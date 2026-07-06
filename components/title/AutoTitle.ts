@@ -17,9 +17,13 @@ export function AutoTitle() {
     const segments = pathname.split("/").filter(Boolean);
 
     if (segments.length > 0) {
-      const mainRoute = segments[0];
+      let targetSegment = segments[segments.length - 1];
 
-      const formattedRoute = mainRoute
+      if (!isNaN(Number(targetSegment)) && segments.length > 1) {
+        targetSegment = segments[segments.length - 2];
+      }
+
+      const formattedRoute = targetSegment
         .split("-")
         .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
         .join(" ");

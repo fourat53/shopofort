@@ -22,4 +22,12 @@ async function createUser(formData: FormData) {
   updateTag("users");
 }
 
-export { createUser };
+async function getUsersOptions() {
+  const users = await prisma.user.findMany({
+    select: { id: true, email: true },
+    orderBy: { id: "asc" },
+  });
+  return users.map((u) => ({ value: String(u.id), label: `${u.id} - ${u.email}` }));
+}
+
+export { createUser, getUsersOptions };

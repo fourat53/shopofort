@@ -1,17 +1,10 @@
+import { NavMain, navMain } from "@/components/sidebar/NavMain";
 import SmallLoader from "@/components/loaders/small-loader";
-import { NavMain } from "@/components/sidebar/NavMain";
+import { IconInnerShadowTop } from "@tabler/icons-react";
 import { NavUser } from "@/components/sidebar/NavUser";
 import type * as React from "react";
 import { Suspense } from "react";
-import {
-  IconDashboard,
-  IconPackage,
-  IconShoppingCart,
-  IconInnerShadowTop,
-  IconShoppingBag,
-  IconUsers,
-  type Icon,
-} from "@tabler/icons-react";
+import Link from "next/link";
 import {
   Sidebar,
   SidebarContent,
@@ -22,41 +15,6 @@ import {
   SidebarMenuItem,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
-import Link from "next/link";
-
-type NavItem = {
-  title: string;
-  url: string;
-  icon: Icon;
-};
-
-const navMain: NavItem[] = [
-  {
-    title: "Dashboard",
-    url: "/dashboard",
-    icon: IconDashboard,
-  },
-  {
-    title: "Products",
-    url: "/products",
-    icon: IconShoppingBag,
-  },
-  {
-    title: "Orders",
-    url: "/orders",
-    icon: IconPackage,
-  },
-  {
-    title: "Carts",
-    url: "/carts",
-    icon: IconShoppingCart,
-  },
-  {
-    title: "Users",
-    url: "/users",
-    icon: IconUsers,
-  },
-];
 
 export default function AdminSidebar({
   ...props
@@ -71,7 +29,7 @@ export default function AdminSidebar({
               className="data-[slot=sidebar-menu-button]:p-1.5! rounded-full h-10"
             >
               <Link
-                href="/"
+                href="/admin/dashboard"
                 className="text-primary flex justify-center font-bold text-xl"
               >
                 <IconInnerShadowTop className="size-7!" />

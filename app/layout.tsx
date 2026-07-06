@@ -35,9 +35,9 @@ export default function RootLayout({
       )}
     >
       <body className="min-h-screen text-foreground bg-sidebar">
-        <AutoTitle />
         <ThemeProvider>
           <KindeProvider>
+            <AutoTitle />
             <TooltipProvider>{children}</TooltipProvider>
           </KindeProvider>
         </ThemeProvider>

@@ -17,4 +17,12 @@ async function createCart(formData: FormData) {
   updateTag("carts");
 }
 
-export { createCart };
+async function getCartsOptions() {
+  const carts = await prisma.cart.findMany({
+    select: { id: true, userId: true },
+    orderBy: { id: "asc" },
+  });
+  return carts.map((c) => ({ value: String(c.id), label: `Cart ${c.id} (User ${c.userId})` }));
+}
+
+export { createCart, getCartsOptions };

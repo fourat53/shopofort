@@ -8,6 +8,7 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import { PAGE_SIZE } from "./PaginationParams";
+import EntityTooltip from "./EntityTooltip";
 
 type DataTableProps<T> = {
   header: string[];
@@ -17,11 +18,12 @@ type DataTableProps<T> = {
 export default function DataTable<
   T extends { id: number } & Record<string, unknown>,
 >({ header, rows }: DataTableProps<T>) {
+  const serializedRows = JSON.parse(JSON.stringify(rows)) as T[];
   return (
     <Table
       parentClassName="h-[calc(100vh-165px)] w-full"
       className={
-        rows.length < PAGE_SIZE
+        serializedRows.length < PAGE_SIZE
           ? "border-b border-mist-300 dark:border-mist-700"
           : ""
       }
@@ -42,7 +44,7 @@ export default function DataTable<
         </TableRow>
       </TableHeader>
       <TableBody>
-        {rows.map((row) => (
+        {serializedRows.map((row) => (
           <TableRow key={row.id}>
             {Object.values(row).map((value, colIndex) => (
               <TableCell
@@ -52,10 +54,12 @@ export default function DataTable<
                   colIndex === 0 && "border-none",
                 )}
               >
-                {header[colIndex].toLowerCase().includes("id") ? (
-                  <Link href="/" className="underline">
-                    {String(value)}
-                  </Link>
+                {colIndex > 0 &&
+                header[colIndex].toLowerCase().includes("id") ? (
+                  <EntityTooltip
+                    headerName={header[colIndex]}
+                    idValue={String(value)}
+                  />
                 ) : header[colIndex].toLowerCase().includes("status") ? (
                   <p
                     className={cn(

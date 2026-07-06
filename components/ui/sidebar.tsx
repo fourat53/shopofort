@@ -50,8 +50,9 @@ function useSidebar() {
 }
 
 function initOpen({ defaultOpen }: { defaultOpen: boolean }) {
-  const storedOpen = localStorage.getItem(SIDEBAR_LOCAL_STORAGE_NAME);
   if (typeof window === "undefined") return defaultOpen;
+
+  const storedOpen = localStorage.getItem(SIDEBAR_LOCAL_STORAGE_NAME);
   return storedOpen ? storedOpen === "true" : defaultOpen;
 }
 

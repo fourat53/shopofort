@@ -1,5 +1,7 @@
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import type { KindeUser } from "@kinde-oss/kinde-auth-nextjs";
+import { Button } from "@/components/ui/button";
+import Image from "next/image";
 import {
   RegisterLink,
   LoginLink,
@@ -26,8 +28,6 @@ import {
   IconNotification,
   IconUserCircle,
 } from "@tabler/icons-react";
-import Image from "next/image";
-import { Button } from "@/components/ui/button";
 
 function AvatarImage({ user }: { user: KindeUser<Record<string, unknown>> }) {
   return (
@@ -65,7 +65,7 @@ function UserInfo({ user }: { user: KindeUser<Record<string, unknown>> }) {
   );
 }
 
-export async function NavUser() {
+async function NavUser() {
   const { isAuthenticated, getUser } = getKindeServerSession();
   const user = await getUser();
   const isLoggedIn = await isAuthenticated();
@@ -74,11 +74,11 @@ export async function NavUser() {
     return (
       <SidebarMenu>
         <SidebarMenuItem className="w-full p-1.5">
-          <div className="w-full flex gap-2 items-center justify-between">
-            <Button className="w-11/24">
+          <div className="w-full flex gap-2 items-center justify-center">
+            <Button className="w-23/48">
               <LoginLink>Login</LoginLink>
             </Button>
-            <Button className="w-11/24" variant="outline">
+            <Button className="w-23/48" variant="outline">
               <RegisterLink>Sign Up</RegisterLink>
             </Button>
           </div>
@@ -141,3 +141,5 @@ export async function NavUser() {
     </SidebarMenu>
   );
 }
+
+export { AvatarImage, UserInfo, NavUser };

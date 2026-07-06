@@ -3,6 +3,17 @@ import { checkedEnvVar } from "@/lib/checked-env-var";
 import { PrismaPg } from "@prisma/adapter-pg";
 import "dotenv/config";
 
+const productImages = [
+  "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=800&q=80", // T-Shirt
+  "https://images.unsplash.com/photo-1576566588028-4147f3842f27?auto=format&fit=crop&w=800&q=80", // T-shirt
+  "https://images.unsplash.com/photo-1608234808654-2a8875faa7fd?auto=format&fit=crop&w=800&q=80", // Sweatshirt
+  "https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&w=800&q=80", //    Hoodie
+  "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?auto=format&fit=crop&w=800&q=80", // Trousers
+  "https://images.unsplash.com/photo-1542272604-787c3835535d?auto=format&fit=crop&w=800&q=80", //    Jeans
+  "https://images.unsplash.com/photo-1591195853828-11db59a44f6b?auto=format&fit=crop&w=800&q=80", // Shorts
+  "https://images.unsplash.com/photo-1509942774463-acf339cf87d5?auto=format&fit=crop&w=800&q=80", // Hat
+] as const;
+
 const adapter = new PrismaPg({
   connectionString: checkedEnvVar("DATABASE_URL"),
 });
@@ -29,6 +40,7 @@ async function clearDatabase() {
 }
 
 async function main(minId: number, maxId: number) {
+  await clearDatabase();
   console.log("🌱 Starting seed...");
   console.log("📂 Seeding Categories...");
   const categories = [];
@@ -81,10 +93,12 @@ async function main(minId: number, maxId: number) {
   const images = [];
 
   for (let i = minId; i <= maxId; i++) {
+    const selectedImageUrl = productImages[i % productImages.length];
+
     images.push({
-      fileName: `image-${i}.jpg`,
+      fileName: `product-image-${i}.jpg`,
       fileType: "image/jpeg",
-      downloadUrl: `https://picsum.photos/seed/${i}/200/300`,
+      downloadUrl: selectedImageUrl,
       productId: dbProducts[i % dbProducts.length].id,
     });
   }

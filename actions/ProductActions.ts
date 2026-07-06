@@ -9,6 +9,7 @@ async function createProduct(formData: FormData) {
   const price = Number(formData.get("price"));
   const inventory = Number(formData.get("inventory"));
   const description = formData.get("description") as string;
+  const categoryId = formData.get("categoryId") ? Number(formData.get("categoryId")) : null;
 
   await prisma.product.create({
     data: {
@@ -17,10 +18,19 @@ async function createProduct(formData: FormData) {
       price,
       inventory,
       description,
+      categoryId,
     },
   });
 
   updateTag("products");
 }
 
-export { createProduct };
+async function getProductsOptions() {
+  const products = await prisma.product.findMany({
+    select: { id: true, name: true },
+    orderBy: { id: "asc" },
+  });
+  return products.map((p) => ({ value: String(p.id), label: `${p.id} - ${p.name}` }));
+}
+
+export { createProduct, getProductsOptions };
