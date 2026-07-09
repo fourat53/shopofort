@@ -44,11 +44,12 @@ async function main(minId: number, maxId: number) {
   console.log("🌱 Starting seed...");
   console.log("📂 Seeding Categories...");
   const categories = [];
+  const categoryNames = ["T-Shirts", "Jeans", "Hoodies", "Dresses", "Jackets"];
   const genders: ("MALE" | "FEMALE")[] = ["MALE", "FEMALE"];
 
   for (let i = minId; i <= maxId; i++) {
     categories.push({
-      name: `Category ${i}`,
+      name: categoryNames[i % categoryNames.length],
       gender: genders[i % 2],
     });
   }
@@ -58,10 +59,13 @@ async function main(minId: number, maxId: number) {
 
   console.log("👤 Seeding Users...");
   const users = [];
+  const firstNames = ["James", "Mary", "John", "Patricia", "Robert", "Jennifer", "Michael", "Linda"];
+  const lastNames = ["Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis"];
+  
   for (let i = minId; i <= maxId; i++) {
     users.push({
-      firstName: `User${i}`,
-      lastName: `Lastname${i}`,
+      firstName: firstNames[i % firstNames.length],
+      lastName: lastNames[i % lastNames.length],
       email: `user${i}@example.com`,
       role: i === 0 ? Role.ADMIN : Role.USER,
     });
@@ -73,14 +77,26 @@ async function main(minId: number, maxId: number) {
   console.log("📦 Seeding Products...");
   const dbCategories = await prisma.category.findMany();
   const products = [];
+  
+  const productNames = [
+    "Classic Cotton T-Shirt",
+    "Slim Fit Denim Jeans",
+    "Cozy Fleece Hoodie",
+    "Summer Flowy Dress",
+    "Leather Biker Jacket",
+    "Comfortable Sweatpants",
+    "Formal Oxford Shirt",
+    "Casual Chino Shorts"
+  ];
+  const brands = ["Nike", "Adidas", "Puma", "Zara", "H&M"];
 
   for (let i = minId; i <= maxId; i++) {
     products.push({
-      name: `Product ${i}`,
-      brand: `Brand ${i % 5}`,
+      name: productNames[i % productNames.length],
+      brand: brands[i % brands.length],
       price: randomPrice(),
       inventory: Math.floor(Math.random() * 100),
-      description: `Description for product ${i}`,
+      description: `High quality ${productNames[i % productNames.length].toLowerCase()} for everyday wear.`,
       categoryId: dbCategories[i % dbCategories.length].id,
     });
   }

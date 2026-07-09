@@ -81,6 +81,27 @@ export default function EntityTooltip({
                     return null;
                   if (value === null || value === undefined) return null;
                   if (typeof value === "object") return null;
+                  
+                  if (
+                    key === "downloadUrl" ||
+                    (typeof value === "string" &&
+                      (value.startsWith("http://") ||
+                        value.startsWith("https://")) &&
+                      value.match(/\.(jpeg|jpg|gif|png|webp)/i)) ||
+                    (typeof value === "string" &&
+                      value.includes("images.unsplash.com"))
+                  ) {
+                    return (
+                      <div key={key} className="col-span-2 flex justify-center py-2">
+                        <img
+                          src={String(value)}
+                          alt={key}
+                          className="w-full max-h-40 object-cover rounded-md border border-mist-300 dark:border-mist-700"
+                        />
+                      </div>
+                    );
+                  }
+
                   return (
                     <div key={key} className="grid grid-cols-[1fr_2fr] gap-1">
                       <span className="text-xs font-medium text-muted-foreground capitalize">

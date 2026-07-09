@@ -16,12 +16,18 @@ function getImagesPage(page: number) {
         skip: (page - 1) * PAGE_SIZE,
         take: PAGE_SIZE,
         orderBy: { id: "asc" },
-        omit: { image: true, downloadUrl: true },
+        select: {
+          id: true,
+          downloadUrl: true,
+          fileName: true,
+          fileType: true,
+          productId: true,
+        },
       }),
     ["images-page", String(page)],
     { revalidate: CACHE_REVALIDATE_SECONDS, tags: ["images"] },
   )();
 }
 
-type ImageType = Omit<Image, "image" | "downloadUrl">;
+type ImageType = Pick<Image, "id" | "downloadUrl" | "fileName" | "fileType" | "productId">;
 export { type ImageType, getImageCount, getImagesPage };

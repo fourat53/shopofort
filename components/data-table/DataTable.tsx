@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/table";
 import { PAGE_SIZE } from "./PaginationParams";
 import EntityTooltip from "./EntityTooltip";
+import Image from "next/image";
 
 type DataTableProps<T> = {
   header: string[];
@@ -36,6 +37,7 @@ export default function DataTable<
               className={cn(
                 "border-l border-mist-300 dark:border-mist-700",
                 item === header[0] && "border-none",
+                item.toLowerCase() === "preview" && "w-18 text-center",
               )}
             >
               {item}
@@ -78,6 +80,18 @@ export default function DataTable<
                   >
                     {String(value)}
                   </p>
+                ) : header[colIndex].toLowerCase() === "preview" ? (
+                  value ? (
+                    <Image
+                      src={String(value)}
+                      alt="preview"
+                      width={56}
+                      height={56}
+                      className="size-14 object-cover rounded-md border border-mist-300 dark:border-mist-700"
+                    />
+                  ) : (
+                    "-"
+                  )
                 ) : value !== null && value !== undefined ? (
                   String(value)
                 ) : (

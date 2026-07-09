@@ -9,7 +9,7 @@ import {
   type ImageType,
 } from "@/queries/ImageQueries";
 
-const HEADER = ["Image ID", "File Name", "File Type", "Product ID"];
+const HEADER = ["Image ID", "Preview", "File Name", "File Type", "Product ID"];
 
 interface PageProps {
   searchParams: Promise<{ page?: string }>;
