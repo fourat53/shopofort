@@ -4,22 +4,18 @@ import {
   getOrdersPage,
   type OrderType,
 } from "@/queries/OrderQueries";
-import DataTablePagination from "@/components/data-table/DataTablePagination";
-import DataTableSkeleton from "@/components/data-table/DataTableSkeleton";
-import DataTable from "@/components/data-table/DataTable";
-import { Suspense } from "react";
+import {
+  type PageProps,
+  DataTableLayout,
+} from "@/components/data-table/DataTableLayout";
 
-const ORDERS_HEADER = [
+const ORDERS_HEADER: string[] = [
   "Order ID",
   "Order Date",
   "Total Amount",
   "Order Status",
   "User ID",
-];
-
-interface PageProps {
-  searchParams: Promise<{ page?: string }>;
-}
+] as const;
 
 export default async function OrdersPage({ searchParams }: PageProps) {
   const params = await searchParams;
@@ -28,17 +24,15 @@ export default async function OrdersPage({ searchParams }: PageProps) {
   const { page, totalPages } = getPaginationParams(params, totalCount);
 
   const orders: OrderType[] = await getOrdersPage(page);
-
   const pageKey = params.page ?? "1";
+
   return (
-    <Suspense
-      key={pageKey}
-      fallback={<DataTableSkeleton header={ORDERS_HEADER} />}
-    >
-      <DataTable<OrderType> header={ORDERS_HEADER} rows={orders} />
-      {totalPages > 1 && (
-        <DataTablePagination basePath={"/orders"} totalPages={totalPages} />
-      )}
-    </Suspense>
+    <DataTableLayout<OrderType>
+      pageKey={pageKey}
+      header={ORDERS_HEADER}
+      totalPages={totalPages}
+      rows={orders}
+      basePath="/orders"
+    />
   );
 }

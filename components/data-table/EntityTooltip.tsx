@@ -1,25 +1,25 @@
 "use client";
 
-import { useState } from "react";
 import { getEntityById } from "@/actions/EntityActions";
+import SmallLoader from "../loaders/small-loader";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { IconLoader2 } from "@tabler/icons-react";
-import { usePathname } from "next/navigation";
-import SmallLoader from "../loaders/small-loader";
+import Image from "next/image";
 
-export default function EntityTooltip({
+export default function EntityTooltip<T extends null>({
   headerName,
   idValue,
 }: {
   headerName: string;
   idValue: string | number;
 }) {
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<T>();
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
@@ -65,8 +65,8 @@ export default function EntityTooltip({
           </span>
         </TooltipTrigger>
         <TooltipContent
-          side="right"
-          className="w-64 shadow-lg bg-background border text-foreground rounded-lg"
+          side="left"
+          className="max-w-82 shadow-lg bg-background border text-foreground rounded-lg"
         >
           {loading ? (
             <SmallLoader />
@@ -77,26 +77,29 @@ export default function EntityTooltip({
               </p>
               <div className="pt-1.5">
                 {Object.entries(data).map(([key, value]) => {
-                  if (key === "id" || key.endsWith("Id") || key === "password")
-                    return null;
-                  if (value === null || value === undefined) return null;
-                  if (typeof value === "object") return null;
-                  
                   if (
-                    key === "downloadUrl" ||
-                    (typeof value === "string" &&
-                      (value.startsWith("http://") ||
-                        value.startsWith("https://")) &&
-                      value.match(/\.(jpeg|jpg|gif|png|webp)/i)) ||
-                    (typeof value === "string" &&
-                      value.includes("images.unsplash.com"))
-                  ) {
+                    key === "id" ||
+                    key.endsWith("Id") ||
+                    key === "password" ||
+                    value === null ||
+                    value === undefined ||
+                    typeof value === "object"
+                  )
+                    return null;
+
+                  if (key === "downloadUrl") {
                     return (
-                      <div key={key} className="col-span-2 flex justify-center py-2">
-                        <img
+                      <div
+                        key={key}
+                        className="col-span-2 flex justify-center py-2"
+                      >
+                        <Image
                           src={String(value)}
                           alt={key}
-                          className="w-full max-h-40 object-cover rounded-md border border-mist-300 dark:border-mist-700"
+                          width={48}
+                          height={48}
+                          loading="eager"
+                          className="size-12 object-cover rounded-md border border-mist-300 dark:border-mist-700"
                         />
                       </div>
                     );
@@ -107,7 +110,9 @@ export default function EntityTooltip({
                       <span className="text-xs font-medium text-muted-foreground capitalize">
                         {key.replace(/([A-Z])/g, " $1").trim()}:
                       </span>
-                      <span className="text-xs truncate">{String(value)}</span>
+                      <span title={String(value)} className="text-xs truncate">
+                        {String(value)}
+                      </span>
                     </div>
                   );
                 })}

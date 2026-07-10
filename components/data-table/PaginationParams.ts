@@ -1,4 +1,5 @@
 const PAGE_SIZE = 20;
+const IMAGE_PAGE_SIZE = 9;
 
 type SearchParams = {
   page?: string;
@@ -29,6 +30,25 @@ function getPaginationParams(searchParams: SearchParams, totalCount: number) {
     page,
     skip,
     take: PAGE_SIZE,
+    totalPages,
+    totalCount,
+  };
+}
+
+function getImagePaginationParams(
+  searchParams: SearchParams,
+  totalCount: number,
+) {
+  const parsedPage = Number.parseInt(searchParams.page ?? "1", 10);
+  const requestedPage = Number.isNaN(parsedPage) ? 1 : parsedPage;
+  const totalPages = Math.max(1, Math.ceil(totalCount / IMAGE_PAGE_SIZE));
+  const page = Math.min(Math.max(1, requestedPage), totalPages);
+  const skip = (page - 1) * IMAGE_PAGE_SIZE;
+
+  return {
+    page,
+    skip,
+    take: IMAGE_PAGE_SIZE,
     totalPages,
     totalCount,
   };
@@ -76,4 +96,12 @@ function getVisiblePages(
   return pages;
 }
 
-export { PAGE_SIZE, parsePage, getPaginationParams, pageHref, getVisiblePages };
+export {
+  PAGE_SIZE,
+  IMAGE_PAGE_SIZE,
+  parsePage,
+  getPaginationParams,
+  getImagePaginationParams,
+  pageHref,
+  getVisiblePages,
+};

@@ -1,5 +1,8 @@
+import { PAGE_SIZE, IMAGE_PAGE_SIZE } from "./PaginationParams";
+import EntityTooltip from "./EntityTooltip";
 import { cn } from "@/lib/utils";
-import Link from "next/link";
+import Image from "next/image";
+import clsx from "clsx";
 import {
   Table,
   TableHeader,
@@ -7,9 +10,6 @@ import {
   TableRow,
   TableCell,
 } from "@/components/ui/table";
-import { PAGE_SIZE } from "./PaginationParams";
-import EntityTooltip from "./EntityTooltip";
-import Image from "next/image";
 
 type DataTableProps<T> = {
   header: string[];
@@ -22,12 +22,14 @@ export default function DataTable<
   const serializedRows = JSON.parse(JSON.stringify(rows)) as T[];
   return (
     <Table
-      parentClassName="h-[calc(100vh-165px)] w-full"
-      className={
-        serializedRows.length < PAGE_SIZE
-          ? "border-b border-mist-300 dark:border-mist-700"
-          : ""
-      }
+      parentClassName={"w-full h-[calc(100vh-166.5px)]"}
+      className={clsx(
+        ((!header.some((item) => item.toLowerCase() === "preview") &&
+          serializedRows.length < PAGE_SIZE) ||
+          (header.some((item) => item.toLowerCase() === "preview") &&
+            serializedRows.length < IMAGE_PAGE_SIZE)) &&
+          "border-b border-mist-300 dark:border-mist-700",
+      )}
     >
       <TableHeader className="bg-chart-1 dark:bg-sidebar-accent">
         <TableRow>
@@ -56,44 +58,43 @@ export default function DataTable<
                   colIndex === 0 && "border-none",
                 )}
               >
-                {colIndex > 0 &&
-                header[colIndex].toLowerCase().includes("id") ? (
-                  <EntityTooltip
-                    headerName={header[colIndex]}
-                    idValue={String(value)}
-                  />
-                ) : header[colIndex].toLowerCase().includes("status") ? (
-                  <p
-                    className={cn(
-                      "w-fit text-center bg-accent text-rose-100 rounded-full flex items-center px-2",
-                      value === "PENDING" &&
-                        "bg-[#ffe6a8] text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400",
-                      value === "PROCESSING" &&
-                        "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
-                      value === "SHIPPED" &&
-                        "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400",
-                      value === "DELIVERED" &&
-                        "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
-                      value === "CANCELLED" &&
-                        "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
-                    )}
-                  >
-                    {String(value)}
-                  </p>
-                ) : header[colIndex].toLowerCase() === "preview" ? (
-                  value ? (
+                {value ? (
+                  colIndex > 0 &&
+                  header[colIndex].toLowerCase().includes("id") ? (
+                    <EntityTooltip
+                      headerName={header[colIndex]}
+                      idValue={String(value)}
+                    />
+                  ) : header[colIndex].toLowerCase().includes("status") ? (
+                    <p
+                      className={cn(
+                        "w-fit text-center bg-accent text-rose-100 rounded-full flex items-center px-2",
+                        value === "PENDING" &&
+                          "bg-[#ffe6a8] text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400",
+                        value === "PROCESSING" &&
+                          "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
+                        value === "SHIPPED" &&
+                          "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400",
+                        value === "DELIVERED" &&
+                          "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
+                        value === "CANCELLED" &&
+                          "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
+                      )}
+                    >
+                      {String(value)}
+                    </p>
+                  ) : header[colIndex].toLowerCase() === "preview" ? (
                     <Image
                       src={String(value)}
                       alt="preview"
+                      loading="eager"
                       width={56}
                       height={56}
                       className="size-14 object-cover rounded-md border border-mist-300 dark:border-mist-700"
                     />
                   ) : (
-                    "-"
+                    String(value)
                   )
-                ) : value !== null && value !== undefined ? (
-                  String(value)
                 ) : (
                   "-"
                 )}

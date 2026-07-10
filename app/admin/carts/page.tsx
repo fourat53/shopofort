@@ -1,19 +1,15 @@
 import { getPaginationParams } from "@/components/data-table/PaginationParams";
-import DataTablePagination from "@/components/data-table/DataTablePagination";
 import {
   getCartCount,
   getCartsPage,
   type CartType,
 } from "@/queries/CartQueries";
-import DataTableSkeleton from "@/components/data-table/DataTableSkeleton";
-import DataTable from "@/components/data-table/DataTable";
-import { Suspense } from "react";
+import {
+  type PageProps,
+  DataTableLayout,
+} from "@/components/data-table/DataTableLayout";
 
-const CARTS_HEADER = ["Cart ID", "Total Amount", "User ID"];
-
-interface PageProps {
-  searchParams: Promise<{ page?: string }>;
-}
+const CARTS_HEADER: string[] = ["Cart ID", "Total Amount", "User ID"] as const;
 
 export default async function CartsPage({ searchParams }: PageProps) {
   const params = await searchParams;
@@ -22,17 +18,15 @@ export default async function CartsPage({ searchParams }: PageProps) {
   const { page, totalPages } = getPaginationParams(params, totalCount);
 
   const carts: CartType[] = await getCartsPage(page);
-
   const pageKey = params.page ?? "1";
+
   return (
-    <Suspense
-      key={pageKey}
-      fallback={<DataTableSkeleton header={CARTS_HEADER} />}
-    >
-      <DataTable<CartType> header={CARTS_HEADER} rows={carts} />
-      {totalPages > 1 && (
-        <DataTablePagination basePath={"/carts"} totalPages={totalPages} />
-      )}
-    </Suspense>
+    <DataTableLayout<CartType>
+      pageKey={pageKey}
+      header={CARTS_HEADER}
+      totalPages={totalPages}
+      rows={carts}
+      basePath="/carts"
+    />
   );
 }
