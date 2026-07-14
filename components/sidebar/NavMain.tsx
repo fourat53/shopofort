@@ -11,17 +11,15 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import {
-  IconDashboard,
-  IconPackage,
-  IconShoppingCart,
-  IconInnerShadowTop,
-  IconShoppingBag,
-  IconUsers,
   type Icon,
-  IconBrandAsana,
+  IconUsers,
+  IconPackage,
   IconPackages,
+  IconDashboard,
   IconCategory2,
-  IconMacro,
+  IconBrandAsana,
+  IconShoppingBag,
+  IconShoppingCart,
 } from "@tabler/icons-react";
 
 type NavItem = {
@@ -70,11 +68,6 @@ const navMain: NavItem[] = [
     title: "Cart Items",
     url: "/cart-items",
     icon: IconBrandAsana,
-  },
-  {
-    title: "Images",
-    url: "/images",
-    icon: IconMacro,
   },
 ] as const;
 

@@ -24,9 +24,9 @@ export default function DataTable<
     <Table
       parentClassName={"w-full h-[calc(100vh-166.5px)]"}
       className={clsx(
-        ((!header.some((item) => item.toLowerCase() === "preview") &&
+        ((!header.some((item) => item === "Images") &&
           serializedRows.length < PAGE_SIZE) ||
-          (header.some((item) => item.toLowerCase() === "preview") &&
+          (header.some((item) => item === "Images") &&
             serializedRows.length < IMAGE_PAGE_SIZE)) &&
           "border-b border-mist-300 dark:border-mist-700",
       )}
@@ -39,7 +39,7 @@ export default function DataTable<
               className={cn(
                 "border-l border-mist-300 dark:border-mist-700",
                 item === header[0] && "border-none",
-                item.toLowerCase() === "preview" && "w-18 text-center",
+                item === "Images" && "w-62 text-center",
               )}
             >
               {item}
@@ -83,15 +83,22 @@ export default function DataTable<
                     >
                       {String(value)}
                     </p>
-                  ) : header[colIndex].toLowerCase() === "preview" ? (
-                    <Image
-                      src={String(value)}
-                      alt="preview"
-                      loading="eager"
-                      width={56}
-                      height={56}
-                      className="size-14 object-cover rounded-md border border-mist-300 dark:border-mist-700"
-                    />
+                  ) : header[colIndex].toLowerCase() === "images" ? (
+                    <div className="flex gap-2 overflow-x-auto w-62 items-center scrollbar-none">
+                      {(Array.isArray(value) ? value : [value]).map(
+                        (imgSrc, idx) => (
+                          <Image
+                            key={idx}
+                            src={String(imgSrc)}
+                            alt="image"
+                            loading="eager"
+                            width={56}
+                            height={56}
+                            className="size-14 shrink-0 object-cover rounded-md border border-mist-300 dark:border-mist-700"
+                          />
+                        ),
+                      )}
+                    </div>
                   ) : (
                     String(value)
                   )

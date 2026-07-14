@@ -1,13 +1,11 @@
 generator client {
   provider = "prisma-client"
-  output   = "@/lib/generated/prisma"
+  output   = "../lib/generated/prisma"
 }
-
 
 datasource db {
   provider = "postgresql"
 }
-
 
 // Enums
 enum Gender {
@@ -29,53 +27,52 @@ enum Role {
   GUEST
 }
 
-
 // Models
 model User {
-  id        Int      @id @default(autoincrement())
+  id        Int     @id @default(autoincrement())
   firstName String?
   lastName  String?
-  email     String   @unique
-  password  String?  
-  role      Role     @default(USER)
+  email     String  @unique
+  password  String?
+  role      Role    @default(USER)
 
-  cart      Cart?
-  orders    Order[]
+  cart   Cart?
+  orders Order[]
 
   @@map("users")
 }
 
 model Cart {
-  id          Int       @id @default(autoincrement())
-  totalAmount Decimal   @default(0.00) @db.Decimal(10, 2)
+  id          Int     @id @default(autoincrement())
+  totalAmount Decimal @default(0.00) @db.Decimal(10, 2)
 
-  userId      Int       @unique
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int  @unique
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  items       CartItem[]
+  items CartItem[]
 
   @@map("carts")
 }
 
 model CartItem {
-  id         Int      @id @default(autoincrement())
+  id         Int     @id @default(autoincrement())
   quantity   Int
-  unitPrice  Decimal  @db.Decimal(10, 2)
-  totalPrice Decimal  @db.Decimal(10, 2)
+  unitPrice  Decimal @db.Decimal(10, 2)
+  totalPrice Decimal @db.Decimal(10, 2)
 
-  cartId     Int
-  cart       Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  cartId Int
+  cart   Cart @relation(fields: [cartId], references: [id], onDelete: Cascade)
 
-  productId  Int
-  product    Product  @relation(fields: [productId], references: [id])
+  productId Int
+  product   Product @relation(fields: [productId], references: [id])
 
   @@map("cart_items")
 }
 
 model Category {
-  id       Int       @id @default(autoincrement())
-  name     String
-  gender   Gender?
+  id     Int     @id @default(autoincrement())
+  name   String
+  gender Gender?
 
   products Product[]
 
@@ -83,34 +80,21 @@ model Category {
 }
 
 model Product {
-  id          Int        @id @default(autoincrement())
+  id          Int     @id @default(autoincrement())
   name        String
   brand       String?
-  price       Decimal    @db.Decimal(10, 2)
+  price       Decimal @db.Decimal(10, 2)
   inventory   Int
   description String?
 
-  categoryId  Int?
-  category    Category?  @relation(fields: [categoryId], references: [id])
+  categoryId Int?
+  category   Category? @relation(fields: [categoryId], references: [id])
 
-  images      Image[]
-  cartItems   CartItem[]
-  orderItems  OrderItem[]
+  images     String[]
+  cartItems  CartItem[]
+  orderItems OrderItem[]
 
   @@map("products")
-}
-
-model Image {
-  id          Int      @id @default(autoincrement())
-  fileName    String?
-  fileType    String?
-  image       Bytes?
-  downloadUrl String?
-
-  productId   Int?
-  product     Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
-
-  @@map("images")
 }
 
 model Order {
@@ -118,25 +102,25 @@ model Order {
   orderDate   DateTime    @db.Date
   totalAmount Decimal     @db.Decimal(10, 2)
   orderStatus OrderStatus
-  
-  userId      Int
-  user        User        @relation(fields: [userId], references: [id])
 
-  orderItems  OrderItem[]
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+
+  orderItems OrderItem[]
 
   @@map("orders")
 }
 
 model OrderItem {
-  id        Int      @id @default(autoincrement())
-  quantity  Int
-  price     Decimal  @db.Decimal(10, 2)
+  id       Int     @id @default(autoincrement())
+  quantity Int
+  price    Decimal @db.Decimal(10, 2)
 
-  orderId   Int
-  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId Int
+  order   Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
   productId Int
-  product   Product  @relation(fields: [productId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
 
   @@map("order_items")
 }

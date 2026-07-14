@@ -19,36 +19,23 @@ function parsePage(
   return Math.max(1, page);
 }
 
-function getPaginationParams(searchParams: SearchParams, totalCount: number) {
-  const parsedPage = Number.parseInt(searchParams.page ?? "1", 10);
-  const requestedPage = Number.isNaN(parsedPage) ? 1 : parsedPage;
-  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
-  const page = Math.min(Math.max(1, requestedPage), totalPages);
-  const skip = (page - 1) * PAGE_SIZE;
-
-  return {
-    page,
-    skip,
-    take: PAGE_SIZE,
-    totalPages,
-    totalCount,
-  };
-}
-
-function getImagePaginationParams(
+function getPaginationParams(
   searchParams: SearchParams,
   totalCount: number,
+  hasImage: boolean = false,
 ) {
+  const pageSize = hasImage ? IMAGE_PAGE_SIZE : PAGE_SIZE;
+
   const parsedPage = Number.parseInt(searchParams.page ?? "1", 10);
   const requestedPage = Number.isNaN(parsedPage) ? 1 : parsedPage;
-  const totalPages = Math.max(1, Math.ceil(totalCount / IMAGE_PAGE_SIZE));
+  const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
   const page = Math.min(Math.max(1, requestedPage), totalPages);
-  const skip = (page - 1) * IMAGE_PAGE_SIZE;
+  const skip = (page - 1) * pageSize;
 
   return {
     page,
     skip,
-    take: IMAGE_PAGE_SIZE,
+    take: pageSize,
     totalPages,
     totalCount,
   };
@@ -99,9 +86,8 @@ function getVisiblePages(
 export {
   PAGE_SIZE,
   IMAGE_PAGE_SIZE,
-  parsePage,
-  getPaginationParams,
-  getImagePaginationParams,
   pageHref,
+  parsePage,
   getVisiblePages,
+  getPaginationParams,
 };

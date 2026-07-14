@@ -17,13 +17,14 @@ const PRODUCTS_HEADER: string[] = [
   "Inventory",
   "Description",
   "Category ID",
+  "Images",
 ] as const;
 
 export default async function ProductsPage({ searchParams }: PageProps) {
   const params = await searchParams;
 
   const totalCount = await getProductCount();
-  const { page, totalPages } = getPaginationParams(params, totalCount);
+  const { page, totalPages } = getPaginationParams(params, totalCount, true);
 
   const products: ProductType[] = await getProductsPage(page);
   const pageKey = params.page ?? "1";

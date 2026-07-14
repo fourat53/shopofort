@@ -36,7 +36,20 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
 <!-- Biome auto sort imports -->
+
 pnpm biome format --write .
 
-bg-[linear-gradient(45deg,var(--chart-1)_1%,var(--sidebar)_100%)] 
+bg-[linear-gradient(45deg,var(--chart-1)_1%,var(--sidebar)_100%)]
 dark:bg-[linear-gradient(-135deg,var(--sidebar)_1%,var(--sidebar-accent)_100%)]
+
+- TO DO :
+  <!-- data table format: product images + kinde users -->
+  1. add upload images to product table.
+  2. update the list of users in database via seed.ts by inserting only the list of users from Kinde and update the user table columns to accommodate the Kinde user format (look into my auth setup).
+  3. make a dashboard design with shadcn UI and display statistics by using the most relevent data from the database.
+  <!-- table filtering and sorting -->
+  4. add the ability to filter from server all table columns in DataTableLayout by adding inputs for non enum columns and select for enum columns above the table header.
+  5. add the ability to sort from server any table columns in DataTable by adding arrows to the table header.
+  - Note: the sorting and filtering should should work together (update the get function for each table) and should update the pagination from server (new total pages and reset current page to 1).
+  <!-- table row actions -->
+  6. add delete and add buttons as actions column for each DataTable row.

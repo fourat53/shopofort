@@ -1,18 +1,7 @@
-import { PrismaClient, Role } from "@/lib/generated/prisma/client";
+import { OrderStatus, PrismaClient, Role } from "@/lib/generated/prisma/client";
 import { checkedEnvVar } from "@/lib/checked-env-var";
 import { PrismaPg } from "@prisma/adapter-pg";
 import "dotenv/config";
-
-const productImages = [
-  "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=800&q=80", // T-Shirt
-  "https://images.unsplash.com/photo-1576566588028-4147f3842f27?auto=format&fit=crop&w=800&q=80", // T-shirt
-  "https://images.unsplash.com/photo-1608234808654-2a8875faa7fd?auto=format&fit=crop&w=800&q=80", // Sweatshirt
-  "https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&w=800&q=80", //    Hoodie
-  "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?auto=format&fit=crop&w=800&q=80", // Trousers
-  "https://images.unsplash.com/photo-1542272604-787c3835535d?auto=format&fit=crop&w=800&q=80", //    Jeans
-  "https://images.unsplash.com/photo-1591195853828-11db59a44f6b?auto=format&fit=crop&w=800&q=80", // Shorts
-  "https://images.unsplash.com/photo-1509942774463-acf339cf87d5?auto=format&fit=crop&w=800&q=80", // Hat
-] as const;
 
 const adapter = new PrismaPg({
   connectionString: checkedEnvVar("DATABASE_URL"),
@@ -31,7 +20,6 @@ const randomInt = (min: number, max: number) => {
 async function clearDatabase() {
   await prisma.orderItem.deleteMany();
   await prisma.cartItem.deleteMany();
-  await prisma.image.deleteMany();
   await prisma.order.deleteMany();
   await prisma.cart.deleteMany();
   await prisma.product.deleteMany();
@@ -59,9 +47,27 @@ async function main(minId: number, maxId: number) {
 
   console.log("👤 Seeding Users...");
   const users = [];
-  const firstNames = ["James", "Mary", "John", "Patricia", "Robert", "Jennifer", "Michael", "Linda"];
-  const lastNames = ["Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis"];
-  
+  const firstNames = [
+    "James",
+    "Mary",
+    "John",
+    "Patricia",
+    "Robert",
+    "Jennifer",
+    "Michael",
+    "Linda",
+  ];
+  const lastNames = [
+    "Smith",
+    "Johnson",
+    "Williams",
+    "Brown",
+    "Jones",
+    "Garcia",
+    "Miller",
+    "Davis",
+  ];
+
   for (let i = minId; i <= maxId; i++) {
     users.push({
       firstName: firstNames[i % firstNames.length],
@@ -77,8 +83,8 @@ async function main(minId: number, maxId: number) {
   console.log("📦 Seeding Products...");
   const dbCategories = await prisma.category.findMany();
   const products = [];
-  
-  const productNames = [
+
+  const productNames: string[] = [
     "Classic Cotton T-Shirt",
     "Slim Fit Denim Jeans",
     "Cozy Fleece Hoodie",
@@ -86,9 +92,19 @@ async function main(minId: number, maxId: number) {
     "Leather Biker Jacket",
     "Comfortable Sweatpants",
     "Formal Oxford Shirt",
-    "Casual Chino Shorts"
+    "Casual Chino Shorts",
   ];
-  const brands = ["Nike", "Adidas", "Puma", "Zara", "H&M"];
+  const brands: string[] = ["Nike", "Adidas", "Puma", "Zara", "H&M"];
+  const productImages: string[] = [
+    "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=800&q=80", // T-Shirt
+    "https://images.unsplash.com/photo-1576566588028-4147f3842f27?auto=format&fit=crop&w=800&q=80", // T-shirt
+    "https://images.unsplash.com/photo-1608234808654-2a8875faa7fd?auto=format&fit=crop&w=800&q=80", // Sweatshirt
+    "https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&w=800&q=80", //    Hoodie
+    "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?auto=format&fit=crop&w=800&q=80", // Trousers
+    "https://images.unsplash.com/photo-1542272604-787c3835535d?auto=format&fit=crop&w=800&q=80", //    Jeans
+    "https://images.unsplash.com/photo-1591195853828-11db59a44f6b?auto=format&fit=crop&w=800&q=80", // Shorts
+    "https://images.unsplash.com/photo-1509942774463-acf339cf87d5?auto=format&fit=crop&w=800&q=80", // Hat
+  ];
 
   for (let i = minId; i <= maxId; i++) {
     products.push({
@@ -98,29 +114,14 @@ async function main(minId: number, maxId: number) {
       inventory: Math.floor(Math.random() * 100),
       description: `High quality ${productNames[i % productNames.length].toLowerCase()} for everyday wear.`,
       categoryId: dbCategories[i % dbCategories.length].id,
+      images: productImages,
     });
   }
   await prisma.product.createMany({
     data: products,
   });
 
-  console.log("🖼️ Seeding Images...");
   const dbProducts = await prisma.product.findMany();
-  const images = [];
-
-  for (let i = minId; i <= maxId; i++) {
-    const selectedImageUrl = productImages[i % productImages.length];
-
-    images.push({
-      fileName: `product-image-${i}.jpg`,
-      fileType: "image/jpeg",
-      downloadUrl: selectedImageUrl,
-      productId: dbProducts[i % dbProducts.length].id,
-    });
-  }
-  await prisma.image.createMany({
-    data: images,
-  });
 
   console.log("🛒 Seeding Carts...");
   const dbUsers = await prisma.user.findMany();
@@ -161,13 +162,13 @@ async function main(minId: number, maxId: number) {
 
   console.log("📦 Seeding Orders...");
   const orders = [];
-  const statuses: (
-    | "PENDING"
-    | "PROCESSING"
-    | "SHIPPED"
-    | "DELIVERED"
-    | "CANCELLED"
-  )[] = ["PENDING", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED"];
+  const statuses: OrderStatus[] = [
+    "PENDING",
+    "PROCESSING",
+    "SHIPPED",
+    "DELIVERED",
+    "CANCELLED",
+  ];
 
   for (let i = minId; i < maxId; i++) {
     const randomUser = dbUsers[i % dbUsers.length];

@@ -1,4 +1,4 @@
-import { PAGE_SIZE } from "@/components/data-table/PaginationParams";
+import { IMAGE_PAGE_SIZE } from "@/components/data-table/PaginationParams";
 import { prisma, CACHE_REVALIDATE_SECONDS } from "@/lib/prisma";
 import type { Product } from "@/lib/generated/prisma/client";
 import { unstable_cache } from "next/cache";
@@ -13,8 +13,8 @@ function getProductsPage(page: number) {
   return unstable_cache(
     async () =>
       prisma.product.findMany({
-        skip: (page - 1) * PAGE_SIZE,
-        take: PAGE_SIZE,
+        skip: (page - 1) * IMAGE_PAGE_SIZE,
+        take: IMAGE_PAGE_SIZE,
         orderBy: { id: "asc" },
       }),
     ["products-page", String(page)],
