@@ -1,4 +1,7 @@
-import { getPaginationParams } from "@/components/data-table/PaginationParams";
+import {
+  getPaginationParams,
+  IMAGE_PAGE_SIZE,
+} from "@/components/data-table/PaginationParams";
 import {
   getProductCount,
   getProductsPage,
@@ -36,6 +39,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
       totalPages={totalPages}
       rows={products}
       basePath="/products"
+      hasImages
     />
   );
 }

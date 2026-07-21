@@ -10,6 +10,8 @@ import {
   TableRow,
   TableCell,
 } from "@/components/ui/table";
+import EditButton from "@/components/buttons/edit-button";
+import DeleteButton from "@/components/buttons/delete-button";
 
 type DataTableProps<T> = {
   header: string[];
@@ -45,6 +47,9 @@ export default function DataTable<
               {item}
             </TableCell>
           ))}
+          <TableCell className="border-l border-mist-300 dark:border-mist-700 w-20 text-center">
+            Actions
+          </TableCell>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -107,6 +112,12 @@ export default function DataTable<
                 )}
               </TableCell>
             ))}
+            <TableCell className="p-0.5 border-l border-mist-300 dark:border-mist-700 w-20 text-center">
+              <div className="flex items-center justify-center gap-1.5">
+                <EditButton row={row} />
+                <DeleteButton id={row.id} />
+              </div>
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>

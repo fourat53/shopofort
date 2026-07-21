@@ -1,4 +1,3 @@
-import { PAGE_SIZE } from "@/components/data-table/PaginationParams";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import {
@@ -8,16 +7,19 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { IMAGE_PAGE_SIZE, PAGE_SIZE } from "./PaginationParams";
+import clsx from "clsx";
 
 type DataTableSkeletonProps = {
   header: string[];
-  rowCount?: number;
+  hasImages: boolean;
 };
 
 export default function DataTableSkeleton({
   header,
-  rowCount = PAGE_SIZE,
+  hasImages,
 }: DataTableSkeletonProps) {
+  const rowCount = hasImages ? IMAGE_PAGE_SIZE : PAGE_SIZE;
   return (
     <Table>
       <TableHeader className="bg-chart-1 dark:bg-sidebar-accent">
@@ -33,6 +35,9 @@ export default function DataTableSkeleton({
               {item}
             </TableCell>
           ))}
+          <TableCell className="border-l border-mist-300 dark:border-mist-700 w-20 text-center">
+            Actions
+          </TableCell>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -46,9 +51,16 @@ export default function DataTableSkeleton({
                   item === header[0] && "border-none",
                 )}
               >
-                <Skeleton className="h-4 w-full" />
+                <Skeleton
+                  className={clsx("w-full", hasImages ? "h-14" : "h-4")}
+                />
               </TableCell>
             ))}
+            <TableCell className="border-l border-mist-300 dark:border-mist-700 w-20 text-center">
+              <Skeleton
+                className={clsx("w-full", hasImages ? "h-14" : "h-4")}
+              />
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>

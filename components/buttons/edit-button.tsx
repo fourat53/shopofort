@@ -1,13 +1,6 @@
 "use client";
 
-import { createProduct } from "@/actions/ProductActions";
-import { createOrder } from "@/actions/OrderActions";
-import { createUser } from "@/actions/UserActions";
-import { createCart } from "@/actions/CartActions";
-import { createCategory } from "@/actions/CategoryActions";
-import { createCartItem } from "@/actions/CartItemActions";
-import { createOrderItem } from "@/actions/OrderItemActions";
-
+import { updateEntity } from "@/actions/EntityActions";
 import { getUsersOptions } from "@/actions/UserActions";
 import { getCategoriesOptions } from "@/actions/CategoryActions";
 import { getProductsOptions } from "@/actions/ProductActions";
@@ -26,8 +19,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-import { IconPlus } from "@tabler/icons-react";
-import { usePathname } from "next/navigation";
+import { IconEdit } from "@tabler/icons-react";
+import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 
 const roleItems: SelectOption[] = [
@@ -44,8 +37,9 @@ const orderStatusItems: SelectOption[] = [
   { label: "Cancelled", value: "CANCELLED" },
 ];
 
-export default function CreateButton() {
+export default function EditButton({ row }: { row: any }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [open, setOpen] = useState(false);
 
   const [userOptions, setUserOptions] = useState<SelectOption[]>([]);
@@ -56,14 +50,29 @@ export default function CreateButton() {
   const [productImages, setProductImages] = useState<File[]>([]);
 
   let entity = "";
-  if (pathname.includes("/users")) entity = "user";
-  else if (pathname.includes("/products")) entity = "product";
-  else if (pathname.includes("/orders")) entity = "order";
-  else if (pathname.includes("/carts")) entity = "cart";
-  else if (pathname.includes("/categories")) entity = "category";
-  else if (pathname.includes("/cart-items")) entity = "cart item";
-  else if (pathname.includes("/images")) entity = "image";
-  else if (pathname.includes("/order-items")) entity = "order item";
+  let modelName = "";
+  if (pathname.includes("/users")) {
+    entity = "user";
+    modelName = "user";
+  } else if (pathname.includes("/products")) {
+    entity = "product";
+    modelName = "product";
+  } else if (pathname.includes("/orders")) {
+    entity = "order";
+    modelName = "order";
+  } else if (pathname.includes("/carts")) {
+    entity = "cart";
+    modelName = "cart";
+  } else if (pathname.includes("/categories")) {
+    entity = "category";
+    modelName = "category";
+  } else if (pathname.includes("/cart-items")) {
+    entity = "cart item";
+    modelName = "cartItem";
+  } else if (pathname.includes("/order-items")) {
+    entity = "order item";
+    modelName = "orderItem";
+  }
 
   useEffect(() => {
     if (!open) return;
@@ -74,7 +83,6 @@ export default function CreateButton() {
       getCartsOptions().then(setCartOptions);
       getProductsOptions().then(setProductOptions);
     }
-    if (entity === "image") getProductsOptions().then(setProductOptions);
     if (entity === "order item") {
       getOrdersOptions().then(setOrderOptions);
       getProductsOptions().then(setProductOptions);
@@ -86,17 +94,63 @@ export default function CreateButton() {
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
+    let data: any = {};
 
-    if (entity === "user") await createUser(formData);
-    else if (entity === "product") {
-      productImages.forEach((img) => formData.append("images", img));
-      await createProduct(formData);
-    } else if (entity === "order") await createOrder(formData);
-    else if (entity === "cart") await createCart(formData);
-    else if (entity === "category") await createCategory(formData);
-    else if (entity === "cart item") await createCartItem(formData);
-    else if (entity === "order item") await createOrderItem(formData);
+    if (modelName === "user") {
+      data = {
+        firstName: formData.get("firstName") as string,
+        lastName: formData.get("lastName") as string,
+        email: formData.get("email") as string,
+        role: formData.get("role") as string,
+      };
+    } else if (modelName === "product") {
+      data = {
+        name: formData.get("name") as string,
+        brand: formData.get("brand") as string,
+        price: Number(formData.get("price")),
+        inventory: Number(formData.get("inventory")),
+        description: formData.get("description") as string,
+        categoryId: formData.get("categoryId")
+          ? Number(formData.get("categoryId"))
+          : null,
+      };
+    } else if (modelName === "order") {
+      data = {
+        orderDate: new Date(formData.get("orderDate") as string),
+        totalAmount: Number(formData.get("totalAmount")),
+        orderStatus: formData.get("orderStatus") as string,
+        userId: Number(formData.get("userId")),
+      };
+    } else if (modelName === "cart") {
+      data = {
+        userId: Number(formData.get("userId")),
+        totalAmount: Number(formData.get("totalAmount")) || 0,
+      };
+    } else if (modelName === "category") {
+      data = {
+        name: formData.get("name") as string,
+        gender: formData.get("gender") as any,
+      };
+    } else if (modelName === "cartItem") {
+      data = {
+        quantity: Number(formData.get("quantity")),
+        unitPrice: Number(formData.get("unitPrice")),
+        totalPrice: Number(formData.get("totalPrice")),
+        cartId: Number(formData.get("cartId")),
+        productId: Number(formData.get("productId")),
+      };
+    } else if (modelName === "orderItem") {
+      data = {
+        quantity: Number(formData.get("quantity")),
+        price: Number(formData.get("price")),
+        orderId: Number(formData.get("orderId")),
+        productId: Number(formData.get("productId")),
+      };
+    }
+
+    await updateEntity(modelName, row.id, data);
     handleOpenChange(false);
+    router.refresh();
   };
 
   const handleOpenChange = (isOpen: boolean) => {
@@ -109,14 +163,18 @@ export default function CreateButton() {
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="rounded-xl">
-          <IconPlus className="h-4 w-4" />
+        <Button
+          variant="ghost"
+          border={false}
+          className="rounded-xl size-6 p-0"
+        >
+          <IconEdit className="h-4 w-4 text-mist-400" />
         </Button>
       </DialogTrigger>
       <DialogContent className="max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
-            Create New {entity.charAt(0).toUpperCase() + entity.slice(1)}
+            Edit {entity.charAt(0).toUpperCase() + entity.slice(1)}
           </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="flex flex-col gap-2 pt-2">
@@ -126,20 +184,28 @@ export default function CreateButton() {
                 id="firstName"
                 name="firstName"
                 label="First Name"
+                defaultValue={row.firstName || row.first_name || ""}
                 required
               />
-              <Input id="lastName" name="lastName" label="Last Name" required />
+              <Input
+                id="lastName"
+                name="lastName"
+                label="Last Name"
+                defaultValue={row.lastName || row.last_name || ""}
+                required
+              />
               <Input
                 id="email"
                 name="email"
                 type="email"
                 label="Email"
+                defaultValue={row.email || ""}
                 required
               />
               <Select
                 label="Role"
                 name="role"
-                defaultValue="USER"
+                defaultValue={row.role || "USER"}
                 placeholder="Select role"
                 items={roleItems}
               />
@@ -148,15 +214,26 @@ export default function CreateButton() {
 
           {entity === "product" && (
             <>
-              <Input id="name" name="name" label="Name" required />
-              <Input id="brand" name="brand" label="Brand" />
+              <Input
+                id="name"
+                name="name"
+                label="Name"
+                defaultValue={row.name || ""}
+                required
+              />
+              <Input
+                id="brand"
+                name="brand"
+                label="Brand"
+                defaultValue={row.brand || ""}
+              />
               <Input
                 id="price"
                 name="price"
                 type="number"
                 label="Price ($)"
                 step="0.01"
-                defaultValue={5}
+                defaultValue={row.price || 5}
                 required
               />
               <Input
@@ -164,14 +241,22 @@ export default function CreateButton() {
                 name="inventory"
                 type="number"
                 label="Inventory"
-                defaultValue={1}
+                defaultValue={row.inventory || 1}
                 required
               />
-              <Input id="description" name="description" label="Description" />
+              <Input
+                id="description"
+                name="description"
+                label="Description"
+                defaultValue={row.description || ""}
+              />
               <Select
                 label="Category"
                 name="categoryId"
                 placeholder="Select Category"
+                defaultValue={
+                  row.categoryId ? String(row.categoryId) : undefined
+                }
                 items={categoryOptions}
               />
               <ImageUpload images={productImages} onChange={setProductImages} />
@@ -185,7 +270,11 @@ export default function CreateButton() {
                 name="orderDate"
                 type="date"
                 label="Order Date"
-                defaultValue={new Date().toISOString().split("T")[0]}
+                defaultValue={
+                  row.orderDate
+                    ? new Date(row.orderDate).toISOString().split("T")[0]
+                    : new Date().toISOString().split("T")[0]
+                }
                 required
               />
               <Input
@@ -194,13 +283,13 @@ export default function CreateButton() {
                 type="number"
                 label="Total Amount ($)"
                 step="1"
-                defaultValue={1}
+                defaultValue={row.totalAmount || 1}
                 required
               />
               <Select
                 label="Order Status"
                 name="orderStatus"
-                defaultValue="PENDING"
+                defaultValue={row.orderStatus || "PENDING"}
                 placeholder="Select status"
                 items={orderStatusItems}
               />
@@ -208,6 +297,7 @@ export default function CreateButton() {
                 label="User"
                 name="userId"
                 placeholder="Select User"
+                defaultValue={row.userId ? String(row.userId) : undefined}
                 items={userOptions}
               />
             </>
@@ -219,6 +309,7 @@ export default function CreateButton() {
                 label="User"
                 name="userId"
                 placeholder="Select User"
+                defaultValue={row.userId ? String(row.userId) : undefined}
                 items={userOptions}
               />
               <Input
@@ -227,7 +318,7 @@ export default function CreateButton() {
                 type="number"
                 label="Total Amount ($)"
                 step="1"
-                defaultValue={1}
+                defaultValue={row.totalAmount || 1}
                 required
               />
             </>
@@ -235,11 +326,18 @@ export default function CreateButton() {
 
           {entity === "category" && (
             <>
-              <Input id="name" name="name" label="Name" required />
+              <Input
+                id="name"
+                name="name"
+                label="Name"
+                defaultValue={row.name || ""}
+                required
+              />
               <Select
                 label="Gender"
                 name="gender"
                 placeholder="Select Gender"
+                defaultValue={row.gender || undefined}
                 items={[
                   { label: "Male", value: "MALE" },
                   { label: "Female", value: "FEMALE" },
@@ -255,6 +353,7 @@ export default function CreateButton() {
                 name="quantity"
                 type="number"
                 label="Quantity"
+                defaultValue={row.quantity || 1}
                 required
               />
               <Input
@@ -263,6 +362,7 @@ export default function CreateButton() {
                 type="number"
                 label="Unit Price ($)"
                 step="0.01"
+                defaultValue={row.unitPrice || 0}
                 required
               />
               <Input
@@ -271,18 +371,21 @@ export default function CreateButton() {
                 type="number"
                 label="Total Price ($)"
                 step="0.01"
+                defaultValue={row.totalPrice || 0}
                 required
               />
               <Select
                 label="Cart"
                 name="cartId"
                 placeholder="Select Cart"
+                defaultValue={row.cartId ? String(row.cartId) : undefined}
                 items={cartOptions}
               />
               <Select
                 label="Product"
                 name="productId"
                 placeholder="Select Product"
+                defaultValue={row.productId ? String(row.productId) : undefined}
                 items={productOptions}
               />
             </>
@@ -295,6 +398,7 @@ export default function CreateButton() {
                 name="quantity"
                 type="number"
                 label="Quantity"
+                defaultValue={row.quantity || 1}
                 required
               />
               <Input
@@ -303,18 +407,21 @@ export default function CreateButton() {
                 type="number"
                 label="Price ($)"
                 step="0.01"
+                defaultValue={row.price || 0}
                 required
               />
               <Select
                 label="Order"
                 name="orderId"
                 placeholder="Select Order"
+                defaultValue={row.orderId ? String(row.orderId) : undefined}
                 items={orderOptions}
               />
               <Select
                 label="Product"
                 name="productId"
                 placeholder="Select Product"
+                defaultValue={row.productId ? String(row.productId) : undefined}
                 items={productOptions}
               />
             </>
@@ -322,7 +429,7 @@ export default function CreateButton() {
 
           <div className="w-full pt-4">
             <Button type="submit" className="w-full">
-              Create
+              Update
             </Button>
           </div>
         </form>

@@ -60,7 +60,7 @@ export default function EntityTooltip<T extends null>({
     <TooltipProvider>
       <Tooltip open={open} onOpenChange={handleOpenChange} delayDuration={300}>
         <TooltipTrigger asChild>
-          <span className="underline cursor-pointer hover:text-blue-500 transition-colors">
+          <span className="underline cursor-pointer hover:text-primary transition-colors">
             {idValue}
           </span>
         </TooltipTrigger>
