@@ -12,7 +12,7 @@ import clsx from "clsx";
 
 type DataTableSkeletonProps = {
   header: string[];
-  hasImages: boolean;
+  hasImages?: boolean;
 };
 
 export default function DataTableSkeleton({

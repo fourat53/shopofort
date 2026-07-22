@@ -10,22 +10,22 @@ interface PageProps {
 
 interface DataTableLayoutProps<T> {
   totalPages: number;
-  hasImages: boolean;
   header: string[];
   basePath: string;
   pageKey: string;
   rows: T[];
+  hasImages?: boolean;
 }
 
 async function DataTableLayout<
   T extends { id: number } & Record<string, unknown>,
 >({
   totalPages,
-  hasImages,
   header,
   basePath,
   pageKey,
   rows,
+  hasImages = false,
 }: DataTableLayoutProps<T>) {
   return (
     <Suspense
