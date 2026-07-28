@@ -37,7 +37,13 @@ const orderStatusItems: SelectOption[] = [
   { label: "Cancelled", value: "CANCELLED" },
 ];
 
-export default function EditButton({ row }: { row: any }) {
+export default function EditButton({
+  row,
+  disabled,
+}: {
+  row: any;
+  disabled?: boolean;
+}) {
   const pathname = usePathname();
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -165,6 +171,7 @@ export default function EditButton({ row }: { row: any }) {
       <DialogTrigger asChild>
         <Button
           variant="ghost"
+          disabled={disabled}
           border={false}
           className="rounded-xl size-6 p-0"
         >

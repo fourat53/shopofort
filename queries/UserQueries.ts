@@ -3,6 +3,14 @@ import { prisma, CACHE_REVALIDATE_SECONDS } from "@/lib/prisma";
 import type { User } from "@/lib/generated/prisma/client";
 import { unstable_cache } from "next/cache";
 
+const USERS_HEADER: string[] = [
+  "User ID",
+  "Firstname",
+  "Lastname",
+  "Email",
+  "Role",
+] as const;
+
 const getUserCount = unstable_cache(
   async () => prisma.user.count(),
   ["users-count"],
@@ -29,4 +37,10 @@ function getUsersPage(page: number) {
 type UserType = Omit<User, "password">;
 type UserCreateType = Omit<UserType, "id" | "createdAt" | "updatedAt">;
 
-export { type UserType, type UserCreateType, getUserCount, getUsersPage };
+export {
+  USERS_HEADER,
+  type UserType,
+  type UserCreateType,
+  getUserCount,
+  getUsersPage,
+};

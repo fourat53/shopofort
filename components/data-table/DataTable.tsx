@@ -23,7 +23,7 @@ export default function DataTable<
   const serializedRows = JSON.parse(JSON.stringify(rows)) as T[];
   return (
     <Table
-      parentClassName="w-full h-[calc(100vh-166.5px)] overscroll-none overflow-auto rounded-lg border border-mist-300 dark:border-mist-700"
+      parentClassName="w-full h-[calc(100vh-172px)] overscroll-none overflow-auto rounded-lg border border-mist-300 dark:border-mist-700"
       className={cn(
         ((!header.some((item) => item === "Images") &&
           serializedRows.length < PAGE_SIZE) ||

@@ -44,7 +44,7 @@ export default function AdminSidebar({
       </SidebarContent>
       <SidebarFooter>
         <SidebarSeparator />
-        <Suspense fallback={<SmallLoader />}>
+        <Suspense fallback={<SmallLoader className="h-12" />}>
           <NavUser />
         </Suspense>
       </SidebarFooter>

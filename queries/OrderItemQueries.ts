@@ -3,6 +3,14 @@ import { prisma, CACHE_REVALIDATE_SECONDS } from "@/lib/prisma";
 import type { OrderItem } from "@/lib/generated/prisma/client";
 import { unstable_cache } from "next/cache";
 
+const ORDER_ITEMS_HEADER: string[] = [
+  "OrderItem ID",
+  "Quantity",
+  "Price",
+  "Order ID",
+  "Product ID",
+] as const;
+
 const getOrderItemCount = unstable_cache(
   async () => prisma.orderItem.count(),
   ["order-items-count"],
@@ -23,4 +31,9 @@ function getOrderItemsPage(page: number) {
 }
 
 type OrderItemType = OrderItem;
-export { type OrderItemType, getOrderItemCount, getOrderItemsPage };
+export {
+  ORDER_ITEMS_HEADER,
+  type OrderItemType,
+  getOrderItemCount,
+  getOrderItemsPage,
+};

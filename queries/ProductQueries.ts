@@ -3,6 +3,17 @@ import { prisma, CACHE_REVALIDATE_SECONDS } from "@/lib/prisma";
 import type { Product } from "@/lib/generated/prisma/client";
 import { unstable_cache } from "next/cache";
 
+const PRODUCTS_HEADER: string[] = [
+  "Product ID",
+  "Name",
+  "Brand",
+  "Price ($)",
+  "Inventory",
+  "Description",
+  "Category ID",
+  "Images",
+] as const;
+
 const getProductCount = unstable_cache(
   async () => prisma.product.count(),
   ["products-count"],
@@ -24,4 +35,4 @@ function getProductsPage(page: number) {
 
 type ProductType = Product;
 
-export { type ProductType, getProductCount, getProductsPage };
+export { PRODUCTS_HEADER, type ProductType, getProductCount, getProductsPage };

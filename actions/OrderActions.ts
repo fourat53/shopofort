@@ -1,7 +1,7 @@
 "use server";
 
 import { OrderStatus } from "@/lib/generated/prisma/enums";
-import { revalidateTag } from "next/cache";
+import { updateTag } from "next/cache";
 import { prisma } from "@/lib/prisma";
 
 async function createOrder(formData: FormData) {
@@ -19,8 +19,7 @@ async function createOrder(formData: FormData) {
     },
   });
 
-  // @ts-expect-error - prisma tag
-  revalidateTag("orders");
+    updateTag("orders");
 }
 
 async function getOrdersOptions() {

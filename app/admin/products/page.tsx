@@ -5,23 +5,13 @@ import {
 import {
   getProductCount,
   getProductsPage,
+  PRODUCTS_HEADER,
   type ProductType,
 } from "@/queries/ProductQueries";
 import {
   type PageProps,
   DataTableLayout,
 } from "@/components/data-table/DataTableLayout";
-
-const PRODUCTS_HEADER: string[] = [
-  "Product ID",
-  "Name",
-  "Brand",
-  "Price ($)",
-  "Inventory",
-  "Description",
-  "Category ID",
-  "Images",
-] as const;
 
 export default async function ProductsPage({ searchParams }: PageProps) {
   const params = await searchParams;
@@ -34,7 +24,6 @@ export default async function ProductsPage({ searchParams }: PageProps) {
 
   return (
     <DataTableLayout<ProductType>
-      pageKey={pageKey}
       header={PRODUCTS_HEADER}
       totalPages={totalPages}
       rows={products}

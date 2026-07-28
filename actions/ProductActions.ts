@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { revalidateTag } from "next/cache";
+import { updateTag } from "next/cache";
 
 async function createProduct(formData: FormData) {
   const name = formData.get("name") as string;
@@ -24,8 +24,7 @@ async function createProduct(formData: FormData) {
     },
   });
 
-  // @ts-expect-error - prisma tag
-  revalidateTag("products");
+    updateTag("products");
 }
 
 async function getProductsOptions() {

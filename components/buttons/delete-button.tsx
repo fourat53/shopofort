@@ -5,7 +5,13 @@ import { Button } from "@/components/ui/button";
 import { IconTrash } from "@tabler/icons-react";
 import { usePathname, useRouter } from "next/navigation";
 
-export default function DeleteButton({ id }: { id: number }) {
+export default function DeleteButton({
+  id,
+  disabled,
+}: {
+  id: number;
+  disabled?: boolean;
+}) {
   const pathname = usePathname();
   const router = useRouter();
 
@@ -31,6 +37,7 @@ export default function DeleteButton({ id }: { id: number }) {
     <Button
       variant="ghost"
       border={false}
+      disabled={disabled}
       className="rounded-xl size-6 p-0 text-red-500 hover:text-red-700"
       onClick={handleDelete}
     >

@@ -5,6 +5,14 @@ import type { Order } from "@/lib/generated/prisma/client";
 import { unstable_cache } from "next/cache";
 import { formatDate } from "@/lib/date-format";
 
+const ORDERS_HEADER: string[] = [
+  "Order ID",
+  "Order Date",
+  "Total Amount",
+  "Order Status",
+  "User ID",
+] as const;
+
 const getOrderCount = unstable_cache(
   async () => prisma.order.count(),
   ["orders-count"],
@@ -34,4 +42,4 @@ type OrderType = Omit<Order, "orderDate"> & {
   orderDate: string;
 };
 
-export { type OrderType, getOrderCount, getOrdersPage };
+export { ORDERS_HEADER, type OrderType, getOrderCount, getOrdersPage };

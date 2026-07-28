@@ -51,5 +51,3 @@ dark:bg-[linear-gradient(-135deg,var(--sidebar)_1%,var(--sidebar-accent)_100%)]
   4. add the ability to filter from server all table columns in DataTableLayout by adding inputs for non enum columns and select for enum columns above the table header.
   5. add the ability to sort from server any table columns in DataTable by adding arrows to the table header.
   - Note: the sorting and filtering should should work together (update the get function for each table) and should update the pagination from server (new total pages and reset current page to 1).
-  <!-- table row actions -->
-  6. add delete and add buttons as actions column for each DataTable row.

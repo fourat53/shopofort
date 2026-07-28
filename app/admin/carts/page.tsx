@@ -1,5 +1,6 @@
 import { getPaginationParams } from "@/components/data-table/PaginationParams";
 import {
+  CARTS_HEADER,
   getCartCount,
   getCartsPage,
   type CartType,
@@ -9,8 +10,6 @@ import {
   DataTableLayout,
 } from "@/components/data-table/DataTableLayout";
 
-const CARTS_HEADER: string[] = ["Cart ID", "Total Amount", "User ID"] as const;
-
 export default async function CartsPage({ searchParams }: PageProps) {
   const params = await searchParams;
 
@@ -18,11 +17,9 @@ export default async function CartsPage({ searchParams }: PageProps) {
   const { page, totalPages } = getPaginationParams(params, totalCount);
 
   const carts: CartType[] = await getCartsPage(page);
-  const pageKey = params.page ?? "1";
 
   return (
     <DataTableLayout<CartType>
-      pageKey={pageKey}
       header={CARTS_HEADER}
       totalPages={totalPages}
       rows={carts}

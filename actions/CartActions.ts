@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { revalidateTag } from "next/cache";
+import { updateTag } from "next/cache";
 
 async function createCart(formData: FormData) {
   const userId = Number(formData.get("userId"));
@@ -14,8 +14,7 @@ async function createCart(formData: FormData) {
     },
   });
 
-  // @ts-expect-error - prisma tag
-  revalidateTag("carts");
+    updateTag("carts");
 }
 
 async function getCartsOptions() {

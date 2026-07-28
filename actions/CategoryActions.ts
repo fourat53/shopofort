@@ -1,6 +1,6 @@
 "use server";
 import { prisma } from "@/lib/prisma";
-import { revalidateTag } from "next/cache";
+import { updateTag } from "next/cache";
 
 async function createCategory(formData: FormData) {
   const name = formData.get("name") as string;
@@ -10,8 +10,7 @@ async function createCategory(formData: FormData) {
     data: { name, gender },
   });
 
-  // @ts-expect-error - prisma tag
-  revalidateTag("categories");
+    updateTag("categories");
 }
 
 async function getCategoriesOptions() {
