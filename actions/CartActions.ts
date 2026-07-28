@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { updateTag } from "next/cache";
+import { revalidateTag } from "next/cache";
 
 async function createCart(formData: FormData) {
   const userId = Number(formData.get("userId"));
@@ -14,7 +14,8 @@ async function createCart(formData: FormData) {
     },
   });
 
-  updateTag("carts");
+  // @ts-expect-error - prisma tag
+  revalidateTag("carts");
 }
 
 async function getCartsOptions() {
@@ -22,7 +23,10 @@ async function getCartsOptions() {
     select: { id: true, userId: true },
     orderBy: { id: "asc" },
   });
-  return carts.map((c) => ({ value: String(c.id), label: `Cart ${c.id} (User ${c.userId})` }));
+  return carts.map((c) => ({
+    value: String(c.id),
+    label: `Cart ${c.id} (User ${c.userId})`,
+  }));
 }
 
 export { createCart, getCartsOptions };

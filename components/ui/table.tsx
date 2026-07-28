@@ -11,13 +11,7 @@ function Table({
   ...props
 }: React.ComponentProps<"table"> & { parentClassName?: string }) {
   return (
-    <ScrollArea
-      data-slot="table-container"
-      className={cn(
-        "overscroll-none overflow-auto rounded-lg border border-mist-300 dark:border-mist-700",
-        parentClassName,
-      )}
-    >
+    <ScrollArea data-slot="table-container" className={parentClassName}>
       <table
         data-slot="table"
         className={cn("w-full caption-bottom text-xs", className)}
@@ -28,13 +22,7 @@ function Table({
 }
 
 function TableHeader({ className, ...props }: React.ComponentProps<"thead">) {
-  return (
-    <thead
-      data-slot="table-header"
-      className={cn("[&_tr]:border-b", className)}
-      {...props}
-    />
-  );
+  return <thead data-slot="table-header" className={className} {...props} />;
 }
 
 function TableBody({ className, ...props }: React.ComponentProps<"tbody">) {
@@ -65,7 +53,7 @@ function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
     <tr
       data-slot="table-row"
       className={cn(
-        "border-b transition-colors hover:bg-mist-700/10 has-aria-expanded:bg-muted/50 data-[state=selected]:bg-muted",
+        "border transition-colors hover:bg-mist-700/10 has-aria-expanded:bg-muted/50 data-[state=selected]:bg-muted",
         className,
       )}
       {...props}

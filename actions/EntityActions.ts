@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
+import { revalidateTag } from "next/cache";
 import type {
   User,
   Product,
@@ -43,7 +43,8 @@ async function deleteEntity(modelName: string, id: number) {
 
     const tag = tagMap[modelName];
     if (tag) {
-      revalidatePath(`/${tag}`);
+      // @ts-expect-error - prisma tag
+      revalidateTag(tag);
     }
   } catch (error) {
     console.error(error);
@@ -57,7 +58,8 @@ async function createEntity(modelName: string, data: DataType) {
 
     const tag = tagMap[modelName];
     if (tag) {
-      revalidatePath(`/${tag}`);
+      // @ts-expect-error - prisma tag
+      revalidateTag(tag);
     }
   } catch (error) {
     console.error(error);
@@ -71,7 +73,8 @@ async function updateEntity(modelName: string, id: number, data: DataType) {
 
     const tag = tagMap[modelName];
     if (tag) {
-      revalidatePath(`/${tag}`);
+      // @ts-expect-error - prisma tag
+      revalidateTag(tag);
     }
   } catch (error) {
     console.error(error);

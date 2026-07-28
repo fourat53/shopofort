@@ -1,5 +1,5 @@
-const PAGE_SIZE = 20;
-const IMAGE_PAGE_SIZE = 9;
+const PAGE_SIZE = 25;
+const IMAGE_PAGE_SIZE = 12;
 
 type SearchParams = {
   page?: string;

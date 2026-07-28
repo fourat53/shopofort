@@ -1,6 +1,6 @@
 "use server";
 import { prisma } from "@/lib/prisma";
-import { updateTag } from "next/cache";
+import { revalidateTag } from "next/cache";
 
 async function createCartItem(formData: FormData) {
   const quantity = Number(formData.get("quantity"));
@@ -13,7 +13,8 @@ async function createCartItem(formData: FormData) {
     data: { quantity, unitPrice, totalPrice, cartId, productId },
   });
 
-  updateTag("cart-items");
+  // @ts-expect-error - prisma tag
+  revalidateTag("cart-items");
 }
 
 export { createCartItem };

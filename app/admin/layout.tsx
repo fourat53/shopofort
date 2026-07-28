@@ -30,7 +30,7 @@ export default function AdminLayout({
               </div>
             </div>
             <div className="border-b border-mist-200 dark:border-mist-700" />
-            <div className="h-188 p-3 overflow-y-auto">{children}</div>
+            <div className="h-188 p-3">{children}</div>
           </div>
         </div>
       </SidebarInset>

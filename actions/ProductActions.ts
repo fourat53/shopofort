@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { updateTag } from "next/cache";
+import { revalidateTag } from "next/cache";
 
 async function createProduct(formData: FormData) {
   const name = formData.get("name") as string;
@@ -9,7 +9,9 @@ async function createProduct(formData: FormData) {
   const price = Number(formData.get("price"));
   const inventory = Number(formData.get("inventory"));
   const description = formData.get("description") as string;
-  const categoryId = formData.get("categoryId") ? Number(formData.get("categoryId")) : null;
+  const categoryId = formData.get("categoryId")
+    ? Number(formData.get("categoryId"))
+    : null;
 
   await prisma.product.create({
     data: {
@@ -22,7 +24,8 @@ async function createProduct(formData: FormData) {
     },
   });
 
-  updateTag("products");
+  // @ts-expect-error - prisma tag
+  revalidateTag("products");
 }
 
 async function getProductsOptions() {
@@ -30,7 +33,10 @@ async function getProductsOptions() {
     select: { id: true, name: true },
     orderBy: { id: "asc" },
   });
-  return products.map((p) => ({ value: String(p.id), label: `${p.id} - ${p.name}` }));
+  return products.map((p) => ({
+    value: String(p.id),
+    label: `${p.id} - ${p.name}`,
+  }));
 }
 
 export { createProduct, getProductsOptions };

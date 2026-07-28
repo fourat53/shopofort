@@ -2,7 +2,7 @@
 
 import { Role } from "@/lib/generated/prisma/enums";
 import { prisma } from "@/lib/prisma";
-import { updateTag } from "next/cache";
+import { revalidateTag } from "next/cache";
 
 async function createUser(formData: FormData) {
   const firstName = formData.get("firstName") as string;
@@ -19,7 +19,8 @@ async function createUser(formData: FormData) {
     },
   });
 
-  updateTag("users");
+  // @ts-expect-error - prisma tag
+  revalidateTag("users");
 }
 
 async function getUsersOptions() {
@@ -27,7 +28,10 @@ async function getUsersOptions() {
     select: { id: true, email: true },
     orderBy: { id: "asc" },
   });
-  return users.map((u) => ({ value: String(u.id), label: `${u.id} - ${u.email}` }));
+  return users.map((u) => ({
+    value: String(u.id),
+    label: `${u.id} - ${u.email}`,
+  }));
 }
 
 export { createUser, getUsersOptions };

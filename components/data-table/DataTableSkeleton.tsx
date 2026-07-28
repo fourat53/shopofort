@@ -24,9 +24,9 @@ export default function DataTableSkeleton({
     <Table>
       <TableHeader className="bg-chart-1 dark:bg-sidebar-accent">
         <TableRow>
-          {header.map((item) => (
+          {header.map((item, index) => (
             <TableCell
-              key={item}
+              key={index}
               className={cn(
                 "border-l border-mist-300 dark:border-mist-700",
                 item === header[0] && "border-none",
@@ -42,7 +42,7 @@ export default function DataTableSkeleton({
       </TableHeader>
       <TableBody>
         {Array.from({ length: rowCount }, (_, rowIndex) => (
-          <TableRow key={`${header[0]}-${rowIndex}`}>
+          <TableRow key={rowIndex}>
             {header.map((item) => (
               <TableCell
                 key={item}

@@ -1,7 +1,7 @@
 "use server";
 
 import { OrderStatus } from "@/lib/generated/prisma/enums";
-import { updateTag } from "next/cache";
+import { revalidateTag } from "next/cache";
 import { prisma } from "@/lib/prisma";
 
 async function createOrder(formData: FormData) {
@@ -19,7 +19,8 @@ async function createOrder(formData: FormData) {
     },
   });
 
-  updateTag("orders");
+  // @ts-expect-error - prisma tag
+  revalidateTag("orders");
 }
 
 async function getOrdersOptions() {
@@ -27,7 +28,10 @@ async function getOrdersOptions() {
     select: { id: true, userId: true },
     orderBy: { id: "asc" },
   });
-  return orders.map((o) => ({ value: String(o.id), label: `Order ${o.id} (User ${o.userId})` }));
+  return orders.map((o) => ({
+    value: String(o.id),
+    label: `Order ${o.id} (User ${o.userId})`,
+  }));
 }
 
 export { createOrder, getOrdersOptions };

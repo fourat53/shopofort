@@ -27,5 +27,6 @@ function getUsersPage(page: number) {
 }
 
 type UserType = Omit<User, "password">;
+type UserCreateType = Omit<UserType, "id" | "createdAt" | "updatedAt">;
 
-export { type UserType, getUserCount, getUsersPage };
+export { type UserType, type UserCreateType, getUserCount, getUsersPage };
