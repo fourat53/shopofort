@@ -1,22 +1,22 @@
-import { PrismaClient } from "@/lib/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
+import { PrismaClient } from "@/lib/generated/prisma/client";
 
 const globalForPrisma = global as unknown as {
-  prisma: PrismaClient;
+	prisma: PrismaClient;
 };
 
 const adapter = new PrismaPg({
-  connectionString: process.env.DATABASE_URL,
+	connectionString: process.env.DATABASE_URL,
 });
 
 const prisma =
-  globalForPrisma.prisma ||
-  new PrismaClient({
-    adapter,
-  });
+	globalForPrisma.prisma ||
+	new PrismaClient({
+		adapter,
+	});
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
 const CACHE_REVALIDATE_SECONDS = 300;
 
-export { prisma, CACHE_REVALIDATE_SECONDS };
+export { CACHE_REVALIDATE_SECONDS, prisma };

@@ -1,25 +1,25 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function DocumentTitle() {
-  const [title, setTitle] = useState("");
+	const [title, setTitle] = useState("");
 
-  const updateTitle = () => {
-    setTitle(document.title.replace("Shopofort - ", ""));
-  };
+	const updateTitle = () => {
+		setTitle(document.title.replace("Shopofort - ", ""));
+	};
 
-  useEffect(() => {
-    updateTitle();
+	useEffect(() => {
+		updateTitle();
 
-    const titleElement = document.querySelector("title");
-    if (!titleElement) return;
+		const titleElement = document.querySelector("title");
+		if (!titleElement) return;
 
-    const observer = new MutationObserver(updateTitle);
-    observer.observe(titleElement, { childList: true });
+		const observer = new MutationObserver(updateTitle);
+		observer.observe(titleElement, { childList: true });
 
-    return () => observer.disconnect();
-  }, []);
+		return () => observer.disconnect();
+	}, []);
 
-  return title;
+	return title;
 }

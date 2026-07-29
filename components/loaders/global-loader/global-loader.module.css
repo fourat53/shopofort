@@ -1,64 +1,68 @@
 .container {
-  z-index: 10;
-  position: absolute;
-  inset: 50%;
-  border-radius: 50%;
-  height: 45px;
-  width: 45px;
-  translate: -50% -50%;
-  animation: rotation 1.2s linear infinite;
+	z-index: 10;
+	position: absolute;
+	inset: 50%;
+	border-radius: 50%;
+	height: 45px;
+	width: 45px;
+	translate: -50% -50%;
+	animation: rotation 1.2s linear infinite;
 }
 
 .container span {
-  position: absolute;
-  border-radius: 50%;
-  height: 100%;
-  width: 100%;
+	position: absolute;
+	border-radius: 50%;
+	height: 100%;
+	width: 100%;
 }
 
 .container,
 .container span {
-  --gradient-mid: var(--ring);
-  --gradient-end: var(--chart-1);
-  background-image: linear-gradient(var(--primary), var(--gradient-mid), var(--gradient-end));
+	--gradient-mid: var(--ring);
+	--gradient-end: var(--chart-1);
+	background-image: linear-gradient(
+		var(--primary),
+		var(--gradient-mid),
+		var(--gradient-end)
+	);
 }
 
 :global(.dark) .container,
 :global(.dark) .container span {
-  --gradient-mid: var(--muted);
-  --gradient-end: var(--chart-2);
+	--gradient-mid: var(--muted);
+	--gradient-end: var(--chart-2);
 }
 
 .container span:nth-of-type(1) {
-  filter: blur(4px);
+	filter: blur(4px);
 }
 
 .container span:nth-of-type(2) {
-  filter: blur(8px);
+	filter: blur(8px);
 }
 
 .container span:nth-of-type(3) {
-  filter: blur(12px);
+	filter: blur(12px);
 }
 
 .container span:nth-of-type(4) {
-  filter: blur(16px);
+	filter: blur(16px);
 }
 
 .container::after {
-  content: "";
-  position: absolute;
-  inset: 7px;
-  background-color: var(--sidebar);
-  border-radius: 50%;
+	content: "";
+	position: absolute;
+	inset: 7px;
+	background-color: var(--sidebar);
+	border-radius: 50%;
 }
 
 @keyframes rotation {
-  from {
-    transform: rotate(0deg);
-  }
+	from {
+		transform: rotate(0deg);
+	}
 
-  to {
-    transform: rotate(360deg);
-  }
+	to {
+		transform: rotate(360deg);
+	}
 }

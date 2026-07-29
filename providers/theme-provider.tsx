@@ -1,12 +1,12 @@
 import { ThemeProvider as NextThemesProvider } from "@wrksz/themes/next";
 export default function ThemeProvider({
-  children,
+	children,
 }: {
-  children: React.ReactNode;
+	children: React.ReactNode;
 }) {
-  return (
-    <NextThemesProvider enableSystem defaultTheme="system">
-      {children}
-    </NextThemesProvider>
-  );
+	return (
+		<NextThemesProvider enableSystem defaultTheme="system">
+			{children}
+		</NextThemesProvider>
+	);
 }
