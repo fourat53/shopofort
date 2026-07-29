@@ -54,7 +54,10 @@ export default function DataTable<
       <TableBody>
         {serializedRows.length === 0 ? (
           <TableRow>
-            <TableCell colSpan={header.length + 1} className="h-24 text-center">
+            <TableCell
+              colSpan={header.length + 1}
+              className="h-full text-center"
+            >
               No data available
             </TableCell>
           </TableRow>

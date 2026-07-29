@@ -27,13 +27,18 @@ function getUsersPage(page: number) {
         skip: (page - 1) * PAGE_SIZE,
         take: PAGE_SIZE,
         orderBy: { id: "asc" },
-        omit: { password: true },
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+          role: true,
+        },
       }),
     ["users-page", String(page)],
     { revalidate: CACHE_REVALIDATE_SECONDS, tags: ["users"] },
   )();
 }
-
 type UserType = Omit<User, "password">;
 type UserCreateType = Omit<UserType, "id" | "createdAt" | "updatedAt">;
 
