@@ -1,7 +1,5 @@
-import { Suspense } from "react";
 import CreateButton from "@/components/buttons/create-button";
 import ThemeToggle from "@/components/buttons/theme-toggle";
-import GlobalLoader from "@/components/loaders/global-loader/global-loader";
 import AdminSidebar from "@/components/sidebar/AdminSidebar";
 import DocumentTitle from "@/components/title/DocumentTitle";
 import {
@@ -32,9 +30,7 @@ export default function AdminLayout({
 							</div>
 						</div>
 						<div className="border-b border-mist-200 dark:border-mist-700" />
-						<Suspense fallback={<GlobalLoader />}>
-							<div className="overflow-hidden p-3.5">{children}</div>
-						</Suspense>
+						<div className="relative h-full p-3.5">{children}</div>
 					</div>
 				</div>
 			</SidebarInset>

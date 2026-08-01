@@ -93,7 +93,10 @@ export default function DataTablePagination({
 	}
 
 	return (
-		<Pagination aria-busy={isPending} className="pt-2 flex justify-center">
+		<Pagination
+			aria-busy={isPending}
+			className="w-full absolute bottom-15 flex justify-center"
+		>
 			<PaginationContent className="w-80 sm:w-90 justify-between">
 				<PaginationItem>
 					<PaginationPrevious
