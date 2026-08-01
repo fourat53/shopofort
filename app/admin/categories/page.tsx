@@ -5,7 +5,6 @@ import {
 import { getPaginationParams } from "@/components/data-table/PaginationParams";
 import {
 	CATEGORIES_HEADER,
-	type CategoryType,
 	getCategoriesPage,
 	getCategoryCount,
 } from "@/queries/CategoryQueries";
@@ -16,14 +15,13 @@ export default async function CategoriesPage({ searchParams }: PageProps) {
 	const totalCount = await getCategoryCount();
 	const { page, totalPages } = getPaginationParams(params, totalCount);
 
-	const items: CategoryType[] = await getCategoriesPage(page);
+	const categories = await getCategoriesPage(page);
 
 	return (
-		<DataTableLayout<CategoryType>
+		<DataTableLayout
 			header={CATEGORIES_HEADER}
 			totalPages={totalPages}
-			rows={items}
-			basePath="/categories"
+			entityRows={["categories", categories]}
 		/>
 	);
 }

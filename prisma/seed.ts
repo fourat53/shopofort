@@ -7,7 +7,6 @@ import {
 	Role,
 } from "@/lib/generated/prisma/client";
 import type { UserCreateManyInput } from "@/lib/generated/prisma/models";
-import { type UserCreateType, UserType } from "@/queries/UserQueries";
 
 config({ path: checkedEnvVar("ENV_PATH") });
 config();
@@ -77,7 +76,7 @@ async function fetchKindeUsers(): Promise<KindeUserPayload[]> {
 		);
 	}
 
-	const usersResponse = await fetch(`${issuerUrl}/api/v1/users?page_size=100`, {
+	const usersResponse = await fetch(`${issuerUrl}/api/v1/users`, {
 		headers: {
 			Authorization: `Bearer ${tokenJson.access_token}`,
 			Accept: "application/json",
@@ -188,7 +187,7 @@ async function main(minId: number, maxId: number) {
 	});
 
 	console.log("👤 Seeding Users...");
-	let kindeUsers: UserCreateType[] = [];
+	let kindeUsers: KindeUserPayload[] = [];
 	try {
 		kindeUsers = (await fetchKindeUsers()).map(normalizeKindeUser);
 		console.log(`✅ Fetched ${kindeUsers.length} users from Kinde`);

@@ -1,6 +1,5 @@
 import { unstable_cache } from "next/cache";
 import { IMAGE_PAGE_SIZE } from "@/components/data-table/PaginationParams";
-import type { Product } from "@/lib/generated/prisma/client";
 import { CACHE_REVALIDATE_SECONDS, prisma } from "@/lib/prisma";
 
 const PRODUCTS_HEADER: string[] = [
@@ -33,6 +32,4 @@ function getProductsPage(page: number) {
 	)();
 }
 
-type ProductType = Product;
-
-export { getProductCount, getProductsPage, PRODUCTS_HEADER, type ProductType };
+export { getProductCount, getProductsPage, PRODUCTS_HEADER };

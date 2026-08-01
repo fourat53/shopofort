@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/tooltip";
 import SmallLoader from "../loaders/small-loader";
 
-export default function EntityTooltip<T extends null>({
+export default function EntityTooltip<T>({
 	headerName,
 	idValue,
 }: {
@@ -20,8 +20,8 @@ export default function EntityTooltip<T extends null>({
 	idValue: string | number;
 }) {
 	const [data, setData] = useState<T>();
-	const [loading, setLoading] = useState(false);
-	const [open, setOpen] = useState(false);
+	const [loading, setLoading] = useState<boolean>(false);
+	const [open, setOpen] = useState<boolean>(false);
 	const pathname = usePathname();
 
 	const handleOpenChange = async (isOpen: boolean) => {

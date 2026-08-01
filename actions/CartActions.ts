@@ -3,17 +3,24 @@
 import { updateTag } from "next/cache";
 import { prisma } from "@/lib/prisma";
 
-async function createCart(formData: FormData) {
+function getFormCart(formData: FormData) {
 	const userId = Number(formData.get("userId"));
 	const totalAmount = Number(formData.get("totalAmount")) || 0;
+	return { userId, totalAmount };
+}
 
+async function createCart(formData: FormData) {
 	await prisma.cart.create({
-		data: {
-			userId,
-			totalAmount,
-		},
+		data: getFormCart(formData),
 	});
+	updateTag("carts");
+}
 
+async function updateCart(id: number, formData: FormData) {
+	await prisma.cart.update({
+		where: { id },
+		data: getFormCart(formData),
+	});
 	updateTag("carts");
 }
 
@@ -28,4 +35,4 @@ async function getCartsOptions() {
 	}));
 }
 
-export { createCart, getCartsOptions };
+export { createCart, getCartsOptions, updateCart };

@@ -7,7 +7,6 @@ import {
 	getUserCount,
 	getUsersPage,
 	USERS_HEADER,
-	type UserType,
 } from "@/queries/UserQueries";
 
 export default async function UsersPage({ searchParams }: PageProps) {
@@ -16,13 +15,13 @@ export default async function UsersPage({ searchParams }: PageProps) {
 	const totalCount = await getUserCount();
 	const { page, totalPages } = getPaginationParams(params, totalCount);
 
-	const users: UserType[] = await getUsersPage(page);
+	const users = await getUsersPage(page);
 	return (
-		<DataTableLayout<UserType>
+		<DataTableLayout
 			header={USERS_HEADER}
 			totalPages={totalPages}
-			rows={users}
-			basePath="/users"
+			entityRows={["users", users]}
+			hasImage="one"
 		/>
 	);
 }

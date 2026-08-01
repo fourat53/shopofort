@@ -7,7 +7,6 @@ import {
 	getOrderItemCount,
 	getOrderItemsPage,
 	ORDER_ITEMS_HEADER,
-	type OrderItemType,
 } from "@/queries/OrderItemQueries";
 
 export default async function OrderItemsPage({ searchParams }: PageProps) {
@@ -16,13 +15,12 @@ export default async function OrderItemsPage({ searchParams }: PageProps) {
 	const totalCount = await getOrderItemCount();
 	const { page, totalPages } = getPaginationParams(params, totalCount);
 
-	const items: OrderItemType[] = await getOrderItemsPage(page);
+	const orderItems = await getOrderItemsPage(page);
 	return (
-		<DataTableLayout<OrderItemType>
+		<DataTableLayout
 			header={ORDER_ITEMS_HEADER}
 			totalPages={totalPages}
-			rows={items}
-			basePath="/order-items"
+			entityRows={["order-items", orderItems]}
 		/>
 	);
 }

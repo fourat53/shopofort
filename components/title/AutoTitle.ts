@@ -19,7 +19,7 @@ export function AutoTitle() {
 		if (segments.length > 0) {
 			let targetSegment = segments[segments.length - 1];
 
-			if (!isNaN(Number(targetSegment)) && segments.length > 1) {
+			if (!Number.isNaN(Number(targetSegment)) && segments.length > 1) {
 				targetSegment = segments[segments.length - 2];
 			}
 

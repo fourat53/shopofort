@@ -20,7 +20,7 @@ export default withAuth(
 		}
 	},
 	{
-		publicPaths: ["/admin", "/colors"],
+		publicPaths: ["/", "/colors"],
 	},
 );
 

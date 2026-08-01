@@ -1,29 +1,67 @@
 import DataTable from "@/components/data-table/DataTable";
 import DataTablePagination from "@/components/data-table/DataTablePagination";
+import type {
+	Cart,
+	CartItem,
+	Category,
+	Order,
+	OrderItem,
+	Product,
+	User,
+} from "@/lib/generated/prisma/client";
 
 interface PageProps {
 	searchParams: Promise<{ page?: string }>;
 }
 
-interface DataTableLayoutProps<T> {
+type HasImage = "none" | "one" | "multiple";
+
+type EntityRowType = {
+	entityRow:
+		| ["users", User]
+		| ["products", Product]
+		| ["orders", Order]
+		| ["carts", Cart]
+		| ["categories", Category]
+		| ["cart-items", CartItem]
+		| ["order-items", OrderItem];
+};
+
+type EntityRowsType = {
+	entityRows:
+		| ["users", User[]]
+		| ["products", Product[]]
+		| ["orders", Order[]]
+		| ["carts", Cart[]]
+		| ["categories", Category[]]
+		| ["cart-items", CartItem[]]
+		| ["order-items", OrderItem[]];
+};
+
+interface DataTableLayoutBaseProps {
 	totalPages: number;
 	header: string[];
-	basePath: string;
-	rows: T[];
-	hasImages?: boolean;
+	hasImage?: HasImage;
 }
 
-async function DataTableLayout<
-	T extends { id: number } & Record<string, unknown>,
->({ totalPages, header, basePath, rows }: DataTableLayoutProps<T>) {
+type DataTableLayoutProps = DataTableLayoutBaseProps & EntityRowsType;
+
+async function DataTableLayout({
+	totalPages,
+	header,
+	hasImage = "none",
+	entityRows,
+}: DataTableLayoutProps) {
+	const entity = entityRows[0];
 	return (
 		<>
-			<DataTable<T> header={header} rows={rows} />
+			<DataTable header={header} hasImage={hasImage} entityRows={entityRows} />
 			{totalPages > 1 && (
-				<DataTablePagination basePath={basePath} totalPages={totalPages} />
+				<DataTablePagination basePath={`/${entity}`} totalPages={totalPages} />
 			)}
 		</>
 	);
 }
 
-export { DataTableLayout, type PageProps };
+export type { EntityRowsType, EntityRowType, HasImage, PageProps };
+export { DataTableLayout };

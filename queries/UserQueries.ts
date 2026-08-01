@@ -1,14 +1,29 @@
 import { unstable_cache } from "next/cache";
 import { PAGE_SIZE } from "@/components/data-table/PaginationParams";
-import type { User } from "@/lib/generated/prisma/client";
 import { CACHE_REVALIDATE_SECONDS, prisma } from "@/lib/prisma";
 
 const USERS_HEADER: string[] = [
 	"User ID",
-	"Firstname",
-	"Lastname",
+	"Kinde ID",
+	"Provided ID",
+	"First Name",
+	"Last Name",
+	"Given Name",
+	"Family Name",
+	"Username",
 	"Email",
+	"Email Verified",
+	"Picture",
 	"Role",
+	"Suspended",
+	"Total Sign-ins",
+	"Failed Sign-ins",
+	"Last Signed In",
+	"Created On",
+	"Organizations",
+	"Identities",
+	"Created At",
+	"Updated At",
 ] as const;
 
 const getUserCount = unstable_cache(
@@ -27,25 +42,10 @@ function getUsersPage(page: number) {
 				skip: (page - 1) * PAGE_SIZE,
 				take: PAGE_SIZE,
 				orderBy: { id: "asc" },
-				select: {
-					id: true,
-					firstName: true,
-					lastName: true,
-					email: true,
-					role: true,
-				},
 			}),
 		["users-page", String(page)],
 		{ revalidate: CACHE_REVALIDATE_SECONDS, tags: ["users"] },
 	)();
 }
-type UserType = Omit<User, "password">;
-type UserCreateType = Omit<UserType, "id" | "createdAt" | "updatedAt">;
 
-export {
-	getUserCount,
-	getUsersPage,
-	USERS_HEADER,
-	type UserCreateType,
-	type UserType,
-};
+export { getUserCount, getUsersPage, USERS_HEADER };

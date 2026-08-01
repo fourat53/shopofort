@@ -3,13 +3,13 @@
 import { useEffect, useState } from "react";
 
 export default function DocumentTitle() {
-	const [title, setTitle] = useState("");
-
-	const updateTitle = () => {
-		setTitle(document.title.replace("Shopofort - ", ""));
-	};
+	const [title, setTitle] = useState<string>("");
 
 	useEffect(() => {
+		const updateTitle = () => {
+			setTitle(document.title.replace("Shopofort - ", ""));
+		};
+
 		updateTitle();
 
 		const titleElement = document.querySelector("title");

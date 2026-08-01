@@ -1,24 +1,29 @@
 "use server";
 
 import { updateTag } from "next/cache";
-import { Role } from "@/lib/generated/prisma/enums";
+import { Role } from "@/lib/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 
-async function createUser(formData: FormData) {
+function getFormUser(formData: FormData) {
 	const firstName = formData.get("firstName") as string;
 	const lastName = formData.get("lastName") as string;
 	const email = formData.get("email") as string;
 	const role = (formData.get("role") as Role) || "USER";
+	return { firstName, lastName, email, role };
+}
 
+async function createUser(formData: FormData) {
 	await prisma.user.create({
-		data: {
-			firstName,
-			lastName,
-			email,
-			role,
-		},
+		data: getFormUser(formData),
 	});
+	updateTag("users");
+}
 
+async function updateUser(id: number, formData: FormData) {
+	await prisma.user.update({
+		where: { id },
+		data: getFormUser(formData),
+	});
 	updateTag("users");
 }
 
@@ -41,7 +46,7 @@ type KindeAuthUser = {
 	picture?: string | null;
 };
 
-async function syncKindeUserToSupabase(user: KindeAuthUser | null | undefined) {
+async function syncKindeUserToSupabase(user: KindeAuthUser) {
 	if (!user?.email) {
 		return null;
 	}
@@ -78,4 +83,4 @@ async function syncKindeUserToSupabase(user: KindeAuthUser | null | undefined) {
 	});
 }
 
-export { createUser, getUsersOptions, syncKindeUserToSupabase };
+export { createUser, getUsersOptions, syncKindeUserToSupabase, updateUser };

@@ -7,7 +7,6 @@ import {
 	getOrderCount,
 	getOrdersPage,
 	ORDERS_HEADER,
-	type OrderType,
 } from "@/queries/OrderQueries";
 
 export default async function OrdersPage({ searchParams }: PageProps) {
@@ -16,14 +15,13 @@ export default async function OrdersPage({ searchParams }: PageProps) {
 	const totalCount = await getOrderCount();
 	const { page, totalPages } = getPaginationParams(params, totalCount);
 
-	const orders: OrderType[] = await getOrdersPage(page);
+	const orders = await getOrdersPage(page);
 
 	return (
-		<DataTableLayout<OrderType>
+		<DataTableLayout
 			header={ORDERS_HEADER}
 			totalPages={totalPages}
-			rows={orders}
-			basePath="/orders"
+			entityRows={["orders", orders]}
 		/>
 	);
 }

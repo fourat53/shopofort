@@ -1,15 +1,26 @@
 "use server";
 import { updateTag } from "next/cache";
+import type { Gender } from "@/lib/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 
-async function createCategory(formData: FormData) {
+function getFormCategory(formData: FormData) {
 	const name = formData.get("name") as string;
-	const gender = formData.get("gender") as any;
+	const gender = formData.get("gender") as Gender;
+	return { name, gender };
+}
 
+async function createCategory(formData: FormData) {
 	await prisma.category.create({
-		data: { name, gender },
+		data: getFormCategory(formData),
 	});
+	updateTag("categories");
+}
 
+async function updateCategory(id: number, formData: FormData) {
+	await prisma.category.update({
+		where: { id },
+		data: getFormCategory(formData),
+	});
 	updateTag("categories");
 }
 
@@ -24,4 +35,4 @@ async function getCategoriesOptions() {
 	}));
 }
 
-export { createCategory, getCategoriesOptions };
+export { createCategory, getCategoriesOptions, updateCategory };

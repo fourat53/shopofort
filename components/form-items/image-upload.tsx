@@ -3,13 +3,16 @@
 import { IconUpload, IconX } from "@tabler/icons-react";
 import Image from "next/image";
 import { useEffect, useRef } from "react";
+import { cn } from "@/lib/utils";
+import { Label } from "../ui/label";
 
 interface ImageUploadProps {
 	images: File[];
 	onChange: (files: File[]) => void;
+	className?: string;
 }
 
-export function ImageUpload({ images, onChange }: ImageUploadProps) {
+export function ImageUpload({ images, onChange, className }: ImageUploadProps) {
 	const fileInputRef = useRef<HTMLInputElement>(null);
 
 	const handleDivClick = () => {
@@ -30,19 +33,17 @@ export function ImageUpload({ images, onChange }: ImageUploadProps) {
 
 	useEffect(() => {
 		return () => {
-			images.forEach((image) =>
-				URL.revokeObjectURL(URL.createObjectURL(image)),
-			);
+			for (const image of images) {
+				URL.revokeObjectURL(URL.createObjectURL(image));
+			}
 		};
 	}, [images]);
 
 	return (
-		<div>
-			<label className="block text-sm font-medium mb-2 mt-2">
-				Product Images
-			</label>
+		<div className={className}>
+			<Label className="pb-1.5">Product Images</Label>
 
-			{/* Hidden file input */}
+			{/* Hidden File Input */}
 			<input
 				type="file"
 				ref={fileInputRef}
@@ -52,27 +53,23 @@ export function ImageUpload({ images, onChange }: ImageUploadProps) {
 				className="hidden"
 			/>
 
-			<div className="flex flex-wrap gap-4 items-center">
-				{/* Clickable Upload Dropzone */}
-				<div
-					onClick={handleDivClick}
-					className="w-24 h-24 flex flex-col items-center justify-center border-2 border-dashed border-mist-300 dark:border-mist-700 rounded-lg cursor-pointer hover:bg-mist-100 dark:hover:bg-zinc-800 transition-colors"
-				>
-					<IconUpload className="w-6 h-6 text-gray-400 mb-1" />
-					<span className="text-xs text-gray-500">Upload</span>
-				</div>
-
+			<div
+				className={cn(
+					"w-full grid grid-cols-3 gap-2 items-center",
+					images.length === 0 && "grid-cols-1",
+				)}
+			>
 				{/* Image Previews */}
 				{images.map((img, idx) => (
 					<div
 						key={idx}
-						className="relative w-24 h-24 border border-mist-300 dark:border-mist-700 rounded-lg overflow-hidden group"
+						className="relative w-28 h-28 border border-mist-300 dark:border-mist-700 rounded-lg overflow-hidden group"
 					>
 						<Image
 							src={URL.createObjectURL(img)}
 							alt={`Preview ${idx}`}
 							fill
-							className="object-cover"
+							className="h-full w-fit object-cover"
 						/>
 						<button
 							type="button"
@@ -83,6 +80,20 @@ export function ImageUpload({ images, onChange }: ImageUploadProps) {
 						</button>
 					</div>
 				))}
+
+				{/* Clickable Upload Dropzone */}
+				<button
+					type="button"
+					onClick={handleDivClick}
+					className={cn(
+						"w-28 h-28 flex flex-col items-center justify-center border-2 border-dashed border-mist-300 dark:border-mist-700 rounded-lg cursor-pointer hover:bg-mist-100 dark:hover:bg-mist-800 transition-colors",
+						images.length % 3 === 0 && "w-full col-span-3",
+						images.length % 3 === 1 && "w-full col-span-2",
+					)}
+				>
+					<IconUpload className="w-6 h-6 text-mist-400 mb-1" />
+					<span className="text-xs text-mist-500">Upload</span>
+				</button>
 			</div>
 		</div>
 	);

@@ -5,7 +5,6 @@ import {
 import { getPaginationParams } from "@/components/data-table/PaginationParams";
 import {
 	CART_ITEMS_HEADER,
-	type CartItemType,
 	getCartItemCount,
 	getCartItemsPage,
 } from "@/queries/CartItemQueries";
@@ -16,13 +15,12 @@ export default async function CartItemsPage({ searchParams }: PageProps) {
 	const totalCount = await getCartItemCount();
 	const { page, totalPages } = getPaginationParams(params, totalCount);
 
-	const items: CartItemType[] = await getCartItemsPage(page);
+	const cartItems = await getCartItemsPage(page);
 	return (
-		<DataTableLayout<CartItemType>
+		<DataTableLayout
 			header={CART_ITEMS_HEADER}
 			totalPages={totalPages}
-			rows={items}
-			basePath="/cart-items"
+			entityRows={["cart-items", cartItems]}
 		/>
 	);
 }

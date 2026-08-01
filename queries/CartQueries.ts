@@ -1,6 +1,5 @@
 import { unstable_cache } from "next/cache";
 import { PAGE_SIZE } from "@/components/data-table/PaginationParams";
-import type { Cart } from "@/lib/generated/prisma/client";
 import { CACHE_REVALIDATE_SECONDS, prisma } from "@/lib/prisma";
 
 const CARTS_HEADER: string[] = ["Cart ID", "Total Amount", "User ID"] as const;
@@ -24,6 +23,4 @@ function getCartsPage(page: number) {
 	)();
 }
 
-type CartType = Cart;
-
-export { CARTS_HEADER, type CartType, getCartCount, getCartsPage };
+export { CARTS_HEADER, getCartCount, getCartsPage };

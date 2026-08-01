@@ -1,6 +1,5 @@
 import { unstable_cache } from "next/cache";
 import { PAGE_SIZE } from "@/components/data-table/PaginationParams";
-import type { OrderItem } from "@/lib/generated/prisma/client";
 import { CACHE_REVALIDATE_SECONDS, prisma } from "@/lib/prisma";
 
 const ORDER_ITEMS_HEADER: string[] = [
@@ -30,11 +29,4 @@ function getOrderItemsPage(page: number) {
 	)();
 }
 
-type OrderItemType = OrderItem;
-
-export {
-	getOrderItemCount,
-	getOrderItemsPage,
-	ORDER_ITEMS_HEADER,
-	type OrderItemType,
-};
+export { getOrderItemCount, getOrderItemsPage, ORDER_ITEMS_HEADER };

@@ -2,15 +2,11 @@ import {
 	DataTableLayout,
 	type PageProps,
 } from "@/components/data-table/DataTableLayout";
-import {
-	getPaginationParams,
-	IMAGE_PAGE_SIZE,
-} from "@/components/data-table/PaginationParams";
+import { getPaginationParams } from "@/components/data-table/PaginationParams";
 import {
 	getProductCount,
 	getProductsPage,
 	PRODUCTS_HEADER,
-	type ProductType,
 } from "@/queries/ProductQueries";
 
 export default async function ProductsPage({ searchParams }: PageProps) {
@@ -19,16 +15,14 @@ export default async function ProductsPage({ searchParams }: PageProps) {
 	const totalCount = await getProductCount();
 	const { page, totalPages } = getPaginationParams(params, totalCount, true);
 
-	const products: ProductType[] = await getProductsPage(page);
-	const pageKey = params.page ?? "1";
+	const products = await getProductsPage(page);
 
 	return (
-		<DataTableLayout<ProductType>
+		<DataTableLayout
 			header={PRODUCTS_HEADER}
 			totalPages={totalPages}
-			rows={products}
-			basePath="/products"
-			hasImages
+			entityRows={["products", products]}
+			hasImage="multiple"
 		/>
 	);
 }

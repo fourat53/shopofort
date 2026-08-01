@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import Image from "next/image";
 import DeleteButton from "@/components/buttons/delete-button";
 import EditButton from "@/components/buttons/edit-button";
@@ -8,80 +9,68 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { cn } from "@/lib/utils";
+import type { EntityRowsType, HasImage } from "./DataTableLayout";
 import EntityTooltip from "./EntityTooltip";
-import { IMAGE_PAGE_SIZE, PAGE_SIZE } from "./PaginationParams";
 
-type DataTableProps<T> = {
+type DataTableBaseProps = {
 	header: string[];
-	rows: T[];
+	hasImage: HasImage;
 };
 
-export default function DataTable<
-	T extends { id: number } & Record<string, unknown>,
->({ header, rows }: DataTableProps<T>) {
-	const serializedRows = JSON.parse(JSON.stringify(rows)) as T[];
+type DataTableProps = DataTableBaseProps & EntityRowsType;
+
+export default function DataTable({
+	header,
+	hasImage,
+	entityRows,
+}: DataTableProps) {
+	const [entity, rows] = entityRows;
 	return (
-		<Table
-			parentClassName="w-full h-[calc(100vh-172px)] overscroll-none overflow-auto rounded-lg border border-mist-300 dark:border-mist-700"
-			className={cn(
-				((!header.some((item) => item === "Images") &&
-					serializedRows.length < PAGE_SIZE) ||
-					(header.some((item) => item === "Images") &&
-						serializedRows.length < IMAGE_PAGE_SIZE)) &&
-					"border-b border-mist-300 dark:border-mist-700",
-			)}
-		>
+		<Table>
 			<TableHeader className="bg-chart-1 dark:bg-sidebar-accent">
 				<TableRow>
-					{header.map((item) => (
+					{header.map((item, index) => (
 						<TableCell
 							key={item}
-							className={cn(
-								"border-l border-mist-300 dark:border-mist-700",
-								item === header[0] && "border-none",
-								item === "Images" && "w-62 text-center",
+							border={index !== 0}
+							className={clsx(
+								hasImage === "multiple" && "w-62 text-center",
+								hasImage === "one" && "min-w-18 text-center",
 							)}
 						>
 							{item}
 						</TableCell>
 					))}
-					<TableCell className="border-l border-mist-300 dark:border-mist-700 w-20 text-center">
-						Actions
-					</TableCell>
+					<TableCell className="w-20 text-center">Actions</TableCell>
 				</TableRow>
 			</TableHeader>
 			<TableBody>
-				{serializedRows.length === 0 ? (
+				{rows.length === 0 ? (
 					<TableRow>
 						<TableCell
 							colSpan={header.length + 1}
-							className="h-full text-center"
+							className="h-40 text-sm text-center"
 						>
 							No data available
 						</TableCell>
 					</TableRow>
 				) : (
-					serializedRows.map((row) => (
-						<TableRow key={row.id}>
+					rows.map((row, rowIndex) => (
+						<TableRow key={rowIndex}>
 							{Object.values(row).map((value, colIndex) => (
 								<TableCell
-									key={`${row.id}-${header[colIndex]}`}
-									className={cn(
-										"border-l border-mist-300 dark:border-mist-700",
-										colIndex === 0 && "border-none",
-									)}
+									border={colIndex !== 0}
+									key={`${rowIndex}-${colIndex}`}
 								>
 									{value ? (
-										colIndex > 0 &&
-										header[colIndex].toLowerCase().includes("id") ? (
+										colIndex > 0 && header[colIndex]?.includes(" ID") ? (
 											<EntityTooltip
 												headerName={header[colIndex]}
 												idValue={String(value)}
 											/>
-										) : header[colIndex].toLowerCase().includes("status") ? (
+										) : header[colIndex] === "Order Status" ? (
 											<p
-												className={cn(
+												className={clsx(
 													"w-fit text-center bg-accent text-rose-100 rounded-full flex items-center px-2",
 													value === "PENDING" &&
 														"bg-[#ffe6a8] text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400",
@@ -97,18 +86,26 @@ export default function DataTable<
 											>
 												{String(value)}
 											</p>
-										) : header[colIndex].toLowerCase() === "images" ? (
+										) : header[colIndex] === "Picture" ? (
+											<Image
+												src={String(value)}
+												alt="image"
+												width={56}
+												height={56}
+												className="size-14 shrink-0 object-cover rounded-full"
+											/>
+										) : header[colIndex] === "Images" ? (
 											<div className="flex gap-2 overflow-x-auto w-62 items-center scrollbar-none">
 												{(Array.isArray(value) ? value : [value]).map(
-													(imgSrc, idx) => (
+													(imgSrc) => (
 														<Image
-															key={idx}
+															key={`image-${row.id}-${imgSrc}`}
 															src={String(imgSrc)}
 															alt="image"
 															loading="eager"
 															width={56}
 															height={56}
-															className="size-14 shrink-0 object-cover rounded-md border border-mist-300 dark:border-mist-700"
+															className="size-14 shrink-0 object-cover rounded-md"
 														/>
 													),
 												)}
@@ -121,9 +118,10 @@ export default function DataTable<
 									)}
 								</TableCell>
 							))}
-							<TableCell className="p-0.5 border-l border-mist-300 dark:border-mist-700 w-20 text-center">
+							<TableCell border className="p-0.5 w-20 text-center">
 								<div className="flex items-center justify-center gap-1.5">
-									<EditButton row={row} />
+									{/* @ts-expect-error - correct type expected*/}
+									<EditButton entityRow={[entity, row]} />
 									<DeleteButton id={row.id} />
 								</div>
 							</TableCell>

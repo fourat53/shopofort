@@ -3,7 +3,7 @@
 import { updateTag } from "next/cache";
 import { prisma } from "@/lib/prisma";
 
-async function createProduct(formData: FormData) {
+function getFormProduct(formData: FormData) {
 	const name = formData.get("name") as string;
 	const brand = formData.get("brand") as string;
 	const price = Number(formData.get("price"));
@@ -12,18 +12,21 @@ async function createProduct(formData: FormData) {
 	const categoryId = formData.get("categoryId")
 		? Number(formData.get("categoryId"))
 		: null;
+	return { name, brand, price, inventory, description, categoryId };
+}
 
+async function createProduct(formData: FormData) {
 	await prisma.product.create({
-		data: {
-			name,
-			brand,
-			price,
-			inventory,
-			description,
-			categoryId,
-		},
+		data: getFormProduct(formData),
 	});
+	updateTag("products");
+}
 
+async function updateProduct(id: number, formData: FormData) {
+	await prisma.product.update({
+		where: { id },
+		data: getFormProduct(formData),
+	});
 	updateTag("products");
 }
 
@@ -38,4 +41,4 @@ async function getProductsOptions() {
 	}));
 }
 
-export { createProduct, getProductsOptions };
+export { createProduct, getProductsOptions, updateProduct };

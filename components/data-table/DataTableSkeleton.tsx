@@ -1,4 +1,4 @@
-import clsx from "clsx";
+import { IconEdit, IconTrash } from "@tabler/icons-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
 	Table,
@@ -7,61 +7,60 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { cn } from "@/lib/utils";
-import DeleteButton from "../buttons/delete-button";
-import EditButton from "../buttons/edit-button";
+import { Button } from "../ui/button";
+import type { HasImage } from "./DataTableLayout";
 import { IMAGE_PAGE_SIZE, PAGE_SIZE } from "./PaginationParams";
 
 type DataTableSkeletonProps = {
 	header: string[];
-	hasImages?: boolean;
+	hasImage?: HasImage;
 };
 
 export default function DataTableSkeleton({
 	header,
-	hasImages,
+	hasImage = "none",
 }: DataTableSkeletonProps) {
-	const rowCount = hasImages ? IMAGE_PAGE_SIZE : PAGE_SIZE;
+	const rowCount = hasImage !== "none" ? IMAGE_PAGE_SIZE : PAGE_SIZE;
 	return (
-		<Table parentClassName="border border-mist-300 dark:border-mist-700 rounded-lg">
+		<Table>
 			<TableHeader className="bg-chart-1 dark:bg-sidebar-accent">
 				<TableRow>
 					{header.map((item, index) => (
-						<TableCell
-							key={index}
-							className={cn(
-								"border-l border-mist-300 dark:border-mist-700",
-								item === header[0] && "border-none",
-							)}
-						>
+						<TableCell key={index} border={index !== 0}>
 							{item}
 						</TableCell>
 					))}
-					<TableCell className="border-l border-mist-300 dark:border-mist-700 w-20 text-center">
-						Actions
-					</TableCell>
+					<TableCell className="w-20 text-center">Actions</TableCell>
 				</TableRow>
 			</TableHeader>
 			<TableBody>
 				{Array.from({ length: rowCount }, (_, rowIndex) => (
 					<TableRow key={rowIndex}>
-						{header.map((item) => (
-							<TableCell
-								key={item}
-								className={cn(
-									"-z-10 border-l border-mist-300 dark:border-mist-700",
-									item === header[0] && "border-none",
-								)}
-							>
+						{header.map((item, index) => (
+							<TableCell key={item} border={index !== 0}>
 								<Skeleton
-									className={clsx("w-full", hasImages ? "h-14" : "h-4")}
+									className={`w-full ${hasImage !== "none" ? "h-14" : "h-4"}`}
 								/>
 							</TableCell>
 						))}
-						<TableCell className="p-0.5 border-l border-mist-300 dark:border-mist-700 w-20 text-center">
+						<TableCell border className="p-0.5 w-20 text-center">
 							<div className="flex items-center justify-center gap-1.5">
-								<EditButton row={{}} disabled />
-								<DeleteButton id={-1} disabled />
+								<Button
+									variant="ghost"
+									border={false}
+									disabled
+									className="rounded-xl size-6 p-0"
+								>
+									<IconEdit className="h-4 w-4 text-mist-400" />
+								</Button>
+								<Button
+									variant="ghost"
+									border={false}
+									disabled
+									className="rounded-xl size-6 p-0 text-red-500 hover:text-red-700"
+								>
+									<IconTrash className="h-4 w-4" />
+								</Button>
 							</div>
 						</TableCell>
 					</TableRow>
