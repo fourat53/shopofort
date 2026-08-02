@@ -307,7 +307,7 @@ function SidebarInset({ className, ...props }: React.ComponentProps<"main">) {
 			className={cn(
 				"overflow-hidden p-2 rounded-l-4xl bg-sidebar relative flex w-full flex-1 flex-col md:peer-data-[variant=inset]:m-2 md:peer-data-[variant=inset]:ms-0 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:shadow-sm md:peer-data-[variant=inset]:peer-data-[state=collapsed]:ms-2",
 				"transition-all duration-200 ease-linear",
-				open ? "w-[calc(100vw-256px)]" : "w-full",
+				open ? "w-[calc(100vw-256px)] pl-0" : "w-full",
 				className,
 			)}
 			{...props}
@@ -455,7 +455,7 @@ function SidebarMenu({ className, ...props }: React.ComponentProps<"ul">) {
 		<ul
 			data-slot="sidebar-menu"
 			data-sidebar="menu"
-			className={cn("flex w-full min-w-0 flex-col gap-px", className)}
+			className={cn("flex w-full min-w-0 flex-col gap-1", className)}
 			{...props}
 		/>
 	);

@@ -11,6 +11,7 @@ import {
 	IconShoppingCart,
 	IconUsers,
 } from "@tabler/icons-react";
+import { clsx } from "clsx";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -20,7 +21,6 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { cn } from "@/lib/utils";
 
 type NavItem = {
 	title: string;
@@ -77,7 +77,7 @@ function NavMain({
 	items: {
 		title: string;
 		url: string;
-		icon?: Icon;
+		icon: Icon;
 	}[];
 }) {
 	const pathname = usePathname();
@@ -90,9 +90,9 @@ function NavMain({
 							<SidebarMenuButton
 								asChild
 								tooltip={item.title}
-								className={cn(
+								className={clsx(
 									pathname === `/admin${item.url}` &&
-										"bg-mist-400/80 dark:bg-mist-700/80",
+										"bg-primary dark:bg-primary/90 hover:bg-primary/90 dark:hover:bg-primary text-mist-50 hover:text-mist-50",
 								)}
 							>
 								<Link href={`/admin${item.url}`}>

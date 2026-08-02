@@ -23,7 +23,7 @@ export default function DataTableSkeleton({
 	const rowCount = hasImage !== "none" ? IMAGE_PAGE_SIZE : PAGE_SIZE;
 	return (
 		<Table>
-			<TableHeader className="bg-chart-1 dark:bg-sidebar-accent">
+			<TableHeader className="bg-mist-300/80 dark:bg-sidebar-accent">
 				<TableRow>
 					{header.map((item, index) => (
 						<TableCell key={index} border={index !== 0}>

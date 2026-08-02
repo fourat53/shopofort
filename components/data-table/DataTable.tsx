@@ -27,7 +27,7 @@ export default function DataTable({
 	const [entity, rows] = entityRows;
 	return (
 		<Table>
-			<TableHeader className="bg-chart-1 dark:bg-sidebar-accent">
+			<TableHeader className="bg-mist-300/80 dark:bg-sidebar-accent">
 				<TableRow>
 					{header.map((item, index) => (
 						<TableCell
@@ -41,7 +41,9 @@ export default function DataTable({
 							{item}
 						</TableCell>
 					))}
-					<TableCell className="w-20 text-center">Actions</TableCell>
+					<TableCell border className="w-20 text-center">
+						Actions
+					</TableCell>
 				</TableRow>
 			</TableHeader>
 			<TableBody>
@@ -66,7 +68,7 @@ export default function DataTable({
 										colIndex > 0 && header[colIndex]?.includes(" ID") ? (
 											<EntityTooltip
 												headerName={header[colIndex]}
-												idValue={String(value)}
+												idValue={value}
 											/>
 										) : header[colIndex] === "Order Status" ? (
 											<p
@@ -84,12 +86,12 @@ export default function DataTable({
 														"bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
 												)}
 											>
-												{String(value)}
+												{value}
 											</p>
 										) : header[colIndex] === "Picture" ? (
 											<Image
-												src={String(value)}
-												alt="image"
+												src={value}
+												alt={`image-${value}`}
 												width={56}
 												height={56}
 												className="size-14 shrink-0 object-cover rounded-full"
@@ -99,9 +101,9 @@ export default function DataTable({
 												{(Array.isArray(value) ? value : [value]).map(
 													(imgSrc) => (
 														<Image
-															key={`image-${row.id}-${imgSrc}`}
-															src={String(imgSrc)}
-															alt="image"
+															key={`${row.id}-${imgSrc}`}
+															src={imgSrc}
+															alt={`image-${imgSrc}`}
 															loading="eager"
 															width={56}
 															height={56}
@@ -111,7 +113,7 @@ export default function DataTable({
 												)}
 											</div>
 										) : (
-											String(value)
+											value
 										)
 									) : (
 										"-"

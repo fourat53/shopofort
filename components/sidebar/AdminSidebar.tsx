@@ -26,11 +26,11 @@ export default function AdminSidebar({
 					<SidebarMenuItem>
 						<SidebarMenuButton
 							asChild
-							className="data-[slot=sidebar-menu-button]:p-1.5! rounded-full h-10"
+							className="text-primary hover:text-primary data-[slot=sidebar-menu-button]:p-1.5! rounded-full h-10"
 						>
 							<Link
 								href="/admin/dashboard"
-								className="text-primary flex justify-center font-bold text-xl"
+								className="flex justify-center font-bold text-xl"
 							>
 								<IconInnerShadowTop className="size-7!" />
 								<span>Shopofort</span>

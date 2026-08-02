@@ -17,7 +17,7 @@ export default function EntityTooltip<T>({
 	idValue,
 }: {
 	headerName: string;
-	idValue: string | number;
+	idValue: number;
 }) {
 	const [data, setData] = useState<T>();
 	const [loading, setLoading] = useState<boolean>(false);
