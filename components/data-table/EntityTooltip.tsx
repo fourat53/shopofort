@@ -99,7 +99,7 @@ export default function EntityTooltip<T>({
 													width={48}
 													height={48}
 													loading="eager"
-													className="size-12 object-cover rounded-md border border-mist-300 dark:border-mist-700"
+													className="size-12 object-cover rounded-md border border-mist-400/70 dark:border-mist-700"
 												/>
 											</div>
 										);

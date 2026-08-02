@@ -62,7 +62,7 @@ export default function DataTable({
 							{Object.values(row).map((value, colIndex) => (
 								<TableCell
 									border={colIndex !== 0}
-									key={`${rowIndex}-${colIndex}`}
+									key={`cell-${rowIndex}-${colIndex}`}
 								>
 									{value ? (
 										colIndex > 0 && header[colIndex]?.includes(" ID") ? (

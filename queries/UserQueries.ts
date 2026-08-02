@@ -40,6 +40,7 @@ function getUsersPage(page: number) {
 		async () =>
 			prisma.user.findMany({
 				skip: (page - 1) * PAGE_SIZE,
+				omit: { password: true },
 				take: PAGE_SIZE,
 				orderBy: { id: "asc" },
 			}),

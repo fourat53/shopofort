@@ -7,7 +7,7 @@ function Table({ className, ...props }: React.ComponentProps<"table">) {
 	return (
 		<div
 			data-slot="table-container"
-			className="overflow-auto overscroll-none w-full rounded-lg border border-mist-300 dark:border-mist-700"
+			className="overflow-auto overscroll-none w-full rounded-lg border border-mist-400/70 dark:border-mist-700"
 		>
 			<table
 				data-slot="table"
@@ -23,7 +23,7 @@ function TableHeader({ className, ...props }: React.ComponentProps<"thead">) {
 		<thead
 			data-slot="table-header"
 			className={cn(
-				"[&_tr]:border-b border-mist-300 dark:border-mist-700",
+				"[&_tr]:border-b border-mist-400/70 dark:border-mist-700",
 				className,
 			)}
 			{...props}
@@ -59,7 +59,7 @@ function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
 		<tr
 			data-slot="table-row"
 			className={cn(
-				"border-b border-mist-300 dark:border-mist-700 transition-colors hover:bg-muted/50 has-aria-expanded:bg-muted/50 data-[state=selected]:bg-muted",
+				"border-b border-mist-400/70 dark:border-mist-700 transition-colors hover:bg-muted/50 has-aria-expanded:bg-muted/50 data-[state=selected]:bg-muted",
 				className,
 			)}
 			{...props}
@@ -77,7 +77,7 @@ function TableHead({
 			data-slot="table-head"
 			className={cn(
 				"h-4 px-2 text-left align-middle font-medium whitespace-nowrap text-foreground has-[[role=checkbox]]:pr-0",
-				border && "border-l border-mist-300 dark:border-mist-700",
+				border && "border-l border-mist-400/70 dark:border-mist-700",
 				className,
 			)}
 			{...props}
@@ -95,7 +95,7 @@ function TableCell({
 			data-slot="table-cell"
 			className={cn(
 				"p-2 align-middle whitespace-nowrap has-[[role=checkbox]]:pr-0",
-				border && "border-l border-mist-300 dark:border-mist-700",
+				border && "border-l border-mist-400/70 dark:border-mist-700",
 				className,
 			)}
 			{...props}
