@@ -18,7 +18,7 @@ type HasImage = "none" | "one" | "multiple";
 
 type EntityRowType = {
 	entityRow:
-		| ["users", User]
+		| ["users", Partial<User> & { id: string }]
 		| ["products", Product]
 		| ["orders", Order]
 		| ["carts", Cart]
@@ -29,7 +29,7 @@ type EntityRowType = {
 
 type EntityRowsType = {
 	entityRows:
-		| ["users", User[]]
+		| ["users", (Partial<User> & { id: string })[]]
 		| ["products", Product[]]
 		| ["orders", Order[]]
 		| ["carts", Cart[]]

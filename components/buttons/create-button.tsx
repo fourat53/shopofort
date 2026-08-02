@@ -97,7 +97,10 @@ export default function CreateButton() {
 					<IconPlus className="h-4 w-4" />
 				</Button>
 			</DialogTrigger>
-			<DialogContent>
+			<DialogContent
+				onPointerDownOutside={(e) => loading && e.preventDefault()}
+				onEscapeKeyDown={(e) => loading && e.preventDefault()}
+			>
 				<DialogHeader>
 					<DialogTitle>
 						Create New {entity.charAt(0).toUpperCase() + entity.slice(1)}

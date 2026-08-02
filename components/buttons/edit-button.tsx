@@ -97,7 +97,10 @@ export default function EditButton({ disabled, entityRow }: EditButtonProps) {
 					<IconEdit className="h-4 w-4 text-mist-400" />
 				</Button>
 			</DialogTrigger>
-			<DialogContent>
+			<DialogContent
+				onPointerDownOutside={(e) => loading && e.preventDefault()}
+				onEscapeKeyDown={(e) => loading && e.preventDefault()}
+			>
 				<DialogHeader>
 					<DialogTitle>
 						Edit {entity.charAt(0).toUpperCase() + entity.slice(1)}

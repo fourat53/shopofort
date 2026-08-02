@@ -27,12 +27,13 @@ export default function DataTable({
 	const [entity, rows] = entityRows;
 	return (
 		<Table>
-			<TableHeader className="bg-mist-300/80 dark:bg-sidebar-accent">
+			<TableHeader>
 				<TableRow>
 					{header.map((item, index) => (
 						<TableCell
 							key={item}
 							border={index !== 0}
+							headerCell
 							className={clsx(
 								hasImage === "multiple" && "w-62 text-center",
 								hasImage === "one" && "min-w-18 text-center",
@@ -41,7 +42,7 @@ export default function DataTable({
 							{item}
 						</TableCell>
 					))}
-					<TableCell border className="w-20 text-center">
+					<TableCell border headerCell className="w-20 text-center">
 						Actions
 					</TableCell>
 				</TableRow>
@@ -94,6 +95,7 @@ export default function DataTable({
 												alt={`image-${value}`}
 												width={56}
 												height={56}
+												loading="eager"
 												className="size-14 shrink-0 object-cover rounded-full"
 											/>
 										) : header[colIndex] === "Images" ? (
@@ -113,7 +115,7 @@ export default function DataTable({
 												)}
 											</div>
 										) : (
-											value
+											String(value)
 										)
 									) : (
 										"-"

@@ -4,24 +4,17 @@ import { CACHE_REVALIDATE_SECONDS, prisma } from "@/lib/prisma";
 
 const USERS_HEADER: string[] = [
 	"User ID",
-	"Kinde ID",
-	"Provided ID",
+	"Picture",
 	"First Name",
 	"Last Name",
-	"Given Name",
-	"Family Name",
 	"Username",
 	"Email",
 	"Email Verified",
-	"Picture",
 	"Role",
 	"Suspended",
 	"Total Sign-ins",
 	"Failed Sign-ins",
 	"Last Signed In",
-	"Created On",
-	"Organizations",
-	"Identities",
 	"Created At",
 	"Updated At",
 ] as const;
@@ -37,13 +30,29 @@ const getUserCount = unstable_cache(
 
 function getUsersPage(page: number) {
 	return unstable_cache(
-		async () =>
-			prisma.user.findMany({
+		async () => {
+			const users = await prisma.user.findMany({
 				skip: (page - 1) * PAGE_SIZE,
-				omit: { password: true },
+				omit: {
+					kindeId: true,
+					providedId: true,
+					givenName: true,
+					familyName: true,
+					password: true,
+					createdOn: true,
+					organizations: true,
+					identities: true,
+				},
 				take: PAGE_SIZE,
 				orderBy: { id: "asc" },
-			}),
+			});
+
+			return users.map(({ id, picture, ...rest }) => ({
+				id,
+				picture,
+				...rest,
+			}));
+		},
 		["users-page", String(page)],
 		{ revalidate: CACHE_REVALIDATE_SECONDS, tags: ["users"] },
 	)();

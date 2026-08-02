@@ -45,8 +45,7 @@ dark:bg-[linear-gradient(-135deg,var(--sidebar)_1%,var(--sidebar-accent)_100%)]
 To do first:
   1. fix upload images in product table create and edit.
   2. fix decimal errors.
-  3. find the missing user field.
-  4. fix zoomed table y scrolling.
+  3. fix zoomed table y scrolling.
 
 
 - TO DO :

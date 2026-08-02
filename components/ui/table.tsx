@@ -23,6 +23,7 @@ function TableHeader({ className, ...props }: React.ComponentProps<"thead">) {
 		<thead
 			data-slot="table-header"
 			className={cn(
+				"bg-mist-300/80 dark:bg-sidebar-accent hover:bg-mist-300/80 dark:hover:bg-sidebar-accent",
 				"[&_tr]:border-b border-mist-400/70 dark:border-mist-700",
 				className,
 			)}
@@ -59,7 +60,7 @@ function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
 		<tr
 			data-slot="table-row"
 			className={cn(
-				"border-b border-mist-400/70 dark:border-mist-700 transition-colors hover:bg-muted/50 has-aria-expanded:bg-muted/50 data-[state=selected]:bg-muted",
+				"border-b border-mist-400/70 dark:border-mist-700 transition-colors has-aria-expanded:bg-muted/50 data-[state=selected]:bg-muted",
 				className,
 			)}
 			{...props}
@@ -76,7 +77,7 @@ function TableHead({
 		<th
 			data-slot="table-head"
 			className={cn(
-				"h-4 px-2 text-left align-middle font-medium whitespace-nowrap text-foreground has-[[role=checkbox]]:pr-0",
+				"h-4 px-2 font-semibold whitespace-nowrap text-foreground has-[[role=checkbox]]:pr-0",
 				border && "border-l border-mist-400/70 dark:border-mist-700",
 				className,
 			)}
@@ -88,14 +89,17 @@ function TableHead({
 function TableCell({
 	className,
 	border = false,
+	headerCell = false,
 	...props
-}: React.ComponentProps<"td"> & { border?: boolean }) {
+}: React.ComponentProps<"td"> & { border?: boolean; headerCell?: boolean }) {
 	return (
 		<td
 			data-slot="table-cell"
 			className={cn(
 				"p-2 align-middle whitespace-nowrap has-[[role=checkbox]]:pr-0",
 				border && "border-l border-mist-400/70 dark:border-mist-700",
+				headerCell &&
+					"hover:cursor-pointer font-medium hover:bg-mist-400/30 dark:hover:bg-mist-900/30",
 				className,
 			)}
 			{...props}

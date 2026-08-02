@@ -23,14 +23,16 @@ export default function DataTableSkeleton({
 	const rowCount = hasImage !== "none" ? IMAGE_PAGE_SIZE : PAGE_SIZE;
 	return (
 		<Table>
-			<TableHeader className="bg-mist-300/80 dark:bg-sidebar-accent">
+			<TableHeader>
 				<TableRow>
 					{header.map((item, index) => (
-						<TableCell key={index} border={index !== 0}>
+						<TableCell key={index} border={index !== 0} headerCell>
 							{item}
 						</TableCell>
 					))}
-					<TableCell className="w-20 text-center">Actions</TableCell>
+					<TableCell border headerCell className="w-20 text-center">
+						Actions
+					</TableCell>
 				</TableRow>
 			</TableHeader>
 			<TableBody>
