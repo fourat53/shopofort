@@ -16,27 +16,23 @@ interface PageProps {
 
 type HasImage = "none" | "one" | "multiple";
 
-type EntityRowType = {
-	entityRow:
-		| ["users", User]
-		| ["products", Product]
-		| ["orders", Order]
-		| ["carts", Cart]
-		| ["categories", Category]
-		| ["cart-items", CartItem]
-		| ["order-items", OrderItem];
-};
+type EntityRowType =
+	| ["users", User]
+	| ["products", Product]
+	| ["orders", Order]
+	| ["carts", Cart]
+	| ["categories", Category]
+	| ["cart-items", CartItem]
+	| ["order-items", OrderItem];
 
-type EntityRowsType = {
-	entityRows:
-		| ["users", User[]]
-		| ["products", Product[]]
-		| ["orders", Order[]]
-		| ["carts", Cart[]]
-		| ["categories", Category[]]
-		| ["cart-items", CartItem[]]
-		| ["order-items", OrderItem[]];
-};
+type EntityRowsType =
+	| ["users", User[]]
+	| ["products", Product[]]
+	| ["orders", Order[]]
+	| ["carts", Cart[]]
+	| ["categories", Category[]]
+	| ["cart-items", CartItem[]]
+	| ["order-items", OrderItem[]];
 
 interface DataTableLayoutBaseProps {
 	totalPages: number;
@@ -44,7 +40,9 @@ interface DataTableLayoutBaseProps {
 	hasImage?: HasImage;
 }
 
-type DataTableLayoutProps = DataTableLayoutBaseProps & EntityRowsType;
+type DataTableLayoutProps = DataTableLayoutBaseProps & {
+	entityRows: EntityRowsType;
+};
 
 async function DataTableLayout({
 	totalPages,

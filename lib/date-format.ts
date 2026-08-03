@@ -1,4 +1,13 @@
-export function formatDate(date: Date | string | null | undefined): string {
+function isDate(value: unknown): value is Date | string {
+	if (value instanceof Date) return true;
+	return (
+		typeof value === "string" &&
+		/^\d{4}-\d{2}-\d{2}T/.test(value) &&
+		!Number.isNaN(Date.parse(value))
+	);
+}
+
+function formatDate(date: Date | string | null | undefined): string {
 	if (!date) return "N/A";
 
 	const dateObj = typeof date === "string" ? new Date(date) : date;
@@ -14,3 +23,5 @@ export function formatDate(date: Date | string | null | undefined): string {
 		day: "2-digit",
 	}).format(dateObj);
 }
+
+export { formatDate, isDate };

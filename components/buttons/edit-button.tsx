@@ -27,7 +27,7 @@ import {
 import { orderStatusItems, roleItems } from "@/lib/static-data";
 import type { EntityRowType } from "../data-table/DataTableLayout";
 
-type EditButtonProps = { disabled?: boolean } & EntityRowType;
+type EditButtonProps = { disabled?: boolean } & { entityRow: EntityRowType };
 
 export default function EditButton({ disabled, entityRow }: EditButtonProps) {
 	const [entity, row] = entityRow;
