@@ -44,15 +44,13 @@ dark:bg-[linear-gradient(-135deg,var(--sidebar)_1%,var(--sidebar-accent)_100%)]
 
 To do first:
   1. fix upload images in product table create and edit.
-  2. fix decimal errors.
+  2. remove user model and use kinde user directely instead.
   3. fix zoomed table y scrolling.
 
 
 - TO DO :
-  <!-- data table format: product images + kinde users -->
-  1. update the list of users in database via seed.ts by inserting only the list of users from Kinde and update the user table columns to accommodate the Kinde user format (look into my auth setup).
-  2. make a dashboard design with shadcn UI and display statistics by using the most relevent data from the database.
+  1. make a dashboard design with shadcn UI and display statistics by using the most relevent data from the database.
   <!-- table filtering and sorting -->
-  3. add the ability to filter from server all table columns in DataTableLayout by adding inputs for non enum columns and select for enum columns above the table header.
-  4. add the ability to sort from server any table columns in DataTable by adding arrows to the table header.
+  2. add the ability to filter from server all table columns in DataTableLayout by adding inputs for non enum columns and select for enum columns above the table header.
+  3. add the ability to sort from server any table columns in DataTable by adding arrows to the table header.
   - Note: the sorting and filtering should should work together (update the get function for each table) and should update the pagination from server (new total pages and reset current page to 1).

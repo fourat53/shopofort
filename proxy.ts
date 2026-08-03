@@ -1,28 +1,8 @@
 import { withAuth } from "@kinde-oss/kinde-auth-nextjs/middleware";
-import { syncKindeUserToSupabase } from "./actions/UserActions";
 
-export default withAuth(
-	async function proxy(
-		req: Request & {
-			kindeAuth?: {
-				user?: {
-					id?: string;
-					email?: string;
-					given_name?: string;
-					family_name?: string;
-					picture?: string;
-				};
-			};
-		},
-	) {
-		if (req.kindeAuth?.user?.email) {
-			await syncKindeUserToSupabase(req.kindeAuth.user);
-		}
-	},
-	{
-		publicPaths: ["/", "/colors"],
-	},
-);
+export default withAuth(async function proxy() {}, {
+	publicPaths: ["/", "/colors", "/client"],
+});
 
 export const config = {
 	matcher: [
