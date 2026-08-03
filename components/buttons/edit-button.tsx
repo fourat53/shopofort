@@ -77,7 +77,6 @@ export default function EditButton({ disabled, entityRow }: EditButtonProps) {
 				await updateOrderItem(row.id, formData);
 			}
 			setOpen(false);
-			// router.refresh();
 		} catch (error) {
 			console.error("Error updating entity:", error);
 		} finally {
@@ -161,7 +160,7 @@ export default function EditButton({ disabled, entityRow }: EditButtonProps) {
 								name="price"
 								label="Price ($)"
 								step="0.01"
-								// defaultValue={row.price || 5}
+								defaultValue={row.price || 5}
 								required
 							/>
 							<Input
@@ -290,7 +289,7 @@ export default function EditButton({ disabled, entityRow }: EditButtonProps) {
 								type="number"
 								label="Unit Price ($)"
 								step="0.01"
-								// defaultValue={row.unitPrice || 0}
+								defaultValue={row.unitPrice || 0}
 								required
 							/>
 							<Input
@@ -299,7 +298,7 @@ export default function EditButton({ disabled, entityRow }: EditButtonProps) {
 								type="number"
 								label="Total Price ($)"
 								step="0.01"
-								// defaultValue={row.totalPrice || 0}
+								defaultValue={row.totalPrice || 0}
 								required
 							/>
 							<Select
@@ -335,7 +334,7 @@ export default function EditButton({ disabled, entityRow }: EditButtonProps) {
 								type="number"
 								label="Price ($)"
 								step="0.01"
-								// defaultValue={row.price || 0}
+								defaultValue={row.price || 0}
 								required
 							/>
 							<Select

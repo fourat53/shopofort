@@ -66,7 +66,7 @@ export default function DataTable({
 									key={`cell-${rowIndex}-${colIndex}`}
 								>
 									{value ? (
-										colIndex > 0 && header[colIndex]?.includes(" ID") ? (
+										colIndex > 0 && header[colIndex].includes(" ID") ? (
 											<EntityTooltip
 												headerName={header[colIndex]}
 												idValue={value}
@@ -115,7 +115,7 @@ export default function DataTable({
 												)}
 											</div>
 										) : (
-											String(value)
+											value
 										)
 									) : (
 										"-"
@@ -124,7 +124,7 @@ export default function DataTable({
 							))}
 							<TableCell border className="p-0.5 w-20 text-center">
 								<div className="flex items-center justify-center gap-1.5">
-									{/* @ts-expect-error - correct type expected*/}
+									{/* @ts-expect-error - correct type expected */}
 									<EditButton entityRow={[entity, row]} />
 									<DeleteButton id={row.id} />
 								</div>

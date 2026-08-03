@@ -16,7 +16,6 @@ export default async function ProductsPage({ searchParams }: PageProps) {
 	const { page, totalPages } = getPaginationParams(params, totalCount, true);
 
 	const products = await getProductsPage(page);
-
 	return (
 		<DataTableLayout
 			header={PRODUCTS_HEADER}

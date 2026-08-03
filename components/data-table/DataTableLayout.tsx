@@ -8,7 +8,7 @@ import type {
 	OrderItem,
 	Product,
 	User,
-} from "@/lib/generated/prisma/client";
+} from "@/lib/types";
 
 interface PageProps {
 	searchParams: Promise<{ page?: string }>;
@@ -18,7 +18,7 @@ type HasImage = "none" | "one" | "multiple";
 
 type EntityRowType = {
 	entityRow:
-		| ["users", Partial<User> & { id: string }]
+		| ["users", User]
 		| ["products", Product]
 		| ["orders", Order]
 		| ["carts", Cart]
@@ -29,7 +29,7 @@ type EntityRowType = {
 
 type EntityRowsType = {
 	entityRows:
-		| ["users", (Partial<User> & { id: string })[]]
+		| ["users", User[]]
 		| ["products", Product[]]
 		| ["orders", Order[]]
 		| ["carts", Cart[]]

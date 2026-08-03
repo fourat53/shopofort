@@ -5,8 +5,8 @@ import { CACHE_REVALIDATE_SECONDS, prisma } from "@/lib/prisma";
 
 const CART_ITEMS_HEADER: string[] = [
 	"CartItem ID",
-	"Quantity",
 	"Unit Price",
+	"Quantity",
 	"Total Price",
 	"Cart ID",
 	"Product ID",
@@ -20,12 +20,22 @@ const getCartItemCount = unstable_cache(
 
 function getCartItemsPage(page: number) {
 	return unstable_cache(
-		async () =>
-			prisma.cartItem.findMany({
+		async () => {
+			const cartItems = await prisma.cartItem.findMany({
 				skip: (page - 1) * PAGE_SIZE,
 				take: PAGE_SIZE,
 				orderBy: { id: "asc" },
-			}),
+			});
+			return cartItems.map(
+				({ id, quantity, unitPrice, totalPrice, ...rest }) => ({
+					id,
+					unitPrice: Number(unitPrice),
+					quantity,
+					totalPrice: Number(totalPrice),
+					...rest,
+				}),
+			);
+		},
 		["cart-items-page", String(page)],
 		{ revalidate: CACHE_REVALIDATE_SECONDS, tags: ["cart-items"] },
 	)();
