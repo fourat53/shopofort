@@ -1,7 +1,6 @@
 "use client";
 
 import { IconPlus } from "@tabler/icons-react";
-import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { createCart, getCartsOptions } from "@/actions/CartActions";
 import { createCartItem } from "@/actions/CartItemActions";
@@ -26,9 +25,10 @@ import {
 	DialogTrigger,
 } from "@/components/ui/dialog";
 import { orderStatusItems, roleItems } from "@/lib/static-data";
+import { CurrentEntity } from "./current-entity";
 
 export default function CreateButton() {
-	const pathname = usePathname();
+	const entity = CurrentEntity();
 
 	const [open, setOpen] = useState<boolean>(false);
 	const [userOptions, setUserOptions] = useState<SelectOption[]>([]);
@@ -39,31 +39,20 @@ export default function CreateButton() {
 	const [productImages, setProductImages] = useState<File[]>([]);
 	const [loading, setLoading] = useState<boolean>(false);
 
-	let entity = "";
-	if (pathname.includes("/users")) entity = "user";
-	else if (pathname.includes("/products")) entity = "product";
-	else if (pathname.includes("/orders")) entity = "order";
-	else if (pathname.includes("/carts")) entity = "cart";
-	else if (pathname.includes("/categories")) entity = "category";
-	else if (pathname.includes("/cart-items")) entity = "cart item";
-	else if (pathname.includes("/order-items")) entity = "order item";
-
 	useEffect(() => {
-		if (!open) return;
+		if (!open || !entity) return;
 		if (entity === "product") getCategoriesOptions().then(setCategoryOptions);
 		if (entity === "order" || entity === "cart")
 			getUsersOptions().then(setUserOptions);
-		if (entity === "cart item") {
+		if (entity === "cartItem") {
 			getCartsOptions().then(setCartOptions);
 			getProductsOptions().then(setProductOptions);
 		}
-		if (entity === "order item") {
+		if (entity === "orderItem") {
 			getOrdersOptions().then(setOrderOptions);
 			getProductsOptions().then(setProductOptions);
 		}
 	}, [open, entity]);
-
-	if (!entity) return null;
 
 	const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
 		e.preventDefault();
@@ -80,8 +69,8 @@ export default function CreateButton() {
 			} else if (entity === "order") await createOrder(formData);
 			else if (entity === "cart") await createCart(formData);
 			else if (entity === "category") await createCategory(formData);
-			else if (entity === "cart item") await createCartItem(formData);
-			else if (entity === "order item") await createOrderItem(formData);
+			else if (entity === "cartItem") await createCartItem(formData);
+			else if (entity === "orderItem") await createOrderItem(formData);
 			setOpen(false);
 		} catch (error) {
 			console.error("Error creating entity:", error);
@@ -89,6 +78,8 @@ export default function CreateButton() {
 			setLoading(false);
 		}
 	};
+
+	if (!entity || entity === "dashboard") return null;
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
@@ -235,7 +226,7 @@ export default function CreateButton() {
 						</>
 					)}
 
-					{entity === "cart item" && (
+					{entity === "cartItem" && (
 						<>
 							<Input
 								id="quantity"
@@ -275,7 +266,7 @@ export default function CreateButton() {
 						</>
 					)}
 
-					{entity === "order item" && (
+					{entity === "orderItem" && (
 						<>
 							<Input
 								id="quantity"

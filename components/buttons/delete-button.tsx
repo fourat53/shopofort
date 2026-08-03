@@ -1,7 +1,6 @@
 "use client";
 
 import { IconTrash } from "@tabler/icons-react";
-import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { deleteEntity } from "@/actions/EntityActions";
 import { Button } from "@/components/ui/button";
@@ -14,6 +13,7 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
+import { CurrentEntity } from "./current-entity";
 
 export default function DeleteButton({
 	id,
@@ -22,28 +22,19 @@ export default function DeleteButton({
 	id: number;
 	disabled?: boolean;
 }) {
-	const pathname = usePathname();
+	const entity = CurrentEntity();
 
 	const [open, setOpen] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(false);
 
-	let modelName = "";
-	if (pathname.includes("/users")) modelName = "user";
-	else if (pathname.includes("/products")) modelName = "product";
-	else if (pathname.includes("/orders")) modelName = "order";
-	else if (pathname.includes("/carts")) modelName = "cart";
-	else if (pathname.includes("/categories")) modelName = "category";
-	else if (pathname.includes("/cart-items")) modelName = "cartItem";
-	else if (pathname.includes("/order-items")) modelName = "orderItem";
-
 	const handleDelete = async (e: React.MouseEvent) => {
 		e.preventDefault();
 
-		if (!modelName) return;
+		if (!entity) return;
 
 		setLoading(true);
 		try {
-			await deleteEntity(modelName, id);
+			await deleteEntity(entity, id);
 		} catch (error) {
 			console.error("Failed to delete entity", error);
 		} finally {
@@ -56,7 +47,7 @@ export default function DeleteButton({
 			<DialogTrigger asChild>
 				<Button
 					variant="ghost"
-					disabled={disabled || loading || !modelName}
+					disabled={disabled || loading || !entity}
 					className="rounded-xl size-6 p-0 text-red-500 hover:text-red-700"
 				>
 					<IconTrash className="h-4 w-4" />
@@ -68,8 +59,8 @@ export default function DeleteButton({
 					<DialogTitle>Are you absolutely sure?</DialogTitle>
 					<DialogDescription>
 						This action cannot be undone. This will permanently delete this{" "}
-						<span className="font-semibold text-foreground">{modelName}</span>{" "}
-						and remove its data from our servers.
+						<span className="font-semibold text-foreground">{entity}</span> and
+						remove its data from our servers.
 					</DialogDescription>
 				</DialogHeader>
 
