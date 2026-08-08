@@ -11,7 +11,7 @@ import {
 import { createOrder, getOrdersOptions } from "@/actions/OrderActions";
 import { createOrderItem } from "@/actions/OrderItemActions";
 import { createProduct, getProductsOptions } from "@/actions/ProductActions";
-// import { createUser, getUsersOptions } from "@/actions/UserActions";
+import { getUsersOptions } from "@/actions/UserActions";
 import { ImageUpload } from "@/components/form-items/image-upload";
 import { Input } from "@/components/form-items/input";
 import { Select, type SelectOption } from "@/components/form-items/select";
@@ -31,7 +31,7 @@ export default function CreateButton() {
 	const entity = CurrentEntity();
 
 	const [open, setOpen] = useState<boolean>(false);
-	// const [userOptions, setUserOptions] = useState<SelectOption[]>([]);
+	const [userOptions, setUserOptions] = useState<SelectOption[]>([]);
 	const [categoryOptions, setCategoryOptions] = useState<SelectOption[]>([]);
 	const [productOptions, setProductOptions] = useState<SelectOption[]>([]);
 	const [cartOptions, setCartOptions] = useState<SelectOption[]>([]);
@@ -40,10 +40,10 @@ export default function CreateButton() {
 	const [loading, setLoading] = useState<boolean>(false);
 
 	useEffect(() => {
-		if (!open || !entity) return;
+		if (!open || !entity || entity === "user") return;
 		if (entity === "product") getCategoriesOptions().then(setCategoryOptions);
-		// else if (entity === "order" || entity === "cart")
-		// 	getUsersOptions().then(setUserOptions);
+		else if (entity === "order" || entity === "cart")
+			getUsersOptions().then(setUserOptions);
 		else if (entity === "cartItem") {
 			getCartsOptions().then(setCartOptions);
 			getProductsOptions().then(setProductOptions);
@@ -59,8 +59,6 @@ export default function CreateButton() {
 			setLoading(true);
 			const formData = new FormData(e.currentTarget);
 
-			// if (entity === "user") await createUser(formData);
-			// else
 			if (entity === "product") {
 				for (const img of productImages) {
 					formData.append("images", img);
@@ -79,12 +77,12 @@ export default function CreateButton() {
 		}
 	};
 
-	if (!entity || entity === "dashboard") return null;
+	if (!entity || entity === "dashboard" || entity === "user") return null;
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
-				<Button variant="outline" className="rounded-xl">
+				<Button variant="outline">
 					<IconPlus className="h-4 w-4" />
 				</Button>
 			</DialogTrigger>
@@ -98,32 +96,6 @@ export default function CreateButton() {
 					</DialogTitle>
 				</DialogHeader>
 				<form onSubmit={handleSubmit} className="flex flex-col gap-2 pt-2">
-					{entity === "user" && (
-						<>
-							<Input
-								id="firstName"
-								name="firstName"
-								label="First Name"
-								required
-							/>
-							<Input id="lastName" name="lastName" label="Last Name" required />
-							<Input
-								id="email"
-								name="email"
-								type="email"
-								label="Email"
-								required
-							/>
-							{/* <Select
-								label="Role"
-								name="role"
-								defaultValue="USER"
-								placeholder="Select role"
-								items={roleItems}
-							/> */}
-						</>
-					)}
-
 					{entity === "product" && (
 						<>
 							<Input id="name" name="name" label="Name" required />
@@ -182,23 +154,23 @@ export default function CreateButton() {
 								placeholder="Select status"
 								items={orderStatusItems}
 							/>
-							{/* <Select
+							<Select
 								label="User"
 								name="userId"
 								placeholder="Select User"
 								items={userOptions}
-							/> */}
+							/>
 						</>
 					)}
 
 					{entity === "cart" && (
 						<>
-							{/* <Select
+							<Select
 								label="User"
 								name="userId"
 								placeholder="Select User"
 								items={userOptions}
-							/> */}
+							/>
 							<Input
 								id="totalAmount"
 								name="totalAmount"

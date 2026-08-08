@@ -40,11 +40,9 @@ export default function DataTable({
 							{item}
 						</TableCell>
 					))}
-					{entity !== "users" && (
-						<TableCell border headerCell className="w-20 text-center">
-							Actions
-						</TableCell>
-					)}
+					<TableCell border headerCell className="w-20 text-center">
+						Actions
+					</TableCell>
 				</TableRow>
 			</TableHeader>
 			<TableBody>
@@ -64,8 +62,6 @@ export default function DataTable({
 								<TableCell
 									border={colIndex !== 0}
 									key={`cell-${row.id}-${colIndex}`}
-									title={String(value)}
-									className="max-w-66 truncate"
 								>
 									<CellContent
 										value={value}
@@ -75,15 +71,13 @@ export default function DataTable({
 									/>
 								</TableCell>
 							))}
-							{entity !== "users" && typeof row.id === "number" && (
-								<TableCell border className="p-0.5 w-20 text-center">
-									<div className="flex items-center justify-center gap-1.5">
-										{/* @ts-expect-error - correct type expected */}
-										<EditButton entityRow={[entity, row]} />
-										<DeleteButton id={row.id} />
-									</div>
-								</TableCell>
-							)}
+							<TableCell border className="p-0.5 w-20 text-center">
+								<div className="flex items-center justify-center gap-1.5">
+									{/* @ts-expect-error - correct type expected */}
+									<EditButton entityRow={[entity, row]} />
+									<DeleteButton id={row.id} />
+								</div>
+							</TableCell>
 						</TableRow>
 					))
 				)}

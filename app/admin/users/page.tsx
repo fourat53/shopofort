@@ -12,6 +12,7 @@ export default async function UsersPage({ searchParams }: PageProps) {
 	const { page, totalPages } = getPaginationParams(params, totalCount);
 
 	const users = await getUsersPage(page);
+
 	return (
 		<DataTableLayout
 			header={USERS_HEADER}

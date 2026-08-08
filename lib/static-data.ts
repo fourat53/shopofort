@@ -14,4 +14,14 @@ const orderStatusItems: SelectOption[] = [
 	{ label: "Cancelled", value: "CANCELLED" },
 ];
 
-export { orderStatusItems, roleItems };
+const genderItems: SelectOption[] = [
+	{ label: "Male", value: "MALE" },
+	{ label: "Female", value: "FEMALE" },
+];
+
+const booleanItems: SelectOption[] = [
+	{ label: "Yes", value: "true" },
+	{ label: "No", value: "false" },
+];
+
+export { booleanItems, genderItems, orderStatusItems, roleItems };

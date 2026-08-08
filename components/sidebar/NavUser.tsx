@@ -6,10 +6,8 @@ import {
 } from "@kinde-oss/kinde-auth-nextjs/components";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import {
-	IconCreditCard,
 	IconDotsVertical,
 	IconLogout,
-	IconNotification,
 	IconUserCircle,
 } from "@tabler/icons-react";
 import Image from "next/image";
@@ -28,6 +26,7 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import ThemeMenu from "./ThemeMenu";
 
 function AvatarImage({ user }: { user: KindeUser<Record<string, unknown>> }) {
 	return (
@@ -35,18 +34,19 @@ function AvatarImage({ user }: { user: KindeUser<Record<string, unknown>> }) {
 			{user.picture ? (
 				<Image
 					src={user.picture}
-					alt={user.given_name || ""}
+					alt=""
 					width={32}
 					height={32}
 					className="rounded-lg"
 				/>
 			) : (
-				user.given_name &&
-				user.given_name.length > 0 && (
-					<div className="text-xl text-semibold bg-accent">
-						name.charAt(0).toUpperCase
-					</div>
-				)
+				<Image
+					src="/svgs/shopofort.svg"
+					alt=""
+					width={32}
+					height={32}
+					className="bg-mist-500 rounded-lg p-0.5"
+				/>
 			)}
 		</div>
 	);
@@ -67,7 +67,7 @@ function UserInfo({ user }: { user: KindeUser<Record<string, unknown>> }) {
 
 async function NavUser() {
 	const { isAuthenticated, getUser } = getKindeServerSession();
-	const user = await getUser();
+	const user: KindeUser<Record<string, unknown>> | null = await getUser();
 	const isLoggedIn = await isAuthenticated();
 
 	if (!isLoggedIn || !user) {
@@ -119,14 +119,8 @@ async function NavUser() {
 								<IconUserCircle />
 								Account
 							</DropdownMenuItem>
-							<DropdownMenuItem>
-								<IconCreditCard />
-								Billing
-							</DropdownMenuItem>
-							<DropdownMenuItem>
-								<IconNotification />
-								Notifications
-							</DropdownMenuItem>
+
+							<ThemeMenu />
 						</DropdownMenuGroup>
 						<DropdownMenuSeparator className="my-0.5" />
 						<DropdownMenuItem variant="destructive">

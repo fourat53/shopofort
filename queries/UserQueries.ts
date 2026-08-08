@@ -1,7 +1,5 @@
-import { unstable_cache } from "next/cache";
 import { PAGE_SIZE } from "@/components/data-table/PaginationParams";
 import { checkedEnvVar } from "@/lib/checked-env-var";
-import { CACHE_REVALIDATE_SECONDS } from "@/lib/prisma";
 import type { User } from "@/lib/types";
 
 const kindeIssuerUrl = checkedEnvVar("KINDE_ISSUER_URL");
@@ -69,22 +67,13 @@ async function fetchAllKindeUsers() {
 	return allUsers;
 }
 
-const getAllUsersCached = unstable_cache(
-	async () => fetchAllKindeUsers(),
-	["all-kinde-users"],
-	{
-		revalidate: CACHE_REVALIDATE_SECONDS,
-		tags: ["users"],
-	},
-);
-
 async function getUserCount() {
-	const users = await getAllUsersCached();
+	const users = await fetchAllKindeUsers();
 	return users.length;
 }
 
 async function getUsersPage(page: number) {
-	const allUsers = await getAllUsersCached();
+	const allUsers = await fetchAllKindeUsers();
 
 	const paginatedUsers = allUsers.slice(
 		(page - 1) * PAGE_SIZE,
@@ -94,10 +83,9 @@ async function getUsersPage(page: number) {
 	return paginatedUsers.map((user) => ({
 		id: user.id,
 		picture: user.picture,
+		email: user.email,
 		first_name: user.first_name,
 		last_name: user.last_name,
-		username: user.email?.split("@")[0],
-		email: user.email,
 		is_suspended: user.is_suspended,
 		total_sign_ins: user.total_sign_ins,
 		failed_sign_ins: user.failed_sign_ins,
@@ -107,4 +95,10 @@ async function getUsersPage(page: number) {
 	}));
 }
 
-export { getUserCount, getUsersPage };
+export {
+	fetchAllKindeUsers,
+	getKindeToken,
+	getUserCount,
+	getUsersPage,
+	kindeIssuerUrl,
+};

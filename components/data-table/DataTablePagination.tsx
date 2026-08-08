@@ -44,11 +44,13 @@ function PaginationButton({ page, isActive, onClick }: PaginationButtonProps) {
 interface DataTablePaginationProps {
 	basePath: string;
 	totalPages: number;
+	className?: string;
 }
 
 export default function DataTablePagination({
 	basePath,
 	totalPages,
+	className,
 }: DataTablePaginationProps) {
 	const router = useRouter();
 	const searchParams = useSearchParams();
@@ -95,7 +97,7 @@ export default function DataTablePagination({
 	return (
 		<Pagination
 			aria-busy={isPending}
-			className="w-full absolute bottom-15 flex justify-center"
+			className={cn("w-full flex justify-center", className)}
 		>
 			<PaginationContent className="w-80 sm:w-90 justify-between">
 				<PaginationItem>

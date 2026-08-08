@@ -11,8 +11,11 @@ import {
 import { getOrdersOptions, updateOrder } from "@/actions/OrderActions";
 import { updateOrderItem } from "@/actions/OrderItemActions";
 import { getProductsOptions, updateProduct } from "@/actions/ProductActions";
-// import { getUsersOptions, updateUser } from "@/actions/UserActions";
-import { ImageUpload } from "@/components/form-items/image-upload";
+import { getUsersOptions, updateUser } from "@/actions/UserActions";
+// import {
+// 	type ImageType,
+// 	ImageUpload,
+// } from "@/components/form-items/image-upload";
 import { Input } from "@/components/form-items/input";
 import { Select, type SelectOption } from "@/components/form-items/select";
 import { Button } from "@/components/ui/button";
@@ -24,7 +27,7 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
-import { orderStatusItems } from "@/lib/static-data";
+import { booleanItems, orderStatusItems } from "@/lib/static-data";
 import type { EntityRowType } from "../data-table/DataTableLayout";
 
 interface EditButtonProps {
@@ -36,24 +39,26 @@ export default function EditButton({ entityRow, disabled }: EditButtonProps) {
 	const [entity, row] = entityRow;
 
 	const [open, setOpen] = useState<boolean>(false);
-	// const [userOptions, setUserOptions] = useState<SelectOption[]>([]);
+	const [userOptions, setUserOptions] = useState<SelectOption[]>([]);
 	const [categoryOptions, setCategoryOptions] = useState<SelectOption[]>([]);
 	const [productOptions, setProductOptions] = useState<SelectOption[]>([]);
 	const [cartOptions, setCartOptions] = useState<SelectOption[]>([]);
 	const [orderOptions, setOrderOptions] = useState<SelectOption[]>([]);
-	const [productImages, setProductImages] = useState<File[]>([]);
 	const [loading, setLoading] = useState<boolean>(false);
 
 	useEffect(() => {
 		if (!open) return;
-		if (entity === "products") getCategoriesOptions().then(setCategoryOptions);
-		// if (entity === "orders" || entity === "carts")
-		// 	getUsersOptions().then(setUserOptions);
-		if (entity === "cart-items") {
+		if (entity === "users") {
+			// set picture
+		} else if (entity === "products") {
+			// set images
+			getCategoriesOptions().then(setCategoryOptions);
+		} else if (entity === "orders" || entity === "carts")
+			getUsersOptions().then(setUserOptions);
+		else if (entity === "cart-items") {
 			getCartsOptions().then(setCartOptions);
 			getProductsOptions().then(setProductOptions);
-		}
-		if (entity === "order-items") {
+		} else if (entity === "order-items") {
 			getOrdersOptions().then(setOrderOptions);
 			getProductsOptions().then(setProductOptions);
 		}
@@ -61,13 +66,13 @@ export default function EditButton({ entityRow, disabled }: EditButtonProps) {
 
 	const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
 		e.preventDefault();
+		setLoading(true);
+
 		try {
-			setLoading(true);
 			const formData = new FormData(e.currentTarget);
-			// if (entity === "users") {
-			// 	await updateUser(row.id, formData);
-			// } else
-			if (entity === "products") {
+			if (entity === "users") {
+				await updateUser(row.id, formData);
+			} else if (entity === "products") {
 				await updateProduct(row.id, formData);
 			} else if (entity === "orders") {
 				await updateOrder(row.id, formData);
@@ -80,11 +85,12 @@ export default function EditButton({ entityRow, disabled }: EditButtonProps) {
 			} else if (entity === "order-items") {
 				await updateOrderItem(row.id, formData);
 			}
-			setOpen(false);
 		} catch (error) {
 			console.error("Error updating entity:", error);
 		} finally {
 			setLoading(false);
+			setOpen(false);
+			entity === "users" && window.location.reload();
 		}
 	};
 
@@ -112,55 +118,47 @@ export default function EditButton({ entityRow, disabled }: EditButtonProps) {
 				<form onSubmit={handleSubmit} className="flex flex-col gap-2 pt-2">
 					{entity === "users" && (
 						<>
+							{/* <ImageUpload
+								label="Profile Picture"
+								images={userPicture}
+								onChange={setUserPicture}
+							/> */}
 							<Input
-								id="firstName"
-								name="firstName"
+								name="first_name"
 								label="First Name"
 								defaultValue={row.first_name || ""}
 								required
 							/>
 							<Input
-								id="lastName"
-								name="lastName"
+								name="last_name"
 								label="Last Name"
 								defaultValue={row.last_name || ""}
 								required
 							/>
-							<Input
-								id="email"
-								name="email"
-								type="email"
-								label="Email"
-								defaultValue={row.email || ""}
-								required
+							<Select
+								name="is_suspended"
+								label="Suspended"
+								placeholder="Select option"
+								defaultValue={String(row.is_suspended) || ""}
+								items={booleanItems}
 							/>
-							{/* <Select
-								label="Role"
-								name="role"
-								defaultValue={row.role || "USER"}
-								placeholder="Select role"
-								items={roleItems}
-							/> */}
 						</>
 					)}
 
 					{entity === "products" && (
 						<>
 							<Input
-								id="name"
 								name="name"
 								label="Name"
 								defaultValue={row.name || ""}
 								required
 							/>
 							<Input
-								id="brand"
 								name="brand"
 								label="Brand"
 								defaultValue={row.brand || ""}
 							/>
 							<Input
-								id="price"
 								name="price"
 								label="Price ($)"
 								step="0.01"
@@ -168,7 +166,6 @@ export default function EditButton({ entityRow, disabled }: EditButtonProps) {
 								required
 							/>
 							<Input
-								id="inventory"
 								name="inventory"
 								type="number"
 								label="Inventory"
@@ -176,7 +173,6 @@ export default function EditButton({ entityRow, disabled }: EditButtonProps) {
 								required
 							/>
 							<Input
-								id="description"
 								name="description"
 								label="Description"
 								defaultValue={row.description || ""}
@@ -185,19 +181,21 @@ export default function EditButton({ entityRow, disabled }: EditButtonProps) {
 								label="Category"
 								name="categoryId"
 								placeholder="Select Category"
-								defaultValue={
-									row.categoryId ? String(row.categoryId) : undefined
-								}
+								defaultValue={row.categoryId ? String(row.categoryId) : ""}
 								items={categoryOptions}
 							/>
-							<ImageUpload images={productImages} onChange={setProductImages} />
+							{/* <ImageUpload
+								label="Product Images"
+								images={productImages}
+								onChange={setProductImages}
+								multiple
+							/> */}
 						</>
 					)}
 
 					{entity === "orders" && (
 						<>
 							<Input
-								id="orderDate"
 								name="orderDate"
 								type="date"
 								label="Order Date"
@@ -209,7 +207,6 @@ export default function EditButton({ entityRow, disabled }: EditButtonProps) {
 								required
 							/>
 							<Input
-								id="totalAmount"
 								name="totalAmount"
 								type="number"
 								label="Total Amount ($)"
@@ -224,27 +221,19 @@ export default function EditButton({ entityRow, disabled }: EditButtonProps) {
 								placeholder="Select status"
 								items={orderStatusItems}
 							/>
-							{/* <Select
+							<Select
 								label="User"
 								name="userId"
 								placeholder="Select User"
-								defaultValue={row.userId ? String(row.userId) : undefined}
+								defaultValue={row.userId ? String(row.userId) : ""}
 								items={userOptions}
-							/> */}
+							/>
 						</>
 					)}
 
 					{entity === "carts" && (
 						<>
-							{/* <Select
-								label="User"
-								name="userId"
-								placeholder="Select User"
-								defaultValue={row.userId ? String(row.userId) : undefined}
-								items={userOptions}
-							/> */}
 							<Input
-								id="totalAmount"
 								name="totalAmount"
 								type="number"
 								label="Total Amount ($)"
@@ -252,13 +241,19 @@ export default function EditButton({ entityRow, disabled }: EditButtonProps) {
 								defaultValue={row.totalAmount || 1}
 								required
 							/>
+							<Select
+								label="User"
+								name="userId"
+								placeholder="Select User"
+								defaultValue={row.userId ? String(row.userId) : ""}
+								items={userOptions}
+							/>
 						</>
 					)}
 
 					{entity === "categories" && (
 						<>
 							<Input
-								id="name"
 								name="name"
 								label="Name"
 								defaultValue={row.name || ""}
@@ -280,7 +275,6 @@ export default function EditButton({ entityRow, disabled }: EditButtonProps) {
 					{entity === "cart-items" && (
 						<>
 							<Input
-								id="quantity"
 								name="quantity"
 								type="number"
 								label="Quantity"
@@ -288,7 +282,6 @@ export default function EditButton({ entityRow, disabled }: EditButtonProps) {
 								required
 							/>
 							<Input
-								id="unitPrice"
 								name="unitPrice"
 								type="number"
 								label="Unit Price ($)"
@@ -297,7 +290,6 @@ export default function EditButton({ entityRow, disabled }: EditButtonProps) {
 								required
 							/>
 							<Input
-								id="totalPrice"
 								name="totalPrice"
 								type="number"
 								label="Total Price ($)"
@@ -309,14 +301,14 @@ export default function EditButton({ entityRow, disabled }: EditButtonProps) {
 								label="Cart"
 								name="cartId"
 								placeholder="Select Cart"
-								defaultValue={row.cartId ? String(row.cartId) : undefined}
+								defaultValue={row.cartId ? String(row.cartId) : ""}
 								items={cartOptions}
 							/>
 							<Select
 								label="Product"
 								name="productId"
 								placeholder="Select Product"
-								defaultValue={row.productId ? String(row.productId) : undefined}
+								defaultValue={row.productId ? String(row.productId) : ""}
 								items={productOptions}
 							/>
 						</>
@@ -325,7 +317,6 @@ export default function EditButton({ entityRow, disabled }: EditButtonProps) {
 					{entity === "order-items" && (
 						<>
 							<Input
-								id="quantity"
 								name="quantity"
 								type="number"
 								label="Quantity"
@@ -333,7 +324,6 @@ export default function EditButton({ entityRow, disabled }: EditButtonProps) {
 								required
 							/>
 							<Input
-								id="price"
 								name="price"
 								type="number"
 								label="Price ($)"
@@ -345,14 +335,14 @@ export default function EditButton({ entityRow, disabled }: EditButtonProps) {
 								label="Order"
 								name="orderId"
 								placeholder="Select Order"
-								defaultValue={row.orderId ? String(row.orderId) : undefined}
+								defaultValue={row.orderId ? String(row.orderId) : ""}
 								items={orderOptions}
 							/>
 							<Select
 								label="Product"
 								name="productId"
 								placeholder="Select Product"
-								defaultValue={row.productId ? String(row.productId) : undefined}
+								defaultValue={row.productId ? String(row.productId) : ""}
 								items={productOptions}
 							/>
 						</>

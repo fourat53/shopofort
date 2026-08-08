@@ -1,86 +1,112 @@
-// "use server";
+"use server";
 
-// import { updateTag } from "next/cache";
-// import { Role } from "@/lib/generated/prisma/client";
-// import { prisma } from "@/lib/prisma";
+import type { User } from "@/lib/types";
+import {
+	fetchAllKindeUsers,
+	getKindeToken,
+	kindeIssuerUrl,
+} from "@/queries/UserQueries";
 
-// function getFormUser(formData: FormData) {
-// 	const firstName = formData.get("firstName") as string;
-// 	const lastName = formData.get("lastName") as string;
-// 	const email = formData.get("email") as string;
-// 	const role = (formData.get("role") as Role) || "USER";
-// 	return { firstName, lastName, email, role };
-// }
+function getFormUser(formData: FormData) {
+	const picture = formData.get("picture") as string;
+	const first_name = formData.get("first_name") as string;
+	const last_name = formData.get("last_name") as string;
+	const is_suspended = formData.get("is_suspended") as string;
+	return { picture, first_name, last_name, is_suspended };
+}
 
-// async function createUser(formData: FormData) {
-// 	await prisma.user.create({
-// 		data: getFormUser(formData),
-// 	});
-// 	updateTag("users");
-// }
+async function getUserById(id: string) {
+	const token = await getKindeToken();
 
-// async function updateUser(id: number, formData: FormData) {
-// 	await prisma.user.update({
-// 		where: { id },
-// 		data: getFormUser(formData),
-// 	});
-// 	updateTag("users");
-// }
+	const res = await fetch(`${kindeIssuerUrl}/api/v1/user?id=${id}`, {
+		method: "GET",
+		headers: {
+			Authorization: `Bearer ${token}`,
+			Accept: "application/json",
+		},
+		cache: "no-store",
+	});
 
-// async function getUsersOptions() {
-// 	const users = await prisma.user.findMany({
-// 		select: { id: true, email: true },
-// 		orderBy: { id: "asc" },
-// 	});
-// 	return users.map((u) => ({
-// 		value: String(u.id),
-// 		label: `${u.id} - ${u.email}`,
-// 	}));
-// }
+	if (!res.ok) {
+		if (res.status === 404) return null;
+		const errorBody = await res.text();
+		console.error("Error fetching Kinde user:", errorBody);
+		throw new Error("Failed to fetch user from Kinde");
+	}
 
-// type KindeAuthUser = {
-// 	id?: string;
-// 	email?: string | null;
-// 	given_name?: string | null;
-// 	family_name?: string | null;
-// 	picture?: string | null;
-// };
+	const user = await res.json();
+	console.log(user.picture);
+	return {
+		id: user.id,
+		picture: user.picture,
+		email: user.preferred_email,
+		first_name: user.first_name,
+		last_name: user.last_name,
+		is_suspended: user.is_suspended,
+		total_sign_ins: user.total_sign_ins,
+		failed_sign_ins: user.failed_sign_ins,
+		last_signed_in: user.last_signed_in,
+		created_on: user.created_on,
+		updated_on: user.created_on,
+	};
+}
 
-// async function syncKindeUserToSupabase(user: KindeAuthUser) {
-// 	if (!user?.email) {
-// 		return null;
-// 	}
+async function updateUser(id: string, formData: FormData) {
+	const token = await getKindeToken();
+	const { picture, first_name, last_name, is_suspended } =
+		getFormUser(formData);
 
-// 	const email = user.email.trim().toLowerCase();
-// 	const firstName = user.given_name?.trim() || null;
-// 	const lastName = user.family_name?.trim() || null;
+	const res = await fetch(`${kindeIssuerUrl}/api/v1/user?id=${id}`, {
+		method: "PATCH",
+		headers: {
+			Authorization: `Bearer ${token}`,
+			"Content-Type": "application/json",
+			Accept: "application/json",
+		},
+		body: JSON.stringify({
+			picture,
+			given_name: first_name,
+			family_name: last_name,
+			is_suspended,
+		}),
+	});
 
-// 	return prisma.user.upsert({
-// 		where: { email },
-// 		create: {
-// 			email,
-// 			kindeId: user.id ?? null,
-// 			firstName,
-// 			lastName,
-// 			givenName: firstName,
-// 			familyName: lastName,
-// 			emailVerified: true,
-// 			picture: user.picture ?? null,
-// 			role: Role.USER,
-// 			createdAt: new Date(),
-// 			updatedAt: new Date(),
-// 		},
-// 		update: {
-// 			kindeId: user.id ?? undefined,
-// 			firstName,
-// 			lastName,
-// 			givenName: firstName,
-// 			familyName: lastName,
-// 			emailVerified: true,
-// 			picture: user.picture ?? null,
-// 			updatedAt: new Date(),
-// 		},
-// 	});
-// }
+	if (!res.ok) {
+		const errorBody = await res.text();
+		console.error("Error updating Kinde user:", errorBody);
+		throw new Error("Failed to update user in Kinde");
+	}
+}
 
-// export { createUser, getUsersOptions, syncKindeUserToSupabase, updateUser };
+async function deleteUser(id: string) {
+	try {
+		const token = await getKindeToken();
+
+		const res = await fetch(`${kindeIssuerUrl}/api/v1/user?id=${id}`, {
+			method: "DELETE",
+			headers: {
+				Authorization: `Bearer ${token}`,
+				Accept: "application/json",
+			},
+		});
+
+		if (!res.ok) {
+			const errorBody = await res.text();
+			console.error("Error deleting Kinde user:", errorBody);
+			throw new Error("Failed to delete user in Kinde");
+		}
+	} catch (error) {
+		console.error("Error deleting Kinde user:", error);
+	}
+}
+
+async function getUsersOptions() {
+	const users = await fetchAllKindeUsers();
+
+	return users.map((u: User) => ({
+		value: u.id,
+		label: `${u.id} - ${u.email || u.first_name} ${u.last_name}`,
+	}));
+}
+
+export { deleteUser, getUserById, getUsersOptions, updateUser };

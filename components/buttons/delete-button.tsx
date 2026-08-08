@@ -19,7 +19,7 @@ export default function DeleteButton({
 	id,
 	disabled,
 }: {
-	id: number;
+	id: number | string;
 	disabled?: boolean;
 }) {
 	const entity = CurrentEntity();
@@ -29,9 +29,7 @@ export default function DeleteButton({
 
 	const handleDelete = async (e: React.MouseEvent) => {
 		e.preventDefault();
-
 		if (!entity) return;
-
 		setLoading(true);
 		try {
 			await deleteEntity(entity, id);
@@ -39,6 +37,8 @@ export default function DeleteButton({
 			console.error("Failed to delete entity", error);
 		} finally {
 			setLoading(false);
+			setOpen(false);
+			entity === "user" && window.location.reload();
 		}
 	};
 

@@ -18,7 +18,7 @@ export default function EntityTooltip<T>({
 	idValue,
 }: {
 	headerName: string;
-	idValue: number;
+	idValue: number | string;
 }) {
 	const [data, setData] = useState<T>();
 	const [loading, setLoading] = useState<boolean>(false);
@@ -33,7 +33,7 @@ export default function EntityTooltip<T>({
 			const entity = entityFromHeaderName(headerName, pathname);
 
 			if (entity) {
-				const result = await getEntityById(entity, Number(idValue));
+				const result = await getEntityById(entity, idValue);
 				setData(result);
 			}
 			setLoading(false);
@@ -50,7 +50,7 @@ export default function EntityTooltip<T>({
 				</TooltipTrigger>
 				<TooltipContent
 					side="left"
-					className="max-w-82 shadow-lg bg-background border text-foreground rounded-lg"
+					className="max-w-100 shadow-lg bg-background border text-foreground rounded-lg"
 				>
 					{loading ? (
 						<SmallLoader />
@@ -65,19 +65,17 @@ export default function EntityTooltip<T>({
 							</p>
 							<div className="pt-1.5 flex flex-col gap-1">
 								{Object.entries(data).map(([key, value]) => {
+									const valueHeader = key
+										.replace(/([a-z])([A-Z])/g, "$1 $2")
+										.replace(/_/g, " ")
+										.trim()
+										.replace(/\b\w/g, (char) => char.toUpperCase());
 									return (
-										<div key={key} className="grid grid-cols-[1fr_2fr] gap-1.5">
-											<p className="text-xs font-medium text-muted-foreground capitalize">
-												{key.replace(/([A-Z])/g, " $1").trim()}:
+										<div key={key} className="grid grid-cols-[2fr_5fr] gap-1.5">
+											<p className="max-w-28 text-xs font-medium text-muted-foreground capitalize">
+												{valueHeader}:
 											</p>
-											<div className="max-w-60 truncate" title={String(value)}>
-												<CellContent
-													headerName={key}
-													value={value}
-													colIndex={idValue}
-													tooltip
-												/>
-											</div>
+											<CellContent headerName={key} value={value} tooltip />
 										</div>
 									);
 								})}

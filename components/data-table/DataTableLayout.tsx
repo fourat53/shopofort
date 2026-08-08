@@ -52,7 +52,11 @@ export default function DataTableLayout({
 		<>
 			<DataTable header={header} hasImage={hasImage} entityRows={entityRows} />
 			{totalPages > 1 && (
-				<DataTablePagination basePath={`/${entity}`} totalPages={totalPages} />
+				<DataTablePagination
+					basePath={`/${entity}`}
+					totalPages={totalPages}
+					className="absolute py-2 bottom-13.5"
+				/>
 			)}
 		</>
 	);

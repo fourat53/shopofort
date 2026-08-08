@@ -9,9 +9,7 @@ function getFormProduct(formData: FormData) {
 	const price = Number(formData.get("price"));
 	const inventory = Number(formData.get("inventory"));
 	const description = formData.get("description") as string;
-	const categoryId = formData.get("categoryId")
-		? Number(formData.get("categoryId"))
-		: null;
+	const categoryId = Number(formData.get("categoryId"));
 	return { name, brand, price, inventory, description, categoryId };
 }
 

@@ -4,7 +4,8 @@ function CurrentEntity() {
 	const pathname = usePathname();
 	let entity: string = "";
 
-	if (pathname.includes("/products")) entity = "product";
+	if (pathname.includes("/users")) entity = "user";
+	else if (pathname.includes("/products")) entity = "product";
 	else if (pathname.includes("/orders")) entity = "order";
 	else if (pathname.includes("/carts")) entity = "cart";
 	else if (pathname.includes("/categories")) entity = "category";

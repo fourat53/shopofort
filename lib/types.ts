@@ -10,10 +10,9 @@ import type {
 type User = {
 	id: string;
 	picture: string;
+	email: string;
 	first_name: string;
 	last_name: string;
-	username: string;
-	email: string;
 	is_suspended: boolean;
 	total_sign_ins: number;
 	failed_sign_ins: number;

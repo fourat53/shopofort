@@ -42,15 +42,14 @@ pnpm biome format --write .
 bg-[linear-gradient(45deg,var(--chart-1)_1%,var(--sidebar)_100%)]
 dark:bg-[linear-gradient(-135deg,var(--sidebar)_1%,var(--sidebar-accent)_100%)]
 
-To do first:
-  1. fix upload images in product table create and edit.
-  2. remove user model and use kinde user directely instead.
-  3. fix zoomed table y scrolling.
-  4. fix loading glitch for datatable.
 
 
 - TO DO :
-  1. make a dashboard design with shadcn UI and display statistics by using the most relevent data from the database.
+  1. delete user carts and orders on user delete.
+  <!-- products and users page -->
+  2. fix upload images in product and user table create and edit.
+  <!-- dashboard page -->
+  3. make a dashboard design with shadcn UI and display statistics by using the most relevent data from the database.
   <!-- table filtering and sorting -->
   2. add the ability to filter from server all table columns in DataTableLayout by adding inputs for non enum columns and select for enum columns above the table header.
   3. add the ability to sort from server any table columns in DataTable by adding arrows to the table header.

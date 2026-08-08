@@ -2,6 +2,7 @@
 
 import { updateTag } from "next/cache";
 import { prisma } from "@/lib/prisma";
+import { deleteUser, getUserById } from "./UserActions";
 
 const tagMap: Record<string, string> = {
 	user: "users",
@@ -13,25 +14,12 @@ const tagMap: Record<string, string> = {
 	orderItem: "order-items",
 };
 
-async function getEntityById(entity: string, id: number) {
+async function getEntityById(entity: string, id: number | string) {
 	try {
 		let data = null;
-		if (entity === "user") {
-			// data = await prisma.user.findUnique({
-			// 	where: { id },
-			// 	omit: {
-			// 		kindeId: true,
-			// 		providedId: true,
-			// 		givenName: true,
-			// 		familyName: true,
-			// 		password: true,
-			// 		createdOn: true,
-			// 		organizations: true,
-			// 		identities: true,
-			// 	},
-			// });
-			return;
-		} else {
+		if (entity === "user" && typeof id === "string") {
+			data = await getUserById(id);
+		} else if (typeof id === "number") {
 			// @ts-expect-error - prisma dynamic model access
 			data = await prisma[entity].findUnique({ where: { id } });
 		}
@@ -42,14 +30,18 @@ async function getEntityById(entity: string, id: number) {
 	}
 }
 
-async function deleteEntity(entity: string, id: number) {
+async function deleteEntity(entity: string, id: number | string) {
 	try {
-		// @ts-expect-error - prisma dynamic model access
-		await prisma[entity].delete({ where: { id } });
+		if (entity === "user" && typeof id === "string") {
+			await deleteUser(id);
+		} else if (typeof id === "number") {
+			// @ts-expect-error - prisma dynamic model access
+			await prisma[entity].delete({ where: { id } });
 
-		const tag = tagMap[entity];
-		if (tag) {
-			updateTag(tag);
+			const tag = tagMap[entity];
+			if (tag) {
+				updateTag(tag);
+			}
 		}
 	} catch (error) {
 		console.error(error);
