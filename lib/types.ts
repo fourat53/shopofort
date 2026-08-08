@@ -5,20 +5,22 @@ import type {
 	Order,
 	OrderItem as OrderItemType,
 	Product as ProductType,
-	User as UserType,
 } from "@/lib/generated/prisma/client";
 
-type User = Omit<
-	UserType,
-	| "kindeId"
-	| "providedId"
-	| "givenName"
-	| "familyName"
-	| "password"
-	| "createdOn"
-	| "organizations"
-	| "identities"
->;
+type User = {
+	id: string;
+	picture: string;
+	first_name: string;
+	last_name: string;
+	username: string;
+	email: string;
+	is_suspended: boolean;
+	total_sign_ins: number;
+	failed_sign_ins: number;
+	last_signed_in: Date;
+	created_on: Date;
+	updated_on: Date;
+};
 
 type Product = Omit<ProductType, "price"> & { price: number };
 

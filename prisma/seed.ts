@@ -1,32 +1,10 @@
 import { PrismaPg } from "@prisma/adapter-pg";
 import { config } from "dotenv";
 import { checkedEnvVar } from "@/lib/checked-env-var";
-import {
-	type OrderStatus,
-	PrismaClient,
-	Role,
-} from "@/lib/generated/prisma/client";
-import type { UserCreateManyInput } from "@/lib/generated/prisma/models";
+import { type OrderStatus, PrismaClient } from "@/lib/generated/prisma/client";
 
 config({ path: checkedEnvVar("ENV_PATH") });
 config();
-
-type KindeUserPayload = {
-	id?: string;
-	provided_id?: string;
-	email?: string | null;
-	username?: string | null;
-	first_name?: string | null;
-	last_name?: string | null;
-	picture?: string | null;
-	is_suspended?: boolean | null;
-	total_sign_ins?: number | null;
-	failed_sign_ins?: number | null;
-	last_signed_in?: string | null;
-	created_on?: string | null;
-	organizations?: unknown;
-	identities?: unknown;
-};
 
 const adapter = new PrismaPg({
 	connectionString: checkedEnvVar("DATABASE_URL"),
@@ -42,93 +20,6 @@ const randomInt = (min: number, max: number) => {
 	return Math.floor(Math.random() * (max - min + 1) + min);
 };
 
-async function fetchKindeUsers(): Promise<KindeUserPayload[]> {
-	const issuerUrl = checkedEnvVar("KINDE_ISSUER_URL").replace(/\/$/, "");
-	const tokenResponse = await fetch(`${issuerUrl}/oauth2/token`, {
-		method: "POST",
-		headers: {
-			"content-type": "application/x-www-form-urlencoded",
-		},
-		body: new URLSearchParams({
-			grant_type: "client_credentials",
-			client_id: checkedEnvVar("KINDE_CLIENT_ID"),
-			client_secret: checkedEnvVar("KINDE_CLIENT_SECRET"),
-			audience: `${issuerUrl}/api`,
-		}),
-	});
-
-	if (!tokenResponse.ok) {
-		const errorText = await tokenResponse.text();
-		throw new Error(
-			`Kinde token request failed (${tokenResponse.status}): ${errorText}`,
-		);
-	}
-
-	const tokenJson = (await tokenResponse.json()) as {
-		access_token?: string;
-		error?: string;
-		error_description?: string;
-	};
-
-	if (!tokenJson.access_token) {
-		throw new Error(
-			`Kinde token response did not include an access token: ${tokenJson.error_description ?? tokenJson.error ?? "unknown error"}`,
-		);
-	}
-
-	const usersResponse = await fetch(`${issuerUrl}/api/v1/users`, {
-		headers: {
-			Authorization: `Bearer ${tokenJson.access_token}`,
-			Accept: "application/json",
-		},
-	});
-
-	if (!usersResponse.ok) {
-		const errorText = await usersResponse.text();
-		throw new Error(
-			`Kinde users request failed (${usersResponse.status}): ${errorText}`,
-		);
-	}
-
-	const usersPayload = (await usersResponse.json()) as {
-		users?: KindeUserPayload[];
-		message?: string;
-		code?: string;
-	};
-
-	return usersPayload.users ?? [];
-}
-
-function normalizeKindeUser(user: KindeUserPayload) {
-	const firstName = user.first_name ?? null;
-	const lastName = user.last_name ?? null;
-
-	return {
-		kindeId: user.id ?? user.provided_id ?? null,
-		providedId: user.provided_id ?? null,
-		firstName,
-		lastName,
-		givenName: firstName,
-		familyName: lastName,
-		username: user.username ?? null,
-		email:
-			user.email ??
-			`${user.provided_id ?? user.id ?? "kinde-user"}@kinde.local`,
-		emailVerified: false,
-		picture: user.picture ?? null,
-		role: Role.USER,
-		isSuspended: Boolean(user.is_suspended),
-		totalSignIns:
-			typeof user.total_sign_ins === "number" ? user.total_sign_ins : null,
-		failedSignIns:
-			typeof user.failed_sign_ins === "number" ? user.failed_sign_ins : null,
-		lastSignedIn: user.last_signed_in ? new Date(user.last_signed_in) : null,
-		createdOn: user.created_on ? new Date(user.created_on) : null,
-		organizations: user.organizations ?? null,
-		identities: user.identities ?? null,
-	};
-}
-
 async function clearDatabase() {
 	await prisma.orderItem.deleteMany();
 	await prisma.cartItem.deleteMany();
@@ -136,7 +27,6 @@ async function clearDatabase() {
 	await prisma.cart.deleteMany();
 	await prisma.product.deleteMany();
 	await prisma.category.deleteMany();
-	await prisma.user.deleteMany();
 }
 
 const categoryNames = ["T-Shirts", "Jeans", "Hoodies", "Dresses", "Jackets"];
@@ -186,23 +76,6 @@ async function main(minId: number, maxId: number) {
 		data: categories,
 	});
 
-	console.log("👤 Seeding Users...");
-	let kindeUsers: KindeUserPayload[] = [];
-	try {
-		kindeUsers = (await fetchKindeUsers()).map(normalizeKindeUser);
-		console.log(`✅ Fetched ${kindeUsers.length} users from Kinde`);
-	} catch (error) {
-		console.error(
-			"⚠️  Unable to fetch Kinde users, continuing with an empty user set.",
-			error,
-		);
-	}
-	if (kindeUsers.length > 0) {
-		await prisma.user.createMany({
-			data: kindeUsers as UserCreateManyInput[],
-		});
-	}
-
 	console.log("📦 Seeding Products...");
 	const dbCategories = await prisma.category.findMany();
 	const products = [];
@@ -222,6 +95,7 @@ async function main(minId: number, maxId: number) {
 	});
 
 	const dbProducts = await prisma.product.findMany();
+	// get users directly from kinde instead of prisma+supabase
 	const dbUsers = await prisma.user.findMany();
 
 	if (dbUsers.length > 0) {

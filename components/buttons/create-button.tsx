@@ -11,7 +11,7 @@ import {
 import { createOrder, getOrdersOptions } from "@/actions/OrderActions";
 import { createOrderItem } from "@/actions/OrderItemActions";
 import { createProduct, getProductsOptions } from "@/actions/ProductActions";
-import { createUser, getUsersOptions } from "@/actions/UserActions";
+// import { createUser, getUsersOptions } from "@/actions/UserActions";
 import { ImageUpload } from "@/components/form-items/image-upload";
 import { Input } from "@/components/form-items/input";
 import { Select, type SelectOption } from "@/components/form-items/select";
@@ -24,14 +24,14 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
-import { orderStatusItems, roleItems } from "@/lib/static-data";
+import { orderStatusItems } from "@/lib/static-data";
 import { CurrentEntity } from "./current-entity";
 
 export default function CreateButton() {
 	const entity = CurrentEntity();
 
 	const [open, setOpen] = useState<boolean>(false);
-	const [userOptions, setUserOptions] = useState<SelectOption[]>([]);
+	// const [userOptions, setUserOptions] = useState<SelectOption[]>([]);
 	const [categoryOptions, setCategoryOptions] = useState<SelectOption[]>([]);
 	const [productOptions, setProductOptions] = useState<SelectOption[]>([]);
 	const [cartOptions, setCartOptions] = useState<SelectOption[]>([]);
@@ -42,13 +42,12 @@ export default function CreateButton() {
 	useEffect(() => {
 		if (!open || !entity) return;
 		if (entity === "product") getCategoriesOptions().then(setCategoryOptions);
-		if (entity === "order" || entity === "cart")
-			getUsersOptions().then(setUserOptions);
-		if (entity === "cartItem") {
+		// else if (entity === "order" || entity === "cart")
+		// 	getUsersOptions().then(setUserOptions);
+		else if (entity === "cartItem") {
 			getCartsOptions().then(setCartOptions);
 			getProductsOptions().then(setProductOptions);
-		}
-		if (entity === "orderItem") {
+		} else if (entity === "orderItem") {
 			getOrdersOptions().then(setOrderOptions);
 			getProductsOptions().then(setProductOptions);
 		}
@@ -60,8 +59,9 @@ export default function CreateButton() {
 			setLoading(true);
 			const formData = new FormData(e.currentTarget);
 
-			if (entity === "user") await createUser(formData);
-			else if (entity === "product") {
+			// if (entity === "user") await createUser(formData);
+			// else
+			if (entity === "product") {
 				for (const img of productImages) {
 					formData.append("images", img);
 				}
@@ -114,13 +114,13 @@ export default function CreateButton() {
 								label="Email"
 								required
 							/>
-							<Select
+							{/* <Select
 								label="Role"
 								name="role"
 								defaultValue="USER"
 								placeholder="Select role"
 								items={roleItems}
-							/>
+							/> */}
 						</>
 					)}
 
@@ -182,23 +182,23 @@ export default function CreateButton() {
 								placeholder="Select status"
 								items={orderStatusItems}
 							/>
-							<Select
+							{/* <Select
 								label="User"
 								name="userId"
 								placeholder="Select User"
 								items={userOptions}
-							/>
+							/> */}
 						</>
 					)}
 
 					{entity === "cart" && (
 						<>
-							<Select
+							{/* <Select
 								label="User"
 								name="userId"
 								placeholder="Select User"
 								items={userOptions}
-							/>
+							/> */}
 							<Input
 								id="totalAmount"
 								name="totalAmount"

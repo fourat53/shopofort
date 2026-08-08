@@ -1,13 +1,9 @@
-import {
-	DataTableLayout,
+import DataTableLayout, {
 	type PageProps,
 } from "@/components/data-table/DataTableLayout";
 import { getPaginationParams } from "@/components/data-table/PaginationParams";
-import {
-	CART_ITEMS_HEADER,
-	getCartItemCount,
-	getCartItemsPage,
-} from "@/queries/CartItemQueries";
+import { getCartItemCount, getCartItemsPage } from "@/queries/CartItemQueries";
+import { CART_ITEMS_HEADER } from "./loading";
 
 export default async function CartItemsPage({ searchParams }: PageProps) {
 	const params = await searchParams;

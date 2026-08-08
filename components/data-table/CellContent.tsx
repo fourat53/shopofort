@@ -7,7 +7,7 @@ interface CellContentProps {
 	value: unknown;
 	headerName: string;
 	colIndex: number;
-	rowId?: number;
+	rowId?: number | string;
 	tooltip?: boolean;
 }
 
@@ -19,21 +19,7 @@ export default function CellContent({
 	tooltip = false,
 }: CellContentProps) {
 	const lowerHeader = headerName.toLowerCase();
-	console.log(
-		"CellContent value:",
-		value,
-		"headerName:",
-		headerName,
-		"colIndex:",
-		colIndex,
-		"rowId:",
-		rowId,
-		"tooltip:",
-		tooltip,
-	);
 	const imageSize = tooltip ? 40 : 56;
-
-	if (value === null || value === undefined || value === "") return "-";
 
 	if (
 		colIndex > 0 &&
@@ -41,9 +27,7 @@ export default function CellContent({
 		typeof value === "number"
 	) {
 		return <EntityTooltip headerName={headerName} idValue={value} />;
-	}
-
-	if (["orderstatus", "order status"].includes(lowerHeader)) {
+	} else if (["orderstatus", "order status"].includes(lowerHeader)) {
 		return (
 			<p
 				className={clsx(
@@ -63,26 +47,23 @@ export default function CellContent({
 				{String(value)}
 			</p>
 		);
-	}
-
-	if (lowerHeader === "picture") {
+	} else if (lowerHeader === "picture") {
 		return (
 			<Image
 				src={String(value)}
-				alt="Picture"
+				alt=""
 				width={imageSize}
 				height={imageSize}
 				loading="eager"
-				className="shrink-0 object-cover rounded-full"
-				style={{
-					width: `${imageSize}px`,
-					height: `${imageSize}px`,
-				}}
+				className="rounded-xl"
+				style={{ height: `${imageSize}px`, width: `${imageSize}px` }}
 			/>
 		);
-	}
-
-	if (lowerHeader === "images" && Array.isArray(value) && value.length > 0) {
+	} else if (
+		lowerHeader === "images" &&
+		Array.isArray(value) &&
+		value.length > 0
+	) {
 		return (
 			<div
 				className={clsx(
@@ -98,20 +79,14 @@ export default function CellContent({
 						loading="eager"
 						width={imageSize}
 						height={imageSize}
-						className="shrink-0 object-cover rounded-md"
-						style={{
-							width: `${imageSize}px`,
-							height: `${imageSize}px`,
-						}}
+						className="rounded-md"
+						style={{ height: `${imageSize}px`, width: `${imageSize}px` }}
 					/>
 				))}
 			</div>
 		);
-	}
-
-	if (isDate(value)) {
+	} else if (isDate(value)) {
 		return formatDate(value);
-	}
-
-	return String(value);
+	} else if (value === null || value === undefined || value === "") return "-";
+	else return String(value);
 }

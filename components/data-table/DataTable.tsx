@@ -11,12 +11,11 @@ import {
 import CellContent from "./CellContent";
 import type { EntityRowsType, HasImage } from "./DataTableLayout";
 
-type DataTableBaseProps = {
+interface DataTableProps {
 	header: string[];
 	hasImage: HasImage;
-};
-
-type DataTableProps = DataTableBaseProps & { entityRows: EntityRowsType };
+	entityRows: EntityRowsType;
+}
 
 export default function DataTable({
 	header,
@@ -41,9 +40,11 @@ export default function DataTable({
 							{item}
 						</TableCell>
 					))}
-					<TableCell border headerCell className="w-20 text-center">
-						Actions
-					</TableCell>
+					{entity !== "users" && (
+						<TableCell border headerCell className="w-20 text-center">
+							Actions
+						</TableCell>
+					)}
 				</TableRow>
 			</TableHeader>
 			<TableBody>
@@ -74,13 +75,15 @@ export default function DataTable({
 									/>
 								</TableCell>
 							))}
-							<TableCell border className="p-0.5 w-20 text-center">
-								<div className="flex items-center justify-center gap-1.5">
-									{/* @ts-expect-error - correct type expected */}
-									<EditButton entityRow={[entity, row]} />
-									<DeleteButton id={row.id} />
-								</div>
-							</TableCell>
+							{entity !== "users" && typeof row.id === "number" && (
+								<TableCell border className="p-0.5 w-20 text-center">
+									<div className="flex items-center justify-center gap-1.5">
+										{/* @ts-expect-error - correct type expected */}
+										<EditButton entityRow={[entity, row]} />
+										<DeleteButton id={row.id} />
+									</div>
+								</TableCell>
+							)}
 						</TableRow>
 					))
 				)}

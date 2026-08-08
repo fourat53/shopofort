@@ -1,5 +1,15 @@
 import DataTableSkeleton from "@/components/data-table/DataTableSkeleton";
-import { PRODUCTS_HEADER } from "@/queries/ProductQueries";
+
+export const PRODUCTS_HEADER: string[] = [
+	"Product ID",
+	"Name",
+	"Price ($)",
+	"Brand",
+	"Inventory",
+	"Description",
+	"Category ID",
+	"Images",
+] as const;
 
 export default function loading() {
 	return <DataTableSkeleton header={PRODUCTS_HEADER} hasImage="multiple" />;

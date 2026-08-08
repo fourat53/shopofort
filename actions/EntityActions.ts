@@ -17,19 +17,20 @@ async function getEntityById(entity: string, id: number) {
 	try {
 		let data = null;
 		if (entity === "user") {
-			data = await prisma.user.findUnique({
-				where: { id },
-				omit: {
-					kindeId: true,
-					providedId: true,
-					givenName: true,
-					familyName: true,
-					password: true,
-					createdOn: true,
-					organizations: true,
-					identities: true,
-				},
-			});
+			// data = await prisma.user.findUnique({
+			// 	where: { id },
+			// 	omit: {
+			// 		kindeId: true,
+			// 		providedId: true,
+			// 		givenName: true,
+			// 		familyName: true,
+			// 		password: true,
+			// 		createdOn: true,
+			// 		organizations: true,
+			// 		identities: true,
+			// 	},
+			// });
+			return;
 		} else {
 			// @ts-expect-error - prisma dynamic model access
 			data = await prisma[entity].findUnique({ where: { id } });

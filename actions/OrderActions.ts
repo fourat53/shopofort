@@ -7,8 +7,8 @@ import { prisma } from "@/lib/prisma";
 function getFormOrder(formData: FormData) {
 	const orderDate = new Date(formData.get("orderDate") as string);
 	const totalAmount = Number(formData.get("totalAmount"));
-	const orderStatus = (formData.get("orderStatus") as OrderStatus) || "PENDING";
-	const userId = Number(formData.get("userId"));
+	const orderStatus = formData.get("orderStatus") as OrderStatus;
+	const userId = String(formData.get("userId"));
 	return { orderDate, totalAmount, orderStatus, userId };
 }
 

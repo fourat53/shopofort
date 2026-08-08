@@ -2,8 +2,6 @@ import { unstable_cache } from "next/cache";
 import { PAGE_SIZE } from "@/components/data-table/PaginationParams";
 import { CACHE_REVALIDATE_SECONDS, prisma } from "@/lib/prisma";
 
-const CARTS_HEADER: string[] = ["Cart ID", "Total Amount", "User ID"] as const;
-
 const getCartCount = unstable_cache(
 	async () => prisma.cart.count(),
 	["carts-count"],
@@ -23,4 +21,4 @@ function getCartsPage(page: number) {
 	)();
 }
 
-export { CARTS_HEADER, getCartCount, getCartsPage };
+export { getCartCount, getCartsPage };

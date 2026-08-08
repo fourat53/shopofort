@@ -3,8 +3,6 @@ import { PAGE_SIZE } from "@/components/data-table/PaginationParams";
 import type { Category } from "@/lib/generated/prisma/client";
 import { CACHE_REVALIDATE_SECONDS, prisma } from "@/lib/prisma";
 
-const CATEGORIES_HEADER: string[] = ["Category ID", "Name", "Gender"] as const;
-
 const getCategoryCount = unstable_cache(
 	async () => prisma.category.count(),
 	["categories-count"],
@@ -26,9 +24,4 @@ function getCategoriesPage(page: number) {
 
 type CategoryType = Category;
 
-export {
-	CATEGORIES_HEADER,
-	type CategoryType,
-	getCategoriesPage,
-	getCategoryCount,
-};
+export { type CategoryType, getCategoriesPage, getCategoryCount };

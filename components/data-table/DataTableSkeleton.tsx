@@ -30,9 +30,11 @@ export default function DataTableSkeleton({
 							{item}
 						</TableCell>
 					))}
-					<TableCell border headerCell className="w-20 text-center">
-						Actions
-					</TableCell>
+					{header[0] !== "User ID" && (
+						<TableCell border headerCell className="w-20 text-center">
+							Actions
+						</TableCell>
+					)}
 				</TableRow>
 			</TableHeader>
 			<TableBody>
@@ -45,26 +47,28 @@ export default function DataTableSkeleton({
 								/>
 							</TableCell>
 						))}
-						<TableCell border className="p-0.5 w-20 text-center">
-							<div className="flex items-center justify-center gap-1.5">
-								<Button
-									variant="ghost"
-									border={false}
-									disabled
-									className="rounded-xl size-6 p-0"
-								>
-									<IconEdit className="h-4 w-4 text-mist-400" />
-								</Button>
-								<Button
-									variant="ghost"
-									border={false}
-									disabled
-									className="rounded-xl size-6 p-0 text-red-500 hover:text-red-700"
-								>
-									<IconTrash className="h-4 w-4" />
-								</Button>
-							</div>
-						</TableCell>
+						{header[0] !== "User ID" && (
+							<TableCell border className="p-0.5 w-20 text-center">
+								<div className="flex items-center justify-center gap-1.5">
+									<Button
+										variant="ghost"
+										border={false}
+										disabled
+										className="rounded-xl size-6 p-0"
+									>
+										<IconEdit className="h-4 w-4 text-mist-400" />
+									</Button>
+									<Button
+										variant="ghost"
+										border={false}
+										disabled
+										className="rounded-xl size-6 p-0 text-red-500 hover:text-red-700"
+									>
+										<IconTrash className="h-4 w-4" />
+									</Button>
+								</div>
+							</TableCell>
+						)}
 					</TableRow>
 				))}
 			</TableBody>

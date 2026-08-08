@@ -3,15 +3,6 @@ import { PAGE_SIZE } from "@/components/data-table/PaginationParams";
 import type { CartItem } from "@/lib/generated/prisma/client";
 import { CACHE_REVALIDATE_SECONDS, prisma } from "@/lib/prisma";
 
-const CART_ITEMS_HEADER: string[] = [
-	"CartItem ID",
-	"Unit Price",
-	"Quantity",
-	"Total Price",
-	"Cart ID",
-	"Product ID",
-] as const;
-
 const getCartItemCount = unstable_cache(
 	async () => prisma.cartItem.count(),
 	["cart-items-count"],
@@ -43,9 +34,4 @@ function getCartItemsPage(page: number) {
 
 type CartItemType = CartItem;
 
-export {
-	CART_ITEMS_HEADER,
-	type CartItemType,
-	getCartItemCount,
-	getCartItemsPage,
-};
+export { type CartItemType, getCartItemCount, getCartItemsPage };

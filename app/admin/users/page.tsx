@@ -1,13 +1,9 @@
-import {
-	DataTableLayout,
+import DataTableLayout, {
 	type PageProps,
 } from "@/components/data-table/DataTableLayout";
 import { getPaginationParams } from "@/components/data-table/PaginationParams";
-import {
-	getUserCount,
-	getUsersPage,
-	USERS_HEADER,
-} from "@/queries/UserQueries";
+import { getUserCount, getUsersPage } from "@/queries/UserQueries";
+import { USERS_HEADER } from "./loading";
 
 export default async function UsersPage({ searchParams }: PageProps) {
 	const params = await searchParams;

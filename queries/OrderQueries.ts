@@ -2,14 +2,6 @@ import { unstable_cache } from "next/cache";
 import { PAGE_SIZE } from "@/components/data-table/PaginationParams";
 import { CACHE_REVALIDATE_SECONDS, prisma } from "@/lib/prisma";
 
-const ORDERS_HEADER: string[] = [
-	"Order ID",
-	"Order Date",
-	"Total Amount",
-	"Order Status",
-	"User ID",
-] as const;
-
 const getOrderCount = unstable_cache(
 	async () => prisma.order.count(),
 	["orders-count"],
@@ -30,4 +22,4 @@ function getOrdersPage(page: number) {
 	)();
 }
 
-export { getOrderCount, getOrdersPage, ORDERS_HEADER };
+export { getOrderCount, getOrdersPage };

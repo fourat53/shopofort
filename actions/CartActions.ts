@@ -4,7 +4,7 @@ import { updateTag } from "next/cache";
 import { prisma } from "@/lib/prisma";
 
 function getFormCart(formData: FormData) {
-	const userId = Number(formData.get("userId"));
+	const userId = String(formData.get("userId"));
 	const totalAmount = Number(formData.get("totalAmount")) || 0;
 	return { userId, totalAmount };
 }

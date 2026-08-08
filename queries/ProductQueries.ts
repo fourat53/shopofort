@@ -2,17 +2,6 @@ import { unstable_cache } from "next/cache";
 import { IMAGE_PAGE_SIZE } from "@/components/data-table/PaginationParams";
 import { CACHE_REVALIDATE_SECONDS, prisma } from "@/lib/prisma";
 
-const PRODUCTS_HEADER: string[] = [
-	"Product ID",
-	"Name",
-	"Price ($)",
-	"Brand",
-	"Inventory",
-	"Description",
-	"Category ID",
-	"Images",
-] as const;
-
 const getProductCount = unstable_cache(
 	async () => prisma.product.count(),
 	["products-count"],
@@ -39,4 +28,4 @@ function getProductsPage(page: number) {
 	)();
 }
 
-export { getProductCount, getProductsPage, PRODUCTS_HEADER };
+export { getProductCount, getProductsPage };

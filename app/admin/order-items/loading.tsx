@@ -1,5 +1,12 @@
 import DataTableSkeleton from "@/components/data-table/DataTableSkeleton";
-import { ORDER_ITEMS_HEADER } from "@/queries/OrderItemQueries";
+
+export const ORDER_ITEMS_HEADER: string[] = [
+	"OrderItem ID",
+	"Price",
+	"Quantity",
+	"Order ID",
+	"Product ID",
+] as const;
 
 export default function loading() {
 	return <DataTableSkeleton header={ORDER_ITEMS_HEADER} />;

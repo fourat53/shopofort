@@ -11,7 +11,7 @@ import {
 import { getOrdersOptions, updateOrder } from "@/actions/OrderActions";
 import { updateOrderItem } from "@/actions/OrderItemActions";
 import { getProductsOptions, updateProduct } from "@/actions/ProductActions";
-import { getUsersOptions, updateUser } from "@/actions/UserActions";
+// import { getUsersOptions, updateUser } from "@/actions/UserActions";
 import { ImageUpload } from "@/components/form-items/image-upload";
 import { Input } from "@/components/form-items/input";
 import { Select, type SelectOption } from "@/components/form-items/select";
@@ -24,16 +24,19 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
-import { orderStatusItems, roleItems } from "@/lib/static-data";
+import { orderStatusItems } from "@/lib/static-data";
 import type { EntityRowType } from "../data-table/DataTableLayout";
 
-type EditButtonProps = { disabled?: boolean } & { entityRow: EntityRowType };
+interface EditButtonProps {
+	entityRow: EntityRowType;
+	disabled?: boolean;
+}
 
-export default function EditButton({ disabled, entityRow }: EditButtonProps) {
+export default function EditButton({ entityRow, disabled }: EditButtonProps) {
 	const [entity, row] = entityRow;
 
 	const [open, setOpen] = useState<boolean>(false);
-	const [userOptions, setUserOptions] = useState<SelectOption[]>([]);
+	// const [userOptions, setUserOptions] = useState<SelectOption[]>([]);
 	const [categoryOptions, setCategoryOptions] = useState<SelectOption[]>([]);
 	const [productOptions, setProductOptions] = useState<SelectOption[]>([]);
 	const [cartOptions, setCartOptions] = useState<SelectOption[]>([]);
@@ -44,8 +47,8 @@ export default function EditButton({ disabled, entityRow }: EditButtonProps) {
 	useEffect(() => {
 		if (!open) return;
 		if (entity === "products") getCategoriesOptions().then(setCategoryOptions);
-		if (entity === "orders" || entity === "carts")
-			getUsersOptions().then(setUserOptions);
+		// if (entity === "orders" || entity === "carts")
+		// 	getUsersOptions().then(setUserOptions);
 		if (entity === "cart-items") {
 			getCartsOptions().then(setCartOptions);
 			getProductsOptions().then(setProductOptions);
@@ -61,9 +64,10 @@ export default function EditButton({ disabled, entityRow }: EditButtonProps) {
 		try {
 			setLoading(true);
 			const formData = new FormData(e.currentTarget);
-			if (entity === "users") {
-				await updateUser(row.id, formData);
-			} else if (entity === "products") {
+			// if (entity === "users") {
+			// 	await updateUser(row.id, formData);
+			// } else
+			if (entity === "products") {
 				await updateProduct(row.id, formData);
 			} else if (entity === "orders") {
 				await updateOrder(row.id, formData);
@@ -112,14 +116,14 @@ export default function EditButton({ disabled, entityRow }: EditButtonProps) {
 								id="firstName"
 								name="firstName"
 								label="First Name"
-								defaultValue={row.firstName || ""}
+								defaultValue={row.first_name || ""}
 								required
 							/>
 							<Input
 								id="lastName"
 								name="lastName"
 								label="Last Name"
-								defaultValue={row.lastName || ""}
+								defaultValue={row.last_name || ""}
 								required
 							/>
 							<Input
@@ -130,13 +134,13 @@ export default function EditButton({ disabled, entityRow }: EditButtonProps) {
 								defaultValue={row.email || ""}
 								required
 							/>
-							<Select
+							{/* <Select
 								label="Role"
 								name="role"
 								defaultValue={row.role || "USER"}
 								placeholder="Select role"
 								items={roleItems}
-							/>
+							/> */}
 						</>
 					)}
 
@@ -220,25 +224,25 @@ export default function EditButton({ disabled, entityRow }: EditButtonProps) {
 								placeholder="Select status"
 								items={orderStatusItems}
 							/>
-							<Select
+							{/* <Select
 								label="User"
 								name="userId"
 								placeholder="Select User"
 								defaultValue={row.userId ? String(row.userId) : undefined}
 								items={userOptions}
-							/>
+							/> */}
 						</>
 					)}
 
 					{entity === "carts" && (
 						<>
-							<Select
+							{/* <Select
 								label="User"
 								name="userId"
 								placeholder="Select User"
 								defaultValue={row.userId ? String(row.userId) : undefined}
 								items={userOptions}
-							/>
+							/> */}
 							<Input
 								id="totalAmount"
 								name="totalAmount"

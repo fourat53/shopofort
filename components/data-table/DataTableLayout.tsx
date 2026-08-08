@@ -34,21 +34,18 @@ type EntityRowsType =
 	| ["cart-items", CartItem[]]
 	| ["order-items", OrderItem[]];
 
-interface DataTableLayoutBaseProps {
+interface DataTableLayoutProps {
 	totalPages: number;
 	header: string[];
+	entityRows: EntityRowsType;
 	hasImage?: HasImage;
 }
 
-type DataTableLayoutProps = DataTableLayoutBaseProps & {
-	entityRows: EntityRowsType;
-};
-
-async function DataTableLayout({
+export default function DataTableLayout({
 	totalPages,
 	header,
-	hasImage = "none",
 	entityRows,
+	hasImage = "none",
 }: DataTableLayoutProps) {
 	const entity = entityRows[0];
 	return (
@@ -62,4 +59,3 @@ async function DataTableLayout({
 }
 
 export type { EntityRowsType, EntityRowType, HasImage, PageProps };
-export { DataTableLayout };

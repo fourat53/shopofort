@@ -1,13 +1,12 @@
-import {
-	DataTableLayout,
+import DataTableLayout, {
 	type PageProps,
 } from "@/components/data-table/DataTableLayout";
 import { getPaginationParams } from "@/components/data-table/PaginationParams";
 import {
 	getOrderItemCount,
 	getOrderItemsPage,
-	ORDER_ITEMS_HEADER,
 } from "@/queries/OrderItemQueries";
+import { ORDER_ITEMS_HEADER } from "./loading";
 
 export default async function OrderItemsPage({ searchParams }: PageProps) {
 	const params = await searchParams;
