@@ -4,6 +4,7 @@ import {
 	Table,
 	TableBody,
 	TableCell,
+	TableHead,
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
@@ -26,23 +27,51 @@ export default function DataTableSkeleton({
 			<TableHeader>
 				<TableRow>
 					{header.map((item, index) => (
-						<TableCell key={index} border={index !== 0} headerCell>
+						<TableHead
+							key={index}
+							border={index !== 0}
+							className={
+								item === "Images"
+									? "w-66"
+									: item === "Picture"
+										? "w-18 max-w-18"
+										: ""
+							}
+						>
 							{item}
-						</TableCell>
+						</TableHead>
 					))}
-					<TableCell border headerCell className="w-20 text-center">
+					<TableHead border className="w-20 text-center">
 						Actions
-					</TableCell>
+					</TableHead>
 				</TableRow>
 			</TableHeader>
 			<TableBody>
 				{Array.from({ length: rowCount }, (_, rowIndex) => (
 					<TableRow key={rowIndex}>
 						{header.map((item, index) => (
-							<TableCell key={item} border={index !== 0}>
-								<Skeleton
-									className={`w-full ${hasImage !== "none" ? "h-14" : "h-4"}`}
-								/>
+							<TableCell
+								key={item}
+								border={index !== 0}
+								className={
+									item === "Images"
+										? "w-66"
+										: item === "Picture"
+											? "w-18 max-w-18"
+											: ""
+								}
+							>
+								{item === "Images" ? (
+									<div className="w-fit flex gap-2">
+										{Array.from({ length: 4 }).map((_, index) => (
+											<Skeleton key={index} className="size-14" />
+										))}
+									</div>
+								) : (
+									<Skeleton
+										className={`${item === "Picture" ? "size-14" : "w-full h-4"}`}
+									/>
+								)}
 							</TableCell>
 						))}
 						<TableCell border className="py-0.5 w-20 text-center">

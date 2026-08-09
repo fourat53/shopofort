@@ -77,7 +77,7 @@ export default function CreateButton() {
 		}
 	};
 
-	if (!entity || entity === "dashboard" || entity === "user") return null;
+	if (!entity || entity === "user") return null;
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>

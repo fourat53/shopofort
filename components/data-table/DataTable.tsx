@@ -5,6 +5,7 @@ import {
 	Table,
 	TableBody,
 	TableCell,
+	TableHead,
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
@@ -28,21 +29,20 @@ export default function DataTable({
 			<TableHeader>
 				<TableRow>
 					{header.map((item, index) => (
-						<TableCell
+						<TableHead
 							key={item}
 							border={index !== 0}
-							headerCell
 							className={clsx(
 								hasImage === "multiple" && "w-62 text-center",
 								hasImage === "one" && "min-w-18 text-center",
 							)}
 						>
 							{item}
-						</TableCell>
+						</TableHead>
 					))}
-					<TableCell border headerCell className="w-20 text-center">
+					<TableHead border className="w-20 text-center">
 						Actions
-					</TableCell>
+					</TableHead>
 				</TableRow>
 			</TableHeader>
 			<TableBody>

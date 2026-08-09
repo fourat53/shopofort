@@ -54,4 +54,14 @@ async function deleteEntity(entity: string, id: number | string) {
 	}
 }
 
-export { deleteEntity, getEntityById };
+async function filterEntity(entity: string) {
+	try {
+		if (entity === "user") {
+		} else {
+		}
+	} catch (error) {
+		console.error(error);
+	}
+}
+
+export { deleteEntity, filterEntity, getEntityById };

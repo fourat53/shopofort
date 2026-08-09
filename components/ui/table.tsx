@@ -77,7 +77,8 @@ function TableHead({
 		<th
 			data-slot="table-head"
 			className={cn(
-				"h-4 px-2 font-semibold whitespace-nowrap text-foreground has-[[role=checkbox]]:pr-0",
+				"h-4 py-1.5 px-2.5 font-semibold whitespace-nowrap text-foreground has-[[role=checkbox]]:pr-0",
+				"hover:cursor-pointer hover:bg-mist-400/30 dark:hover:bg-mist-900/30",
 				border && "border-l border-mist-400/70 dark:border-mist-700",
 				className,
 			)}
@@ -89,17 +90,14 @@ function TableHead({
 function TableCell({
 	className,
 	border = false,
-	headerCell = false,
 	...props
-}: React.ComponentProps<"td"> & { border?: boolean; headerCell?: boolean }) {
+}: React.ComponentProps<"td"> & { border?: boolean }) {
 	return (
 		<td
 			data-slot="table-cell"
 			className={cn(
 				"p-2 align-middle whitespace-nowrap has-[[role=checkbox]]:pr-0",
 				border && "border-l border-mist-400/70 dark:border-mist-700",
-				headerCell &&
-					"hover:cursor-pointer font-medium hover:bg-mist-400/30 dark:hover:bg-mist-900/30",
 				className,
 			)}
 			{...props}

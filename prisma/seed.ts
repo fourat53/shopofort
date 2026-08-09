@@ -21,6 +21,11 @@ const randomInt = (min: number, max: number) => {
 	return Math.floor(Math.random() * (max - min + 1) + min);
 };
 
+const randomImages = (productImages: string[], max = 6) => {
+	const count = randomInt(0, Math.min(max, productImages.length));
+	return [...productImages].sort(() => Math.random() - 0.5).slice(0, count);
+};
+
 const categoryNames = ["T-Shirts", "Jeans", "Hoodies", "Dresses", "Jackets"];
 const genders: ("MALE" | "FEMALE")[] = ["MALE", "FEMALE"];
 const productNames: string[] = [
@@ -78,7 +83,7 @@ async function main(minId: number, maxId: number) {
 			inventory: Math.floor(Math.random() * 100),
 			description: `High quality ${productNames[i % productNames.length].toLowerCase()} for everyday wear.`,
 			categoryId: dbCategories[i % dbCategories.length].id,
-			images: productImages,
+			images: randomImages(productImages),
 		});
 	}
 	await prisma.product.createMany({
@@ -179,7 +184,7 @@ async function clearDatabase() {
 
 (async () => {
 	try {
-		// await clearDatabase();
+		await clearDatabase();
 		await main(1, 99);
 	} catch (e) {
 		console.error(e);

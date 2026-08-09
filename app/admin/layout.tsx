@@ -1,4 +1,5 @@
 import CreateButton from "@/components/buttons/create-button";
+import FilterButton from "@/components/buttons/filter-button";
 import AdminSidebar from "@/components/sidebar/AdminSidebar";
 import DocumentTitle from "@/components/title/DocumentTitle";
 import {
@@ -23,7 +24,10 @@ export default function AdminLayout({
 								<SidebarTrigger size="lg" className="size-7.5 rounded-xl" />
 								<DocumentTitle />
 							</div>
-							<CreateButton />
+							<div className="flex gap-1.5">
+								<CreateButton />
+								<FilterButton />
+							</div>
 						</div>
 						<div className="border-b border-mist-400/70 dark:border-mist-700" />
 						<div className="relative h-full p-3.5 pb-0">{children}</div>
