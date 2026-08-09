@@ -21,15 +21,6 @@ const randomInt = (min: number, max: number) => {
 	return Math.floor(Math.random() * (max - min + 1) + min);
 };
 
-async function clearDatabase() {
-	await prisma.orderItem.deleteMany();
-	await prisma.cartItem.deleteMany();
-	await prisma.order.deleteMany();
-	await prisma.cart.deleteMany();
-	await prisma.product.deleteMany();
-	await prisma.category.deleteMany();
-}
-
 const categoryNames = ["T-Shirts", "Jeans", "Hoodies", "Dresses", "Jackets"];
 const genders: ("MALE" | "FEMALE")[] = ["MALE", "FEMALE"];
 const productNames: string[] = [
@@ -62,7 +53,6 @@ const statuses: OrderStatus[] = [
 ];
 
 async function main(minId: number, maxId: number) {
-	await clearDatabase();
 	console.log("🌱 Starting seed...");
 
 	console.log("📂 Seeding Categories...");
@@ -177,8 +167,19 @@ async function main(minId: number, maxId: number) {
 	console.log("✅ Seed finished successfully!");
 }
 
+async function clearDatabase() {
+	await prisma.orderItem.deleteMany();
+	await prisma.cartItem.deleteMany();
+	await prisma.order.deleteMany();
+	await prisma.cart.deleteMany();
+	await prisma.product.deleteMany();
+	await prisma.category.deleteMany();
+	console.log("🗑️ Database cleared.");
+}
+
 (async () => {
 	try {
+		// await clearDatabase();
 		await main(1, 99);
 	} catch (e) {
 		console.error(e);
@@ -187,3 +188,5 @@ async function main(minId: number, maxId: number) {
 		await prisma.$disconnect();
 	}
 })();
+
+export { clearDatabase, main };

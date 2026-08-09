@@ -55,7 +55,7 @@ export default function DataTableLayout({
 				<DataTablePagination
 					basePath={`/${entity}`}
 					totalPages={totalPages}
-					className="absolute py-2 bottom-13.5"
+					className="absolute bottom-15"
 				/>
 			)}
 		</>

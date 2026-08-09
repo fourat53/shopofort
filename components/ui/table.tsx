@@ -7,7 +7,7 @@ function Table({ className, ...props }: React.ComponentProps<"table">) {
 	return (
 		<div
 			data-slot="table-container"
-			className="w-full max-h-[calc(100vh-160px)] overflow-scroll overscroll-none rounded-lg border border-mist-400/70 dark:border-mist-700"
+			className="w-full max-h-[calc(100vh-152px)] overflow-auto overscroll-none rounded-lg border border-mist-400/70 dark:border-mist-700"
 		>
 			<table
 				data-slot="table"

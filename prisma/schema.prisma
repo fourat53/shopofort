@@ -25,8 +25,7 @@ enum OrderStatus {
 model Cart {
   id          Int     @id @default(autoincrement())
   totalAmount Int
-
-  userId String  @unique
+  userId      String  @unique
 
   items CartItem[]
 
@@ -81,8 +80,7 @@ model Order {
   orderDate   DateTime    @db.Date
   totalAmount Int
   orderStatus OrderStatus
-
-  userId String
+  userId      String
 
   orderItems OrderItem[]
 

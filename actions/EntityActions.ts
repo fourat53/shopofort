@@ -34,6 +34,12 @@ async function deleteEntity(entity: string, id: number | string) {
 	try {
 		if (entity === "user" && typeof id === "string") {
 			await deleteUser(id);
+
+			await prisma.cart.delete({ where: { userId: id } });
+			updateTag("carts");
+
+			await prisma.order.deleteMany({ where: { userId: id } });
+			updateTag("orders");
 		} else if (typeof id === "number") {
 			// @ts-expect-error - prisma dynamic model access
 			await prisma[entity].delete({ where: { id } });

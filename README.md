@@ -45,14 +45,13 @@ dark:bg-[linear-gradient(-135deg,var(--sidebar)_1%,var(--sidebar-accent)_100%)]
 
 
 - TO DO :
-  1. delete user carts and orders on user delete.
   <!-- products and users page -->
-  2. fix upload images in product and user table create and edit.
+  1. fix upload images in product and user table create and edit.
   <!-- dashboard page -->
-  3. make a dashboard design with shadcn UI and display statistics by using the most relevent data from the database.
+  2. make a dashboard design with shadcn UI and display statistics by using the most relevent data from the database.
   <!-- table filtering and sorting -->
-  2. add the ability to filter from server all table columns in DataTableLayout by adding inputs for non enum columns and select for enum columns above the table header.
-  3. add the ability to sort from server any table columns in DataTable by adding arrows to the table header.
+  3. add the ability to filter from server all table columns in DataTableLayout by adding inputs for non enum columns and select for enum columns above the table header.
+  4. add the ability to sort from server any table columns in DataTable by adding arrows to the table header.
   - Note: the sorting and filtering should should work together (update the get function for each table) and should update the pagination from server (new total pages and reset current page to 1).
 
 

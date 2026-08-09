@@ -45,7 +45,7 @@ export default function DataTableSkeleton({
 								/>
 							</TableCell>
 						))}
-						<TableCell border className="p-0.5 w-20 text-center">
+						<TableCell border className="py-0.5 w-20 text-center">
 							<div className="flex items-center justify-center gap-1.5">
 								<Button
 									variant="ghost"

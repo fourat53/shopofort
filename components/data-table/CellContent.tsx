@@ -33,15 +33,15 @@ export default function CellContent({
 					className={clsx(
 						"w-fit text-center bg-accent rounded-full flex items-center px-2",
 						value === "PENDING" &&
-							"bg-yellow-200 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400",
+							"bg-yellow-200/40 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400",
 						value === "PROCESSING" &&
-							"bg-blue-200 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
+							"bg-blue-200/60 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
 						value === "SHIPPED" &&
-							"bg-purple-200 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400",
+							"bg-purple-200/60 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400",
 						value === "DELIVERED" &&
-							"bg-green-200 text-green-700 dark:bg-green-900/30 dark:text-green-400",
+							"bg-green-200/60 text-green-700 dark:bg-green-900/30 dark:text-green-400",
 						value === "CANCELLED" &&
-							"bg-red-200 text-red-700 dark:bg-red-900/30 dark:text-red-400",
+							"bg-red-200/60 text-red-700 dark:bg-red-900/30 dark:text-red-400",
 					)}
 				>
 					{String(value)}
