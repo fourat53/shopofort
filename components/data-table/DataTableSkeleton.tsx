@@ -31,11 +31,13 @@ export default function DataTableSkeleton({
 							key={index}
 							border={index !== 0}
 							className={
-								item === "Images"
-									? "w-66"
-									: item === "Picture"
-										? "w-18 max-w-18"
-										: ""
+								item === "User ID"
+									? "w-63.75"
+									: item === "Images"
+										? "w-66"
+										: item === "Picture"
+											? "w-18 max-w-18"
+											: ""
 							}
 						>
 							{item}

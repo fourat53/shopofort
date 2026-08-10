@@ -32,11 +32,13 @@ export default function DataTable({
 							key={item}
 							border={index !== 0}
 							className={
-								hasImage === "multiple"
-									? "w-62 text-center"
-									: hasImage === "one"
-										? "min-w-18 text-center"
-										: ""
+								item === "User ID"
+									? "w-63.75"
+									: hasImage === "multiple"
+										? "w-62 text-center"
+										: hasImage === "one"
+											? "min-w-18 text-center"
+											: ""
 							}
 						>
 							{item}

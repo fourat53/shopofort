@@ -1,6 +1,7 @@
 "use client";
 
 import { IconArrowBackUp, IconFilter } from "@tabler/icons-react";
+import clsx from "clsx";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { getFilterOptions } from "@/actions/FilterActions";
@@ -98,8 +99,11 @@ export default function FilterButton({ disabled }: { disabled?: boolean }) {
 	const [isPending, startTransition] = useTransition();
 
 	const currentFields = entity ? entityFilters[entity] || [] : [];
-
 	const fetchedFields = useRef<Set<string>>(new Set());
+	const hasFilters = currentFields.some((field) => {
+		const value = searchParams.get(field.name);
+		return value !== null && value !== "";
+	});
 
 	useEffect(() => {
 		if (open && entity) {
@@ -121,11 +125,6 @@ export default function FilterButton({ disabled }: { disabled?: boolean }) {
 			}
 		}
 	}, [open, entity, currentFields]);
-
-	const hasFilters = currentFields.some((field) => {
-		const value = searchParams.get(field.name);
-		return value !== null && value !== "";
-	});
 
 	const handleClear = () => {
 		const newParams = new URLSearchParams(searchParams.toString());
@@ -171,12 +170,22 @@ export default function FilterButton({ disabled }: { disabled?: boolean }) {
 	if (!entity) return null;
 
 	return (
-		<div className="flex gap-1.5">
+		<div
+			className={clsx(
+				"flex gap-1.5",
+				entity !== "user" &&
+					"pr-1.5 border-r border-mist-400/70 dark:border-mist-700",
+			)}
+		>
 			{hasFilters && (
-				<Button onClick={handleClear} disabled={loading || isPending}>
+				<Button
+					variant="outline"
+					onClick={handleClear}
+					disabled={loading || isPending}
+				>
 					<IconArrowBackUp className="h-4 w-4" />
 				</Button>
-			)}{" "}
+			)}
 			<Dialog open={open} onOpenChange={setOpen}>
 				<DialogTrigger asChild>
 					<Button disabled={disabled || loading || isPending || !entity}>
@@ -193,7 +202,6 @@ export default function FilterButton({ disabled }: { disabled?: boolean }) {
 								<div key={field.name} className="flex flex-col gap-2">
 									{field.type === "string" && (
 										<Input
-											id={field.name}
 											label={field.label}
 											name={field.name}
 											type="text"
@@ -202,17 +210,15 @@ export default function FilterButton({ disabled }: { disabled?: boolean }) {
 									)}
 									{field.type === "number" && (
 										<Input
-											id={field.name}
 											label={field.label}
 											name={field.name}
 											type="number"
-											step="any"
+											step="1"
 											defaultValue={searchParams.get(field.name) || ""}
 										/>
 									)}
 									{field.type === "date" && (
 										<Input
-											id={field.name}
 											label={field.label}
 											name={field.name}
 											type="date"
