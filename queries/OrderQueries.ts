@@ -5,12 +5,16 @@ import { prisma } from "@/lib/prisma";
 
 const FILTERED_CACHE_SECONDS = 10;
 
-function buildWhereClause(searchParams: Record<string, string | string[] | undefined>): Prisma.OrderWhereInput {
+function buildWhereClause(
+	searchParams: Record<string, string | string[] | undefined>,
+): Prisma.OrderWhereInput {
 	const where: Prisma.OrderWhereInput = {};
 	if (searchParams.id) where.id = Number(searchParams.id);
-	if (searchParams.totalAmount) where.totalAmount = Number(searchParams.totalAmount);
+	if (searchParams.totalAmount)
+		where.totalAmount = Number(searchParams.totalAmount);
 	if (searchParams.userId) where.userId = String(searchParams.userId);
-	if (searchParams.orderStatus) where.orderStatus = searchParams.orderStatus as OrderStatus;
+	if (searchParams.orderStatus)
+		where.orderStatus = searchParams.orderStatus as OrderStatus;
 	if (searchParams.orderDate) {
 		const date = new Date(String(searchParams.orderDate));
 		if (!Number.isNaN(date.getTime())) {
@@ -20,16 +24,26 @@ function buildWhereClause(searchParams: Record<string, string | string[] | undef
 	return where;
 }
 
-function getOrderCount(searchParams: Record<string, string | string[] | undefined> = {}) {
+function getOrderCount(
+	searchParams: Record<string, string | string[] | undefined> = {},
+) {
 	const where = buildWhereClause(searchParams);
 	return unstable_cache(
 		async () => prisma.order.count({ where }),
 		["orders-count", JSON.stringify(searchParams)],
-		{ revalidate: Object.keys(searchParams).length ? FILTERED_CACHE_SECONDS : 3600, tags: ["orders"] },
+		{
+			revalidate: Object.keys(searchParams).length
+				? FILTERED_CACHE_SECONDS
+				: 3600,
+			tags: ["orders"],
+		},
 	)();
 }
 
-function getOrdersPage(page: number, searchParams: Record<string, string | string[] | undefined> = {}) {
+function getOrdersPage(
+	page: number,
+	searchParams: Record<string, string | string[] | undefined> = {},
+) {
 	const where = buildWhereClause(searchParams);
 	return unstable_cache(
 		async () => {
@@ -41,7 +55,12 @@ function getOrdersPage(page: number, searchParams: Record<string, string | strin
 			});
 		},
 		["orders-page", String(page), JSON.stringify(searchParams)],
-		{ revalidate: Object.keys(searchParams).length ? FILTERED_CACHE_SECONDS : 3600, tags: ["orders"] },
+		{
+			revalidate: Object.keys(searchParams).length
+				? FILTERED_CACHE_SECONDS
+				: 3600,
+			tags: ["orders"],
+		},
 	)();
 }
 

@@ -5,7 +5,9 @@ import { prisma } from "@/lib/prisma";
 
 const FILTERED_CACHE_SECONDS = 10;
 
-function buildWhereClause(searchParams: Record<string, string | string[] | undefined>): Prisma.ProductWhereInput {
+function buildWhereClause(
+	searchParams: Record<string, string | string[] | undefined>,
+): Prisma.ProductWhereInput {
 	const where: Prisma.ProductWhereInput = {};
 	if (searchParams.id) where.id = Number(searchParams.id);
 	if (searchParams.name)
@@ -14,20 +16,31 @@ function buildWhereClause(searchParams: Record<string, string | string[] | undef
 		where.brand = { contains: String(searchParams.brand), mode: "insensitive" };
 	if (searchParams.price) where.price = Number(searchParams.price);
 	if (searchParams.inventory) where.inventory = Number(searchParams.inventory);
-	if (searchParams.categoryId) where.categoryId = Number(searchParams.categoryId);
+	if (searchParams.categoryId)
+		where.categoryId = Number(searchParams.categoryId);
 	return where;
 }
 
-function getProductCount(searchParams: Record<string, string | string[] | undefined> = {}) {
+function getProductCount(
+	searchParams: Record<string, string | string[] | undefined> = {},
+) {
 	const where = buildWhereClause(searchParams);
 	return unstable_cache(
 		async () => prisma.product.count({ where }),
 		["products-count", JSON.stringify(searchParams)],
-		{ revalidate: Object.keys(searchParams).length ? FILTERED_CACHE_SECONDS : 3600, tags: ["products"] },
+		{
+			revalidate: Object.keys(searchParams).length
+				? FILTERED_CACHE_SECONDS
+				: 3600,
+			tags: ["products"],
+		},
 	)();
 }
 
-function getProductsPage(page: number, searchParams: Record<string, string | string[] | undefined> = {}) {
+function getProductsPage(
+	page: number,
+	searchParams: Record<string, string | string[] | undefined> = {},
+) {
 	const where = buildWhereClause(searchParams);
 	return unstable_cache(
 		async () => {
@@ -45,7 +58,12 @@ function getProductsPage(page: number, searchParams: Record<string, string | str
 			}));
 		},
 		["products-page", String(page), JSON.stringify(searchParams)],
-		{ revalidate: Object.keys(searchParams).length ? FILTERED_CACHE_SECONDS : 3600, tags: ["products"] },
+		{
+			revalidate: Object.keys(searchParams).length
+				? FILTERED_CACHE_SECONDS
+				: 3600,
+			tags: ["products"],
+		},
 	)();
 }
 

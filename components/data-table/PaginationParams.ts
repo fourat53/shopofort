@@ -51,7 +51,7 @@ function pageHref(
 ) {
 	const path = `/admin${basePath}`;
 	const newParams = new URLSearchParams(searchParams?.toString());
-	
+
 	if (page === 1) {
 		newParams.delete("page");
 	} else {

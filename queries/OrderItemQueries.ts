@@ -5,7 +5,9 @@ import { prisma } from "@/lib/prisma";
 
 const FILTERED_CACHE_SECONDS = 10;
 
-function buildWhereClause(searchParams: Record<string, string | string[] | undefined>): Prisma.OrderItemWhereInput {
+function buildWhereClause(
+	searchParams: Record<string, string | string[] | undefined>,
+): Prisma.OrderItemWhereInput {
 	const where: Prisma.OrderItemWhereInput = {};
 	if (searchParams.id) where.id = Number(searchParams.id);
 	if (searchParams.quantity) where.quantity = Number(searchParams.quantity);
@@ -15,16 +17,26 @@ function buildWhereClause(searchParams: Record<string, string | string[] | undef
 	return where;
 }
 
-function getOrderItemCount(searchParams: Record<string, string | string[] | undefined> = {}) {
+function getOrderItemCount(
+	searchParams: Record<string, string | string[] | undefined> = {},
+) {
 	const where = buildWhereClause(searchParams);
 	return unstable_cache(
 		async () => prisma.orderItem.count({ where }),
 		["order-items-count", JSON.stringify(searchParams)],
-		{ revalidate: Object.keys(searchParams).length ? FILTERED_CACHE_SECONDS : 3600, tags: ["order-items"] },
+		{
+			revalidate: Object.keys(searchParams).length
+				? FILTERED_CACHE_SECONDS
+				: 3600,
+			tags: ["order-items"],
+		},
 	)();
 }
 
-function getOrderItemsPage(page: number, searchParams: Record<string, string | string[] | undefined> = {}) {
+function getOrderItemsPage(
+	page: number,
+	searchParams: Record<string, string | string[] | undefined> = {},
+) {
 	const where = buildWhereClause(searchParams);
 	return unstable_cache(
 		async () => {
@@ -41,7 +53,12 @@ function getOrderItemsPage(page: number, searchParams: Record<string, string | s
 			}));
 		},
 		["order-items-page", String(page), JSON.stringify(searchParams)],
-		{ revalidate: Object.keys(searchParams).length ? FILTERED_CACHE_SECONDS : 3600, tags: ["order-items"] },
+		{
+			revalidate: Object.keys(searchParams).length
+				? FILTERED_CACHE_SECONDS
+				: 3600,
+			tags: ["order-items"],
+		},
 	)();
 }
 

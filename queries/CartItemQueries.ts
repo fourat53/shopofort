@@ -5,27 +5,40 @@ import { prisma } from "@/lib/prisma";
 
 const FILTERED_CACHE_SECONDS = 10;
 
-function buildWhereClause(searchParams: Record<string, string | string[] | undefined>): Prisma.CartItemWhereInput {
+function buildWhereClause(
+	searchParams: Record<string, string | string[] | undefined>,
+): Prisma.CartItemWhereInput {
 	const where: Prisma.CartItemWhereInput = {};
 	if (searchParams.id) where.id = Number(searchParams.id);
 	if (searchParams.quantity) where.quantity = Number(searchParams.quantity);
 	if (searchParams.unitPrice) where.unitPrice = Number(searchParams.unitPrice);
-	if (searchParams.totalPrice) where.totalPrice = Number(searchParams.totalPrice);
+	if (searchParams.totalPrice)
+		where.totalPrice = Number(searchParams.totalPrice);
 	if (searchParams.cartId) where.cartId = Number(searchParams.cartId);
 	if (searchParams.productId) where.productId = Number(searchParams.productId);
 	return where;
 }
 
-function getCartItemCount(searchParams: Record<string, string | string[] | undefined> = {}) {
+function getCartItemCount(
+	searchParams: Record<string, string | string[] | undefined> = {},
+) {
 	const where = buildWhereClause(searchParams);
 	return unstable_cache(
 		async () => prisma.cartItem.count({ where }),
 		["cart-items-count", JSON.stringify(searchParams)],
-		{ revalidate: Object.keys(searchParams).length ? FILTERED_CACHE_SECONDS : 3600, tags: ["cart-items"] },
+		{
+			revalidate: Object.keys(searchParams).length
+				? FILTERED_CACHE_SECONDS
+				: 3600,
+			tags: ["cart-items"],
+		},
 	)();
 }
 
-function getCartItemsPage(page: number, searchParams: Record<string, string | string[] | undefined> = {}) {
+function getCartItemsPage(
+	page: number,
+	searchParams: Record<string, string | string[] | undefined> = {},
+) {
 	const where = buildWhereClause(searchParams);
 	return unstable_cache(
 		async () => {
@@ -46,7 +59,12 @@ function getCartItemsPage(page: number, searchParams: Record<string, string | st
 			);
 		},
 		["cart-items-page", String(page), JSON.stringify(searchParams)],
-		{ revalidate: Object.keys(searchParams).length ? FILTERED_CACHE_SECONDS : 3600, tags: ["cart-items"] },
+		{
+			revalidate: Object.keys(searchParams).length
+				? FILTERED_CACHE_SECONDS
+				: 3600,
+			tags: ["cart-items"],
+		},
 	)();
 }
 

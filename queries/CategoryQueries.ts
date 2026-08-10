@@ -5,25 +5,38 @@ import { prisma } from "@/lib/prisma";
 
 const FILTERED_CACHE_SECONDS = 10;
 
-function buildWhereClause(searchParams: Record<string, string | string[] | undefined>): Prisma.CategoryWhereInput {
+function buildWhereClause(
+	searchParams: Record<string, string | string[] | undefined>,
+): Prisma.CategoryWhereInput {
 	const where: Prisma.CategoryWhereInput = {};
-	if (searchParams.id && !Number.isNaN(Number(searchParams.id))) where.id = Number(searchParams.id);
+	if (searchParams.id && !Number.isNaN(Number(searchParams.id)))
+		where.id = Number(searchParams.id);
 	if (searchParams.name)
 		where.name = { contains: String(searchParams.name), mode: "insensitive" };
 	if (searchParams.gender) where.gender = String(searchParams.gender) as Gender;
 	return where;
 }
 
-function getCategoryCount(searchParams: Record<string, string | string[] | undefined> = {}) {
+function getCategoryCount(
+	searchParams: Record<string, string | string[] | undefined> = {},
+) {
 	const where = buildWhereClause(searchParams);
 	return unstable_cache(
 		async () => prisma.category.count({ where }),
 		["categories-count", JSON.stringify(searchParams)],
-		{ revalidate: Object.keys(searchParams).length ? FILTERED_CACHE_SECONDS : 3600, tags: ["categories"] },
+		{
+			revalidate: Object.keys(searchParams).length
+				? FILTERED_CACHE_SECONDS
+				: 3600,
+			tags: ["categories"],
+		},
 	)();
 }
 
-function getCategoriesPage(page: number, searchParams: Record<string, string | string[] | undefined> = {}) {
+function getCategoriesPage(
+	page: number,
+	searchParams: Record<string, string | string[] | undefined> = {},
+) {
 	const where = buildWhereClause(searchParams);
 	return unstable_cache(
 		async () =>
@@ -34,7 +47,12 @@ function getCategoriesPage(page: number, searchParams: Record<string, string | s
 				orderBy: { id: "asc" },
 			}),
 		["categories-page", String(page), JSON.stringify(searchParams)],
-		{ revalidate: Object.keys(searchParams).length ? FILTERED_CACHE_SECONDS : 3600, tags: ["categories"] },
+		{
+			revalidate: Object.keys(searchParams).length
+				? FILTERED_CACHE_SECONDS
+				: 3600,
+			tags: ["categories"],
+		},
 	)();
 }
 
