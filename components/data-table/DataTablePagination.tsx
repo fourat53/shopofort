@@ -78,10 +78,10 @@ export default function DataTablePagination({
 
 		for (const page of pagesToPrefetch) {
 			if (page >= 1 && page <= totalPages) {
-				router.prefetch(pageHref(basePath, page));
+				router.prefetch(pageHref(basePath, page, searchParams));
 			}
 		}
-	}, [basePath, currentPage, router, totalPages]);
+	}, [basePath, currentPage, router, totalPages, searchParams]);
 
 	function navigate(page: number) {
 		if (page < 1 || page > totalPages || page === currentPage) {
@@ -90,7 +90,7 @@ export default function DataTablePagination({
 
 		setPendingPage(page);
 		startTransition(() => {
-			router.push(pageHref(basePath, page), { scroll: false });
+			router.push(pageHref(basePath, page, searchParams), { scroll: false });
 		});
 	}
 
@@ -102,7 +102,7 @@ export default function DataTablePagination({
 			<PaginationContent className="w-80 sm:w-90 justify-between">
 				<PaginationItem>
 					<PaginationPrevious
-						href={pageHref(basePath, currentPage - 1)}
+						href={pageHref(basePath, currentPage - 1, searchParams)}
 						aria-disabled={currentPage <= 1 || isPending}
 						className={cn(
 							(currentPage <= 1 || isPending) &&
@@ -133,7 +133,7 @@ export default function DataTablePagination({
 
 				<PaginationItem>
 					<PaginationNext
-						href={pageHref(basePath, currentPage + 1)}
+						href={pageHref(basePath, currentPage + 1, searchParams)}
 						aria-disabled={currentPage >= totalPages || isPending}
 						className={cn(
 							(currentPage >= totalPages || isPending) &&

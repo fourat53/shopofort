@@ -8,10 +8,11 @@ import { CARTS_HEADER } from "./loading";
 export default async function CartsPage({ searchParams }: PageProps) {
 	const params = await searchParams;
 
-	const totalCount = await getCartCount();
+	const { page: _pageParam, ...filterParams } = params;
+	const totalCount = await getCartCount(filterParams);
 	const { page, totalPages } = getPaginationParams(params, totalCount);
 
-	const carts = await getCartsPage(page);
+	const carts = await getCartsPage(page, filterParams);
 
 	return (
 		<DataTableLayout

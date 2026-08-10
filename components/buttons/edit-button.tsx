@@ -12,10 +12,6 @@ import { getOrdersOptions, updateOrder } from "@/actions/OrderActions";
 import { updateOrderItem } from "@/actions/OrderItemActions";
 import { getProductsOptions, updateProduct } from "@/actions/ProductActions";
 import { getUsersOptions, updateUser } from "@/actions/UserActions";
-// import {
-// 	type ImageType,
-// 	ImageUpload,
-// } from "@/components/form-items/image-upload";
 import { Input } from "@/components/form-items/input";
 import { Select, type SelectOption } from "@/components/form-items/select";
 import { Button } from "@/components/ui/button";
@@ -49,9 +45,7 @@ export default function EditButton({ entityRow, disabled }: EditButtonProps) {
 	useEffect(() => {
 		if (!open) return;
 		if (entity === "users") {
-			// set picture
 		} else if (entity === "products") {
-			// set images
 			getCategoriesOptions().then(setCategoryOptions);
 		} else if (entity === "orders" || entity === "carts")
 			getUsersOptions().then(setUserOptions);

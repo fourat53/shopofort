@@ -11,10 +11,11 @@ import { ORDER_ITEMS_HEADER } from "./loading";
 export default async function OrderItemsPage({ searchParams }: PageProps) {
 	const params = await searchParams;
 
-	const totalCount = await getOrderItemCount();
+	const { page: _pageParam, ...filterParams } = params;
+	const totalCount = await getOrderItemCount(filterParams);
 	const { page, totalPages } = getPaginationParams(params, totalCount);
 
-	const orderItems = await getOrderItemsPage(page);
+	const orderItems = await getOrderItemsPage(page, filterParams);
 	return (
 		<DataTableLayout
 			header={ORDER_ITEMS_HEADER}

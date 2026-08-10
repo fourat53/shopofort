@@ -8,10 +8,11 @@ import { CATEGORIES_HEADER } from "./loading";
 export default async function CategoriesPage({ searchParams }: PageProps) {
 	const params = await searchParams;
 
-	const totalCount = await getCategoryCount();
+	const { page: _pageParam, ...filterParams } = params;
+	const totalCount = await getCategoryCount(filterParams);
 	const { page, totalPages } = getPaginationParams(params, totalCount);
 
-	const categories = await getCategoriesPage(page);
+	const categories = await getCategoriesPage(page, filterParams);
 
 	return (
 		<DataTableLayout

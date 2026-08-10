@@ -2,7 +2,7 @@ const PAGE_SIZE = 25;
 const IMAGE_PAGE_SIZE = 12;
 
 type SearchParams = {
-	page?: string;
+	[key: string]: string | string[] | undefined;
 };
 
 function parsePage(
@@ -26,7 +26,10 @@ function getPaginationParams(
 ) {
 	const pageSize = hasImage ? IMAGE_PAGE_SIZE : PAGE_SIZE;
 
-	const parsedPage = Number.parseInt(searchParams.page ?? "1", 10);
+	const pageParam = Array.isArray(searchParams.page)
+		? searchParams.page[0]
+		: searchParams.page;
+	const parsedPage = Number.parseInt(pageParam ?? "1", 10);
 	const requestedPage = Number.isNaN(parsedPage) ? 1 : parsedPage;
 	const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
 	const page = Math.min(Math.max(1, requestedPage), totalPages);
@@ -41,9 +44,22 @@ function getPaginationParams(
 	};
 }
 
-function pageHref(basePath: string, page: number) {
+function pageHref(
+	basePath: string,
+	page: number,
+	searchParams?: URLSearchParams,
+) {
 	const path = `/admin${basePath}`;
-	return page === 1 ? path : `${path}?page=${page}`;
+	const newParams = new URLSearchParams(searchParams?.toString());
+	
+	if (page === 1) {
+		newParams.delete("page");
+	} else {
+		newParams.set("page", page.toString());
+	}
+
+	const qs = newParams.toString();
+	return qs ? `${path}?${qs}` : path;
 }
 
 type VisiblePageItem =

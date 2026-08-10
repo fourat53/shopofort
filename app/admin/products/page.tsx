@@ -8,10 +8,11 @@ import { PRODUCTS_HEADER } from "./loading";
 export default async function ProductsPage({ searchParams }: PageProps) {
 	const params = await searchParams;
 
-	const totalCount = await getProductCount();
+	const { page: _pageParam, ...filterParams } = params;
+	const totalCount = await getProductCount(filterParams);
 	const { page, totalPages } = getPaginationParams(params, totalCount, true);
 
-	const products = await getProductsPage(page);
+	const products = await getProductsPage(page, filterParams);
 	return (
 		<DataTableLayout
 			header={PRODUCTS_HEADER}
