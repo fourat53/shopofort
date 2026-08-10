@@ -55,10 +55,10 @@ export default function DataTableSkeleton({
 								border={index !== 0}
 								className={
 									item === "Images"
-										? "w-66"
+										? "h-18.25 w-66"
 										: item === "Picture"
-											? "w-18 max-w-18"
-											: ""
+											? "h-18.25 w-18 max-w-18"
+											: "h-8.25"
 								}
 							>
 								{item === "Images" ? (

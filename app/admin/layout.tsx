@@ -25,8 +25,8 @@ export default function AdminLayout({
 								<DocumentTitle />
 							</div>
 							<div className="flex gap-1.5">
-								<CreateButton />
 								<FilterButton />
+								<CreateButton />
 							</div>
 						</div>
 						<div className="border-b border-mist-400/70 dark:border-mist-700" />

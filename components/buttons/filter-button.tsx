@@ -1,6 +1,6 @@
 "use client";
 
-import { IconFilter } from "@tabler/icons-react";
+import { IconArrowBackUp, IconFilter } from "@tabler/icons-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { getFilterOptions } from "@/actions/FilterActions";
@@ -122,6 +122,24 @@ export default function FilterButton({ disabled }: { disabled?: boolean }) {
 		}
 	}, [open, entity, currentFields]);
 
+	const hasFilters = currentFields.some((field) => {
+		const value = searchParams.get(field.name);
+		return value !== null && value !== "";
+	});
+
+	const handleClear = () => {
+		const newParams = new URLSearchParams(searchParams.toString());
+		newParams.delete("page");
+		for (const field of currentFields) {
+			newParams.delete(field.name);
+		}
+		const qs = newParams.toString();
+		const newUrl = qs ? `${pathname}?${qs}` : pathname;
+		startTransition(() => {
+			router.push(newUrl);
+		});
+	};
+
 	const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		setLoading(true);
@@ -153,97 +171,104 @@ export default function FilterButton({ disabled }: { disabled?: boolean }) {
 	if (!entity) return null;
 
 	return (
-		<Dialog open={open} onOpenChange={setOpen}>
-			<DialogTrigger asChild>
-				<Button disabled={disabled || loading || isPending || !entity}>
-					<IconFilter className="h-4 w-4" />
+		<div className="flex gap-1.5">
+			{hasFilters && (
+				<Button onClick={handleClear} disabled={loading || isPending}>
+					<IconArrowBackUp className="h-4 w-4" />
 				</Button>
-			</DialogTrigger>
+			)}{" "}
+			<Dialog open={open} onOpenChange={setOpen}>
+				<DialogTrigger asChild>
+					<Button disabled={disabled || loading || isPending || !entity}>
+						<IconFilter className="h-4 w-4" />
+					</Button>
+				</DialogTrigger>
 
-			<DialogContent className="w-90">
-				<form onSubmit={handleSubmit}>
-					<DialogTitle>Filter {entity}</DialogTitle>
+				<DialogContent className="w-90">
+					<form onSubmit={handleSubmit}>
+						<DialogTitle>Filter {entity}</DialogTitle>
 
-					<div className="flex flex-col gap-4 py-4">
-						{currentFields.map((field) => (
-							<div key={field.name} className="flex flex-col gap-2">
-								{field.type === "string" && (
-									<Input
-										id={field.name}
-										label={field.label}
-										name={field.name}
-										type="text"
-										defaultValue={searchParams.get(field.name) || ""}
-									/>
-								)}
-								{field.type === "number" && (
-									<Input
-										id={field.name}
-										label={field.label}
-										name={field.name}
-										type="number"
-										step="any"
-										defaultValue={searchParams.get(field.name) || ""}
-									/>
-								)}
-								{field.type === "date" && (
-									<Input
-										id={field.name}
-										label={field.label}
-										name={field.name}
-										type="date"
-										defaultValue={searchParams.get(field.name) || ""}
-									/>
-								)}
-								{field.type === "enum" && (
-									<Select
-										name={field.name}
-										label={field.label}
-										defaultValue={searchParams.get(field.name) || undefined}
-										placeholder="Select an option"
-										items={[
-											{ label: "Any", value: "ALL" },
-											...(field.enumValues?.map((v) => ({
-												label: v,
-												value: v,
-											})) ?? []),
-										]}
-									/>
-								)}
+						<div className="flex flex-col gap-4 py-4">
+							{currentFields.map((field) => (
+								<div key={field.name} className="flex flex-col gap-2">
+									{field.type === "string" && (
+										<Input
+											id={field.name}
+											label={field.label}
+											name={field.name}
+											type="text"
+											defaultValue={searchParams.get(field.name) || ""}
+										/>
+									)}
+									{field.type === "number" && (
+										<Input
+											id={field.name}
+											label={field.label}
+											name={field.name}
+											type="number"
+											step="any"
+											defaultValue={searchParams.get(field.name) || ""}
+										/>
+									)}
+									{field.type === "date" && (
+										<Input
+											id={field.name}
+											label={field.label}
+											name={field.name}
+											type="date"
+											defaultValue={searchParams.get(field.name) || ""}
+										/>
+									)}
+									{field.type === "enum" && (
+										<Select
+											name={field.name}
+											label={field.label}
+											defaultValue={searchParams.get(field.name) || undefined}
+											placeholder="Select an option"
+											items={[
+												{ label: "Any", value: "ALL" },
+												...(field.enumValues?.map((v) => ({
+													label: v,
+													value: v,
+												})) ?? []),
+											]}
+										/>
+									)}
 
-								{field.type === "foreignKey" && (
-									<Select
-										name={field.name}
-										label={field.label}
-										defaultValue={searchParams.get(field.name) || undefined}
-										placeholder="Select an option"
-										items={[
-											{ label: "Any", value: "ALL" },
-											...(optionsCache[field.name] ?? []),
-										]}
-									/>
-								)}
-							</div>
-						))}
-					</div>
+									{field.type === "foreignKey" && (
+										<Select
+											name={field.name}
+											label={field.label}
+											defaultValue={searchParams.get(field.name) || undefined}
+											placeholder="Select an option"
+											items={[
+												{ label: "Any", value: "ALL" },
+												...(optionsCache[field.name] ?? []),
+											]}
+										/>
+									)}
+								</div>
+							))}
+						</div>
 
-					<DialogFooter>
-						<Button
-							variant="outline"
-							onClick={(e) => {
-								e.preventDefault();
-								setOpen(false);
-							}}
-							disabled={loading || isPending}
-						>
-							Cancel
-						</Button>
-						<Button type="submit" loading={loading || isPending}>
-							Filter
-						</Button>
-					</DialogFooter>
-				</form>
-			</DialogContent>
-		</Dialog>
+						<DialogFooter>
+							<Button
+								variant="outline"
+								onClick={(e) => {
+									e.preventDefault();
+									setOpen(false);
+								}}
+								disabled={loading || isPending}
+							>
+								Cancel
+							</Button>
+							<Button type="submit" loading={loading || isPending}>
+								Filter
+							</Button>
+						</DialogFooter>
+					</form>
+				</DialogContent>
+			</Dialog>
+		</div>
 	);
 }

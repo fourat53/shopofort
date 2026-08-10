@@ -1,4 +1,3 @@
-import clsx from "clsx";
 import DeleteButton from "@/components/buttons/delete-button";
 import EditButton from "@/components/buttons/edit-button";
 import {
@@ -32,10 +31,13 @@ export default function DataTable({
 						<TableHead
 							key={item}
 							border={index !== 0}
-							className={clsx(
-								hasImage === "multiple" && "w-62 text-center",
-								hasImage === "one" && "min-w-18 text-center",
-							)}
+							className={
+								hasImage === "multiple"
+									? "w-62 text-center"
+									: hasImage === "one"
+										? "min-w-18 text-center"
+										: ""
+							}
 						>
 							{item}
 						</TableHead>
@@ -62,6 +64,13 @@ export default function DataTable({
 								<TableCell
 									border={colIndex !== 0}
 									key={`cell-${row.id}-${colIndex}`}
+									className={
+										hasImage === "multiple"
+											? "h-18.25"
+											: hasImage === "one"
+												? "h-18.25"
+												: "h-8.25"
+									}
 								>
 									<CellContent
 										value={value}
