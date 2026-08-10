@@ -91,10 +91,7 @@ function CommandList({
 	return (
 		<CommandPrimitive.List
 			data-slot="command-list"
-			className={cn(
-				"no-scrollbar max-h-72 scroll-py-1 overflow-x-hidden overflow-y-auto outline-none",
-				className,
-			)}
+			className={className}
 			{...props}
 		/>
 	);
@@ -136,7 +133,10 @@ function CommandSeparator({
 	return (
 		<CommandPrimitive.Separator
 			data-slot="command-separator"
-			className={cn("-mx-1 my-1 h-px bg-border/50", className)}
+			className={cn(
+				"-mx-1 border-t border-mist-400/20 dark:border-mist-700/40",
+				className,
+			)}
 			{...props}
 		/>
 	);
@@ -151,7 +151,7 @@ function CommandItem({
 		<CommandPrimitive.Item
 			data-slot="command-item"
 			className={cn(
-				"mt-1 group/command-item relative flex h-6.5 cursor-default items-center gap-2 rounded-md px-2.5 py-1.5 text-xs/relaxed outline-hidden select-none in-data-[slot=dialog-content]:rounded-md data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 data-selected:bg-muted data-selected:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3.5 data-selected:*:[svg]:text-foreground",
+				"cursor-pointer mt-1 group/command-item relative flex h-6.5 cursor-default items-center gap-2 rounded-md px-2.5 py-1.5 text-xs/relaxed outline-hidden select-none in-data-[slot=dialog-content]:rounded-md data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 data-selected:bg-muted data-selected:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3.5 data-selected:*:[svg]:text-foreground",
 				className,
 			)}
 			{...props}

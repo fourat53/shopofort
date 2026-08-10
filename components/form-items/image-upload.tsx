@@ -63,7 +63,7 @@ export function ImageUpload({ images, onChange, className }: ImageUploadProps) {
 				{images.map((img, idx) => (
 					<div
 						key={idx}
-						className="relative w-28 h-28 border border-mist-400/70 dark:border-mist-700 rounded-lg overflow-hidden group"
+						className="relative w-28 h-28 border rounded-lg overflow-hidden group"
 					>
 						<Image
 							src={URL.createObjectURL(img)}
@@ -86,7 +86,7 @@ export function ImageUpload({ images, onChange, className }: ImageUploadProps) {
 					type="button"
 					onClick={handleDivClick}
 					className={cn(
-						"w-28 h-28 flex flex-col items-center justify-center border-2 border-dashed border-mist-400/70 dark:border-mist-700 rounded-lg cursor-pointer hover:bg-mist-100 dark:hover:bg-mist-800 transition-colors",
+						"w-28 h-28 flex flex-col items-center justify-center border-2 border-dashed rounded-lg cursor-pointer hover:bg-mist-100 dark:hover:bg-mist-800 transition-colors",
 						images.length % 3 === 0 && "w-full col-span-3",
 						images.length % 3 === 1 && "w-full col-span-2",
 					)}

@@ -42,7 +42,8 @@ pnpm biome format --write .
 bg-[linear-gradient(45deg,var(--chart-1)_1%,var(--sidebar)_100%)]
 dark:bg-[linear-gradient(-135deg,var(--sidebar)_1%,var(--sidebar-accent)_100%)]
 
-
+- add user filtering
+- 
 
 - TO DO :
   <!-- products and users page -->
@@ -50,8 +51,7 @@ dark:bg-[linear-gradient(-135deg,var(--sidebar)_1%,var(--sidebar-accent)_100%)]
   <!-- dashboard page -->
   2. make a dashboard design with shadcn UI and display statistics by using the most relevent data from the database.
   <!-- table filtering and sorting -->
-  3. add the ability to filter from server all table columns in DataTableLayout by adding inputs for non enum columns and select for enum columns above the table header.
-  4. add the ability to sort from server any table columns in DataTable by adding arrows to the table header.
+  3. add the ability to sort from server any table columns in DataTable by adding arrows to the table header.
   - Note: the sorting and filtering should should work together (update the get function for each table) and should update the pagination from server (new total pages and reset current page to 1).
 
 

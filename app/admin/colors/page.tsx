@@ -53,7 +53,7 @@ export default function ColorsPage() {
 						className="flex flex-col gap-2 p-2 border rounded-lg shadow-sm bg-card"
 					>
 						<div
-							className="w-full h-20 border rounded-md border-black/10 dark:border-white/10"
+							className="w-full h-20 border rounded-md dark:border-white/10"
 							style={{ backgroundColor: `var(--${color})` }}
 						/>
 

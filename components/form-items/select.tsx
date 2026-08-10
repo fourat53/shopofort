@@ -190,7 +190,7 @@ function Select({
 							aria-expanded={open}
 							disabled={disabled}
 							className={cn(
-								"relative bg-input/20 dark:bg-input/30 rounded-md px-3 h-7 w-full justify-between disabled:cursor-not-allowed border border-mist-400/60 dark:border-mist-700/80",
+								"relative bg-input/20 dark:bg-input/30 rounded-md px-3 h-7 w-full justify-between disabled:cursor-not-allowed border border-border/80",
 								!selectedValue && "text-muted-foreground",
 								selectedItem &&
 									Array.isArray(selectedItem.label) &&
@@ -211,18 +211,18 @@ function Select({
 						<Command className="bg-transparent" filter={filterItems}>
 							{searchable && <CommandInput placeholder="Search.." />}
 
-							<CommandList>
+							<CommandList className="z-50 max-h-60 overflow-y-auto">
 								<CommandEmpty>No option found</CommandEmpty>
 								<CommandGroup>
 									{items.map((item, index) => (
 										<CommandItem
 											key={index}
 											value={item.value}
-											className={cn(
-												index !== 0 && "cursor-pointer mt-0.5",
-												selectedValue === item.value && "bg-primary",
-											)}
 											onSelect={handleSelect}
+											className={cn(
+												selectedValue === item.value &&
+													"bg-primary hover:bg-accent",
+											)}
 										>
 											{renderItemContent(item)}
 

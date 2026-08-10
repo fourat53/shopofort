@@ -7,7 +7,7 @@ function Table({ className, ...props }: React.ComponentProps<"table">) {
 	return (
 		<div
 			data-slot="table-container"
-			className="w-full max-h-[calc(100vh-152px)] overflow-auto overscroll-none rounded-lg border border-mist-400/70 dark:border-mist-700"
+			className="w-full max-h-[calc(100vh-152px)] overflow-auto overscroll-none rounded-lg border"
 		>
 			<table
 				data-slot="table"
@@ -24,7 +24,7 @@ function TableHeader({ className, ...props }: React.ComponentProps<"thead">) {
 			data-slot="table-header"
 			className={cn(
 				"bg-mist-300/80 dark:bg-sidebar-accent hover:bg-mist-300/80 dark:hover:bg-sidebar-accent",
-				"[&_tr]:border-b border-mist-400/70 dark:border-mist-700",
+				"[&_tr]:border-b",
 				className,
 			)}
 			{...props}
@@ -60,7 +60,7 @@ function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
 		<tr
 			data-slot="table-row"
 			className={cn(
-				"border-b border-mist-400/70 dark:border-mist-700 transition-colors has-aria-expanded:bg-muted/50 data-[state=selected]:bg-muted",
+				"border-b transition-colors has-aria-expanded:bg-muted/50 data-[state=selected]:bg-muted",
 				className,
 			)}
 			{...props}
@@ -79,7 +79,7 @@ function TableHead({
 			className={cn(
 				"h-4 py-1.5 px-2.5 font-semibold whitespace-nowrap text-foreground has-[[role=checkbox]]:pr-0",
 				"hover:cursor-pointer hover:bg-mist-400/30 dark:hover:bg-mist-900/30",
-				border && "border-l border-mist-400/70 dark:border-mist-700",
+				border && "border-l",
 				className,
 			)}
 			{...props}
@@ -97,7 +97,7 @@ function TableCell({
 			data-slot="table-cell"
 			className={cn(
 				"p-2 align-middle whitespace-nowrap has-[[role=checkbox]]:pr-0",
-				border && "border-l border-mist-400/70 dark:border-mist-700",
+				border && "border-l",
 				className,
 			)}
 			{...props}

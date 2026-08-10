@@ -171,11 +171,7 @@ export default function FilterButton({ disabled }: { disabled?: boolean }) {
 
 	return (
 		<div
-			className={clsx(
-				"flex gap-1.5",
-				entity !== "user" &&
-					"pr-1.5 border-r border-mist-400/70 dark:border-mist-700",
-			)}
+			className={clsx("flex gap-1.5", entity !== "user" && "pr-1.5 border-r")}
 		>
 			{hasFilters && (
 				<Button
