@@ -61,12 +61,11 @@ async function getFilterOptions(field: string): Promise<SelectOption[]> {
 		switch (field) {
 			case "categoryId": {
 				const categories = await prisma.category.findMany({
-					select: { id: true, name: true },
 					orderBy: { name: "asc" },
 				});
 				return categories.map((c) => ({
 					value: c.id.toString(),
-					label: [c.id, c.name],
+					label: [c.name, c.gender || "Any"],
 				}));
 			}
 			case "productId": {

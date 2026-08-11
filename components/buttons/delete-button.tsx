@@ -1,7 +1,7 @@
 "use client";
 
 import { IconTrash } from "@tabler/icons-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { deleteEntity } from "@/actions/EntityActions";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,6 +26,7 @@ export default function DeleteButton({
 
 	const [open, setOpen] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(false);
+	const deleteButtonRef = useRef<HTMLButtonElement>(null);
 
 	const handleDelete = async (e: React.MouseEvent) => {
 		e.preventDefault();
@@ -54,7 +55,13 @@ export default function DeleteButton({
 				</Button>
 			</DialogTrigger>
 
-			<DialogContent className="w-90">
+			<DialogContent
+				className="w-90"
+				onOpenAutoFocus={(e) => {
+					e.preventDefault();
+					deleteButtonRef.current?.focus();
+				}}
+			>
 				<DialogHeader>
 					<DialogTitle>Are you absolutely sure?</DialogTitle>
 					<DialogDescription>
@@ -73,6 +80,7 @@ export default function DeleteButton({
 						Cancel
 					</Button>
 					<Button
+						ref={deleteButtonRef}
 						variant="destructive"
 						onClick={handleDelete}
 						loading={loading}

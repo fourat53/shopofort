@@ -39,12 +39,13 @@ function Button({
 			data-slot="button"
 			disabled={loading || disabled || false}
 			className={cn(
-				buttonVariants({ variant, size, className }),
+				buttonVariants({ variant, size }),
 				!border && "border-none",
 				!shadow && "shadow-none",
 				showIcon &&
 					iconPosition === "end" &&
 					"pl-4 flex-row-reverse items-center justify-between",
+				className,
 			)}
 			{...props}
 		>

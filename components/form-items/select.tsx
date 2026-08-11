@@ -185,13 +185,12 @@ function Select({
 				<Popover open={open} onOpenChange={setOpen}>
 					<PopoverTrigger asChild>
 						<Button
-							border
 							variant="ghost"
 							role="combobox"
 							aria-expanded={open}
 							disabled={disabled}
 							className={cn(
-								"relative border-border bg-input/20 dark:bg-input/30 rounded-md px-3 h-7 w-full justify-between disabled:cursor-not-allowed",
+								"relative border border-border/90 bg-input/20 dark:bg-input/30 rounded-md px-3 h-7 w-full justify-between disabled:cursor-not-allowed",
 								!selectedValue && "text-muted-foreground",
 								selectedItem &&
 									Array.isArray(selectedItem.label) &&
