@@ -2,7 +2,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { config } from "dotenv";
 import { checkedEnvVar } from "@/lib/checked-env-var";
 import { type OrderStatus, PrismaClient } from "@/lib/generated/prisma/client";
-import { fetchAllKindeUsers } from "@/queries/UserQueries";
+import { getAllUsers } from "@/queries/UserQueries";
 
 config({ path: checkedEnvVar("ENV_PATH") });
 config();
@@ -91,7 +91,7 @@ async function main(minId: number, maxId: number) {
 	});
 
 	const dbProducts = await prisma.product.findMany();
-	const dbUsers = await fetchAllKindeUsers();
+	const dbUsers = await getAllUsers();
 
 	if (dbUsers.length > 0) {
 		console.log("🛒 Seeding Carts...");

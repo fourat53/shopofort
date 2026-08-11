@@ -2,7 +2,7 @@
 
 import type { User } from "@/lib/types";
 import {
-	fetchAllKindeUsers,
+	getAllUsers,
 	getKindeToken,
 	kindeIssuerUrl,
 } from "@/queries/UserQueries";
@@ -101,7 +101,7 @@ async function deleteUser(id: string) {
 }
 
 async function getUsersOptions() {
-	const users = await fetchAllKindeUsers();
+	const users = await getAllUsers();
 
 	return users.map((u: User) => ({
 		value: u.id,

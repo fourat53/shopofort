@@ -101,15 +101,15 @@ function Select({
 	const renderItemContent = (item: SelectOption) => {
 		if (Array.isArray(item.label) && item.label.length === 2) {
 			return (
-				<div className="absolute top-1/2 -translate-y-1/2 w-[calc(100%-50px)] flex max-sm:flex-col gap-1.5 max-sm:items-start justify-between">
+				<div className="absolute top-1/2 -translate-y-1/2 w-[calc(100%-36px)] flex max-sm:flex-col gap-1.5 max-sm:items-start justify-between">
 					<p
-						className="truncate max-w-full sm:max-w-[55%]"
+						className="truncate max-w-full sm:max-w-[40%]"
 						title={String(item.label[0])}
 					>
 						{item.label[0]}
 					</p>
 					<p
-						className="sm:text-right text-muted-foreground truncate max-w-full sm:max-w-[45%]"
+						className="sm:text-right text-muted-foreground truncate max-w-full sm:max-w-[60%]"
 						title={String(item.label[1])}
 					>
 						{item.label[1]}
@@ -136,15 +136,15 @@ function Select({
 
 		if (Array.isArray(selectedItem.label) && selectedItem.label.length === 2) {
 			return (
-				<div className="absolute top-1/2 -translate-y-1/2 w-[calc(100%-50px)] flex max-sm:flex-col sm:gap-1.5 items-start sm:items-center sm:justify-between">
+				<div className="absolute top-1/2 -translate-y-1/2 w-[calc(100%-36px)] flex max-sm:flex-col sm:gap-1.5 items-start sm:items-center sm:justify-between">
 					<p
-						className="truncate max-w-full sm:max-w-[55%]"
+						className="truncate max-w-full sm:max-w-[40%]"
 						title={String(selectedItem.label[0])}
 					>
 						{selectedItem.label[0]}
 					</p>
 					<p
-						className="sm:text-right text-muted-foreground truncate max-w-full sm:max-w-[45%]"
+						className="sm:text-right text-muted-foreground truncate max-w-full sm:max-w-[60%]"
 						title={String(selectedItem.label[1])}
 					>
 						{selectedItem.label[1]}
@@ -185,12 +185,13 @@ function Select({
 				<Popover open={open} onOpenChange={setOpen}>
 					<PopoverTrigger asChild>
 						<Button
+							border
 							variant="ghost"
 							role="combobox"
 							aria-expanded={open}
 							disabled={disabled}
 							className={cn(
-								"relative bg-input/20 dark:bg-input/30 rounded-md px-3 h-7 w-full justify-between disabled:cursor-not-allowed border border-border/80",
+								"relative border-border bg-input/20 dark:bg-input/30 rounded-md px-3 h-7 w-full justify-between disabled:cursor-not-allowed",
 								!selectedValue && "text-muted-foreground",
 								selectedItem &&
 									Array.isArray(selectedItem.label) &&
@@ -207,7 +208,7 @@ function Select({
 						</Button>
 					</PopoverTrigger>
 
-					<PopoverContent className={menuClassName}>
+					<PopoverContent className={cn("w-82", menuClassName)}>
 						<Command className="bg-transparent" filter={filterItems}>
 							{searchable && <CommandInput placeholder="Search.." />}
 

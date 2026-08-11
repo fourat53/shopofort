@@ -39,11 +39,8 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 pnpm biome format --write .
 
-bg-[linear-gradient(45deg,var(--chart-1)_1%,var(--sidebar)_100%)]
-dark:bg-[linear-gradient(-135deg,var(--sidebar)_1%,var(--sidebar-accent)_100%)]
-
 - add user filtering
-- 
+- update selects options
 
 - TO DO :
   <!-- products and users page -->

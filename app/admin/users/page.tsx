@@ -8,10 +8,13 @@ import { USERS_HEADER } from "./loading";
 export default async function UsersPage({ searchParams }: PageProps) {
 	const params = await searchParams;
 
-	const totalCount = await getUserCount();
+	const { page: _pageParam, ...filterParams } = params;
+
+	const totalCount = await getUserCount(filterParams);
+
 	const { page, totalPages } = getPaginationParams(params, totalCount);
 
-	const users = await getUsersPage(page);
+	const users = await getUsersPage(page, filterParams);
 
 	return (
 		<DataTableLayout

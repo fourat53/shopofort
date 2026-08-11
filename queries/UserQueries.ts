@@ -1,11 +1,24 @@
-import { PAGE_SIZE } from "@/components/data-table/PaginationParams";
+import { unstable_cache } from "next/cache";
+import { IMAGE_PAGE_SIZE } from "@/components/data-table/PaginationParams";
 import { checkedEnvVar } from "@/lib/checked-env-var";
 import type { User } from "@/lib/types";
 
 const kindeIssuerUrl = checkedEnvVar("KINDE_ISSUER_URL");
 
+type UserSearchParams = Record<string, string | string[] | undefined>;
+
+function getParam(
+	searchParams: UserSearchParams,
+	name: string,
+): string | undefined {
+	const value = searchParams[name];
+
+	return Array.isArray(value) ? value[0] : value;
+}
+
 async function getKindeToken() {
 	const tokenUrl = `${kindeIssuerUrl}/oauth2/token`;
+
 	const params = new URLSearchParams({
 		grant_type: "client_credentials",
 		client_id: checkedEnvVar("M2M_KINDE_CLIENT_ID"),
@@ -15,72 +28,104 @@ async function getKindeToken() {
 
 	const res = await fetch(tokenUrl, {
 		method: "POST",
-		headers: { "Content-Type": "application/x-www-form-urlencoded" },
+		headers: {
+			"Content-Type": "application/x-www-form-urlencoded",
+		},
 		body: params,
 		cache: "no-store",
 	});
 
 	if (!res.ok) {
 		const errorBody = await res.text();
-		console.error("Kinde M2M Auth Error:", errorBody);
 		throw new Error(`Failed to authenticate with Kinde API: ${errorBody}`);
 	}
 
 	const data = await res.json();
+
 	return data.access_token;
 }
 
-async function fetchAllKindeUsers() {
+async function getAllUsers(): Promise<User[]> {
 	const token = await getKindeToken();
-	let allUsers: User[] = [];
-	let nextToken: string | null = null;
-	let hasMore = true;
 
-	while (hasMore) {
+	const allUsers: User[] = [];
+	let nextToken: string | null = null;
+
+	while (true) {
 		const url = new URL(`${kindeIssuerUrl}/api/v1/users`);
-		if (nextToken) url.searchParams.append("next_token", nextToken);
+
+		if (nextToken) {
+			url.searchParams.set("next_token", nextToken);
+		}
 
 		const res = await fetch(url.toString(), {
 			headers: {
 				Authorization: `Bearer ${token}`,
 				Accept: "application/json",
 			},
+			cache: "no-store",
 		});
 
 		if (!res.ok) {
 			const errorBody = await res.text();
-			console.error("Kinde M2M Auth Error:", errorBody);
-			throw new Error(`Failed to authenticate with Kinde API: ${errorBody}`);
-		}
-		const data = await res.json();
-		if (data.users) {
-			allUsers = [...allUsers, ...data.users];
+			throw new Error(`Failed to fetch Kinde users: ${errorBody}`);
 		}
 
-		if (data.next_token) {
-			nextToken = data.next_token;
-		} else {
-			hasMore = false;
+		const data = await res.json();
+
+		if (data.users) {
+			allUsers.push(...data.users);
 		}
+
+		if (!data.next_token) break;
+
+		nextToken = data.next_token;
 	}
 
 	return allUsers;
 }
 
-async function getUserCount() {
-	const users = await fetchAllKindeUsers();
-	return users.length;
+function filterUsers(users: User[], searchParams: UserSearchParams): User[] {
+	const id = getParam(searchParams, "id")?.toLowerCase();
+	const email = getParam(searchParams, "email")?.toLowerCase();
+	const firstName = getParam(searchParams, "first_name")?.toLowerCase();
+	const lastName = getParam(searchParams, "last_name")?.toLowerCase();
+
+	return users.filter((user) => {
+		if (id && !user.id.toLowerCase().includes(id)) {
+			return false;
+		}
+
+		if (email && !user.email?.toLowerCase().includes(email)) {
+			return false;
+		}
+
+		if (firstName && !user.first_name?.toLowerCase().includes(firstName)) {
+			return false;
+		}
+
+		if (lastName && !user.last_name?.toLowerCase().includes(lastName)) {
+			return false;
+		}
+
+		return true;
+	});
 }
 
-async function getUsersPage(page: number) {
-	const allUsers = await fetchAllKindeUsers();
+const getFilteredUsers = unstable_cache(
+	async (searchParams: UserSearchParams) => {
+		const users = await getAllUsers();
 
-	const paginatedUsers = allUsers.slice(
-		(page - 1) * PAGE_SIZE,
-		page * PAGE_SIZE,
-	);
+		return filterUsers(users, searchParams);
+	},
+	["kinde-filtered-users"],
+	{
+		revalidate: 10,
+	},
+);
 
-	return paginatedUsers.map((user) => ({
+function mapUser(user: User) {
+	return {
 		id: user.id,
 		picture: user.picture,
 		email: user.email,
@@ -92,11 +137,26 @@ async function getUsersPage(page: number) {
 		last_signed_in: user.last_signed_in,
 		created_on: user.created_on,
 		updated_on: user.created_on,
-	}));
+	};
+}
+
+async function getUserCount(searchParams: UserSearchParams = {}) {
+	const users = await getFilteredUsers(searchParams);
+
+	return users.length;
+}
+
+async function getUsersPage(page: number, searchParams: UserSearchParams = {}) {
+	const users = await getFilteredUsers(searchParams);
+
+	const start = (page - 1) * IMAGE_PAGE_SIZE;
+
+	return users.slice(start, start + IMAGE_PAGE_SIZE).map(mapUser);
 }
 
 export {
-	fetchAllKindeUsers,
+	getAllUsers,
+	getFilteredUsers,
 	getKindeToken,
 	getUserCount,
 	getUsersPage,

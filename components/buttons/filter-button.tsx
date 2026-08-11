@@ -4,9 +4,9 @@ import { IconArrowBackUp, IconFilter } from "@tabler/icons-react";
 import clsx from "clsx";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
-import { getFilterOptions } from "@/actions/FilterActions";
+import { getFilterOptions } from "@/actions/EntityActions";
 import { Input } from "@/components/form-items/input";
-import { Select } from "@/components/form-items/select";
+import { Select, type SelectOption } from "@/components/form-items/select";
 import { Button } from "@/components/ui/button";
 import {
 	Dialog,
@@ -19,12 +19,18 @@ import { CurrentEntity } from "./current-entity";
 
 type FieldConfig = {
 	name: string;
-	label: string;
+	label: string | string[];
 	type: "string" | "number" | "date" | "enum" | "foreignKey";
 	enumValues?: string[];
 };
 
 const entityFilters: Record<string, FieldConfig[]> = {
+	user: [
+		{ name: "id", label: "ID", type: "string" },
+		{ name: "email", label: "Email", type: "string" },
+		{ name: "first_name", label: "First Name", type: "string" },
+		{ name: "last_name", label: "Last Name", type: "string" },
+	],
 	product: [
 		{ name: "id", label: "ID", type: "number" },
 		{ name: "name", label: "Name", type: "string" },
@@ -83,8 +89,6 @@ const entityFilters: Record<string, FieldConfig[]> = {
 	],
 };
 
-type Option = { value: string; label: string };
-
 export default function FilterButton({ disabled }: { disabled?: boolean }) {
 	const entity = CurrentEntity();
 	const router = useRouter();
@@ -93,9 +97,9 @@ export default function FilterButton({ disabled }: { disabled?: boolean }) {
 
 	const [open, setOpen] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(false);
-	const [optionsCache, setOptionsCache] = useState<Record<string, Option[]>>(
-		{},
-	);
+	const [optionsCache, setOptionsCache] = useState<
+		Record<string, SelectOption[]>
+	>({});
 	const [isPending, startTransition] = useTransition();
 
 	const currentFields = entity ? entityFilters[entity] || [] : [];
@@ -198,7 +202,7 @@ export default function FilterButton({ disabled }: { disabled?: boolean }) {
 								<div key={field.name} className="flex flex-col gap-2">
 									{field.type === "string" && (
 										<Input
-											label={field.label}
+											label={field.label.toString()}
 											name={field.name}
 											type="text"
 											defaultValue={searchParams.get(field.name) || ""}
@@ -206,7 +210,7 @@ export default function FilterButton({ disabled }: { disabled?: boolean }) {
 									)}
 									{field.type === "number" && (
 										<Input
-											label={field.label}
+											label={field.label.toString()}
 											name={field.name}
 											type="number"
 											step="1"
@@ -215,7 +219,7 @@ export default function FilterButton({ disabled }: { disabled?: boolean }) {
 									)}
 									{field.type === "date" && (
 										<Input
-											label={field.label}
+											label={field.label.toString()}
 											name={field.name}
 											type="date"
 											defaultValue={searchParams.get(field.name) || ""}
