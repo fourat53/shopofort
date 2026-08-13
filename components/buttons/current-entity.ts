@@ -24,8 +24,8 @@ const entityFields: Record<string, FieldConfig[]> = {
 		{
 			name: "id",
 			label: "ID",
-			type: "number",
-			category: ["filter", "edit"],
+			type: "string",
+			category: ["filter"],
 		},
 		{
 			name: "email",

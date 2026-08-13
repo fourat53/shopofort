@@ -3,7 +3,7 @@
 import { IconArrowBackUp, IconFilter } from "@tabler/icons-react";
 import clsx from "clsx";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { getFilterOptions } from "@/actions/EntityActions";
 import { Input } from "@/components/form-items/input";
 import { Select, type SelectOption } from "@/components/form-items/select";
@@ -33,11 +33,15 @@ export default function FilterButton({ disabled }: { disabled?: boolean }) {
 
 	const fetchedFields = useRef<Set<string>>(new Set());
 
-	const currentFields = entity
-		? (entityFields[entity]?.filter((field) =>
-				field.category.includes("filter"),
-			) ?? [])
-		: [];
+	const currentFields = useMemo(
+		() =>
+			entity
+				? (entityFields[entity]?.filter((field) =>
+						field.category.includes("filter"),
+					) ?? [])
+				: [],
+		[entity],
+	);
 
 	const hasFilters = currentFields.some((field) => {
 		const value = searchParams.get(field.name);
@@ -73,12 +77,16 @@ export default function FilterButton({ disabled }: { disabled?: boolean }) {
 
 	const handleClear = () => {
 		const newParams = new URLSearchParams(searchParams.toString());
+
 		newParams.delete("page");
+
 		for (const field of currentFields) {
 			newParams.delete(field.name);
 		}
+
 		const qs = newParams.toString();
 		const newUrl = qs ? `${pathname}?${qs}` : pathname;
+
 		startTransition(() => {
 			router.push(newUrl);
 		});
@@ -94,9 +102,10 @@ export default function FilterButton({ disabled }: { disabled?: boolean }) {
 		newParams.delete("page");
 
 		for (const field of currentFields) {
-			const val = formData.get(field.name)?.toString().trim();
-			if (val && val !== "ALL") {
-				newParams.set(field.name, val);
+			const value = formData.get(field.name)?.toString().trim();
+
+			if (value && value !== "ALL") {
+				newParams.set(field.name, value);
 			} else {
 				newParams.delete(field.name);
 			}
@@ -127,6 +136,7 @@ export default function FilterButton({ disabled }: { disabled?: boolean }) {
 					<IconArrowBackUp className="h-4 w-4" />
 				</Button>
 			)}
+
 			<Dialog open={open} onOpenChange={setOpen}>
 				<DialogTrigger asChild>
 					<Button disabled={disabled || loading || isPending || !entity}>
@@ -145,19 +155,20 @@ export default function FilterButton({ disabled }: { disabled?: boolean }) {
 										<Input
 											label={field.label.toString()}
 											name={field.name}
-											type="text"
 											defaultValue={searchParams.get(field.name) || ""}
 										/>
 									)}
+
 									{field.type === "number" && (
 										<Input
 											label={field.label.toString()}
 											name={field.name}
 											type="number"
-											step="1"
+											step={field.step ?? "1"}
 											defaultValue={searchParams.get(field.name) || ""}
 										/>
 									)}
+
 									{field.type === "date" && (
 										<Input
 											label={field.label.toString()}
@@ -166,6 +177,7 @@ export default function FilterButton({ disabled }: { disabled?: boolean }) {
 											defaultValue={searchParams.get(field.name) || ""}
 										/>
 									)}
+
 									{field.type === "enum" && (
 										<Select
 											name={field.name}
@@ -174,9 +186,9 @@ export default function FilterButton({ disabled }: { disabled?: boolean }) {
 											placeholder="Select an option"
 											items={[
 												{ label: "Any", value: "ALL" },
-												...(field.enumValues?.map((v) => ({
-													label: v,
-													value: v,
+												...(field.enumValues?.map((value) => ({
+													label: value,
+													value,
 												})) ?? []),
 											]}
 										/>

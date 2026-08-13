@@ -1,9 +1,8 @@
 "use client";
 
 import { IconEdit } from "@tabler/icons-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { getFilterOptions, updateEntity } from "@/actions/EntityActions";
-// import { ImageUpload } from "@/components/form-items/image-upload";
 import { Input } from "@/components/form-items/input";
 import { Select, type SelectOption } from "@/components/form-items/select";
 import { Button } from "@/components/ui/button";
@@ -29,19 +28,23 @@ export default function EditButton<T extends { id: number | string }>({
 }: EditButtonProps<T>) {
 	const entity = CurrentEntity();
 
-	const [loading, setLoading] = useState<boolean>(false);
 	const [open, setOpen] = useState<boolean>(false);
+	const [loading, setLoading] = useState<boolean>(false);
 	const [optionsCache, setOptionsCache] = useState<
 		Record<string, SelectOption[]>
 	>({});
 
 	const fetchedFields = useRef<Set<string>>(new Set());
 
-	const currentFields = entity
-		? (entityFields[entity]?.filter((field) =>
-				field.category.includes("edit"),
-			) ?? [])
-		: [];
+	const currentFields = useMemo(
+		() =>
+			entity
+				? (entityFields[entity]?.filter((field) =>
+						field.category.includes("edit"),
+					) ?? [])
+				: [],
+		[entity],
+	);
 
 	useEffect(() => {
 		if (!open || !entity) return;
@@ -76,23 +79,24 @@ export default function EditButton<T extends { id: number | string }>({
 		try {
 			const formData = new FormData(e.currentTarget);
 			await updateEntity(entity, row.id, formData);
+
+			setOpen(false);
+			entity === "user" && window.location.reload();
 		} catch (error) {
 			console.error("Error updating entity:", error);
 		} finally {
 			setLoading(false);
-			setOpen(false);
-			entity === "user" && window.location.reload();
 		}
 	};
 
-	if (!entity || entity === "user") return null;
+	if (!entity) return null;
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
 				<Button
 					variant="ghost"
-					disabled={disabled}
+					disabled={disabled || loading || !entity}
 					border={false}
 					className="rounded-xl size-6 p-0"
 				>
@@ -120,7 +124,6 @@ export default function EditButton<T extends { id: number | string }>({
 									<Input
 										name={field.name}
 										label={field.label.toString()}
-										type="text"
 										defaultValue={value?.toString() ?? ""}
 										required={field.required}
 									/>
@@ -176,13 +179,6 @@ export default function EditButton<T extends { id: number | string }>({
 										required={field.required}
 									/>
 								)}
-
-								{/* {field.type === "image" && (
-									<ImageUpload
-										images={productImages}
-										onChange={setProductImages}
-									/>
-								)} */}
 							</div>
 						);
 					})}

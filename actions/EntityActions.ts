@@ -134,19 +134,19 @@ async function updateEntity(
 	id: number | string,
 	formData: FormData,
 ) {
-	if (entity === "users") {
+	if (entity === "user") {
 		await updateUser(id as string, formData);
-	} else if (entity === "products") {
+	} else if (entity === "product") {
 		await updateProduct(id as number, formData);
-	} else if (entity === "orders") {
+	} else if (entity === "order") {
 		await updateOrder(id as number, formData);
-	} else if (entity === "carts") {
+	} else if (entity === "cart") {
 		await updateCart(id as number, formData);
-	} else if (entity === "categories") {
+	} else if (entity === "category") {
 		await updateCategory(id as number, formData);
-	} else if (entity === "cart-items") {
+	} else if (entity === "cartItem") {
 		await updateCartItem(id as number, formData);
-	} else if (entity === "order-items") {
+	} else if (entity === "orderItem") {
 		await updateOrderItem(id as number, formData);
 	}
 }

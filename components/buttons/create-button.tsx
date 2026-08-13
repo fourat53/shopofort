@@ -1,9 +1,8 @@
 "use client";
 
 import { IconPlus } from "@tabler/icons-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { createEntity, getFilterOptions } from "@/actions/EntityActions";
-// import { ImageUpload } from "@/components/form-items/image-upload";
 import { Input } from "@/components/form-items/input";
 import { Select, type SelectOption } from "@/components/form-items/select";
 import { Button } from "@/components/ui/button";
@@ -22,18 +21,22 @@ export default function CreateButton() {
 	const entity = CurrentEntity();
 
 	const [open, setOpen] = useState<boolean>(false);
+	const [loading, setLoading] = useState<boolean>(false);
 	const [optionsCache, setOptionsCache] = useState<
 		Record<string, SelectOption[]>
 	>({});
-	const [loading, setLoading] = useState<boolean>(false);
 
 	const fetchedFields = useRef<Set<string>>(new Set());
 
-	const currentFields = entity
-		? (entityFields[entity]?.filter((field) =>
-				field.category.includes("create"),
-			) ?? [])
-		: [];
+	const currentFields = useMemo(
+		() =>
+			entity
+				? (entityFields[entity]?.filter((field) =>
+						field.category.includes("create"),
+					) ?? [])
+				: [],
+		[entity],
+	);
 
 	useEffect(() => {
 		if (!open || !entity || entity === "user") return;
@@ -103,8 +106,7 @@ export default function CreateButton() {
 								<Input
 									name={field.name}
 									label={field.label.toString()}
-									type="text"
-									defaultValue={field.defaultValue ?? ""}
+									defaultValue={field.defaultValue?.toString() ?? ""}
 									required={field.required}
 								/>
 							)}
@@ -115,7 +117,9 @@ export default function CreateButton() {
 									label={field.label.toString()}
 									type="number"
 									step={field.step ?? "1"}
-									defaultValue={field.defaultValue ?? ""}
+									defaultValue={
+										field.defaultValue ? String(field.defaultValue) : ""
+									}
 									required={field.required}
 								/>
 							)}
@@ -124,7 +128,11 @@ export default function CreateButton() {
 								<DatePicker
 									name={field.name}
 									label={field.label.toString()}
-									defaultValue={new Date()}
+									defaultValue={
+										field.defaultValue
+											? new Date(field.defaultValue)
+											: undefined
+									}
 									required={field.required}
 								/>
 							)}
@@ -154,13 +162,6 @@ export default function CreateButton() {
 									required={field.required}
 								/>
 							)}
-
-							{/* {field.type === "image" && (
-								<ImageUpload
-									images={productImages}
-									onChange={setProductImages}
-								/>
-							)} */}
 						</div>
 					))}
 

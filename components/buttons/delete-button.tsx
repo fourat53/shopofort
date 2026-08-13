@@ -33,12 +33,13 @@ export default function DeleteButton({
 		setLoading(true);
 		try {
 			await deleteEntity(entity, id);
+
+			setOpen(false);
+			entity === "user" && window.location.reload();
 		} catch (error) {
 			console.error("Failed to delete entity", error);
 		} finally {
 			setLoading(false);
-			setOpen(false);
-			entity === "user" && window.location.reload();
 		}
 	};
 

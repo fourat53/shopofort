@@ -1,4 +1,3 @@
-import { IconEdit, IconTrash } from "@tabler/icons-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
 	Table,
@@ -8,7 +7,8 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { Button } from "../ui/button";
+import DeleteButton from "../buttons/delete-button";
+import EditButton from "../buttons/edit-button";
 import type { HasImage } from "./DataTable";
 import { IMAGE_PAGE_SIZE, PAGE_SIZE } from "./PaginationParams";
 
@@ -78,22 +78,8 @@ export default function DataTableSkeleton({
 						))}
 						<TableCell border className="py-0.5 w-20">
 							<div className="flex items-center justify-center gap-1.5">
-								<Button
-									variant="ghost"
-									border={false}
-									disabled
-									className="rounded-xl size-6 p-0"
-								>
-									<IconEdit className="h-4 w-4 text-mist-400" />
-								</Button>
-								<Button
-									variant="ghost"
-									border={false}
-									disabled
-									className="rounded-xl size-6 p-0 text-red-500 hover:text-red-700"
-								>
-									<IconTrash className="h-4 w-4" />
-								</Button>
+								<EditButton row={{ id: "" }} disabled />
+								<DeleteButton id={""} disabled />
 							</div>
 						</TableCell>
 					</TableRow>
