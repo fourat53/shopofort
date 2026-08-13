@@ -3,7 +3,7 @@
 import { IconEdit } from "@tabler/icons-react";
 import { useEffect, useRef, useState } from "react";
 import { getFilterOptions, updateEntity } from "@/actions/EntityActions";
-import { ImageUpload } from "@/components/form-items/image-upload";
+// import { ImageUpload } from "@/components/form-items/image-upload";
 import { Input } from "@/components/form-items/input";
 import { Select, type SelectOption } from "@/components/form-items/select";
 import { Button } from "@/components/ui/button";
@@ -15,36 +15,36 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
-import type { EntityRowType } from "../data-table/DataTableLayout";
 import { DatePicker } from "../form-items/date-picker";
-import { entityFields } from "./current-entity";
+import { CurrentEntity, entityFields } from "./current-entity";
 
-interface EditButtonProps {
-	entityRow: EntityRowType;
+interface EditButtonProps<T> {
+	row: T;
 	disabled?: boolean;
 }
 
-export default function EditButton({ entityRow, disabled }: EditButtonProps) {
-	const [entity, row] = entityRow;
+export default function EditButton<T extends { id: number | string }>({
+	row,
+	disabled,
+}: EditButtonProps<T>) {
+	const entity = CurrentEntity();
 
+	const [loading, setLoading] = useState<boolean>(false);
 	const [open, setOpen] = useState<boolean>(false);
 	const [optionsCache, setOptionsCache] = useState<
 		Record<string, SelectOption[]>
 	>({});
-	const [productImages, setProductImages] = useState<File[]>([]);
-	const [loading, setLoading] = useState<boolean>(false);
 
 	const fetchedFields = useRef<Set<string>>(new Set());
 
-	const entityName = entity.endsWith("s") ? entity.slice(0, -1) : entity;
-
-	const currentFields =
-		entityFields[entityName]?.filter((field) =>
-			field.category.includes("edit"),
-		) ?? [];
+	const currentFields = entity
+		? (entityFields[entity]?.filter((field) =>
+				field.category.includes("edit"),
+			) ?? [])
+		: [];
 
 	useEffect(() => {
-		if (!open) return;
+		if (!open || !entity) return;
 
 		for (const field of currentFields) {
 			if (
@@ -68,38 +68,24 @@ export default function EditButton({ entityRow, disabled }: EditButtonProps) {
 					console.error(error);
 				});
 		}
-	}, [open, currentFields]);
+	}, [open, entity, currentFields]);
 
 	const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
 		e.preventDefault();
-
+		setLoading(true);
 		try {
-			setLoading(true);
-
 			const formData = new FormData(e.currentTarget);
-
-			for (const image of productImages) {
-				formData.append("images", image);
-			}
-
 			await updateEntity(entity, row.id, formData);
-
-			setOpen(false);
-			setProductImages([]);
-
-			if (entity === "users") {
-				window.location.reload();
-			}
 		} catch (error) {
 			console.error("Error updating entity:", error);
 		} finally {
 			setLoading(false);
+			setOpen(false);
+			entity === "user" && window.location.reload();
 		}
 	};
 
-	if (!entity || entity === "users") {
-		return null;
-	}
+	if (!entity || entity === "user") return null;
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
@@ -191,12 +177,12 @@ export default function EditButton({ entityRow, disabled }: EditButtonProps) {
 									/>
 								)}
 
-								{field.type === "image" && (
+								{/* {field.type === "image" && (
 									<ImageUpload
 										images={productImages}
 										onChange={setProductImages}
 									/>
-								)}
+								)} */}
 							</div>
 						);
 					})}

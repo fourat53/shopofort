@@ -30,7 +30,6 @@ export default function DeleteButton({
 
 	const handleDelete = async (e: React.MouseEvent) => {
 		e.preventDefault();
-		if (!entity) return;
 		setLoading(true);
 		try {
 			await deleteEntity(entity, id);

@@ -16,7 +16,7 @@ type FieldConfig = {
 	required?: boolean;
 	defaultValue?: string | number;
 	step?: string;
-	enumValues?: OrderStatus[] | Gender[] | CategoryName[];
+	enumValues?: readonly (OrderStatus | Gender | CategoryName)[];
 };
 
 const entityFields: Record<string, FieldConfig[]> = {
@@ -186,7 +186,6 @@ const entityFields: Record<string, FieldConfig[]> = {
 			type: "date",
 			category: ["filter", "create", "edit"],
 			required: true,
-			defaultValue: new Date().toISOString(),
 		},
 		{
 			name: "totalAmount",
@@ -208,7 +207,7 @@ const entityFields: Record<string, FieldConfig[]> = {
 				"SHIPPED",
 				"DELIVERED",
 				"CANCELLED",
-			] as OrderStatus[],
+			],
 			defaultValue: "PENDING",
 		},
 		{
@@ -268,13 +267,7 @@ const entityFields: Record<string, FieldConfig[]> = {
 			label: "Name",
 			type: "enum",
 			category: ["filter", "create", "edit"],
-			enumValues: [
-				"T_SHIRTS",
-				"JEANS",
-				"HOODIES",
-				"DRESSES",
-				"JACKETS",
-			] as CategoryName[],
+			enumValues: ["T_SHIRTS", "JEANS", "HOODIES", "DRESSES", "JACKETS"],
 			required: true,
 		},
 		{
@@ -282,18 +275,11 @@ const entityFields: Record<string, FieldConfig[]> = {
 			label: "Gender",
 			type: "enum",
 			category: ["filter", "create", "edit"],
-			enumValues: ["MALE", "FEMALE"] as Gender[],
+			enumValues: ["MALE", "FEMALE"],
 			required: true,
 		},
 	],
-} as const;
-
-const entityFilters = Object.fromEntries(
-	Object.entries(entityFields).map(([entity, fields]) => [
-		entity,
-		fields.filter((field) => field.category.includes("filter")),
-	]),
-);
+};
 
 function CurrentEntity() {
 	const pathname = usePathname();
@@ -333,10 +319,4 @@ function entityFromHeaderName(headerName: string, pathname: string) {
 	return entity;
 }
 
-export {
-	CurrentEntity,
-	entityFields,
-	entityFilters,
-	entityFromHeaderName,
-	type FieldConfig,
-};
+export { CurrentEntity, entityFields, entityFromHeaderName, type FieldConfig };

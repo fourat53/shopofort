@@ -3,7 +3,7 @@
 import { IconPlus } from "@tabler/icons-react";
 import { useEffect, useRef, useState } from "react";
 import { createEntity, getFilterOptions } from "@/actions/EntityActions";
-import { ImageUpload } from "@/components/form-items/image-upload";
+// import { ImageUpload } from "@/components/form-items/image-upload";
 import { Input } from "@/components/form-items/input";
 import { Select, type SelectOption } from "@/components/form-items/select";
 import { Button } from "@/components/ui/button";
@@ -25,7 +25,6 @@ export default function CreateButton() {
 	const [optionsCache, setOptionsCache] = useState<
 		Record<string, SelectOption[]>
 	>({});
-	const [productImages, setProductImages] = useState<File[]>([]);
 	const [loading, setLoading] = useState<boolean>(false);
 
 	const fetchedFields = useRef<Set<string>>(new Set());
@@ -37,7 +36,7 @@ export default function CreateButton() {
 		: [];
 
 	useEffect(() => {
-		if (!open || !entity) return;
+		if (!open || !entity || entity === "user") return;
 
 		for (const field of currentFields) {
 			if (
@@ -65,24 +64,15 @@ export default function CreateButton() {
 
 	const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
 		e.preventDefault();
-
+		setLoading(true);
 		try {
-			setLoading(true);
-
 			const formData = new FormData(e.currentTarget);
-
-			for (const image of productImages) {
-				formData.append("images", image);
-			}
-
 			await createEntity(entity, formData);
-
-			setOpen(false);
-			setProductImages([]);
 		} catch (error) {
 			console.error("Error creating entity:", error);
 		} finally {
 			setLoading(false);
+			setOpen(false);
 		}
 	};
 
@@ -165,12 +155,12 @@ export default function CreateButton() {
 								/>
 							)}
 
-							{field.type === "image" && (
+							{/* {field.type === "image" && (
 								<ImageUpload
 									images={productImages}
 									onChange={setProductImages}
 								/>
-							)}
+							)} */}
 						</div>
 					))}
 

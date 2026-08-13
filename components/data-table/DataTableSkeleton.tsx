@@ -9,7 +9,7 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import { Button } from "../ui/button";
-import type { HasImage } from "./DataTableLayout";
+import type { HasImage } from "./DataTable";
 import { IMAGE_PAGE_SIZE, PAGE_SIZE } from "./PaginationParams";
 
 type DataTableSkeletonProps = {

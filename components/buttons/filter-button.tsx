@@ -15,7 +15,7 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
-import { CurrentEntity, entityFilters } from "./current-entity";
+import { CurrentEntity, entityFields } from "./current-entity";
 
 export default function FilterButton({ disabled }: { disabled?: boolean }) {
 	const entity = CurrentEntity();
@@ -23,38 +23,51 @@ export default function FilterButton({ disabled }: { disabled?: boolean }) {
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
 
+	const [isPending, startTransition] = useTransition();
+
 	const [open, setOpen] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(false);
 	const [optionsCache, setOptionsCache] = useState<
 		Record<string, SelectOption[]>
 	>({});
-	const [isPending, startTransition] = useTransition();
 
-	const currentFields = entity ? entityFilters[entity] || [] : [];
 	const fetchedFields = useRef<Set<string>>(new Set());
+
+	const currentFields = entity
+		? (entityFields[entity]?.filter((field) =>
+				field.category.includes("filter"),
+			) ?? [])
+		: [];
+
 	const hasFilters = currentFields.some((field) => {
 		const value = searchParams.get(field.name);
 		return value !== null && value !== "";
 	});
 
 	useEffect(() => {
-		if (open && entity) {
-			for (const field of currentFields) {
-				if (
-					field.type === "foreignKey" &&
-					!fetchedFields.current.has(field.name)
-				) {
-					fetchedFields.current.add(field.name);
-					getFilterOptions(field.name)
-						.then((options) => {
-							setOptionsCache((curr) => ({ ...curr, [field.name]: options }));
-						})
-						.catch((err) => {
-							fetchedFields.current.delete(field.name);
-							console.error(err);
-						});
-				}
+		if (!open || !entity) return;
+
+		for (const field of currentFields) {
+			if (
+				field.type !== "foreignKey" ||
+				fetchedFields.current.has(field.name)
+			) {
+				continue;
 			}
+
+			fetchedFields.current.add(field.name);
+
+			getFilterOptions(field.name)
+				.then((options) => {
+					setOptionsCache((current) => ({
+						...current,
+						[field.name]: options,
+					}));
+				})
+				.catch((error) => {
+					fetchedFields.current.delete(field.name);
+					console.error(error);
+				});
 		}
 	}, [open, entity, currentFields]);
 
