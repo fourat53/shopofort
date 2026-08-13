@@ -45,4 +45,20 @@ function formatDateTime(date: Date | string | null | undefined): string {
 	}).format(dateObj);
 }
 
-export { formatDate, formatDateTime, isDate };
+function dateFormat(date: Date | undefined) {
+	if (!date) return "";
+
+	return date.toLocaleDateString("en-US", {
+		day: "2-digit",
+		month: "long",
+		year: "numeric",
+	});
+}
+
+function isValidDate(date: Date | undefined) {
+	if (!date) return false;
+
+	return !Number.isNaN(date.getTime());
+}
+
+export { dateFormat, formatDate, formatDateTime, isDate, isValidDate };

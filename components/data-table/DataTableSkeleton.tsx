@@ -32,7 +32,7 @@ export default function DataTableSkeleton({
 							border={index !== 0}
 							className={
 								item === "User ID"
-									? "w-63.75"
+									? "w-64"
 									: item === "Images"
 										? "w-66"
 										: item === "Picture"
@@ -57,10 +57,10 @@ export default function DataTableSkeleton({
 								border={index !== 0}
 								className={
 									item === "Images"
-										? "h-18.25 w-66"
+										? "h-18.5 w-66"
 										: item === "Picture"
-											? "h-18.25 w-18 max-w-18"
-											: "h-8.25"
+											? "h-18.5 w-18 max-w-18"
+											: "h-8.5"
 								}
 							>
 								{item === "Images" ? (
@@ -76,7 +76,7 @@ export default function DataTableSkeleton({
 								)}
 							</TableCell>
 						))}
-						<TableCell border className="py-0.5 w-20 text-center">
+						<TableCell border className="py-0.5 w-20">
 							<div className="flex items-center justify-center gap-1.5">
 								<Button
 									variant="ghost"

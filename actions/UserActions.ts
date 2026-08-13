@@ -1,11 +1,6 @@
 "use server";
 
-import type { User } from "@/lib/types";
-import {
-	getAllUsers,
-	getKindeToken,
-	kindeIssuerUrl,
-} from "@/queries/UserQueries";
+import { getKindeToken, kindeIssuerUrl } from "@/queries/UserQueries";
 
 function getFormUser(formData: FormData) {
 	const picture = formData.get("picture") as string;
@@ -100,13 +95,4 @@ async function deleteUser(id: string) {
 	}
 }
 
-async function getUsersOptions() {
-	const users = await getAllUsers();
-
-	return users.map((u: User) => ({
-		value: u.id,
-		label: `${u.id} - ${u.email || u.first_name} ${u.last_name}`,
-	}));
-}
-
-export { deleteUser, getUserById, getUsersOptions, updateUser };
+export { deleteUser, getUserById, updateUser };

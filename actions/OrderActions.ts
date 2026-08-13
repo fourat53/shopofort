@@ -27,15 +27,4 @@ async function updateOrder(id: number, formData: FormData) {
 	updateTag("orders");
 }
 
-async function getOrdersOptions() {
-	const orders = await prisma.order.findMany({
-		select: { id: true, userId: true },
-		orderBy: { id: "asc" },
-	});
-	return orders.map((o) => ({
-		value: String(o.id),
-		label: `Order ${o.id} (User ${o.userId})`,
-	}));
-}
-
-export { createOrder, getOrdersOptions, updateOrder };
+export { createOrder, updateOrder };

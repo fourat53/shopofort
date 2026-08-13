@@ -1,17 +1,9 @@
 "use client";
 
 import { IconEdit } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
-import { getCartsOptions, updateCart } from "@/actions/CartActions";
-import { updateCartItem } from "@/actions/CartItemActions";
-import {
-	getCategoriesOptions,
-	updateCategory,
-} from "@/actions/CategoryActions";
-import { getOrdersOptions, updateOrder } from "@/actions/OrderActions";
-import { updateOrderItem } from "@/actions/OrderItemActions";
-import { getProductsOptions, updateProduct } from "@/actions/ProductActions";
-import { getUsersOptions, updateUser } from "@/actions/UserActions";
+import { useEffect, useRef, useState } from "react";
+import { getFilterOptions, updateEntity } from "@/actions/EntityActions";
+import { ImageUpload } from "@/components/form-items/image-upload";
 import { Input } from "@/components/form-items/input";
 import { Select, type SelectOption } from "@/components/form-items/select";
 import { Button } from "@/components/ui/button";
@@ -23,8 +15,9 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
-import { booleanItems, orderStatusItems } from "@/lib/static-data";
 import type { EntityRowType } from "../data-table/DataTableLayout";
+import { DatePicker } from "../form-items/date-picker";
+import { entityFields } from "./current-entity";
 
 interface EditButtonProps {
 	entityRow: EntityRowType;
@@ -35,58 +28,78 @@ export default function EditButton({ entityRow, disabled }: EditButtonProps) {
 	const [entity, row] = entityRow;
 
 	const [open, setOpen] = useState<boolean>(false);
-	const [userOptions, setUserOptions] = useState<SelectOption[]>([]);
-	const [categoryOptions, setCategoryOptions] = useState<SelectOption[]>([]);
-	const [productOptions, setProductOptions] = useState<SelectOption[]>([]);
-	const [cartOptions, setCartOptions] = useState<SelectOption[]>([]);
-	const [orderOptions, setOrderOptions] = useState<SelectOption[]>([]);
+	const [optionsCache, setOptionsCache] = useState<
+		Record<string, SelectOption[]>
+	>({});
+	const [productImages, setProductImages] = useState<File[]>([]);
 	const [loading, setLoading] = useState<boolean>(false);
+
+	const fetchedFields = useRef<Set<string>>(new Set());
+
+	const entityName = entity.endsWith("s") ? entity.slice(0, -1) : entity;
+
+	const currentFields =
+		entityFields[entityName]?.filter((field) =>
+			field.category.includes("edit"),
+		) ?? [];
 
 	useEffect(() => {
 		if (!open) return;
-		if (entity === "users") {
-		} else if (entity === "products") {
-			getCategoriesOptions().then(setCategoryOptions);
-		} else if (entity === "orders" || entity === "carts")
-			getUsersOptions().then(setUserOptions);
-		else if (entity === "cart-items") {
-			getCartsOptions().then(setCartOptions);
-			getProductsOptions().then(setProductOptions);
-		} else if (entity === "order-items") {
-			getOrdersOptions().then(setOrderOptions);
-			getProductsOptions().then(setProductOptions);
+
+		for (const field of currentFields) {
+			if (
+				field.type !== "foreignKey" ||
+				fetchedFields.current.has(field.name)
+			) {
+				continue;
+			}
+
+			fetchedFields.current.add(field.name);
+
+			getFilterOptions(field.name)
+				.then((options) => {
+					setOptionsCache((current) => ({
+						...current,
+						[field.name]: options,
+					}));
+				})
+				.catch((error) => {
+					fetchedFields.current.delete(field.name);
+					console.error(error);
+				});
 		}
-	}, [open, entity]);
+	}, [open, currentFields]);
 
 	const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		setLoading(true);
 
 		try {
+			setLoading(true);
+
 			const formData = new FormData(e.currentTarget);
+
+			for (const image of productImages) {
+				formData.append("images", image);
+			}
+
+			await updateEntity(entity, row.id, formData);
+
+			setOpen(false);
+			setProductImages([]);
+
 			if (entity === "users") {
-				await updateUser(row.id, formData);
-			} else if (entity === "products") {
-				await updateProduct(row.id, formData);
-			} else if (entity === "orders") {
-				await updateOrder(row.id, formData);
-			} else if (entity === "carts") {
-				await updateCart(row.id, formData);
-			} else if (entity === "categories") {
-				await updateCategory(row.id, formData);
-			} else if (entity === "cart-items") {
-				await updateCartItem(row.id, formData);
-			} else if (entity === "order-items") {
-				await updateOrderItem(row.id, formData);
+				window.location.reload();
 			}
 		} catch (error) {
 			console.error("Error updating entity:", error);
 		} finally {
 			setLoading(false);
-			setOpen(false);
-			entity === "users" && window.location.reload();
 		}
 	};
+
+	if (!entity || entity === "users") {
+		return null;
+	}
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
@@ -100,6 +113,7 @@ export default function EditButton({ entityRow, disabled }: EditButtonProps) {
 					<IconEdit className="h-4 w-4 text-mist-400" />
 				</Button>
 			</DialogTrigger>
+
 			<DialogContent
 				onPointerDownOutside={(e) => loading && e.preventDefault()}
 				onEscapeKeyDown={(e) => loading && e.preventDefault()}
@@ -109,247 +123,94 @@ export default function EditButton({ entityRow, disabled }: EditButtonProps) {
 						Edit {entity.charAt(0).toUpperCase() + entity.slice(1)}
 					</DialogTitle>
 				</DialogHeader>
+
 				<form onSubmit={handleSubmit} className="flex flex-col gap-2 pt-2">
-					{entity === "users" && (
-						<>
-							{/* <ImageUpload
-								label="Profile Picture"
-								images={userPicture}
-								onChange={setUserPicture}
-							/> */}
-							<Input
-								name="first_name"
-								label="First Name"
-								defaultValue={row.first_name || ""}
-								required
-							/>
-							<Input
-								name="last_name"
-								label="Last Name"
-								defaultValue={row.last_name || ""}
-								required
-							/>
-							<Select
-								name="is_suspended"
-								label="Suspended"
-								placeholder="Select option"
-								defaultValue={String(row.is_suspended) || ""}
-								items={booleanItems}
-							/>
-						</>
-					)}
+					{currentFields.map((field) => {
+						const value = (row as Record<string, unknown>)[field.name];
 
-					{entity === "products" && (
-						<>
-							<Input
-								name="name"
-								label="Name"
-								defaultValue={row.name || ""}
-								required
-							/>
-							<Input
-								name="brand"
-								label="Brand"
-								defaultValue={row.brand || ""}
-							/>
-							<Input
-								name="price"
-								label="Price ($)"
-								step="0.01"
-								defaultValue={row.price || 5}
-								required
-							/>
-							<Input
-								name="inventory"
-								type="number"
-								label="Inventory"
-								defaultValue={row.inventory || 1}
-								required
-							/>
-							<Input
-								name="description"
-								label="Description"
-								defaultValue={row.description || ""}
-							/>
-							<Select
-								label="Category"
-								name="categoryId"
-								placeholder="Select Category"
-								defaultValue={row.categoryId ? String(row.categoryId) : ""}
-								items={categoryOptions}
-							/>
-							{/* <ImageUpload
-								label="Product Images"
-								images={productImages}
-								onChange={setProductImages}
-								multiple
-							/> */}
-						</>
-					)}
+						return (
+							<div key={field.name} className="flex flex-col gap-2">
+								{field.type === "string" && (
+									<Input
+										name={field.name}
+										label={field.label.toString()}
+										type="text"
+										defaultValue={value?.toString() ?? ""}
+										required={field.required}
+									/>
+								)}
 
-					{entity === "orders" && (
-						<>
-							<Input
-								name="orderDate"
-								type="date"
-								label="Order Date"
-								defaultValue={
-									row.orderDate
-										? new Date(row.orderDate).toISOString().split("T")[0]
-										: new Date().toISOString().split("T")[0]
-								}
-								required
-							/>
-							<Input
-								name="totalAmount"
-								type="number"
-								label="Total Amount ($)"
-								step="1"
-								defaultValue={row.totalAmount || 1}
-								required
-							/>
-							<Select
-								label="Order Status"
-								name="orderStatus"
-								defaultValue={row.orderStatus || "PENDING"}
-								placeholder="Select status"
-								items={orderStatusItems}
-							/>
-							<Select
-								label="User"
-								name="userId"
-								placeholder="Select User"
-								defaultValue={row.userId ? String(row.userId) : ""}
-								items={userOptions}
-							/>
-						</>
-					)}
+								{field.type === "number" && (
+									<Input
+										name={field.name}
+										label={field.label.toString()}
+										type="number"
+										step={field.step ?? "1"}
+										defaultValue={
+											value !== null && value !== undefined ? String(value) : ""
+										}
+										required={field.required}
+									/>
+								)}
 
-					{entity === "carts" && (
-						<>
-							<Input
-								name="totalAmount"
-								type="number"
-								label="Total Amount ($)"
-								step="1"
-								defaultValue={row.totalAmount || 1}
-								required
-							/>
-							<Select
-								label="User"
-								name="userId"
-								placeholder="Select User"
-								defaultValue={row.userId ? String(row.userId) : ""}
-								items={userOptions}
-							/>
-						</>
-					)}
+								{field.type === "date" && (
+									<DatePicker
+										name={field.name}
+										label={field.label.toString()}
+										defaultValue={value as string | Date | undefined}
+										required={field.required}
+									/>
+								)}
 
-					{entity === "categories" && (
-						<>
-							<Input
-								name="name"
-								label="Name"
-								defaultValue={row.name || ""}
-								required
-							/>
-							<Select
-								label="Gender"
-								name="gender"
-								placeholder="Select Gender"
-								defaultValue={row.gender || undefined}
-								items={[
-									{ label: "Male", value: "MALE" },
-									{ label: "Female", value: "FEMALE" },
-								]}
-							/>
-						</>
-					)}
+								{field.type === "enum" && (
+									<Select
+										name={field.name}
+										label={field.label}
+										defaultValue={value?.toString() || undefined}
+										placeholder="Select an option"
+										items={
+											field.enumValues?.map((enumValue) => ({
+												label: enumValue,
+												value: enumValue,
+											})) ?? []
+										}
+										required={field.required}
+									/>
+								)}
 
-					{entity === "cart-items" && (
-						<>
-							<Input
-								name="quantity"
-								type="number"
-								label="Quantity"
-								defaultValue={row.quantity || 1}
-								required
-							/>
-							<Input
-								name="unitPrice"
-								type="number"
-								label="Unit Price ($)"
-								step="0.01"
-								defaultValue={row.unitPrice || 0}
-								required
-							/>
-							<Input
-								name="totalPrice"
-								type="number"
-								label="Total Price ($)"
-								step="0.01"
-								defaultValue={row.totalPrice || 0}
-								required
-							/>
-							<Select
-								label="Cart"
-								name="cartId"
-								placeholder="Select Cart"
-								defaultValue={row.cartId ? String(row.cartId) : ""}
-								items={cartOptions}
-							/>
-							<Select
-								label="Product"
-								name="productId"
-								placeholder="Select Product"
-								defaultValue={row.productId ? String(row.productId) : ""}
-								items={productOptions}
-							/>
-						</>
-					)}
+								{field.type === "foreignKey" && (
+									<Select
+										name={field.name}
+										label={field.label}
+										placeholder="Select an option"
+										defaultValue={
+											value !== null && value !== undefined ? String(value) : ""
+										}
+										items={optionsCache[field.name] ?? []}
+										required={field.required}
+									/>
+								)}
 
-					{entity === "order-items" && (
-						<>
-							<Input
-								name="quantity"
-								type="number"
-								label="Quantity"
-								defaultValue={row.quantity || 1}
-								required
-							/>
-							<Input
-								name="price"
-								type="number"
-								label="Price ($)"
-								step="0.01"
-								defaultValue={row.price || 0}
-								required
-							/>
-							<Select
-								label="Order"
-								name="orderId"
-								placeholder="Select Order"
-								defaultValue={row.orderId ? String(row.orderId) : ""}
-								items={orderOptions}
-							/>
-							<Select
-								label="Product"
-								name="productId"
-								placeholder="Select Product"
-								defaultValue={row.productId ? String(row.productId) : ""}
-								items={productOptions}
-							/>
-						</>
-					)}
+								{field.type === "image" && (
+									<ImageUpload
+										images={productImages}
+										onChange={setProductImages}
+									/>
+								)}
+							</div>
+						);
+					})}
 
 					<DialogFooter className="pt-4">
 						<Button
 							variant="outline"
 							onClick={() => setOpen(false)}
 							disabled={loading}
+							type="button"
 						>
 							Cancel
 						</Button>
+
 						<Button loading={loading} type="submit">
 							Update
 						</Button>

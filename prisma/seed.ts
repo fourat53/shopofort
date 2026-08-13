@@ -1,7 +1,12 @@
 import { PrismaPg } from "@prisma/adapter-pg";
 import { config } from "dotenv";
 import { checkedEnvVar } from "@/lib/checked-env-var";
-import { type OrderStatus, PrismaClient } from "@/lib/generated/prisma/client";
+import {
+	type CategoryName,
+	type Gender,
+	type OrderStatus,
+	PrismaClient,
+} from "@/lib/generated/prisma/client";
 import { getAllUsers } from "@/queries/UserQueries";
 
 config({ path: checkedEnvVar("ENV_PATH") });
@@ -26,8 +31,14 @@ const randomImages = (productImages: string[], max = 6) => {
 	return [...productImages].sort(() => Math.random() - 0.5).slice(0, count);
 };
 
-const categoryNames = ["T-Shirts", "Jeans", "Hoodies", "Dresses", "Jackets"];
-const genders: ("MALE" | "FEMALE")[] = ["MALE", "FEMALE"];
+const categoryNames: CategoryName[] = [
+	"T_SHIRTS",
+	"JEANS",
+	"HOODIES",
+	"DRESSES",
+	"JACKETS",
+];
+const genders: Gender[] = ["MALE", "FEMALE"];
 const productNames: string[] = [
 	"Classic Cotton T-Shirt",
 	"Slim Fit Denim Jeans",
@@ -62,11 +73,13 @@ async function main(minId: number, maxId: number) {
 
 	console.log("📂 Seeding Categories...");
 	const categories = [];
-	for (let i = minId; i <= maxId; i++) {
-		categories.push({
-			name: categoryNames[i % categoryNames.length],
-			gender: genders[i % 2],
-		});
+	for (const name of categoryNames) {
+		for (const gender of genders) {
+			categories.push({
+				name: name,
+				gender: gender,
+			});
+		}
 	}
 	await prisma.category.createMany({
 		data: categories,

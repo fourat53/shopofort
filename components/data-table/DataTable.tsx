@@ -33,7 +33,7 @@ export default function DataTable({
 							border={index !== 0}
 							className={
 								item === "User ID"
-									? "w-63.75"
+									? "w-64"
 									: hasImage === "multiple"
 										? "w-62 text-center"
 										: hasImage === "one"
@@ -64,14 +64,15 @@ export default function DataTable({
 						<TableRow key={row.id}>
 							{Object.values(row).map((value, colIndex) => (
 								<TableCell
+									title={hasImage ? undefined : String(value)}
 									border={colIndex !== 0}
 									key={`cell-${row.id}-${colIndex}`}
 									className={
 										hasImage === "multiple"
-											? "h-18.25"
+											? "h-18.5"
 											: hasImage === "one"
-												? "h-18.25"
-												: "h-8.25"
+												? "h-18.5"
+												: "h-8.5"
 									}
 								>
 									<CellContent
@@ -82,7 +83,7 @@ export default function DataTable({
 									/>
 								</TableCell>
 							))}
-							<TableCell border className="py-0.5 w-20 text-center">
+							<TableCell border className="py-0.5 w-20">
 								<div className="flex items-center justify-center gap-1.5">
 									{/* @ts-expect-error - correct type expected */}
 									<EditButton entityRow={[entity, row]} />

@@ -24,15 +24,4 @@ async function updateCart(id: number, formData: FormData) {
 	updateTag("carts");
 }
 
-async function getCartsOptions() {
-	const carts = await prisma.cart.findMany({
-		select: { id: true, userId: true },
-		orderBy: { id: "asc" },
-	});
-	return carts.map((c) => ({
-		value: String(c.id),
-		label: `Cart ${c.id} (User ${c.userId})`,
-	}));
-}
-
-export { createCart, getCartsOptions, updateCart };
+export { createCart, updateCart };

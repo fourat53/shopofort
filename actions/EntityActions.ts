@@ -4,7 +4,13 @@ import { updateTag } from "next/cache";
 import type { SelectOption } from "@/components/form-items/select";
 import { prisma } from "@/lib/prisma";
 import { getAllUsers } from "@/queries/UserQueries";
-import { deleteUser, getUserById } from "./UserActions";
+import { createCart, updateCart } from "./CartActions";
+import { createCartItem, updateCartItem } from "./CartItemActions";
+import { createCategory, updateCategory } from "./CategoryActions";
+import { createOrder, updateOrder } from "./OrderActions";
+import { createOrderItem, updateOrderItem } from "./OrderItemActions";
+import { createProduct, updateProduct } from "./ProductActions";
+import { deleteUser, getUserById, updateUser } from "./UserActions";
 
 const tagMap: Record<string, string> = {
 	user: "users",
@@ -114,4 +120,41 @@ async function getFilterOptions(field: string): Promise<SelectOption[]> {
 	}
 }
 
-export { deleteEntity, getEntityById, getFilterOptions };
+async function createEntity(entity: string, formData: FormData) {
+	if (entity === "product") await createProduct(formData);
+	else if (entity === "order") await createOrder(formData);
+	else if (entity === "cart") await createCart(formData);
+	else if (entity === "category") await createCategory(formData);
+	else if (entity === "cartItem") await createCartItem(formData);
+	else if (entity === "orderItem") await createOrderItem(formData);
+}
+
+async function updateEntity(
+	entity: string,
+	id: number | string,
+	formData: FormData,
+) {
+	if (entity === "users") {
+		await updateUser(id as string, formData);
+	} else if (entity === "products") {
+		await updateProduct(id as number, formData);
+	} else if (entity === "orders") {
+		await updateOrder(id as number, formData);
+	} else if (entity === "carts") {
+		await updateCart(id as number, formData);
+	} else if (entity === "categories") {
+		await updateCategory(id as number, formData);
+	} else if (entity === "cart-items") {
+		await updateCartItem(id as number, formData);
+	} else if (entity === "order-items") {
+		await updateOrderItem(id as number, formData);
+	}
+}
+
+export {
+	createEntity,
+	deleteEntity,
+	getEntityById,
+	getFilterOptions,
+	updateEntity,
+};

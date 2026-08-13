@@ -28,15 +28,4 @@ async function updateProduct(id: number, formData: FormData) {
 	updateTag("products");
 }
 
-async function getProductsOptions() {
-	const products = await prisma.product.findMany({
-		select: { id: true, name: true },
-		orderBy: { id: "asc" },
-	});
-	return products.map((p) => ({
-		value: String(p.id),
-		label: `${p.id} - ${p.name}`,
-	}));
-}
-
-export { createProduct, getProductsOptions, updateProduct };
+export { createProduct, updateProduct };

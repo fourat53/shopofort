@@ -1,4 +1,299 @@
 import { usePathname } from "next/navigation";
+import type {
+	CategoryName,
+	Gender,
+	OrderStatus,
+} from "@/lib/generated/prisma/enums";
+
+type FieldCategory = "filter" | "create" | "edit";
+type FieldType = "string" | "number" | "date" | "enum" | "foreignKey" | "image";
+
+type FieldConfig = {
+	name: string;
+	label: string | string[];
+	type: FieldType;
+	category: FieldCategory[];
+	required?: boolean;
+	defaultValue?: string | number;
+	step?: string;
+	enumValues?: OrderStatus[] | Gender[] | CategoryName[];
+};
+
+const entityFields: Record<string, FieldConfig[]> = {
+	user: [
+		{
+			name: "id",
+			label: "ID",
+			type: "number",
+			category: ["filter", "edit"],
+		},
+		{
+			name: "email",
+			label: "Email",
+			type: "string",
+			category: ["filter", "edit"],
+		},
+		{
+			name: "first_name",
+			label: "First Name",
+			type: "string",
+			category: ["filter", "create", "edit"],
+			required: true,
+		},
+		{
+			name: "last_name",
+			label: "Last Name",
+			type: "string",
+			category: ["filter", "create", "edit"],
+			required: true,
+		},
+	],
+	product: [
+		{
+			name: "id",
+			label: "ID",
+			type: "number",
+			category: ["filter", "edit"],
+		},
+		{
+			name: "name",
+			label: "Name",
+			type: "string",
+			category: ["filter", "create", "edit"],
+			required: true,
+		},
+		{
+			name: "brand",
+			label: "Brand",
+			type: "string",
+			category: ["filter", "create", "edit"],
+		},
+		{
+			name: "price",
+			label: "Price",
+			type: "number",
+			category: ["filter", "create", "edit"],
+			defaultValue: 5,
+			required: true,
+			step: "0.01",
+		},
+		{
+			name: "inventory",
+			label: "Inventory",
+			type: "number",
+			category: ["filter", "create", "edit"],
+			defaultValue: 1,
+			required: true,
+		},
+		{
+			name: "description",
+			label: "Description",
+			type: "string",
+			category: ["create", "edit"],
+		},
+		{
+			name: "categoryId",
+			label: "Category",
+			type: "foreignKey",
+			category: ["filter", "create", "edit"],
+		},
+		{
+			name: "images",
+			label: "Images",
+			type: "image",
+			category: ["create", "edit"],
+		},
+	],
+	cart: [
+		{
+			name: "id",
+			label: "ID",
+			type: "number",
+			category: ["filter", "edit"],
+		},
+		{
+			name: "totalAmount",
+			label: "Total Amount",
+			type: "number",
+			category: ["filter", "create", "edit"],
+			defaultValue: 1,
+			required: true,
+			step: "0.01",
+		},
+		{
+			name: "userId",
+			label: "User",
+			type: "foreignKey",
+			category: ["filter", "create", "edit"],
+			required: true,
+		},
+	],
+	cartItem: [
+		{
+			name: "id",
+			label: "ID",
+			type: "number",
+			category: ["filter", "edit"],
+		},
+		{
+			name: "quantity",
+			label: "Quantity",
+			type: "number",
+			category: ["filter", "create", "edit"],
+			required: true,
+		},
+		{
+			name: "unitPrice",
+			label: "Unit Price",
+			type: "number",
+			category: ["filter", "create", "edit"],
+			required: true,
+			step: "0.01",
+		},
+		{
+			name: "totalPrice",
+			label: "Total Price",
+			type: "number",
+			category: ["filter", "create", "edit"],
+			required: true,
+			step: "0.01",
+		},
+		{
+			name: "cartId",
+			label: "Cart",
+			type: "foreignKey",
+			category: ["filter", "create", "edit"],
+			required: true,
+		},
+		{
+			name: "productId",
+			label: "Product",
+			type: "foreignKey",
+			category: ["filter", "create", "edit"],
+			required: true,
+		},
+	],
+	order: [
+		{
+			name: "id",
+			label: "ID",
+			type: "number",
+			category: ["filter", "edit"],
+		},
+		{
+			name: "orderDate",
+			label: "Order Date",
+			type: "date",
+			category: ["filter", "create", "edit"],
+			required: true,
+			defaultValue: new Date().toISOString(),
+		},
+		{
+			name: "totalAmount",
+			label: "Total Amount",
+			type: "number",
+			category: ["filter", "create", "edit"],
+			required: true,
+			defaultValue: 1,
+			step: "0.01",
+		},
+		{
+			name: "orderStatus",
+			label: "Order Status",
+			type: "enum",
+			category: ["filter", "create", "edit"],
+			enumValues: [
+				"PENDING",
+				"PROCESSING",
+				"SHIPPED",
+				"DELIVERED",
+				"CANCELLED",
+			] as OrderStatus[],
+			defaultValue: "PENDING",
+		},
+		{
+			name: "userId",
+			label: "User",
+			type: "foreignKey",
+			category: ["filter", "create", "edit"],
+			required: true,
+		},
+	],
+	orderItem: [
+		{
+			name: "id",
+			label: "ID",
+			type: "number",
+			category: ["filter", "edit"],
+		},
+		{
+			name: "quantity",
+			label: "Quantity",
+			type: "number",
+			category: ["filter", "create", "edit"],
+			required: true,
+		},
+		{
+			name: "price",
+			label: "Price",
+			type: "number",
+			category: ["filter", "create", "edit"],
+			required: true,
+			step: "0.01",
+		},
+		{
+			name: "orderId",
+			label: "Order",
+			type: "foreignKey",
+			category: ["filter", "create", "edit"],
+			required: true,
+		},
+		{
+			name: "productId",
+			label: "Product",
+			type: "foreignKey",
+			category: ["filter", "create", "edit"],
+			required: true,
+		},
+	],
+	category: [
+		{
+			name: "id",
+			label: "ID",
+			type: "number",
+			category: ["filter", "edit"],
+		},
+		{
+			name: "name",
+			label: "Name",
+			type: "enum",
+			category: ["filter", "create", "edit"],
+			enumValues: [
+				"T_SHIRTS",
+				"JEANS",
+				"HOODIES",
+				"DRESSES",
+				"JACKETS",
+			] as CategoryName[],
+			required: true,
+		},
+		{
+			name: "gender",
+			label: "Gender",
+			type: "enum",
+			category: ["filter", "create", "edit"],
+			enumValues: ["MALE", "FEMALE"] as Gender[],
+			required: true,
+		},
+	],
+} as const;
+
+const entityFilters = Object.fromEntries(
+	Object.entries(entityFields).map(([entity, fields]) => [
+		entity,
+		fields.filter((field) => field.category.includes("filter")),
+	]),
+);
 
 function CurrentEntity() {
 	const pathname = usePathname();
@@ -38,4 +333,10 @@ function entityFromHeaderName(headerName: string, pathname: string) {
 	return entity;
 }
 
-export { CurrentEntity, entityFromHeaderName };
+export {
+	CurrentEntity,
+	entityFields,
+	entityFilters,
+	entityFromHeaderName,
+	type FieldConfig,
+};

@@ -7,7 +7,77 @@ datasource db {
   provider = "postgresql"
 }
 
-// Enums
+model Cart {
+  id          Int        @id @default(autoincrement())
+  totalAmount Int
+  userId      String     @unique
+  items       CartItem[]
+
+  @@map("carts")
+}
+
+model CartItem {
+  id         Int     @id @default(autoincrement())
+  quantity   Int
+  unitPrice  Decimal @db.Decimal(10, 2)
+  totalPrice Decimal @db.Decimal(10, 2)
+  cartId     Int
+  productId  Int
+  cart       Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product    Product @relation(fields: [productId], references: [id])
+
+  @@map("cart_items")
+}
+
+model Category {
+  id       Int          @id @default(autoincrement())
+  name     CategoryName
+  gender   Gender
+  products Product[]
+
+  @@unique([name, gender])
+  @@map("categories")
+}
+
+model Product {
+  id          Int         @id @default(autoincrement())
+  name        String
+  brand       String?
+  price       Decimal     @db.Decimal(10, 2)
+  inventory   Int
+  description String?
+  categoryId  Int?
+  images      String[]
+  cartItems   CartItem[]
+  orderItems  OrderItem[]
+  category    Category?   @relation(fields: [categoryId], references: [id])
+
+  @@map("products")
+}
+
+model Order {
+  id          Int         @id @default(autoincrement()) @map("orderId")
+  orderDate   DateTime
+  totalAmount Int
+  orderStatus OrderStatus
+  userId      String
+  orderItems  OrderItem[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id        Int     @id @default(autoincrement())
+  quantity  Int
+  price     Decimal @db.Decimal(10, 2)
+  orderId   Int
+  productId Int
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id])
+
+  @@map("order_items")
+}
+
 enum Gender {
   MALE
   FEMALE
@@ -21,82 +91,10 @@ enum OrderStatus {
   CANCELLED
 }
 
-// Models
-model Cart {
-  id          Int     @id @default(autoincrement())
-  totalAmount Int
-  userId      String  @unique
-
-  items CartItem[]
-
-  @@map("carts")
-}
-
-model CartItem {
-  id         Int     @id @default(autoincrement())
-  quantity   Int
-  unitPrice  Decimal @db.Decimal(10, 2)
-  totalPrice Decimal @db.Decimal(10, 2)
-
-  cartId Int
-  cart   Cart @relation(fields: [cartId], references: [id], onDelete: Cascade)
-
-  productId Int
-  product   Product @relation(fields: [productId], references: [id])
-
-  @@map("cart_items")
-}
-
-model Category {
-  id     Int     @id @default(autoincrement())
-  name   String
-  gender Gender?
-
-  products Product[]
-
-  @@map("categories")
-}
-
-model Product {
-  id          Int     @id @default(autoincrement())
-  name        String
-  brand       String?
-  price       Decimal @db.Decimal(10, 2)
-  inventory   Int
-  description String?
-
-  categoryId Int?
-  category   Category? @relation(fields: [categoryId], references: [id])
-
-  images     String[]
-  cartItems  CartItem[]
-  orderItems OrderItem[]
-
-  @@map("products")
-}
-
-model Order {
-  id          Int         @id @default(autoincrement()) @map("orderId")
-  orderDate   DateTime    @db.Date
-  totalAmount Int
-  orderStatus OrderStatus
-  userId      String
-
-  orderItems OrderItem[]
-
-  @@map("orders")
-}
-
-model OrderItem {
-  id       Int     @id @default(autoincrement())
-  quantity Int
-  price    Decimal @db.Decimal(10, 2)
-
-  orderId Int
-  order   Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
-
-  productId Int
-  product   Product @relation(fields: [productId], references: [id])
-
-  @@map("order_items")
+enum CategoryName {
+  T_SHIRTS
+  JEANS
+  HOODIES
+  DRESSES
+  JACKETS
 }

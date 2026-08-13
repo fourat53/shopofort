@@ -22,7 +22,7 @@ export default function CellContent({
 	const imageSize = tooltip ? 32 : 56;
 
 	return (
-		<div className="truncate max-w-70" title={String(value)}>
+		<>
 			{colIndex &&
 			colIndex > 0 &&
 			lowerHeader.includes(" id") &&
@@ -103,6 +103,6 @@ export default function CellContent({
 			) : (
 				String(value)
 			)}
-		</div>
+		</>
 	);
 }
