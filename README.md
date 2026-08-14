@@ -39,9 +39,8 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 pnpm biome format --write .
 
-- update selects options for create and edit buttons
-- refactpr edit create and delete to have the same structure
 - add select multiple to update or delete multiple entities
+- add tooltip user to cache
 
 - TO DO :
   <!-- products and users page -->

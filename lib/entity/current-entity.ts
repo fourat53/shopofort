@@ -1,9 +1,15 @@
 import { usePathname } from "next/navigation";
-import type {
-	CategoryName,
-	Gender,
-	OrderStatus,
-} from "@/lib/generated/prisma/enums";
+import type { CategoryName, Gender, OrderStatus } from "@/lib/entity/types";
+
+type EntityType =
+	| "user"
+	| "cart"
+	| "order"
+	| "product"
+	| "category"
+	| "cartItem"
+	| "orderItem"
+	| "";
 
 type FieldCategory = "filter" | "create" | "edit";
 type FieldType = "string" | "number" | "date" | "enum" | "foreignKey" | "image";
@@ -29,7 +35,7 @@ const entityFields: Record<string, FieldConfig[]> = {
 		},
 		{
 			name: "email",
-			label: "Email",
+			label: "emailEmail",
 			type: "string",
 			category: ["filter", "edit"],
 		},
@@ -283,7 +289,7 @@ const entityFields: Record<string, FieldConfig[]> = {
 
 function CurrentEntity() {
 	const pathname = usePathname();
-	let entity: string = "";
+	let entity: EntityType = "";
 
 	if (pathname.includes("/users")) entity = "user";
 	else if (pathname.includes("/products")) entity = "product";
@@ -296,27 +302,24 @@ function CurrentEntity() {
 	return entity;
 }
 
-function entityFromHeaderName(headerName: string, pathname: string) {
-	let entity = "";
-	const lowerHeader = headerName.toLowerCase();
+function TooltipEntity(headerName: string) {
+	let entity: EntityType = "";
 
-	if (lowerHeader.includes("user")) entity = "user";
-	else if (lowerHeader.includes("product")) entity = "product";
-	else if (lowerHeader.includes("order") && !lowerHeader.includes("item"))
-		entity = "order";
-	else if (lowerHeader.includes("order item")) entity = "orderItem";
-	else if (lowerHeader.includes("cart item")) entity = "cartItem";
-	else if (lowerHeader.includes("cart")) entity = "cart";
-	else if (lowerHeader.includes("category")) entity = "category";
-	else if (lowerHeader === "id") {
-		if (pathname.includes("users")) entity = "user";
-		else if (pathname.includes("products")) entity = "product";
-		else if (pathname.includes("orders")) entity = "order";
-		else if (pathname.includes("categories")) entity = "category";
-		else if (pathname.includes("carts")) entity = "cart";
-	}
+	if (headerName === "User ID") entity = "user";
+	else if (headerName === "Product ID") entity = "product";
+	else if (headerName === "Order ID") entity = "order";
+	else if (headerName === "Order Item ID") entity = "orderItem";
+	else if (headerName === "Cart Item ID") entity = "cartItem";
+	else if (headerName === "Cart ID") entity = "cart";
+	else if (headerName === "Category ID") entity = "category";
 
 	return entity;
 }
 
-export { CurrentEntity, entityFields, entityFromHeaderName, type FieldConfig };
+export {
+	CurrentEntity,
+	type EntityType,
+	entityFields,
+	type FieldConfig,
+	TooltipEntity,
+};

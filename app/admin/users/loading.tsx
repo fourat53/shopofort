@@ -3,7 +3,7 @@ import DataTableSkeleton from "@/components/data-table/DataTableSkeleton";
 export const USERS_HEADER: string[] = [
 	"User ID",
 	"Picture",
-	"Email",
+	"emailEmail",
 	"First Name",
 	"Last Name",
 	"Suspended",

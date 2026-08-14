@@ -1,16 +1,16 @@
 "use server";
 
 import { updateTag } from "next/cache";
+import {
+	getKindeToken,
+	getUsers,
+	kindeIssuerUrl,
+	mapUser,
+} from "@/actions/UserActions";
 import type { SelectOption } from "@/components/form-items/select";
+import type { EntityType } from "@/lib/entity/current-entity";
 import { prisma } from "@/lib/prisma";
-import { getAllUsers } from "@/queries/UserQueries";
-import { createCart, updateCart } from "./CartActions";
-import { createCartItem, updateCartItem } from "./CartItemActions";
-import { createCategory, updateCategory } from "./CategoryActions";
-import { createOrder, updateOrder } from "./OrderActions";
-import { createOrderItem, updateOrderItem } from "./OrderItemActions";
-import { createProduct, updateProduct } from "./ProductActions";
-import { deleteUser, getUserById, updateUser } from "./UserActions";
+import { getFormEntity, getFormUser } from "../lib/entity/entity-form";
 
 const tagMap: Record<string, string> = {
 	user: "users",
@@ -22,26 +22,43 @@ const tagMap: Record<string, string> = {
 	orderItem: "order-items",
 };
 
-async function getEntityById(entity: string, id: number | string) {
+async function getEntityById(entity: EntityType, id: number | string) {
 	try {
-		let data = null;
 		if (entity === "user" && typeof id === "string") {
-			data = await getUserById(id);
+			const token = await getKindeToken();
+
+			const res = await fetch(`${kindeIssuerUrl}/api/v1/user?id=${id}`, {
+				method: "GET",
+				headers: {
+					Authorization: `Bearer ${token}`,
+					Accept: "application/json",
+				},
+				cache: "no-store",
+			});
+
+			const user = await res.json();
+			return mapUser(user);
 		} else if (typeof id === "number") {
 			// @ts-expect-error - prisma dynamic model access
-			data = await prisma[entity].findUnique({ where: { id } });
+			return await prisma[entity].findUnique({ where: { id } });
 		}
-		if (!data) return null;
-		return JSON.parse(JSON.stringify(data));
 	} catch (error) {
 		console.error(error);
 	}
 }
 
-async function deleteEntity(entity: string, id: number | string) {
+async function deleteEntity(entity: EntityType, id: number | string) {
 	try {
-		if (entity === "user" && typeof id === "string") {
-			await deleteUser(id);
+		if (typeof id === "string" && entity === "user") {
+			const token = await getKindeToken();
+
+			await fetch(`${kindeIssuerUrl}/api/v1/user?id=${id}`, {
+				method: "DELETE",
+				headers: {
+					Authorization: `Bearer ${token}`,
+					Accept: "application/json",
+				},
+			});
 
 			await prisma.cart.delete({ where: { userId: id } });
 			updateTag("carts");
@@ -59,6 +76,49 @@ async function deleteEntity(entity: string, id: number | string) {
 		}
 	} catch (error) {
 		console.error(error);
+	}
+}
+
+async function createEntity(entity: EntityType, formData: FormData) {
+	// @ts-expect-error - prisma dynamic model access
+	await prisma[entity].create({
+		data: getFormEntity(entity, formData),
+	});
+	updateTag(tagMap[entity]);
+}
+
+async function updateEntity(
+	entity: EntityType,
+	id: number | string,
+	formData: FormData,
+) {
+	if (typeof id === "string" && entity === "user") {
+		const token = await getKindeToken();
+
+		const { picture, first_name, last_name, is_suspended } =
+			getFormUser(formData);
+
+		await fetch(`${kindeIssuerUrl}/api/v1/user?id=${id}`, {
+			method: "PATCH",
+			headers: {
+				Authorization: `Bearer ${token}`,
+				"Content-Type": "application/json",
+				Accept: "application/json",
+			},
+			body: JSON.stringify({
+				picture,
+				given_name: first_name,
+				family_name: last_name,
+				is_suspended,
+			}),
+		});
+	} else if (typeof id === "number") {
+		// @ts-expect-error - prisma dynamic model access
+		await prisma[entity].update({
+			where: { id },
+			data: getFormEntity(entity, formData),
+		});
+		updateTag("products");
 	}
 }
 
@@ -105,7 +165,7 @@ async function getFilterOptions(field: string): Promise<SelectOption[]> {
 				}));
 			}
 			case "userId": {
-				const users = await getAllUsers();
+				const users = await getUsers();
 				return users.map((u) => ({
 					value: u.id,
 					label: [u.id, u.email],
@@ -117,37 +177,6 @@ async function getFilterOptions(field: string): Promise<SelectOption[]> {
 	} catch (error) {
 		console.error("Failed to fetch filter options", error);
 		return [];
-	}
-}
-
-async function createEntity(entity: string, formData: FormData) {
-	if (entity === "product") await createProduct(formData);
-	else if (entity === "order") await createOrder(formData);
-	else if (entity === "cart") await createCart(formData);
-	else if (entity === "category") await createCategory(formData);
-	else if (entity === "cartItem") await createCartItem(formData);
-	else if (entity === "orderItem") await createOrderItem(formData);
-}
-
-async function updateEntity(
-	entity: string,
-	id: number | string,
-	formData: FormData,
-) {
-	if (entity === "user") {
-		await updateUser(id as string, formData);
-	} else if (entity === "product") {
-		await updateProduct(id as number, formData);
-	} else if (entity === "order") {
-		await updateOrder(id as number, formData);
-	} else if (entity === "cart") {
-		await updateCart(id as number, formData);
-	} else if (entity === "category") {
-		await updateCategory(id as number, formData);
-	} else if (entity === "cartItem") {
-		await updateCartItem(id as number, formData);
-	} else if (entity === "orderItem") {
-		await updateOrderItem(id as number, formData);
 	}
 }
 

@@ -1,7 +1,7 @@
+import { getCartItemCount, getCartItemsPage } from "@/actions/CartItemActions";
 import DataTable, { type PageProps } from "@/components/data-table/DataTable";
 import { getPaginationParams } from "@/components/data-table/PaginationParams";
-import type { CartItem } from "@/lib/types";
-import { getCartItemCount, getCartItemsPage } from "@/queries/CartItemQueries";
+import type { CartItem } from "@/lib/entity/types";
 import { CART_ITEMS_HEADER } from "./loading";
 
 export default async function CartItemsPage({ searchParams }: PageProps) {

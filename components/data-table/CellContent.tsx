@@ -18,17 +18,16 @@ export default function CellContent({
 	rowId,
 	tooltip = false,
 }: CellContentProps) {
-	const lowerHeader = headerName.toLowerCase();
 	const imageSize = tooltip ? 32 : 56;
 
 	return (
 		<>
 			{colIndex &&
 			colIndex > 0 &&
-			lowerHeader.includes(" id") &&
+			headerName.includes(" ID") &&
 			(typeof value === "number" || typeof value === "string") ? (
 				<EntityTooltip headerName={headerName} idValue={value} />
-			) : ["orderstatus", "order status"].includes(lowerHeader) ? (
+			) : ["OrderStatus", "Order Status"].includes(headerName) ? (
 				<p
 					className={clsx(
 						"w-fit text-center bg-accent rounded-full flex items-center px-2",
@@ -46,7 +45,7 @@ export default function CellContent({
 				>
 					{String(value)}
 				</p>
-			) : lowerHeader === "picture" ? (
+			) : headerName === "Picture" ? (
 				value ? (
 					<Image
 						src={String(value)}
@@ -74,7 +73,7 @@ export default function CellContent({
 						}}
 					/>
 				)
-			) : lowerHeader === "images" &&
+			) : headerName === "Images" &&
 				Array.isArray(value) &&
 				value.length > 0 ? (
 				<div

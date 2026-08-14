@@ -1,6 +1,5 @@
 "use client";
 
-import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { getEntityById } from "@/actions/EntityActions";
 import {
@@ -9,7 +8,7 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { entityFromHeaderName } from "../buttons/current-entity";
+import { TooltipEntity } from "../../lib/entity/current-entity";
 import SmallLoader from "../loaders/small-loader";
 import CellContent from "./CellContent";
 
@@ -23,14 +22,13 @@ export default function EntityTooltip<T>({
 	const [data, setData] = useState<T>();
 	const [loading, setLoading] = useState<boolean>(false);
 	const [open, setOpen] = useState<boolean>(false);
-	const pathname = usePathname();
 
 	const handleOpenChange = async (isOpen: boolean) => {
 		setOpen(isOpen);
 		if (isOpen && !data && !loading) {
 			setLoading(true);
 
-			const entity = entityFromHeaderName(headerName, pathname);
+			const entity = TooltipEntity(headerName);
 
 			if (entity) {
 				const result = await getEntityById(entity, idValue);

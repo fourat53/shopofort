@@ -1,7 +1,7 @@
+import { getProductCount, getProductsPage } from "@/actions/ProductActions";
 import DataTable, { type PageProps } from "@/components/data-table/DataTable";
 import { getPaginationParams } from "@/components/data-table/PaginationParams";
-import type { Product } from "@/lib/types";
-import { getProductCount, getProductsPage } from "@/queries/ProductQueries";
+import type { Product } from "@/lib/entity/types";
 import { PRODUCTS_HEADER } from "./loading";
 
 export default async function ProductsPage({ searchParams }: PageProps) {

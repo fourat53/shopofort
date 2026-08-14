@@ -1,6 +1,7 @@
 "use client";
 
 import { IconEdit } from "@tabler/icons-react";
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { getFilterOptions, updateEntity } from "@/actions/EntityActions";
 import { Input } from "@/components/form-items/input";
@@ -14,8 +15,8 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
+import { CurrentEntity, entityFields } from "../../lib/entity/current-entity";
 import { DatePicker } from "../form-items/date-picker";
-import { CurrentEntity, entityFields } from "./current-entity";
 
 interface EditButtonProps<T> {
 	row: T;
@@ -26,6 +27,7 @@ export default function EditButton<T extends { id: number | string }>({
 	row,
 	disabled,
 }: EditButtonProps<T>) {
+	const router = useRouter();
 	const entity = CurrentEntity();
 
 	const [open, setOpen] = useState<boolean>(false);
@@ -81,7 +83,7 @@ export default function EditButton<T extends { id: number | string }>({
 			await updateEntity(entity, row.id, formData);
 
 			setOpen(false);
-			entity === "user" && window.location.reload();
+			entity === "user" && router.refresh();
 		} catch (error) {
 			console.error("Error updating entity:", error);
 		} finally {

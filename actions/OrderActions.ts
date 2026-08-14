@@ -1,30 +1,70 @@
-"use server";
-
-import { updateTag } from "next/cache";
-import type { OrderStatus } from "@/lib/generated/prisma/client";
+import { unstable_cache } from "next/cache";
+import {
+	CACHE_SECONDS,
+	FILTER_CACHE_SECONDS,
+	PAGE_SIZE,
+} from "@/components/data-table/PaginationParams";
+import type { OrderStatus } from "@/lib/entity/types";
+import type { Prisma } from "@/lib/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 
-function getFormOrder(formData: FormData) {
-	const orderDate = new Date(formData.get("orderDate") as string);
-	const totalAmount = Number(formData.get("totalAmount"));
-	const orderStatus = formData.get("orderStatus") as OrderStatus;
-	const userId = String(formData.get("userId"));
-	return { orderDate, totalAmount, orderStatus, userId };
+function buildWhereClause(
+	searchParams: Record<string, string | string[] | undefined>,
+): Prisma.OrderWhereInput {
+	const where: Prisma.OrderWhereInput = {};
+	if (searchParams.id) where.id = Number(searchParams.id);
+	if (searchParams.totalAmount)
+		where.totalAmount = Number(searchParams.totalAmount);
+	if (searchParams.userId) where.userId = String(searchParams.userId);
+	if (searchParams.orderStatus)
+		where.orderStatus = searchParams.orderStatus as OrderStatus;
+	if (searchParams.orderDate) {
+		const date = new Date(String(searchParams.orderDate));
+		if (!Number.isNaN(date.getTime())) {
+			where.orderDate = date;
+		}
+	}
+	return where;
 }
 
-async function createOrder(formData: FormData) {
-	await prisma.order.create({
-		data: getFormOrder(formData),
-	});
-	updateTag("orders");
+function getOrderCount(
+	searchParams: Record<string, string | string[] | undefined> = {},
+) {
+	const where = buildWhereClause(searchParams);
+	return unstable_cache(
+		async () => prisma.order.count({ where }),
+		["orders-count", JSON.stringify(searchParams)],
+		{
+			revalidate: Object.keys(searchParams).length
+				? FILTER_CACHE_SECONDS
+				: CACHE_SECONDS,
+			tags: ["orders"],
+		},
+	)();
 }
 
-async function updateOrder(id: number, formData: FormData) {
-	await prisma.order.update({
-		where: { id },
-		data: getFormOrder(formData),
-	});
-	updateTag("orders");
+function getOrdersPage(
+	page: number,
+	searchParams: Record<string, string | string[] | undefined> = {},
+) {
+	const where = buildWhereClause(searchParams);
+	return unstable_cache(
+		async () => {
+			return await prisma.order.findMany({
+				where,
+				skip: (page - 1) * PAGE_SIZE,
+				take: PAGE_SIZE,
+				orderBy: { id: "asc" },
+			});
+		},
+		["orders-page", String(page), JSON.stringify(searchParams)],
+		{
+			revalidate: Object.keys(searchParams).length
+				? FILTER_CACHE_SECONDS
+				: CACHE_SECONDS,
+			tags: ["orders"],
+		},
+	)();
 }
 
-export { createOrder, updateOrder };
+export { getOrderCount, getOrdersPage };

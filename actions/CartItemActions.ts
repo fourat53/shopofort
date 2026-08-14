@@ -1,29 +1,73 @@
-"use server";
-import { updateTag } from "next/cache";
+import { unstable_cache } from "next/cache";
+import {
+	CACHE_SECONDS,
+	FILTER_CACHE_SECONDS,
+	PAGE_SIZE,
+} from "@/components/data-table/PaginationParams";
+import type { Prisma } from "@/lib/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 
-function getFormCartItem(formData: FormData) {
-	const quantity = Number(formData.get("quantity"));
-	const unitPrice = Number(formData.get("unitPrice"));
-	const totalPrice = Number(formData.get("totalPrice"));
-	const cartId = Number(formData.get("cartId"));
-	const productId = Number(formData.get("productId"));
-	return { quantity, unitPrice, totalPrice, cartId, productId };
+function buildWhereClause(
+	searchParams: Record<string, string | string[] | undefined>,
+): Prisma.CartItemWhereInput {
+	const where: Prisma.CartItemWhereInput = {};
+	if (searchParams.id) where.id = Number(searchParams.id);
+	if (searchParams.quantity) where.quantity = Number(searchParams.quantity);
+	if (searchParams.unitPrice) where.unitPrice = Number(searchParams.unitPrice);
+	if (searchParams.totalPrice)
+		where.totalPrice = Number(searchParams.totalPrice);
+	if (searchParams.cartId) where.cartId = Number(searchParams.cartId);
+	if (searchParams.productId) where.productId = Number(searchParams.productId);
+	return where;
 }
 
-async function createCartItem(formData: FormData) {
-	await prisma.cartItem.create({
-		data: getFormCartItem(formData),
-	});
-	updateTag("cart-items");
+function getCartItemCount(
+	searchParams: Record<string, string | string[] | undefined> = {},
+) {
+	const where = buildWhereClause(searchParams);
+	return unstable_cache(
+		async () => prisma.cartItem.count({ where }),
+		["cart-items-count", JSON.stringify(searchParams)],
+		{
+			revalidate: Object.keys(searchParams).length
+				? FILTER_CACHE_SECONDS
+				: CACHE_SECONDS,
+			tags: ["cart-items"],
+		},
+	)();
 }
 
-async function updateCartItem(id: number, formData: FormData) {
-	await prisma.cartItem.update({
-		where: { id },
-		data: getFormCartItem(formData),
-	});
-	updateTag("cart-items");
+function getCartItemsPage(
+	page: number,
+	searchParams: Record<string, string | string[] | undefined> = {},
+) {
+	const where = buildWhereClause(searchParams);
+	return unstable_cache(
+		async () => {
+			const cartItems = await prisma.cartItem.findMany({
+				where,
+				skip: (page - 1) * PAGE_SIZE,
+				take: PAGE_SIZE,
+				orderBy: { id: "asc" },
+			});
+			return cartItems.map(
+				({ id, quantity, unitPrice, totalPrice, ...rest }) => ({
+					id,
+					unitPrice: Number(unitPrice),
+					quantity,
+					totalPrice: Number(totalPrice),
+					...rest,
+				}),
+			);
+		},
+		["cart-items-page", String(page), JSON.stringify(searchParams)],
+		{
+			revalidate: Object.keys(searchParams).length
+				? FILTER_CACHE_SECONDS
+				: CACHE_SECONDS,
+			tags: ["cart-items"],
+		},
+	)();
 }
 
-export { createCartItem, updateCartItem };
+export { getCartItemCount, getCartItemsPage };

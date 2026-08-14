@@ -1,6 +1,7 @@
 "use client";
 
 import { IconTrash } from "@tabler/icons-react";
+import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { deleteEntity } from "@/actions/EntityActions";
 import { Button } from "@/components/ui/button";
@@ -13,7 +14,7 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
-import { CurrentEntity } from "./current-entity";
+import { CurrentEntity } from "../../lib/entity/current-entity";
 
 export default function DeleteButton({
 	id,
@@ -22,6 +23,7 @@ export default function DeleteButton({
 	id: number | string;
 	disabled?: boolean;
 }) {
+	const router = useRouter();
 	const entity = CurrentEntity();
 
 	const [open, setOpen] = useState<boolean>(false);
@@ -35,7 +37,7 @@ export default function DeleteButton({
 			await deleteEntity(entity, id);
 
 			setOpen(false);
-			entity === "user" && window.location.reload();
+			entity === "user" && router.refresh();
 		} catch (error) {
 			console.error("Failed to delete entity", error);
 		} finally {

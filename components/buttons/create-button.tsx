@@ -14,8 +14,8 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
+import { CurrentEntity, entityFields } from "../../lib/entity/current-entity";
 import { DatePicker } from "../form-items/date-picker";
-import { CurrentEntity, entityFields } from "./current-entity";
 
 export default function CreateButton() {
 	const entity = CurrentEntity();

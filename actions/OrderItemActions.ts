@@ -1,28 +1,67 @@
-"use server";
-import { updateTag } from "next/cache";
+import { unstable_cache } from "next/cache";
+import {
+	CACHE_SECONDS,
+	FILTER_CACHE_SECONDS,
+	PAGE_SIZE,
+} from "@/components/data-table/PaginationParams";
+import type { Prisma } from "@/lib/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 
-function getFormOrderItem(formData: FormData) {
-	const quantity = Number(formData.get("quantity"));
-	const price = Number(formData.get("price"));
-	const orderId = Number(formData.get("orderId"));
-	const productId = Number(formData.get("productId"));
-	return { quantity, price, orderId, productId };
+function buildWhereClause(
+	searchParams: Record<string, string | string[] | undefined>,
+): Prisma.OrderItemWhereInput {
+	const where: Prisma.OrderItemWhereInput = {};
+	if (searchParams.id) where.id = Number(searchParams.id);
+	if (searchParams.quantity) where.quantity = Number(searchParams.quantity);
+	if (searchParams.price) where.price = Number(searchParams.price);
+	if (searchParams.orderId) where.orderId = Number(searchParams.orderId);
+	if (searchParams.productId) where.productId = Number(searchParams.productId);
+	return where;
 }
 
-async function createOrderItem(formData: FormData) {
-	await prisma.orderItem.create({
-		data: getFormOrderItem(formData),
-	});
-	updateTag("order-items");
+function getOrderItemCount(
+	searchParams: Record<string, string | string[] | undefined> = {},
+) {
+	const where = buildWhereClause(searchParams);
+	return unstable_cache(
+		async () => prisma.orderItem.count({ where }),
+		["order-items-count", JSON.stringify(searchParams)],
+		{
+			revalidate: Object.keys(searchParams).length
+				? FILTER_CACHE_SECONDS
+				: CACHE_SECONDS,
+			tags: ["order-items"],
+		},
+	)();
 }
 
-async function updateOrderItem(id: number, formData: FormData) {
-	await prisma.orderItem.update({
-		where: { id },
-		data: getFormOrderItem(formData),
-	});
-	updateTag("order-items");
+function getOrderItemsPage(
+	page: number,
+	searchParams: Record<string, string | string[] | undefined> = {},
+) {
+	const where = buildWhereClause(searchParams);
+	return unstable_cache(
+		async () => {
+			const orderItems = await prisma.orderItem.findMany({
+				where,
+				skip: (page - 1) * PAGE_SIZE,
+				take: PAGE_SIZE,
+				orderBy: { id: "asc" },
+			});
+			return orderItems.map(({ id, price, ...rest }) => ({
+				id,
+				price: Number(price),
+				...rest,
+			}));
+		},
+		["order-items-page", String(page), JSON.stringify(searchParams)],
+		{
+			revalidate: Object.keys(searchParams).length
+				? FILTER_CACHE_SECONDS
+				: CACHE_SECONDS,
+			tags: ["order-items"],
+		},
+	)();
 }
 
-export { createOrderItem, updateOrderItem };
+export { getOrderItemCount, getOrderItemsPage };

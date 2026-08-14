@@ -1,40 +1,21 @@
-"use server";
+import { unstable_cache } from "next/cache";
+import {
+	FILTER_CACHE_SECONDS,
+	IMAGE_PAGE_SIZE,
+} from "@/components/data-table/PaginationParams";
+import { checkedEnvVar } from "@/lib/checked-env-var";
+import type { PreferredUser, User } from "@/lib/entity/types";
 
-import { getKindeToken, kindeIssuerUrl } from "@/queries/UserQueries";
+const kindeIssuerUrl = checkedEnvVar("KINDE_ISSUER_URL");
 
-function getFormUser(formData: FormData) {
-	const picture = formData.get("picture") as string;
-	const first_name = formData.get("first_name") as string;
-	const last_name = formData.get("last_name") as string;
-	const is_suspended = formData.get("is_suspended") as string;
-	return { picture, first_name, last_name, is_suspended };
-}
+type UserSearchParams = Record<string, string | string[] | undefined>;
 
-async function getUserById(id: string) {
-	const token = await getKindeToken();
-
-	const res = await fetch(`${kindeIssuerUrl}/api/v1/user?id=${id}`, {
-		method: "GET",
-		headers: {
-			Authorization: `Bearer ${token}`,
-			Accept: "application/json",
-		},
-		cache: "no-store",
-	});
-
-	if (!res.ok) {
-		if (res.status === 404) return null;
-		const errorBody = await res.text();
-		console.error("Error fetching Kinde user:", errorBody);
-		throw new Error("Failed to fetch user from Kinde");
-	}
-
-	const user = await res.json();
-	console.log(user.picture);
+function mapUser(user: PreferredUser | User): User {
+	const email = "email" in user ? user.email : user.preferred_email;
 	return {
 		id: user.id,
 		picture: user.picture,
-		email: user.preferred_email,
+		email,
 		first_name: user.first_name,
 		last_name: user.last_name,
 		is_suspended: user.is_suspended,
@@ -46,53 +27,130 @@ async function getUserById(id: string) {
 	};
 }
 
-async function updateUser(id: string, formData: FormData) {
-	const token = await getKindeToken();
-	const { picture, first_name, last_name, is_suspended } =
-		getFormUser(formData);
+function getParam(
+	searchParams: UserSearchParams,
+	name: string,
+): string | undefined {
+	const value = searchParams[name];
 
-	const res = await fetch(`${kindeIssuerUrl}/api/v1/user?id=${id}`, {
-		method: "PATCH",
-		headers: {
-			Authorization: `Bearer ${token}`,
-			"Content-Type": "application/json",
-			Accept: "application/json",
-		},
-		body: JSON.stringify({
-			picture,
-			given_name: first_name,
-			family_name: last_name,
-			is_suspended,
-		}),
-	});
-
-	if (!res.ok) {
-		const errorBody = await res.text();
-		console.error("Error updating Kinde user:", errorBody);
-		throw new Error("Failed to update user in Kinde");
-	}
+	return Array.isArray(value) ? value[0] : value;
 }
 
-async function deleteUser(id: string) {
-	try {
-		const token = await getKindeToken();
+async function getKindeToken() {
+	const tokenUrl = `${kindeIssuerUrl}/oauth2/token`;
 
-		const res = await fetch(`${kindeIssuerUrl}/api/v1/user?id=${id}`, {
-			method: "DELETE",
+	const params = new URLSearchParams({
+		grant_type: "client_credentials",
+		client_id: checkedEnvVar("M2M_KINDE_CLIENT_ID"),
+		client_secret: checkedEnvVar("M2M_KINDE_CLIENT_SECRET"),
+		audience: `${kindeIssuerUrl}/api`,
+	});
+
+	const res = await fetch(tokenUrl, {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/x-www-form-urlencoded",
+		},
+		body: params,
+		cache: "no-store",
+	});
+
+	const data = await res.json();
+
+	return data.access_token;
+}
+
+async function getUsers(): Promise<User[]> {
+	const token = await getKindeToken();
+
+	const allUsers: User[] = [];
+	let nextToken: string | null = null;
+
+	while (true) {
+		const url = new URL(`${kindeIssuerUrl}/api/v1/users`);
+
+		if (nextToken) {
+			url.searchParams.set("next_token", nextToken);
+		}
+
+		const res = await fetch(url.toString(), {
 			headers: {
 				Authorization: `Bearer ${token}`,
 				Accept: "application/json",
 			},
+			cache: "no-store",
 		});
 
-		if (!res.ok) {
-			const errorBody = await res.text();
-			console.error("Error deleting Kinde user:", errorBody);
-			throw new Error("Failed to delete user in Kinde");
+		const data = await res.json();
+
+		if (data.users) {
+			allUsers.push(...data.users);
 		}
-	} catch (error) {
-		console.error("Error deleting Kinde user:", error);
+
+		if (!data.next_token) break;
+
+		nextToken = data.next_token;
 	}
+
+	return allUsers;
 }
 
-export { deleteUser, getUserById, updateUser };
+function filterUsers(users: User[], searchParams: UserSearchParams): User[] {
+	const id = getParam(searchParams, "id")?.toLowerCase();
+	const email = getParam(searchParams, "email")?.toLowerCase();
+	const firstName = getParam(searchParams, "first_name")?.toLowerCase();
+	const lastName = getParam(searchParams, "last_name")?.toLowerCase();
+
+	return users.filter((user) => {
+		if (id && !user.id.toLowerCase().includes(id)) {
+			return false;
+		}
+
+		if (email && !user.email?.toLowerCase().includes(email)) {
+			return false;
+		}
+
+		if (firstName && !user.first_name?.toLowerCase().includes(firstName)) {
+			return false;
+		}
+
+		if (lastName && !user.last_name?.toLowerCase().includes(lastName)) {
+			return false;
+		}
+
+		return true;
+	});
+}
+
+const getFilteredUsers = unstable_cache(
+	async (searchParams: UserSearchParams) => {
+		const users = await getUsers();
+		return filterUsers(users, searchParams);
+	},
+	["kinde-filtered-users"],
+	{ revalidate: FILTER_CACHE_SECONDS },
+);
+
+async function getUserCount(searchParams: UserSearchParams = {}) {
+	const users = await getFilteredUsers(searchParams);
+
+	return users.length;
+}
+
+async function getUsersPage(page: number, searchParams: UserSearchParams = {}) {
+	const users = await getFilteredUsers(searchParams);
+
+	const start = (page - 1) * IMAGE_PAGE_SIZE;
+
+	return users.slice(start, start + IMAGE_PAGE_SIZE).map(mapUser);
+}
+
+export {
+	getFilteredUsers,
+	getKindeToken,
+	getUserCount,
+	getUsers,
+	getUsersPage,
+	kindeIssuerUrl,
+	mapUser,
+};

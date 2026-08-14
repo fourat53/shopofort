@@ -1,7 +1,7 @@
+import { getCategoriesPage, getCategoryCount } from "@/actions/CategoryActions";
 import DataTable, { type PageProps } from "@/components/data-table/DataTable";
 import { getPaginationParams } from "@/components/data-table/PaginationParams";
-import type { Category } from "@/lib/types";
-import { getCategoriesPage, getCategoryCount } from "@/queries/CategoryQueries";
+import type { Category } from "@/lib/entity/types";
 import { CATEGORIES_HEADER } from "./loading";
 
 export default async function CategoriesPage({ searchParams }: PageProps) {

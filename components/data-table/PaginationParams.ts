@@ -1,5 +1,7 @@
 const PAGE_SIZE = 25;
 const IMAGE_PAGE_SIZE = 12;
+const CACHE_SECONDS = 3600;
+const FILTER_CACHE_SECONDS = 10;
 
 type SearchParams = {
 	[key: string]: string | string[] | undefined;
@@ -100,6 +102,8 @@ function getVisiblePages(
 }
 
 export {
+	CACHE_SECONDS,
+	FILTER_CACHE_SECONDS,
 	getPaginationParams,
 	getVisiblePages,
 	IMAGE_PAGE_SIZE,

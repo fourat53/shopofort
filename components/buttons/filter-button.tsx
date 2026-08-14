@@ -15,7 +15,7 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
-import { CurrentEntity, entityFields } from "./current-entity";
+import { CurrentEntity, entityFields } from "../../lib/entity/current-entity";
 
 export default function FilterButton({ disabled }: { disabled?: boolean }) {
 	const entity = CurrentEntity();

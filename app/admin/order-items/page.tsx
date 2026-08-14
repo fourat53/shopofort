@@ -1,10 +1,10 @@
-import DataTable, { type PageProps } from "@/components/data-table/DataTable";
-import { getPaginationParams } from "@/components/data-table/PaginationParams";
-import type { OrderItem } from "@/lib/types";
 import {
 	getOrderItemCount,
 	getOrderItemsPage,
-} from "@/queries/OrderItemQueries";
+} from "@/actions/OrderItemActions";
+import DataTable, { type PageProps } from "@/components/data-table/DataTable";
+import { getPaginationParams } from "@/components/data-table/PaginationParams";
+import type { OrderItem } from "@/lib/entity/types";
 import { ORDER_ITEMS_HEADER } from "./loading";
 
 export default async function OrderItemsPage({ searchParams }: PageProps) {

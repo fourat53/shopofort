@@ -2,8 +2,11 @@ import type {
 	Cart,
 	CartItem as CartItemType,
 	Category,
+	CategoryName,
+	Gender,
 	Order,
 	OrderItem as OrderItemType,
+	OrderStatus,
 	Product as ProductType,
 } from "@/lib/generated/prisma/client";
 
@@ -21,6 +24,8 @@ type User = {
 	updated_on: Date;
 };
 
+type PreferredUser = Omit<User, "email"> & { preferred_email: string };
+
 type Product = Omit<ProductType, "price"> & { price: number };
 
 type CartItem = Omit<CartItemType, "unitPrice" | "totalPrice"> & {
@@ -30,4 +35,16 @@ type CartItem = Omit<CartItemType, "unitPrice" | "totalPrice"> & {
 
 type OrderItem = Omit<OrderItemType, "price"> & { price: number };
 
-export type { Cart, CartItem, Category, Order, OrderItem, Product, User };
+export type {
+	Cart,
+	CartItem,
+	Category,
+	CategoryName,
+	Gender,
+	Order,
+	OrderItem,
+	OrderStatus,
+	PreferredUser,
+	Product,
+	User,
+};
