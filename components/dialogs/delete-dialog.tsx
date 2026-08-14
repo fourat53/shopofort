@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { CurrentEntity } from "../../lib/entity/current-entity";
 
-export default function DeleteButton({
+export default function DeleteDialog({
 	id,
 	disabled,
 }: {
@@ -28,7 +28,7 @@ export default function DeleteButton({
 
 	const [open, setOpen] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(false);
-	const deleteButtonRef = useRef<HTMLButtonElement>(null);
+	const DeleteDialogRef = useRef<HTMLButtonElement>(null);
 
 	const handleDelete = async (e: React.MouseEvent) => {
 		e.preventDefault();
@@ -61,7 +61,7 @@ export default function DeleteButton({
 				className="w-90"
 				onOpenAutoFocus={(e) => {
 					e.preventDefault();
-					deleteButtonRef.current?.focus();
+					DeleteDialogRef.current?.focus();
 				}}
 			>
 				<DialogHeader>
@@ -82,7 +82,7 @@ export default function DeleteButton({
 						Cancel
 					</Button>
 					<Button
-						ref={deleteButtonRef}
+						ref={DeleteDialogRef}
 						variant="destructive"
 						onClick={handleDelete}
 						loading={loading}

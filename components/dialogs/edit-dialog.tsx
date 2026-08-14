@@ -18,15 +18,15 @@ import {
 import { CurrentEntity, entityFields } from "../../lib/entity/current-entity";
 import { DatePicker } from "../form-items/date-picker";
 
-interface EditButtonProps<T> {
+interface EditDialogProps<T> {
 	row: T;
 	disabled?: boolean;
 }
 
-export default function EditButton<T extends { id: number | string }>({
+export default function EditDialog<T extends { id: number | string }>({
 	row,
 	disabled,
-}: EditButtonProps<T>) {
+}: EditDialogProps<T>) {
 	const router = useRouter();
 	const entity = CurrentEntity();
 

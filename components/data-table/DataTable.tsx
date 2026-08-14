@@ -1,6 +1,6 @@
-import DeleteButton from "@/components/buttons/delete-button";
-import EditButton from "@/components/buttons/edit-button";
 import DataTablePagination from "@/components/data-table/DataTablePagination";
+import DeleteDialog from "@/components/dialogs/delete-dialog";
+import EditDialog from "@/components/dialogs/edit-dialog";
 import {
 	Table,
 	TableBody,
@@ -103,8 +103,8 @@ export default function DataTable<T extends { id: number | string }>({
 								))}
 								<TableCell border className="py-0.5 w-20">
 									<div className="flex items-center justify-center gap-1.5">
-										<EditButton<T> row={row} />
-										<DeleteButton id={row.id} />
+										<EditDialog<T> row={row} />
+										<DeleteDialog id={row.id} />
 									</div>
 								</TableCell>
 							</TableRow>

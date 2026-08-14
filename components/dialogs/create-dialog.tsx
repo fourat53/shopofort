@@ -17,7 +17,7 @@ import {
 import { CurrentEntity, entityFields } from "../../lib/entity/current-entity";
 import { DatePicker } from "../form-items/date-picker";
 
-export default function CreateButton() {
+export default function CreateDialog() {
 	const entity = CurrentEntity();
 
 	const [open, setOpen] = useState<boolean>(false);

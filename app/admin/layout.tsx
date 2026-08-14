@@ -1,5 +1,5 @@
-import CreateButton from "@/components/buttons/create-button";
-import FilterButton from "@/components/buttons/filter-button";
+import CreateDialog from "@/components/dialogs/create-dialog";
+import FilterDialog from "@/components/dialogs/filter-dialog";
 import AdminSidebar from "@/components/sidebar/AdminSidebar";
 import DocumentTitle from "@/components/title/DocumentTitle";
 import {
@@ -25,8 +25,8 @@ export default function AdminLayout({
 								<DocumentTitle />
 							</div>
 							<div className="flex gap-1.5">
-								<FilterButton />
-								<CreateButton />
+								<FilterDialog />
+								<CreateDialog />
 							</div>
 						</div>
 						<div className="border-b" />

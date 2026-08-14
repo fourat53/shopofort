@@ -1,3 +1,5 @@
+import DeleteDialog from "@/components/dialogs/delete-dialog";
+import EditDialog from "@/components/dialogs/edit-dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
 	Table,
@@ -7,8 +9,6 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import DeleteButton from "../buttons/delete-button";
-import EditButton from "../buttons/edit-button";
 import type { HasImage } from "./DataTable";
 import { IMAGE_PAGE_SIZE, PAGE_SIZE } from "./PaginationParams";
 
@@ -78,8 +78,8 @@ export default function DataTableSkeleton({
 						))}
 						<TableCell border className="py-0.5 w-20">
 							<div className="flex items-center justify-center gap-1.5">
-								<EditButton row={{ id: "" }} disabled />
-								<DeleteButton id={""} disabled />
+								<EditDialog row={{ id: "" }} disabled />
+								<DeleteDialog id={""} disabled />
 							</div>
 						</TableCell>
 					</TableRow>

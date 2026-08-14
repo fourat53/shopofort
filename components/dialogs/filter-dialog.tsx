@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { CurrentEntity, entityFields } from "../../lib/entity/current-entity";
 
-export default function FilterButton({ disabled }: { disabled?: boolean }) {
+export default function FilterDialog({ disabled }: { disabled?: boolean }) {
 	const entity = CurrentEntity();
 	const router = useRouter();
 	const pathname = usePathname();
