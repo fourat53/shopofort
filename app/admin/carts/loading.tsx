@@ -6,6 +6,6 @@ export const CARTS_HEADER: string[] = [
 	"User ID",
 ] as const;
 
-export default function loading() {
+export default function Loading() {
 	return <DataTableSkeleton header={CARTS_HEADER} />;
 }

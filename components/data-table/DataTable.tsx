@@ -83,11 +83,6 @@ export default function DataTable<T extends { id: number | string }>({
 							<TableRow key={row.id}>
 								{Object.values(row).map((value, colIndex) => (
 									<TableCell
-										title={
-											["Images", "Picture"].includes(header[colIndex])
-												? undefined
-												: String(value)
-										}
 										border={colIndex !== 0}
 										key={`cell-${row.id}-${colIndex}`}
 										className={

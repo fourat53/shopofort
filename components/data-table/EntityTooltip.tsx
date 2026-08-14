@@ -12,28 +12,46 @@ import { TooltipEntity } from "../../lib/entity/current-entity";
 import SmallLoader from "../loaders/small-loader";
 import CellContent from "./CellContent";
 
-export default function EntityTooltip<T>({
+export default function EntityTooltip({
 	headerName,
 	idValue,
 }: {
 	headerName: string;
 	idValue: number | string;
 }) {
-	const [data, setData] = useState<T>();
+	const [data, setData] = useState<unknown>();
 	const [loading, setLoading] = useState<boolean>(false);
 	const [open, setOpen] = useState<boolean>(false);
 
+	const title = `${headerName
+		.replace(" ID", "")
+		.replace(/([A-Z])/g, " $1")
+		.trim()}  Details`;
+
+	function getKeyHeader(key: string) {
+		return `${key
+			.replace(/([a-z])([A-Z])/g, "$1 $2")
+			.replace(/_/g, " ")
+			.trim()
+			.replace(/\b\w/g, (char) => char.toUpperCase())}:`;
+	}
+
 	const handleOpenChange = async (isOpen: boolean) => {
-		setOpen(isOpen);
-		if (isOpen && !data && !loading) {
-			setLoading(true);
+		try {
+			setOpen(isOpen);
+			if (isOpen && !data && !loading) {
+				setLoading(true);
 
-			const entity = TooltipEntity(headerName);
+				const entity = TooltipEntity(headerName);
 
-			if (entity) {
-				const result = await getEntityById(entity, idValue);
-				setData(result);
+				if (entity) {
+					const result = await getEntityById(entity, idValue);
+					setData(result);
+				}
 			}
+		} catch (error) {
+			console.error(error);
+		} finally {
 			setLoading(false);
 		}
 	};
@@ -55,28 +73,17 @@ export default function EntityTooltip<T>({
 					) : data ? (
 						<div className="w-full">
 							<p className="w-full text-sm text-primary text-center font-semibold border-b pb-1 capitalize">
-								{headerName
-									.replace(" ID", "")
-									.replace(/([A-Z])/g, " $1")
-									.trim()}{" "}
-								Details
+								{title}
 							</p>
 							<div className="pt-1.5 flex flex-col gap-1">
-								{Object.entries(data).map(([key, value]) => {
-									const valueHeader = key
-										.replace(/([a-z])([A-Z])/g, "$1 $2")
-										.replace(/_/g, " ")
-										.trim()
-										.replace(/\b\w/g, (char) => char.toUpperCase());
-									return (
-										<div key={key} className="grid grid-cols-[2fr_5fr] gap-1.5">
-											<p className="max-w-28 text-xs font-medium text-muted-foreground capitalize">
-												{valueHeader}:
-											</p>
-											<CellContent headerName={key} value={value} tooltip />
-										</div>
-									);
-								})}
+								{Object.entries(data).map(([key, value]) => (
+									<div key={key} className="grid grid-cols-[2fr_5fr] gap-1.5">
+										<p className="max-w-28 text-xs font-medium text-muted-foreground capitalize">
+											{getKeyHeader(key)}
+										</p>
+										<CellContent headerName={key} value={value} tooltip />
+									</div>
+								))}
 							</div>
 						</div>
 					) : (

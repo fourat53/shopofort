@@ -6,6 +6,6 @@ export const CATEGORIES_HEADER: string[] = [
 	"Gender",
 ] as const;
 
-export default function loading() {
+export default function Loading() {
 	return <DataTableSkeleton header={CATEGORIES_HEADER} />;
 }

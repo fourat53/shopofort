@@ -40,7 +40,8 @@ async function getEntityById(entity: EntityType, id: number | string) {
 			return mapUser(user);
 		} else if (typeof id === "number") {
 			// @ts-expect-error - prisma dynamic model access
-			return await prisma[entity].findUnique({ where: { id } });
+			const res = await prisma[entity].findUnique({ where: { id } });
+			return JSON.parse(JSON.stringify(res));
 		}
 	} catch (error) {
 		console.error(error);
@@ -80,11 +81,15 @@ async function deleteEntity(entity: EntityType, id: number | string) {
 }
 
 async function createEntity(entity: EntityType, formData: FormData) {
-	// @ts-expect-error - prisma dynamic model access
-	await prisma[entity].create({
-		data: getFormEntity(entity, formData),
-	});
-	updateTag(tagMap[entity]);
+	try {
+		// @ts-expect-error - prisma dynamic model access
+		await prisma[entity].create({
+			data: getFormEntity(entity, formData),
+		});
+		updateTag(tagMap[entity]);
+	} catch (error) {
+		console.error(error);
+	}
 }
 
 async function updateEntity(
@@ -92,33 +97,37 @@ async function updateEntity(
 	id: number | string,
 	formData: FormData,
 ) {
-	if (typeof id === "string" && entity === "user") {
-		const token = await getKindeToken();
+	try {
+		if (typeof id === "string" && entity === "user") {
+			const token = await getKindeToken();
 
-		const { picture, first_name, last_name, is_suspended } =
-			getFormUser(formData);
+			const { picture, first_name, last_name, is_suspended } =
+				getFormUser(formData);
 
-		await fetch(`${kindeIssuerUrl}/api/v1/user?id=${id}`, {
-			method: "PATCH",
-			headers: {
-				Authorization: `Bearer ${token}`,
-				"Content-Type": "application/json",
-				Accept: "application/json",
-			},
-			body: JSON.stringify({
-				picture,
-				given_name: first_name,
-				family_name: last_name,
-				is_suspended,
-			}),
-		});
-	} else if (typeof id === "number") {
-		// @ts-expect-error - prisma dynamic model access
-		await prisma[entity].update({
-			where: { id },
-			data: getFormEntity(entity, formData),
-		});
-		updateTag("products");
+			await fetch(`${kindeIssuerUrl}/api/v1/user?id=${id}`, {
+				method: "PATCH",
+				headers: {
+					Authorization: `Bearer ${token}`,
+					"Content-Type": "application/json",
+					Accept: "application/json",
+				},
+				body: JSON.stringify({
+					picture,
+					given_name: first_name,
+					family_name: last_name,
+					is_suspended,
+				}),
+			});
+		} else if (typeof id === "number") {
+			// @ts-expect-error - prisma dynamic model access
+			await prisma[entity].update({
+				where: { id },
+				data: getFormEntity(entity, formData),
+			});
+			updateTag("products");
+		}
+	} catch (error) {
+		console.error(error);
 	}
 }
 

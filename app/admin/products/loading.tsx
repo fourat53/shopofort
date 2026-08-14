@@ -11,6 +11,6 @@ export const PRODUCTS_HEADER: string[] = [
 	"Images",
 ] as const;
 
-export default function loading() {
+export default function Loading() {
 	return <DataTableSkeleton header={PRODUCTS_HEADER} hasImage="multiple" />;
 }

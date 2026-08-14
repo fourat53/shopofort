@@ -287,7 +287,7 @@ const entityFields: Record<string, FieldConfig[]> = {
 	],
 };
 
-function CurrentEntity() {
+function CurrentEntity(): EntityType {
 	const pathname = usePathname();
 	let entity: EntityType = "";
 
@@ -302,7 +302,7 @@ function CurrentEntity() {
 	return entity;
 }
 
-function TooltipEntity(headerName: string) {
+function TooltipEntity(headerName: string): EntityType {
 	let entity: EntityType = "";
 
 	if (headerName === "User ID") entity = "user";

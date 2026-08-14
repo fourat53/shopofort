@@ -14,6 +14,6 @@ export const USERS_HEADER: string[] = [
 	"Updated On",
 ] as const;
 
-export default function loading() {
+export default function Loading() {
 	return <DataTableSkeleton header={USERS_HEADER} hasImage="one" />;
 }
