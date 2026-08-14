@@ -5,7 +5,6 @@ import { checkedEnvVar } from "@/lib/checked-env-var";
 import type { CategoryName, Gender, OrderStatus } from "@/lib/entity/types";
 import { PrismaClient } from "@/lib/generated/prisma/client";
 
-config({ path: checkedEnvVar("ENV_PATH") });
 config();
 
 const adapter = new PrismaPg({

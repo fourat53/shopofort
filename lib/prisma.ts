@@ -17,6 +17,4 @@ const prisma =
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
-const CACHE_REVALIDATE_SECONDS = 300;
-
-export { CACHE_REVALIDATE_SECONDS, prisma };
+export { prisma };
