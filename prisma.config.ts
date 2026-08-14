@@ -10,6 +10,5 @@ export default defineConfig({
 	},
 	datasource: {
 		url: checkedEnvVar("DATABASE_URL"),
-		shadowDatabaseUrl: checkedEnvVar("SHADOW_DATABASE_URL"),
 	},
 });
