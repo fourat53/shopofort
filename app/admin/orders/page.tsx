@@ -1,8 +1,8 @@
 import { getOrderCount, getOrdersPage } from "@/actions/OrderActions";
 import DataTable, { type PageProps } from "@/components/data-table/DataTable";
 import { getPaginationParams } from "@/components/data-table/PaginationParams";
+import { ORDERS_HEADER } from "@/lib/entity/entity-headers";
 import type { Order } from "@/lib/entity/types";
-import { ORDERS_HEADER } from "./loading";
 
 export default async function OrdersPage({ searchParams }: PageProps) {
 	const params = await searchParams;

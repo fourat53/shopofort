@@ -9,8 +9,8 @@ import {
 } from "@/actions/UserActions";
 import type { SelectOption } from "@/components/form-items/select";
 import type { EntityType } from "@/lib/entity/current-entity";
+import { getFormEntity, getFormUser } from "@/lib/entity/entity-form";
 import { prisma } from "@/lib/prisma";
-import { getFormEntity, getFormUser } from "../lib/entity/entity-form";
 
 const tagMap: Record<string, string> = {
 	user: "users",

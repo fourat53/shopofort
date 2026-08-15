@@ -11,6 +11,7 @@ import {
 	IconUserCircle,
 } from "@tabler/icons-react";
 import Image from "next/image";
+import ThemeMenu from "@/components/sidebar/ThemeMenu";
 import { Button } from "@/components/ui/button";
 import {
 	DropdownMenu,
@@ -26,7 +27,6 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import ThemeMenu from "./ThemeMenu";
 
 function AvatarImage({ user }: { user: KindeUser<Record<string, unknown>> }) {
 	return (

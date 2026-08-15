@@ -15,7 +15,7 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
-import { CurrentEntity, entityFields } from "../../lib/entity/current-entity";
+import { CurrentEntity, entityFields } from "@/lib/entity/current-entity";
 
 export default function FilterDialog({ disabled }: { disabled?: boolean }) {
 	const entity = CurrentEntity();
@@ -26,7 +26,6 @@ export default function FilterDialog({ disabled }: { disabled?: boolean }) {
 	const [isPending, startTransition] = useTransition();
 
 	const [open, setOpen] = useState<boolean>(false);
-	const [loading, setLoading] = useState<boolean>(false);
 	const [optionsCache, setOptionsCache] = useState<
 		Record<string, SelectOption[]>
 	>({});
@@ -94,7 +93,6 @@ export default function FilterDialog({ disabled }: { disabled?: boolean }) {
 
 	const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		setLoading(true);
 
 		const formData = new FormData(e.currentTarget);
 		const newParams = new URLSearchParams(searchParams.toString());
@@ -116,7 +114,6 @@ export default function FilterDialog({ disabled }: { disabled?: boolean }) {
 
 		startTransition(() => {
 			router.push(newUrl);
-			setLoading(false);
 			setOpen(false);
 		});
 	};
@@ -128,18 +125,14 @@ export default function FilterDialog({ disabled }: { disabled?: boolean }) {
 			className={clsx("flex gap-1.5", entity !== "user" && "pr-1.5 border-r")}
 		>
 			{hasFilters && (
-				<Button
-					variant="outline"
-					onClick={handleClear}
-					disabled={loading || isPending}
-				>
+				<Button variant="outline" onClick={handleClear} disabled={isPending}>
 					<IconArrowBackUp className="h-4 w-4" />
 				</Button>
 			)}
 
 			<Dialog open={open} onOpenChange={setOpen}>
 				<DialogTrigger asChild>
-					<Button disabled={disabled || loading || isPending || !entity}>
+					<Button disabled={disabled || isPending || !entity}>
 						<IconFilter className="h-4 w-4" />
 					</Button>
 				</DialogTrigger>
@@ -217,11 +210,11 @@ export default function FilterDialog({ disabled }: { disabled?: boolean }) {
 									e.preventDefault();
 									setOpen(false);
 								}}
-								disabled={loading || isPending}
+								disabled={isPending}
 							>
 								Cancel
 							</Button>
-							<Button type="submit" loading={loading || isPending}>
+							<Button type="submit" loading={isPending}>
 								Filter
 							</Button>
 						</DialogFooter>

@@ -3,8 +3,8 @@
 import { IconUpload, IconX } from "@tabler/icons-react";
 import Image from "next/image";
 import { useEffect, useRef } from "react";
+import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { Label } from "../ui/label";
 
 interface ImageUploadProps {
 	images: File[];

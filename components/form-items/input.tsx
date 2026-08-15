@@ -1,5 +1,5 @@
-import { Input as BaseInput } from "../ui/input";
-import { Label } from "../ui/label";
+import { Input as BaseInput } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 type InputProps = React.ComponentProps<"input"> & { label?: string };
 

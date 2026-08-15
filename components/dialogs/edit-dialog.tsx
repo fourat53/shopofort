@@ -4,6 +4,7 @@ import { IconEdit } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { getFilterOptions, updateEntity } from "@/actions/EntityActions";
+import { DatePicker } from "@/components/form-items/date-picker";
 import { Input } from "@/components/form-items/input";
 import { Select, type SelectOption } from "@/components/form-items/select";
 import { Button } from "@/components/ui/button";
@@ -15,8 +16,7 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
-import { CurrentEntity, entityFields } from "../../lib/entity/current-entity";
-import { DatePicker } from "../form-items/date-picker";
+import { CurrentEntity, entityFields } from "@/lib/entity/current-entity";
 
 interface EditDialogProps<T> {
 	row: T;

@@ -14,7 +14,7 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
-import { CurrentEntity } from "../../lib/entity/current-entity";
+import { CurrentEntity } from "@/lib/entity/current-entity";
 
 export default function DeleteDialog({
 	id,

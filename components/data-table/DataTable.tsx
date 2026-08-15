@@ -1,3 +1,5 @@
+import { clsx } from "clsx";
+import CellContent from "@/components/data-table/CellContent";
 import DataTablePagination from "@/components/data-table/DataTablePagination";
 import DeleteDialog from "@/components/dialogs/delete-dialog";
 import EditDialog from "@/components/dialogs/edit-dialog";
@@ -9,7 +11,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import CellContent from "./CellContent";
+import type { HeaderType } from "@/lib/entity/entity-headers";
 
 interface PageProps {
 	searchParams: Promise<{ page?: string }>;
@@ -28,7 +30,7 @@ type BasePathType =
 
 interface DataTableProps<T> {
 	totalPages: number;
-	header: string[];
+	header: HeaderType;
 	rows: T[];
 	basePath: BasePathType;
 	hasImage?: HasImage;
@@ -47,25 +49,11 @@ export default function DataTable<T extends { id: number | string }>({
 				<TableHeader>
 					<TableRow>
 						{header.map((item, index) => (
-							<TableHead
-								key={item}
-								border={index !== 0}
-								className={
-									item === "User ID"
-										? "w-64"
-										: hasImage === "multiple"
-											? "w-62 text-center"
-											: hasImage === "one"
-												? "min-w-18 text-center"
-												: ""
-								}
-							>
-								{item}
+							<TableHead key={item.label} border={index !== 0}>
+								{item.label}
 							</TableHead>
 						))}
-						<TableHead border className="w-20 text-center">
-							Actions
-						</TableHead>
+						<TableHead border>Actions</TableHead>
 					</TableRow>
 				</TableHeader>
 				<TableBody>
@@ -83,25 +71,29 @@ export default function DataTable<T extends { id: number | string }>({
 							<TableRow key={row.id}>
 								{Object.values(row).map((value, colIndex) => (
 									<TableCell
-										border={colIndex !== 0}
 										key={`cell-${row.id}-${colIndex}`}
-										className={
-											hasImage === "multiple"
-												? "h-18.5"
-												: hasImage === "one"
-													? "h-18.5"
-													: "h-8.5"
+										border={colIndex !== 0}
+										title={
+											["Images", "Picture"].includes(header[colIndex].label)
+												? undefined
+												: String(value)
 										}
+										className={clsx("truncate", hasImage !== "none" && "h-18")}
+										style={{
+											width: `${header[colIndex].width}px`,
+											minWidth: `${header[colIndex].width}px`,
+											maxWidth: `${header[colIndex].width}px`,
+										}}
 									>
 										<CellContent
 											value={value}
-											headerName={header[colIndex]}
+											headerName={header[colIndex].label}
 											colIndex={colIndex}
 											rowId={row.id}
 										/>
 									</TableCell>
 								))}
-								<TableCell border className="py-0.5 w-20">
+								<TableCell border className="py-0.5 w-30 min-w-30 max-w-30">
 									<div className="flex items-center justify-center gap-1.5">
 										<EditDialog<T> row={row} />
 										<DeleteDialog id={row.id} />

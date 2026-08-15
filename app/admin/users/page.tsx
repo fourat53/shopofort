@@ -1,8 +1,8 @@
 import { getUserCount, getUsersPage } from "@/actions/UserActions";
 import DataTable, { type PageProps } from "@/components/data-table/DataTable";
 import { getPaginationParams } from "@/components/data-table/PaginationParams";
+import { USERS_HEADER } from "@/lib/entity/entity-headers";
 import type { User } from "@/lib/entity/types";
-import { USERS_HEADER } from "./loading";
 
 export default async function UsersPage({ searchParams }: PageProps) {
 	const params = await searchParams;

@@ -1,7 +1,7 @@
 import { clsx } from "clsx";
 import Image from "next/image";
+import EntityTooltip from "@/components/data-table/EntityTooltip";
 import { formatDateTime, isDate } from "@/lib/date-format";
-import EntityTooltip from "./EntityTooltip";
 
 interface CellContentProps {
 	value: unknown;
@@ -21,12 +21,7 @@ export default function CellContent({
 	const imageSize = tooltip ? 32 : 56;
 	const lowerHeader = headerName.toLowerCase();
 	return (
-		<div
-			title={
-				["images", "picture"].includes(lowerHeader) ? undefined : String(value)
-			}
-			className="truncate max-w-66"
-		>
+		<>
 			{colIndex &&
 			colIndex > 0 &&
 			headerName.includes(" ID") &&
@@ -35,7 +30,7 @@ export default function CellContent({
 			) : ["orderstatus", "order status"].includes(lowerHeader) ? (
 				<p
 					className={clsx(
-						"w-fit text-center bg-accent rounded-full flex items-center px-2",
+						"w-fit bg-accent rounded-full px-1.75",
 						value === "PENDING" &&
 							"bg-yellow-200/40 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400",
 						value === "PROCESSING" &&
@@ -54,7 +49,7 @@ export default function CellContent({
 				value ? (
 					<Image
 						src={String(value)}
-						alt=""
+						alt={String(value)}
 						width={imageSize}
 						height={imageSize}
 						loading="eager"
@@ -67,7 +62,7 @@ export default function CellContent({
 				) : (
 					<Image
 						src="/svgs/shopofort.svg"
-						alt=""
+						alt="picture"
 						width={imageSize}
 						height={imageSize}
 						loading="eager"
@@ -107,6 +102,6 @@ export default function CellContent({
 			) : (
 				String(value)
 			)}
-		</div>
+		</>
 	);
 }

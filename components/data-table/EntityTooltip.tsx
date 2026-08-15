@@ -2,15 +2,15 @@
 
 import { useState } from "react";
 import { getEntityById } from "@/actions/EntityActions";
+import CellContent from "@/components/data-table/CellContent";
+import SmallLoader from "@/components/loaders/small-loader";
 import {
 	Tooltip,
 	TooltipContent,
 	TooltipProvider,
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { TooltipEntity } from "../../lib/entity/current-entity";
-import SmallLoader from "../loaders/small-loader";
-import CellContent from "./CellContent";
+import { TooltipEntity } from "@/lib/entity/current-entity";
 
 export default function EntityTooltip({
 	headerName,
