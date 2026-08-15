@@ -8,11 +8,13 @@ import {
 	SidebarTrigger,
 } from "@/components/ui/sidebar";
 
-export default function AdminLayout({
+export default async function AdminLayout({
 	children,
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
+	await new Promise((resolve) => setTimeout(resolve, 1000));
+
 	return (
 		<SidebarProvider>
 			<AdminSidebar />
