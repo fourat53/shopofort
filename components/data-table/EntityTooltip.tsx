@@ -60,9 +60,16 @@ export default function EntityTooltip({
 		<TooltipProvider>
 			<Tooltip open={open} onOpenChange={handleOpenChange} delayDuration={300}>
 				<TooltipTrigger asChild>
-					<span className="underline cursor-pointer hover:text-primary transition-colors">
+					<button
+						type="button"
+						className="underline cursor-pointer hover:text-primary transition-colors text-left"
+						onClick={(e) => {
+							e.preventDefault();
+							handleOpenChange(true);
+						}}
+					>
 						{idValue}
-					</span>
+					</button>
 				</TooltipTrigger>
 				<TooltipContent
 					side="left"

@@ -1,3 +1,4 @@
+import { IconSelect } from "@tabler/icons-react";
 import { clsx } from "clsx";
 import CellContent from "@/components/data-table/CellContent";
 import DataTablePagination from "@/components/data-table/DataTablePagination";
@@ -12,6 +13,7 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import type { HeaderType } from "@/lib/entity/entity-headers";
+import { Checkbox } from "../ui/checkbox";
 
 interface PageProps {
 	searchParams: Promise<{ page?: string }>;
@@ -48,8 +50,11 @@ export default function DataTable<T extends { id: number | string }>({
 			<Table>
 				<TableHeader>
 					<TableRow>
-						{header.map((item, index) => (
-							<TableHead key={item.label} border={index !== 0}>
+						<TableHead>
+							<IconSelect className="size-4" />
+						</TableHead>
+						{header.map((item) => (
+							<TableHead key={item.label} border>
 								{item.label}
 							</TableHead>
 						))}
@@ -69,31 +74,33 @@ export default function DataTable<T extends { id: number | string }>({
 					) : (
 						rows.map((row) => (
 							<TableRow key={row.id}>
-								{Object.values(row).map((value, colIndex) => (
+								<TableCell className="w-8 max-w-8">
+									<Checkbox />
+								</TableCell>
+								{Object.values(row).map((value, cIndex) => (
 									<TableCell
-										key={`cell-${row.id}-${colIndex}`}
-										border={colIndex !== 0}
+										key={`cell-${row.id}-${cIndex}`}
+										border
 										title={
-											["Images", "Picture"].includes(header[colIndex].label)
+											["Images", "Picture"].includes(header[cIndex].label)
 												? undefined
 												: String(value)
 										}
-										className={clsx("truncate", hasImage !== "none" && "h-18")}
+										className={clsx(hasImage !== "none" && "h-18")}
 										style={{
-											width: `${header[colIndex].width}px`,
-											minWidth: `${header[colIndex].width}px`,
-											maxWidth: `${header[colIndex].width}px`,
+											width: header[cIndex].width,
+											minWidth: header[cIndex].width,
 										}}
 									>
 										<CellContent
 											value={value}
-											headerName={header[colIndex].label}
-											colIndex={colIndex}
+											headerName={header[cIndex].label}
+											cIndex={cIndex}
 											rowId={row.id}
 										/>
 									</TableCell>
 								))}
-								<TableCell border className="py-0.5 w-30 min-w-30 max-w-30">
+								<TableCell border className="py-0.5 w-26 max-w-26 min-w-26">
 									<div className="flex items-center justify-center gap-1.5">
 										<EditDialog<T> row={row} />
 										<DeleteDialog id={row.id} />

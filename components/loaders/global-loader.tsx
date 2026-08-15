@@ -1,4 +1,4 @@
-import styles from "@/components/loaders/global-loader/global-loader.module.css";
+import styles from "@/components/loaders/global-loader.module.css";
 
 export default function GlobalLoader() {
 	return (

@@ -5,6 +5,8 @@ import { CARTS_HEADER } from "@/lib/entity/entity-headers";
 import type { Cart } from "@/lib/entity/types";
 
 export default async function CartsPage({ searchParams }: PageProps) {
+	// await new Promise((resolve) => setTimeout(resolve, 1000));
+
 	const params = await searchParams;
 	const { page: _pageParam, ...filterParams } = params;
 

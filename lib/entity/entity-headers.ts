@@ -1,65 +1,65 @@
-type HeaderType = { label: string; width: number }[];
+type HeaderType = { label: string; width?: string }[];
 
 const CARTS_HEADER: HeaderType = [
-	{ label: "Cart ID", width: 100 },
-	{ label: "Total Amount", width: 150 },
-	{ label: "User ID", width: 300 },
+	{ label: "Cart ID", width: "150px" },
+	{ label: "Total Amount" },
+	{ label: "User ID", width: "300px" },
 ];
 
 const CART_ITEMS_HEADER: HeaderType = [
-	{ label: "Cart Item ID", width: 100 },
-	{ label: "Unit Price", width: 100 },
-	{ label: "Quantity", width: 100 },
-	{ label: "Total Price", width: 100 },
-	{ label: "Cart ID", width: 100 },
-	{ label: "Product ID", width: 100 },
+	{ label: "Cart Item ID", width: "150px" },
+	{ label: "Unit Price", width: "150px" },
+	{ label: "Quantity", width: "150px" },
+	{ label: "Total Price" },
+	{ label: "Cart ID", width: "150px" },
+	{ label: "Product ID", width: "150px" },
 ];
 
 const CATEGORIES_HEADER: HeaderType = [
-	{ label: "Category ID", width: 100 },
-	{ label: "Name", width: 300 },
-	{ label: "Gender", width: 200 },
+	{ label: "Category ID", width: "150px" },
+	{ label: "Name" },
+	{ label: "Gender", width: "300px" },
 ];
 
 const ORDERS_HEADER: HeaderType = [
-	{ label: "Order ID", width: 100 },
-	{ label: "Order Date", width: 160 },
-	{ label: "Total Amount", width: 100 },
-	{ label: "Order Status", width: 160 },
-	{ label: "User ID", width: 260 },
+	{ label: "Order ID", width: "150px" },
+	{ label: "Order Date", width: "160px" },
+	{ label: "Total Amount", width: "150px" },
+	{ label: "Order Status" },
+	{ label: "User ID", width: "255px" },
 ];
 
 const ORDER_ITEMS_HEADER: HeaderType = [
-	{ label: "Order Item ID", width: 100 },
-	{ label: "Price", width: 100 },
-	{ label: "Quantity", width: 100 },
-	{ label: "Order ID", width: 100 },
-	{ label: "Product ID", width: 100 },
+	{ label: "Order Item ID", width: "150px" },
+	{ label: "Price" },
+	{ label: "Quantity", width: "150px" },
+	{ label: "Order ID", width: "150px" },
+	{ label: "Product ID", width: "150px" },
 ];
 
 const PRODUCTS_HEADER: HeaderType = [
-	{ label: "Product ID", width: 100 },
-	{ label: "Name", width: 160 },
-	{ label: "Price", width: 100 },
-	{ label: "Brand", width: 160 },
-	{ label: "Inventory", width: 100 },
-	{ label: "Description", width: 200 },
-	{ label: "Category ID", width: 100 },
-	{ label: "Images", width: 264 },
+	{ label: "Product ID", width: "108px" },
+	{ label: "Name", width: "160px" },
+	{ label: "Price", width: "100px" },
+	{ label: "Brand", width: "120px" },
+	{ label: "Inventory", width: "100px" },
+	{ label: "Description", width: "264px" },
+	{ label: "Category ID", width: "100px" },
+	{ label: "Images", width: "264px" },
 ];
 
 const USERS_HEADER: HeaderType = [
-	{ label: "User ID", width: 260 },
-	{ label: "Picture", width: 72 },
-	{ label: "Email", width: 200 },
-	{ label: "First Name", width: 120 },
-	{ label: "Last Name", width: 120 },
-	{ label: "Suspended", width: 80 },
-	{ label: "Total Sign-ins", width: 110 },
-	{ label: "Failed Sign-ins", width: 110 },
-	{ label: "Last Signed In", width: 160 },
-	{ label: "Created On", width: 160 },
-	{ label: "Updated On", width: 160 },
+	{ label: "User ID", width: "255px" },
+	{ label: "Picture", width: " 72px" },
+	{ label: "Email", width: "264px" },
+	{ label: "First Name", width: "120px" },
+	{ label: "Last Name", width: "120px" },
+	{ label: "Suspended", width: " 80px" },
+	{ label: "Total Sign-ins", width: "105px" },
+	{ label: "Failed Sign-ins", width: "105px" },
+	{ label: "Last Signed In", width: "160px" },
+	{ label: "Created On", width: "160px" },
+	{ label: "Updated On", width: "160px" },
 ];
 
 export {

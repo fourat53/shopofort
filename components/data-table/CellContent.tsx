@@ -6,7 +6,7 @@ import { formatDateTime, isDate } from "@/lib/date-format";
 interface CellContentProps {
 	value: unknown;
 	headerName: string;
-	colIndex?: number;
+	cIndex?: number;
 	rowId?: number | string;
 	tooltip?: boolean;
 }
@@ -14,20 +14,19 @@ interface CellContentProps {
 export default function CellContent({
 	value,
 	headerName,
-	colIndex,
+	cIndex,
 	rowId,
 	tooltip = false,
 }: CellContentProps) {
 	const imageSize = tooltip ? 32 : 56;
-	const lowerHeader = headerName.toLowerCase();
 	return (
 		<>
-			{colIndex &&
-			colIndex > 0 &&
+			{cIndex &&
+			cIndex > 0 &&
 			headerName.includes(" ID") &&
 			(typeof value === "number" || typeof value === "string") ? (
 				<EntityTooltip headerName={headerName} idValue={value} />
-			) : ["orderstatus", "order status"].includes(lowerHeader) ? (
+			) : ["orderStatus", "Order Status"].includes(headerName) ? (
 				<p
 					className={clsx(
 						"w-fit bg-accent rounded-full px-1.75",
@@ -45,7 +44,7 @@ export default function CellContent({
 				>
 					{String(value)}
 				</p>
-			) : lowerHeader === "picture" ? (
+			) : headerName === "Picture" ? (
 				value ? (
 					<Image
 						src={String(value)}
@@ -73,7 +72,7 @@ export default function CellContent({
 						}}
 					/>
 				)
-			) : lowerHeader === "images" &&
+			) : headerName === "Images" &&
 				Array.isArray(value) &&
 				value.length > 0 ? (
 				<div

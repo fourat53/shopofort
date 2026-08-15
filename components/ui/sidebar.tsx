@@ -23,7 +23,7 @@ import {
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 
-const SIDEBAR_LOCAL_STORAGE_NAME = "sidebar_state";
+const SIDEBAR_OPEN = "sidebar_open";
 const SIDEBAR_WIDTH = "16rem";
 const SIDEBAR_WIDTH_MOBILE = "18rem";
 const SIDEBAR_WIDTH_ICON = "3rem";
@@ -49,11 +49,11 @@ function useSidebar() {
 	return context;
 }
 
-function initOpen({ defaultOpen }: { defaultOpen: boolean }) {
+function initOpen(defaultOpen: boolean) {
 	if (typeof window === "undefined") return defaultOpen;
 
-	const storedOpen = localStorage.getItem(SIDEBAR_LOCAL_STORAGE_NAME);
-	return storedOpen ? storedOpen === "true" : defaultOpen;
+	const storedOpen = Boolean(localStorage.getItem(SIDEBAR_OPEN));
+	return storedOpen ?? defaultOpen;
 }
 
 function SidebarProvider({
@@ -72,21 +72,14 @@ function SidebarProvider({
 	const isMobile = useIsMobile();
 	const [openMobile, setOpenMobile] = React.useState<boolean>(false);
 
-	const [_open, _setOpen] = React.useState<boolean>(initOpen({ defaultOpen }));
+	const [_open, _setOpen] = React.useState<boolean>(initOpen(defaultOpen));
 
 	const open = openProp ?? _open;
 	const setOpen = React.useCallback(
 		(value: boolean | ((value: boolean) => boolean)) => {
 			const openState = typeof value === "function" ? value(open) : value;
-			if (setOpenProp) {
-				setOpenProp(openState);
-			} else {
-				_setOpen(openState);
-			}
-
-			if (typeof window !== "undefined") {
-				localStorage.setItem(SIDEBAR_LOCAL_STORAGE_NAME, String(openState));
-			}
+			if (setOpenProp) setOpenProp(openState);
+			else _setOpen(openState);
 		},
 		[setOpenProp, open],
 	);
@@ -253,7 +246,7 @@ function SidebarTrigger({
 	onClick,
 	...props
 }: React.ComponentProps<typeof Button>) {
-	const { toggleSidebar } = useSidebar();
+	const { setOpen, open } = useSidebar();
 
 	return (
 		<Button
@@ -264,7 +257,8 @@ function SidebarTrigger({
 			className={cn("hover:border hover:border-border", className)}
 			onClick={(event) => {
 				onClick?.(event);
-				toggleSidebar();
+				setOpen(!open);
+				localStorage.setItem(SIDEBAR_OPEN, String(open));
 			}}
 			{...props}
 		>

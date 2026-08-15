@@ -13,8 +13,6 @@ export default async function AdminLayout({
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
-	await new Promise((resolve) => setTimeout(resolve, 1000));
-
 	return (
 		<SidebarProvider>
 			<AdminSidebar />
