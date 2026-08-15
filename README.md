@@ -39,11 +39,11 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 pnpm biome format --write .
 
-- add select multiple to update or delete multiple entities
-
+  1. fix upload images in product and user table create and edit.
+  2. display all cart items for a cart, order items for an order
 - TO DO :
   <!-- products and users page -->
-  1. fix upload images in product and user table create and edit.
+
   <!-- dashboard page -->
   2. make a dashboard design with shadcn UI and display statistics by using the most relevent data from the database.
   <!-- table filtering and sorting -->

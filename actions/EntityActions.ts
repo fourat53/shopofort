@@ -189,10 +189,39 @@ async function getFilterOptions(field: string): Promise<SelectOption[]> {
 	}
 }
 
+async function deleteEntities(entity: EntityType, ids: (number | string)[]) {
+	if (ids.length === 0) return;
+	await Promise.allSettled(ids.map((id) => deleteEntity(entity, id)));
+}
+
+async function updateEntities(
+	entity: EntityType,
+	ids: (number | string)[],
+	formData: FormData,
+) {
+	if (ids.length === 0) return;
+	if (entity === "user") {
+		await Promise.allSettled(
+			ids.map((id) => updateEntity(entity, id, formData)),
+		);
+	} else {
+		const data = getFormEntity(entity, formData);
+		// @ts-expect-error - prisma dynamic model access
+		await prisma[entity].updateMany({
+			where: { id: { in: ids as number[] } },
+			data,
+		});
+		const tag = tagMap[entity];
+		if (tag) updateTag(tag);
+	}
+}
+
 export {
 	createEntity,
+	deleteEntities,
 	deleteEntity,
 	getEntityById,
 	getFilterOptions,
+	updateEntities,
 	updateEntity,
 };

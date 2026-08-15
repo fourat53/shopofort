@@ -1,4 +1,3 @@
-import { IconSelect } from "@tabler/icons-react";
 import { clsx } from "clsx";
 import CellContent from "@/components/data-table/CellContent";
 import DataTablePagination from "@/components/data-table/DataTablePagination";
@@ -13,7 +12,7 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import type { HeaderType } from "@/lib/entity/entity-headers";
-import { Checkbox } from "../ui/checkbox";
+import CheckBoxCell from "./CheckBoxCell";
 
 interface PageProps {
 	searchParams: Promise<{ page?: string }>;
@@ -51,14 +50,16 @@ export default function DataTable<T extends { id: number | string }>({
 				<TableHeader>
 					<TableRow>
 						<TableHead>
-							<IconSelect className="size-4" />
+							<CheckBoxCell<T> rows={rows} type="select-all" />
 						</TableHead>
 						{header.map((item) => (
 							<TableHead key={item.label} border>
 								{item.label}
 							</TableHead>
 						))}
-						<TableHead border>Actions</TableHead>
+						<TableHead border className="py-0">
+							<CheckBoxCell<T> rows={rows} type="actions" />
+						</TableHead>
 					</TableRow>
 				</TableHeader>
 				<TableBody>
@@ -75,7 +76,7 @@ export default function DataTable<T extends { id: number | string }>({
 						rows.map((row) => (
 							<TableRow key={row.id}>
 								<TableCell className="w-8 max-w-8">
-									<Checkbox />
+									<CheckBoxCell<T> rows={rows} row={row} type="select-one" />
 								</TableCell>
 								{Object.values(row).map((value, cIndex) => (
 									<TableCell

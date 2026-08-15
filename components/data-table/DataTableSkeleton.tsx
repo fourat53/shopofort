@@ -1,4 +1,3 @@
-import { IconSelect } from "@tabler/icons-react";
 import { clsx } from "clsx";
 import type { HasImage } from "@/components/data-table/DataTable";
 import {
@@ -34,14 +33,16 @@ export default function DataTableSkeleton({
 			<TableHeader>
 				<TableRow>
 					<TableHead>
-						<IconSelect className="size-4" />
+						<Checkbox />
 					</TableHead>
 					{header.map((item) => (
 						<TableHead key={item.label} border>
 							{item.label}
 						</TableHead>
 					))}
-					<TableHead border>Actions</TableHead>
+					<TableHead border className="py-0">
+						Actions
+					</TableHead>
 				</TableRow>
 			</TableHeader>
 			<TableBody>

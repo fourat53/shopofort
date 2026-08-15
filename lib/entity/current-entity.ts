@@ -59,7 +59,7 @@ const entityFields: Record<string, FieldConfig[]> = {
 			name: "id",
 			label: "ID",
 			type: "number",
-			category: ["filter", "edit"],
+			category: ["filter"],
 		},
 		{
 			name: "name",
@@ -115,7 +115,7 @@ const entityFields: Record<string, FieldConfig[]> = {
 			name: "id",
 			label: "ID",
 			type: "number",
-			category: ["filter", "edit"],
+			category: ["filter"],
 		},
 		{
 			name: "totalAmount",
@@ -139,7 +139,7 @@ const entityFields: Record<string, FieldConfig[]> = {
 			name: "id",
 			label: "ID",
 			type: "number",
-			category: ["filter", "edit"],
+			category: ["filter"],
 		},
 		{
 			name: "quantity",
@@ -184,7 +184,7 @@ const entityFields: Record<string, FieldConfig[]> = {
 			name: "id",
 			label: "ID",
 			type: "number",
-			category: ["filter", "edit"],
+			category: ["filter"],
 		},
 		{
 			name: "orderDate",
@@ -229,7 +229,7 @@ const entityFields: Record<string, FieldConfig[]> = {
 			name: "id",
 			label: "ID",
 			type: "number",
-			category: ["filter", "edit"],
+			category: ["filter"],
 		},
 		{
 			name: "quantity",
@@ -266,7 +266,7 @@ const entityFields: Record<string, FieldConfig[]> = {
 			name: "id",
 			label: "ID",
 			type: "number",
-			category: ["filter", "edit"],
+			category: ["filter"],
 		},
 		{
 			name: "name",
