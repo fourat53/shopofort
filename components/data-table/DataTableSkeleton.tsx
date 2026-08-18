@@ -17,14 +17,17 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import type { HeaderType } from "@/lib/entity/entity-header";
+import SortableTableHead from "./SortableTableHead";
 
 interface DataTableSkeletonProps {
 	header: HeaderType;
+	basePath: string;
 	hasImage?: HasImage;
 }
 
 export default function DataTableSkeleton({
 	header,
+	basePath,
 	hasImage = "none",
 }: DataTableSkeletonProps) {
 	const rowCount = hasImage !== "none" ? IMAGE_PAGE_SIZE : PAGE_SIZE;
@@ -36,11 +39,13 @@ export default function DataTableSkeleton({
 						<Checkbox />
 					</TableHead>
 					{header.map((item) => (
-						<TableHead key={item.name} border>
-							{item.name}
-						</TableHead>
+							<SortableTableHead
+								key={item.name}
+								name={item.name}
+								basePath={basePath}
+							/>
 					))}
-					<TableHead border className="py-0">
+					<TableHead border className="py-0 text-center">
 						Actions
 					</TableHead>
 				</TableRow>

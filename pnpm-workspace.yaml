@@ -1,11 +1,14 @@
 allowBuilds:
   '@prisma/engines': true
   esbuild: true
-  msgpackr-extract: set this to true or false
+  msgpackr-extract: true
   prisma: true
   sharp: true
   unrs-resolver: true
+
 overrides:
   find-my-way: "^9.6.1"
   brace-expansion: "^5.0.8"
   valibot: "^1.4.2"
+  effect: "^3.20.0"
+  deepmerge-ts: "^8.0.0"

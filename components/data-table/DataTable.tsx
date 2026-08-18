@@ -1,4 +1,5 @@
 import { clsx } from "clsx";
+import { Suspense } from "react";
 import CellContent from "@/components/data-table/CellContent";
 import CheckBoxCell from "@/components/data-table/CheckBoxCell";
 import DataTablePagination from "@/components/data-table/DataTablePagination";
@@ -14,6 +15,7 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import type { HeaderType } from "@/lib/entity/entity-header";
+import DataTableSkeleton from "./DataTableSkeleton";
 
 interface PageProps {
 	searchParams: Promise<{
@@ -39,6 +41,7 @@ interface DataTableProps<T> {
 	header: HeaderType;
 	rows: T[];
 	basePath: BasePathType;
+	suspenseKey: string;
 	hasImage?: HasImage;
 }
 
@@ -47,10 +50,14 @@ export default function DataTable<T extends { id: number | string }>({
 	header,
 	rows,
 	basePath,
+	suspenseKey,
 	hasImage = "none",
 }: DataTableProps<T>) {
 	return (
-		<>
+		<Suspense
+			key={suspenseKey}
+			fallback={<DataTableSkeleton  header={header} basePath={basePath} hasImage={hasImage} />}
+		>
 			<Table>
 				<TableHeader>
 					<TableRow>
@@ -64,7 +71,7 @@ export default function DataTable<T extends { id: number | string }>({
 								basePath={basePath}
 							/>
 						))}
-						<TableHead border className="py-0">
+						<TableHead border className="py-0 text-center">
 							<CheckBoxCell<T> rows={rows} type="actions" />
 						</TableHead>
 					</TableRow>
@@ -126,7 +133,7 @@ export default function DataTable<T extends { id: number | string }>({
 					className="absolute bottom-15"
 				/>
 			)}
-		</>
+		</Suspense>
 	);
 }
 

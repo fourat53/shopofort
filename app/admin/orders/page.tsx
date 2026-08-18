@@ -15,12 +15,15 @@ export default async function OrdersPage({ searchParams }: PageProps) {
 		sortBy,
 		order,
 	});
+
+	const suspenseKey = JSON.stringify(params);
 	return (
 		<DataTable<Order>
 			header={ORDERS_HEADER}
 			totalPages={totalPages}
 			rows={orders}
 			basePath="orders"
+			suspenseKey={suspenseKey}
 		/>
 	);
 }

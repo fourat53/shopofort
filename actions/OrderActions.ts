@@ -6,8 +6,8 @@ import {
 } from "@/components/data-table/PaginationParams";
 import { ORDERS_HEADER } from "@/lib/entity/entity-header";
 import type { OrderStatus, ParameterType } from "@/lib/entity/types";
-import type { Prisma } from "@/lib/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
+import type { Prisma } from "@/prisma/generated/prisma/client";
 
 function buildWhereClause(searchParams: ParameterType): Prisma.OrderWhereInput {
 	const where: Prisma.OrderWhereInput = {};

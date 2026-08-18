@@ -15,12 +15,15 @@ export default async function CartItemsPage({ searchParams }: PageProps) {
 		sortBy,
 		order,
 	});
+
+	const suspenseKey = JSON.stringify(params);
 	return (
 		<DataTable<CartItem>
 			header={CART_ITEMS_HEADER}
 			totalPages={totalPages}
 			rows={cartItems}
 			basePath="cart-items"
+			suspenseKey={suspenseKey}
 		/>
 	);
 }

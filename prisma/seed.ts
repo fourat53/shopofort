@@ -3,7 +3,7 @@ import { config } from "dotenv";
 import { getUsers } from "@/actions/UserActions";
 import { checkedEnvVar } from "@/lib/checked-env-var";
 import type { CategoryName, Gender, OrderStatus } from "@/lib/entity/types";
-import { PrismaClient } from "@/lib/generated/prisma/client";
+import { PrismaClient } from "@/prisma/generated/prisma/client";
 
 config({ path: ".env" });
 config();

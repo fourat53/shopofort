@@ -37,11 +37,12 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 <!-- Biome auto sort imports -->
 
+-verify sorting
+
 pnpm biome format --write .
 
   1. fix upload images in product and user table create and edit.
   2. display all cart items for a cart, order items for an order
-  3. add the ability to sort from server any table columns in DataTable by adding arrows to the table header.
-  4. make a dashboard design with shadcn UI and display statistics by using the most relevent data from the database.
+  3. make a dashboard design with shadcn UI and display statistics by using the most relevent data from the database.
 
 Important: Since I don't have AWS S3 account, the images are saved locally.

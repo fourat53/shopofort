@@ -16,6 +16,7 @@ import {
 	DialogTrigger,
 } from "@/components/ui/dialog";
 import { CurrentEntity, entityFields } from "@/lib/entity/current-entity";
+import { DatePicker } from "../form-items/date-picker";
 
 export default function FilterDialog({ disabled }: { disabled?: boolean }) {
 	const entity = CurrentEntity();
@@ -163,11 +164,14 @@ export default function FilterDialog({ disabled }: { disabled?: boolean }) {
 									)}
 
 									{field.type === "date" && (
-										<Input
-											label={field.name}
+										<DatePicker
 											name={field.name}
-											type="date"
-											defaultValue={searchParams.get(field.name) || ""}
+											label={field.name}
+											defaultValue={
+												field.defaultValue
+													? new Date(field.defaultValue)
+													: undefined
+											}
 										/>
 									)}
 

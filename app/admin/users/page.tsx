@@ -16,12 +16,14 @@ export default async function UsersPage({ searchParams }: PageProps) {
 		order,
 	});
 
+	const suspenseKey = JSON.stringify(params);
 	return (
 		<DataTable<User>
 			header={USERS_HEADER}
 			totalPages={totalPages}
 			rows={users}
 			basePath="users"
+			suspenseKey={suspenseKey}
 			hasImage="one"
 		/>
 	);

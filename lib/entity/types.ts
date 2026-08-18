@@ -8,7 +8,7 @@ import type {
 	OrderItem as OrderItemType,
 	OrderStatus,
 	Product as ProductType,
-} from "@/lib/generated/prisma/client";
+} from "@/prisma/generated/prisma/client";
 
 type User = {
 	id: string;

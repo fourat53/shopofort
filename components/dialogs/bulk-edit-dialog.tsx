@@ -37,7 +37,6 @@ export default function BulkEditDialog<T extends { id: number | string }>({
 	const fetchedFields = useRef<Set<string>>(new Set());
 
 	const ids = useMemo(() => rows.map((row) => row.id), [rows]);
-	const firstRow = rows[0];
 
 	const currentFields = useMemo(
 		() =>
@@ -120,7 +119,7 @@ export default function BulkEditDialog<T extends { id: number | string }>({
 
 				<form onSubmit={handleSubmit} className="flex flex-col gap-2 pt-2">
 					{currentFields.map((field) => {
-						const value = (firstRow as Record<string, unknown>)[field.name];
+						const value = (rows[0] as Record<string, unknown>)[field.name];
 
 						return (
 							<div key={field.name} className="flex flex-col gap-2">

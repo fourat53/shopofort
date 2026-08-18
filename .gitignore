@@ -41,7 +41,7 @@ yarn-error.log*
 next-env.d.ts
 
 # personal database data
-/lib/generated/prisma
+/prisma/generated/prisma
 
 # vercel agents
 .agents
