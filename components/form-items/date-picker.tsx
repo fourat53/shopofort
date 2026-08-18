@@ -85,9 +85,9 @@ export function DatePicker({
 			<Popover open={open} onOpenChange={setOpen}>
 				<PopoverTrigger asChild>
 					<Button
-						variant="outline"
+						variant="ghost"
 						type="button"
-						className="w-full justify-between font-normal"
+						className="w-full h-7 bg-input/20 border border-border text-xs rounded-md justify-between"
 					>
 						{displayValue}
 						<IconCalendar />

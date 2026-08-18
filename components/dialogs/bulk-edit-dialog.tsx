@@ -4,9 +4,7 @@ import { IconEdit } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { getFilterOptions, updateEntities } from "@/actions/EntityActions";
-import { DatePicker } from "@/components/form-items/date-picker";
-import { Input } from "@/components/form-items/input";
-import { Select, type SelectOption } from "@/components/form-items/select";
+import type { SelectOption } from "@/components/form-items/select";
 import { Button } from "@/components/ui/button";
 import {
 	Dialog,
@@ -17,6 +15,7 @@ import {
 	DialogTrigger,
 } from "@/components/ui/dialog";
 import { CurrentEntity, entityFields } from "@/lib/entity/current-entity";
+import DialogForm from "./dialog-form";
 
 interface BulkEditDialogProps<T> {
 	rows: T[];
@@ -117,74 +116,18 @@ export default function BulkEditDialog<T extends { id: number | string }>({
 					</DialogTitle>
 				</DialogHeader>
 
-				<form onSubmit={handleSubmit} className="flex flex-col gap-2 pt-2">
-					{currentFields.map((field) => {
-						const value = (rows[0] as Record<string, unknown>)[field.name];
-
-						return (
-							<div key={field.name} className="flex flex-col gap-2">
-								{field.type === "string" && (
-									<Input
-										name={field.name}
-										label={field.name}
-										defaultValue={value?.toString() ?? ""}
-										required={field.required}
-									/>
-								)}
-
-								{field.type === "number" && (
-									<Input
-										name={field.name}
-										label={field.name}
-										type="number"
-										step={field.step ?? "1"}
-										defaultValue={
-											value !== null && value !== undefined ? String(value) : ""
-										}
-										required={field.required}
-									/>
-								)}
-
-								{field.type === "date" && (
-									<DatePicker
-										name={field.name}
-										label={field.name}
-										defaultValue={value as string | Date | undefined}
-										required={field.required}
-									/>
-								)}
-
-								{field.type === "enum" && (
-									<Select
-										name={field.name}
-										label={field.name}
-										defaultValue={value?.toString() || undefined}
-										placeholder="Select an option"
-										items={
-											field.enumValues?.map((enumValue) => ({
-												label: enumValue,
-												value: enumValue,
-											})) ?? []
-										}
-										required={field.required}
-									/>
-								)}
-
-								{field.type === "foreignKey" && (
-									<Select
-										name={field.name}
-										label={field.name}
-										placeholder="Select an option"
-										defaultValue={
-											value !== null && value !== undefined ? String(value) : ""
-										}
-										items={optionsCache[field.name] ?? []}
-										required={field.required}
-									/>
-								)}
-							</div>
-						);
-					})}
+				<form onSubmit={handleSubmit}>
+					<DialogForm
+						fields={currentFields}
+						optionsCache={optionsCache}
+						getValue={(field) =>
+							(rows[0] as Record<string, unknown>)[field.name] as
+								| string
+								| number
+								| Date
+								| undefined
+						}
+					/>
 
 					<DialogFooter className="pt-4">
 						<Button

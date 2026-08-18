@@ -5,8 +5,7 @@ import clsx from "clsx";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { getFilterOptions } from "@/actions/EntityActions";
-import { Input } from "@/components/form-items/input";
-import { Select, type SelectOption } from "@/components/form-items/select";
+import type { SelectOption } from "@/components/form-items/select";
 import { Button } from "@/components/ui/button";
 import {
 	Dialog,
@@ -16,7 +15,7 @@ import {
 	DialogTrigger,
 } from "@/components/ui/dialog";
 import { CurrentEntity, entityFields } from "@/lib/entity/current-entity";
-import { DatePicker } from "../form-items/date-picker";
+import DialogForm from "./dialog-form";
 
 export default function FilterDialog({ disabled }: { disabled?: boolean }) {
 	const entity = CurrentEntity();
@@ -142,70 +141,16 @@ export default function FilterDialog({ disabled }: { disabled?: boolean }) {
 					<form onSubmit={handleSubmit}>
 						<DialogTitle>Filter {entity}</DialogTitle>
 
-						<div className="flex flex-col gap-4 py-4">
-							{currentFields.map((field) => (
-								<div key={field.name} className="flex flex-col gap-2">
-									{field.type === "string" && (
-										<Input
-											label={field.name}
-											name={field.name}
-											defaultValue={searchParams.get(field.name) || ""}
-										/>
-									)}
-
-									{field.type === "number" && (
-										<Input
-											label={field.name}
-											name={field.name}
-											type="number"
-											step={field.step ?? "1"}
-											defaultValue={searchParams.get(field.name) || ""}
-										/>
-									)}
-
-									{field.type === "date" && (
-										<DatePicker
-											name={field.name}
-											label={field.name}
-											defaultValue={
-												field.defaultValue
-													? new Date(field.defaultValue)
-													: undefined
-											}
-										/>
-									)}
-
-									{field.type === "enum" && (
-										<Select
-											name={field.name}
-											label={field.name}
-											defaultValue={searchParams.get(field.name) || undefined}
-											placeholder="Select an option"
-											items={[
-												{ label: "Any", value: "ALL" },
-												...(field.enumValues?.map((value) => ({
-													label: value,
-													value,
-												})) ?? []),
-											]}
-										/>
-									)}
-
-									{field.type === "foreignKey" && (
-										<Select
-											name={field.name}
-											label={field.name}
-											defaultValue={searchParams.get(field.name) || undefined}
-											placeholder="Select an option"
-											items={[
-												{ label: "Any", value: "ALL" },
-												...(optionsCache[field.name] ?? []),
-											]}
-										/>
-									)}
-								</div>
-							))}
-						</div>
+						<DialogForm
+							filter
+							fields={currentFields}
+							optionsCache={optionsCache}
+							getValue={(field) =>
+								field.type === "date"
+									? field.defaultValue
+									: searchParams.get(field.name) || undefined
+							}
+						/>
 
 						<DialogFooter>
 							<Button
