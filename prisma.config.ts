@@ -1,6 +1,6 @@
 import "dotenv/config";
 import { defineConfig } from "prisma/config";
-import { checkedEnvVar } from "@/lib/checked-env-var";
+import { checkedEnvVar } from "./lib/checked-env-var";
 
 export default defineConfig({
 	schema: "prisma/schema.prisma",

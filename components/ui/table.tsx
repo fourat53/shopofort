@@ -77,7 +77,7 @@ function TableHead({
 		<th
 			data-slot="table-head"
 			className={cn(
-				"h-7 py-1.5 px-2 font-semibold whitespace-nowrap text-foreground has-[[role=checkbox]]:pr-0",
+				"h-7 py-1.5 px-2 font-semibold text-left whitespace-nowrap text-foreground has-[[role=checkbox]]:pr-0",
 				"hover:cursor-pointer hover:bg-mist-400/30 dark:hover:bg-mist-900/30",
 				border && "border-l",
 				className,

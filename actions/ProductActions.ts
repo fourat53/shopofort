@@ -4,11 +4,13 @@ import {
 	FILTER_CACHE_SECONDS,
 	IMAGE_PAGE_SIZE,
 } from "@/components/data-table/PaginationParams";
+import { PRODUCTS_HEADER } from "@/lib/entity/entity-header";
+import type { ParameterType } from "@/lib/entity/types";
 import type { Prisma } from "@/lib/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 
 function buildWhereClause(
-	searchParams: Record<string, string | string[] | undefined>,
+	searchParams: ParameterType,
 ): Prisma.ProductWhereInput {
 	const where: Prisma.ProductWhereInput = {};
 	if (searchParams.id) where.id = Number(searchParams.id);
@@ -23,13 +25,52 @@ function buildWhereClause(
 	return where;
 }
 
-function getProductCount(
-	searchParams: Record<string, string | string[] | undefined> = {},
+type ProductOrderInput = Prisma.ProductOrderByWithRelationInput;
+
+function buildOrderClause(orderParams: ParameterType): ProductOrderInput {
+	const sortBy =
+		typeof orderParams.sortBy === "string" ? orderParams.sortBy : undefined;
+	const order = orderParams.order === "desc" ? "desc" : "asc";
+
+	const sortableColumns = new Set<keyof ProductOrderInput>(
+		PRODUCTS_HEADER.map((header) => header.name as keyof ProductOrderInput),
+	);
+
+	if (sortBy && sortableColumns.has(sortBy as keyof ProductOrderInput))
+		return {
+			[sortBy]: order,
+		} as ProductOrderInput;
+	return { id: "asc" };
+}
+
+function getProductsPage(
+	page: number,
+	searchParams: ParameterType = {},
+	orderParams: ParameterType = {},
 ) {
 	const where = buildWhereClause(searchParams);
+	const orderBy = buildOrderClause(orderParams);
 	return unstable_cache(
-		async () => prisma.product.count({ where }),
-		["products-count", JSON.stringify(searchParams)],
+		async () => {
+			const products = await prisma.product.findMany({
+				where,
+				skip: (page - 1) * IMAGE_PAGE_SIZE,
+				take: IMAGE_PAGE_SIZE,
+				orderBy,
+			});
+			return products.map(({ id, name, price, ...rest }) => ({
+				id,
+				name,
+				price: Number(price),
+				...rest,
+			}));
+		},
+		[
+			"products-page",
+			String(page),
+			JSON.stringify(searchParams),
+			JSON.stringify(orderParams),
+		],
 		{
 			revalidate: Object.keys(searchParams).length
 				? FILTER_CACHE_SECONDS
@@ -39,27 +80,11 @@ function getProductCount(
 	)();
 }
 
-function getProductsPage(
-	page: number,
-	searchParams: Record<string, string | string[] | undefined> = {},
-) {
+function getProductCount(searchParams: ParameterType = {}) {
 	const where = buildWhereClause(searchParams);
 	return unstable_cache(
-		async () => {
-			const products = await prisma.product.findMany({
-				where,
-				skip: (page - 1) * IMAGE_PAGE_SIZE,
-				take: IMAGE_PAGE_SIZE,
-				orderBy: { id: "asc" },
-			});
-			return products.map(({ id, name, price, ...rest }) => ({
-				id,
-				name,
-				price: Number(price),
-				...rest,
-			}));
-		},
-		["products-page", String(page), JSON.stringify(searchParams)],
+		async () => prisma.product.count({ where }),
+		["products-count", JSON.stringify(searchParams)],
 		{
 			revalidate: Object.keys(searchParams).length
 				? FILTER_CACHE_SECONDS

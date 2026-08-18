@@ -146,7 +146,7 @@ export default function FilterDialog({ disabled }: { disabled?: boolean }) {
 								<div key={field.name} className="flex flex-col gap-2">
 									{field.type === "string" && (
 										<Input
-											label={field.label.toString()}
+											label={field.name}
 											name={field.name}
 											defaultValue={searchParams.get(field.name) || ""}
 										/>
@@ -154,7 +154,7 @@ export default function FilterDialog({ disabled }: { disabled?: boolean }) {
 
 									{field.type === "number" && (
 										<Input
-											label={field.label.toString()}
+											label={field.name}
 											name={field.name}
 											type="number"
 											step={field.step ?? "1"}
@@ -164,7 +164,7 @@ export default function FilterDialog({ disabled }: { disabled?: boolean }) {
 
 									{field.type === "date" && (
 										<Input
-											label={field.label.toString()}
+											label={field.name}
 											name={field.name}
 											type="date"
 											defaultValue={searchParams.get(field.name) || ""}
@@ -174,7 +174,7 @@ export default function FilterDialog({ disabled }: { disabled?: boolean }) {
 									{field.type === "enum" && (
 										<Select
 											name={field.name}
-											label={field.label}
+											label={field.name}
 											defaultValue={searchParams.get(field.name) || undefined}
 											placeholder="Select an option"
 											items={[
@@ -190,7 +190,7 @@ export default function FilterDialog({ disabled }: { disabled?: boolean }) {
 									{field.type === "foreignKey" && (
 										<Select
 											name={field.name}
-											label={field.label}
+											label={field.name}
 											defaultValue={searchParams.get(field.name) || undefined}
 											placeholder="Select an option"
 											items={[

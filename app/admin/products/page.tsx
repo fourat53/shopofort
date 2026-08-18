@@ -1,17 +1,20 @@
 import { getProductCount, getProductsPage } from "@/actions/ProductActions";
 import DataTable, { type PageProps } from "@/components/data-table/DataTable";
 import { getPaginationParams } from "@/components/data-table/PaginationParams";
-import { PRODUCTS_HEADER } from "@/lib/entity/entity-headers";
+import { PRODUCTS_HEADER } from "@/lib/entity/entity-header";
 import type { Product } from "@/lib/entity/types";
 
 export default async function ProductsPage({ searchParams }: PageProps) {
 	const params = await searchParams;
-	const { page: _pageParam, ...filterParams } = params;
+	const { page: _pageParam, sortBy, order, ...filterParams } = params;
 
 	const totalCount = await getProductCount(filterParams);
 	const { page, totalPages } = getPaginationParams(params, totalCount, true);
 
-	const products: Product[] = await getProductsPage(page, filterParams);
+	const products: Product[] = await getProductsPage(page, filterParams, {
+		sortBy,
+		order,
+	});
 	return (
 		<DataTable<Product>
 			header={PRODUCTS_HEADER}

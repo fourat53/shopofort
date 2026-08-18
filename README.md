@@ -41,15 +41,7 @@ pnpm biome format --write .
 
   1. fix upload images in product and user table create and edit.
   2. display all cart items for a cart, order items for an order
-- TO DO :
-  <!-- products and users page -->
-
-  <!-- dashboard page -->
-  2. make a dashboard design with shadcn UI and display statistics by using the most relevent data from the database.
-  <!-- table filtering and sorting -->
   3. add the ability to sort from server any table columns in DataTable by adding arrows to the table header.
-  - Note: the sorting and filtering should should work together (update the get function for each table) and should update the pagination from server (new total pages and reset current page to 1).
-
-
+  4. make a dashboard design with shadcn UI and display statistics by using the most relevent data from the database.
 
 Important: Since I don't have AWS S3 account, the images are saved locally.

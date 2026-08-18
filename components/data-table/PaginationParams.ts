@@ -7,6 +7,14 @@ type SearchParams = {
 	[key: string]: string | string[] | undefined;
 };
 
+const SORT_ORDERS = ["asc", "desc"] as const;
+
+type SortOrder = (typeof SORT_ORDERS)[number];
+
+function parseSortOrder(value: string | null | undefined): SortOrder {
+	return value === "desc" ? "desc" : "asc";
+}
+
 function parsePage(
 	value: string | null | undefined,
 	totalPages?: number,
@@ -51,13 +59,38 @@ function pageHref(
 	page: number,
 	searchParams?: URLSearchParams,
 ) {
-	const path = `/admin${basePath}`;
+	const path = `/admin/${basePath}`;
 	const newParams = new URLSearchParams(searchParams?.toString());
 
-	if (page === 1) {
-		newParams.delete("page");
+	newParams.set("page", page.toString());
+
+	const qs = newParams.toString();
+	return qs ? `${path}?${qs}` : path;
+}
+
+function sortHref(
+	basePath: string,
+	searchParams: URLSearchParams,
+	field: string,
+) {
+	const path = `/admin/${basePath}`;
+	const newParams = new URLSearchParams(searchParams.toString());
+
+	const sortBy = newParams.get("sortBy");
+	const order = parseSortOrder(newParams.get("order"));
+
+	if (sortBy === field) {
+		if (field === "id") {
+			newParams.set("order", order === "asc" ? "desc" : "asc");
+		} else if (order === "asc") {
+			newParams.set("order", "desc");
+		} else {
+			newParams.set("sortBy", "id");
+			newParams.set("order", "asc");
+		}
 	} else {
-		newParams.set("page", page.toString());
+		newParams.set("sortBy", field);
+		newParams.set("order", "asc");
 	}
 
 	const qs = newParams.toString();
@@ -110,4 +143,7 @@ export {
 	PAGE_SIZE,
 	pageHref,
 	parsePage,
+	parseSortOrder,
+	type SortOrder,
+	sortHref,
 };

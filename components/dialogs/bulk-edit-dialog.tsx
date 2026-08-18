@@ -127,7 +127,7 @@ export default function BulkEditDialog<T extends { id: number | string }>({
 								{field.type === "string" && (
 									<Input
 										name={field.name}
-										label={field.label.toString()}
+										label={field.name}
 										defaultValue={value?.toString() ?? ""}
 										required={field.required}
 									/>
@@ -136,7 +136,7 @@ export default function BulkEditDialog<T extends { id: number | string }>({
 								{field.type === "number" && (
 									<Input
 										name={field.name}
-										label={field.label.toString()}
+										label={field.name}
 										type="number"
 										step={field.step ?? "1"}
 										defaultValue={
@@ -149,7 +149,7 @@ export default function BulkEditDialog<T extends { id: number | string }>({
 								{field.type === "date" && (
 									<DatePicker
 										name={field.name}
-										label={field.label.toString()}
+										label={field.name}
 										defaultValue={value as string | Date | undefined}
 										required={field.required}
 									/>
@@ -158,7 +158,7 @@ export default function BulkEditDialog<T extends { id: number | string }>({
 								{field.type === "enum" && (
 									<Select
 										name={field.name}
-										label={field.label}
+										label={field.name}
 										defaultValue={value?.toString() || undefined}
 										placeholder="Select an option"
 										items={
@@ -174,7 +174,7 @@ export default function BulkEditDialog<T extends { id: number | string }>({
 								{field.type === "foreignKey" && (
 									<Select
 										name={field.name}
-										label={field.label}
+										label={field.name}
 										placeholder="Select an option"
 										defaultValue={
 											value !== null && value !== undefined ? String(value) : ""

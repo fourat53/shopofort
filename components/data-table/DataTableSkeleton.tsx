@@ -16,7 +16,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import type { HeaderType } from "@/lib/entity/entity-headers";
+import type { HeaderType } from "@/lib/entity/entity-header";
 
 interface DataTableSkeletonProps {
 	header: HeaderType;
@@ -36,8 +36,8 @@ export default function DataTableSkeleton({
 						<Checkbox />
 					</TableHead>
 					{header.map((item) => (
-						<TableHead key={item.label} border>
-							{item.label}
+						<TableHead key={item.name} border>
+							{item.name}
 						</TableHead>
 					))}
 					<TableHead border className="py-0">
@@ -48,17 +48,17 @@ export default function DataTableSkeleton({
 			<TableBody>
 				{Array.from({ length: rowCount }, (_, rIndex) => (
 					<TableRow key={rIndex}>
-						<TableCell className="w-8 max-w-8">
+						<TableCell className="w-8 min-w-8 max-w-8">
 							<Checkbox />
 						</TableCell>
 						{header.map((item) => (
 							<TableCell
-								key={item.label}
+								key={item.name}
 								border
 								className={clsx(hasImage !== "none" && "h-18")}
 								style={{ width: item.width, minWidth: item.width }}
 							>
-								{item.label === "Images" ? (
+								{item.name === "images" ? (
 									<div className="w-fit flex gap-2">
 										{Array.from({ length: 4 }).map((_, cIndex) => (
 											<Skeleton key={cIndex} className="size-14" />
@@ -68,7 +68,7 @@ export default function DataTableSkeleton({
 									<Skeleton
 										className={clsx(
 											"h-4",
-											item.label === "Picture" && "h-14 rounded-xl",
+											item.name === "picture" && "h-14 rounded-xl",
 										)}
 									/>
 								)}

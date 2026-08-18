@@ -105,7 +105,7 @@ export default function CreateDialog() {
 							{field.type === "string" && (
 								<Input
 									name={field.name}
-									label={field.label.toString()}
+									label={field.name}
 									defaultValue={field.defaultValue?.toString() ?? ""}
 									required={field.required}
 								/>
@@ -114,7 +114,7 @@ export default function CreateDialog() {
 							{field.type === "number" && (
 								<Input
 									name={field.name}
-									label={field.label.toString()}
+									label={field.name}
 									type="number"
 									step={field.step ?? "1"}
 									defaultValue={
@@ -127,7 +127,7 @@ export default function CreateDialog() {
 							{field.type === "date" && (
 								<DatePicker
 									name={field.name}
-									label={field.label.toString()}
+									label={field.name}
 									defaultValue={
 										field.defaultValue
 											? new Date(field.defaultValue)
@@ -140,7 +140,7 @@ export default function CreateDialog() {
 							{field.type === "enum" && (
 								<Select
 									name={field.name}
-									label={field.label}
+									label={field.name}
 									defaultValue={field.defaultValue?.toString() || undefined}
 									placeholder="Select an option"
 									items={
@@ -156,7 +156,7 @@ export default function CreateDialog() {
 							{field.type === "foreignKey" && (
 								<Select
 									name={field.name}
-									label={field.label}
+									label={field.name}
 									placeholder="Select an option"
 									items={optionsCache[field.name] ?? []}
 									required={field.required}

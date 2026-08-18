@@ -31,45 +31,51 @@ type NavItem = {
 const navMain: NavItem[] = [
 	{
 		title: "Dashboard",
-		url: "/dashboard",
+		url: "dashboard",
 		icon: IconDashboard,
 	},
 	{
 		title: "Users",
-		url: "/users",
+		url: "users",
 		icon: IconUsers,
 	},
 	{
 		title: "Products",
-		url: "/products",
+		url: "products",
 		icon: IconShoppingBag,
 	},
 	{
 		title: "Categories",
-		url: "/categories",
+		url: "categories",
 		icon: IconCategory2,
 	},
 	{
 		title: "Orders",
-		url: "/orders",
+		url: "orders",
 		icon: IconPackage,
 	},
 	{
 		title: "Order Items",
-		url: "/order-items",
+		url: "order-items",
 		icon: IconPackages,
 	},
 	{
 		title: "Carts",
-		url: "/carts",
+		url: "carts",
 		icon: IconShoppingCart,
 	},
 	{
 		title: "Cart Items",
-		url: "/cart-items",
+		url: "cart-items",
 		icon: IconBrandAsana,
 	},
 ] as const;
+
+function linkUrl(url: string) {
+	return url === "dashboard"
+		? `/admin/${url}`
+		: `/admin/${url}?page=1&sortBy=id&order=asc`;
+}
 
 function NavMain({
 	items,
@@ -91,11 +97,11 @@ function NavMain({
 								asChild
 								tooltip={item.title}
 								className={clsx(
-									pathname === `/admin${item.url}` &&
+									pathname === `/admin/${item.url}` &&
 										"bg-primary dark:bg-primary/90 hover:bg-primary/90 dark:hover:bg-primary text-mist-50 hover:text-mist-50",
 								)}
 							>
-								<Link href={`/admin${item.url}`}>
+								<Link href={linkUrl(item.url)}>
 									{item.icon && <item.icon />}
 									{item.title}
 								</Link>

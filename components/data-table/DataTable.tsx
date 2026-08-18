@@ -1,6 +1,8 @@
 import { clsx } from "clsx";
 import CellContent from "@/components/data-table/CellContent";
+import CheckBoxCell from "@/components/data-table/CheckBoxCell";
 import DataTablePagination from "@/components/data-table/DataTablePagination";
+import SortableTableHead from "@/components/data-table/SortableTableHead";
 import DeleteDialog from "@/components/dialogs/delete-dialog";
 import EditDialog from "@/components/dialogs/edit-dialog";
 import {
@@ -11,11 +13,14 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import type { HeaderType } from "@/lib/entity/entity-headers";
-import CheckBoxCell from "./CheckBoxCell";
+import type { HeaderType } from "@/lib/entity/entity-header";
 
 interface PageProps {
-	searchParams: Promise<{ page?: string }>;
+	searchParams: Promise<{
+		page?: string;
+		sortBy?: string;
+		order?: "asc" | "desc";
+	}>;
 }
 
 type HasImage = "none" | "one" | "multiple";
@@ -53,9 +58,11 @@ export default function DataTable<T extends { id: number | string }>({
 							<CheckBoxCell<T> rows={rows} type="select-all" />
 						</TableHead>
 						{header.map((item) => (
-							<TableHead key={item.label} border>
-								{item.label}
-							</TableHead>
+							<SortableTableHead
+								key={item.name}
+								name={item.name}
+								basePath={basePath}
+							/>
 						))}
 						<TableHead border className="py-0">
 							<CheckBoxCell<T> rows={rows} type="actions" />
@@ -75,7 +82,7 @@ export default function DataTable<T extends { id: number | string }>({
 					) : (
 						rows.map((row) => (
 							<TableRow key={row.id}>
-								<TableCell className="w-8 max-w-8">
+								<TableCell className="w-8 min-w-8 max-w-8">
 									<CheckBoxCell<T> rows={rows} row={row} type="select-one" />
 								</TableCell>
 								{Object.values(row).map((value, cIndex) => (
@@ -83,7 +90,7 @@ export default function DataTable<T extends { id: number | string }>({
 										key={`cell-${row.id}-${cIndex}`}
 										border
 										title={
-											["Images", "Picture"].includes(header[cIndex].label)
+											["images", "picture"].includes(header[cIndex].name)
 												? undefined
 												: String(value)
 										}
@@ -95,7 +102,7 @@ export default function DataTable<T extends { id: number | string }>({
 									>
 										<CellContent
 											value={value}
-											headerName={header[cIndex].label}
+											headerName={header[cIndex].name}
 											cIndex={cIndex}
 											rowId={row.id}
 										/>

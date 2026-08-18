@@ -1,22 +1,11 @@
 import { usePathname } from "next/navigation";
 import type { CategoryName, Gender, OrderStatus } from "@/lib/entity/types";
 
-type EntityType =
-	| "user"
-	| "cart"
-	| "order"
-	| "product"
-	| "category"
-	| "cartItem"
-	| "orderItem"
-	| "";
-
 type FieldCategory = "filter" | "create" | "edit";
 type FieldType = "string" | "number" | "date" | "enum" | "foreignKey" | "image";
 
 type FieldConfig = {
 	name: string;
-	label: string | string[];
 	type: FieldType;
 	category: FieldCategory[];
 	required?: boolean;
@@ -29,26 +18,22 @@ const entityFields: Record<string, FieldConfig[]> = {
 	user: [
 		{
 			name: "id",
-			label: "ID",
 			type: "string",
 			category: ["filter"],
 		},
 		{
 			name: "email",
-			label: "emailEmail",
 			type: "string",
 			category: ["filter", "edit"],
 		},
 		{
 			name: "first_name",
-			label: "First Name",
 			type: "string",
 			category: ["filter", "create", "edit"],
 			required: true,
 		},
 		{
 			name: "last_name",
-			label: "Last Name",
 			type: "string",
 			category: ["filter", "create", "edit"],
 			required: true,
@@ -57,26 +42,22 @@ const entityFields: Record<string, FieldConfig[]> = {
 	product: [
 		{
 			name: "id",
-			label: "ID",
 			type: "number",
 			category: ["filter"],
 		},
 		{
 			name: "name",
-			label: "Name",
 			type: "string",
 			category: ["filter", "create", "edit"],
 			required: true,
 		},
 		{
 			name: "brand",
-			label: "Brand",
 			type: "string",
 			category: ["filter", "create", "edit"],
 		},
 		{
 			name: "price",
-			label: "Price",
 			type: "number",
 			category: ["filter", "create", "edit"],
 			defaultValue: 5,
@@ -85,7 +66,6 @@ const entityFields: Record<string, FieldConfig[]> = {
 		},
 		{
 			name: "inventory",
-			label: "Inventory",
 			type: "number",
 			category: ["filter", "create", "edit"],
 			defaultValue: 1,
@@ -93,19 +73,16 @@ const entityFields: Record<string, FieldConfig[]> = {
 		},
 		{
 			name: "description",
-			label: "Description",
 			type: "string",
 			category: ["create", "edit"],
 		},
 		{
 			name: "categoryId",
-			label: "Category",
 			type: "foreignKey",
 			category: ["filter", "create", "edit"],
 		},
 		{
 			name: "images",
-			label: "Images",
 			type: "image",
 			category: ["create", "edit"],
 		},
@@ -113,13 +90,11 @@ const entityFields: Record<string, FieldConfig[]> = {
 	cart: [
 		{
 			name: "id",
-			label: "ID",
 			type: "number",
 			category: ["filter"],
 		},
 		{
 			name: "totalAmount",
-			label: "Total Amount",
 			type: "number",
 			category: ["filter", "create", "edit"],
 			defaultValue: 1,
@@ -128,7 +103,6 @@ const entityFields: Record<string, FieldConfig[]> = {
 		},
 		{
 			name: "userId",
-			label: "User",
 			type: "foreignKey",
 			category: ["filter", "create", "edit"],
 			required: true,
@@ -137,20 +111,17 @@ const entityFields: Record<string, FieldConfig[]> = {
 	cartItem: [
 		{
 			name: "id",
-			label: "ID",
 			type: "number",
 			category: ["filter"],
 		},
 		{
 			name: "quantity",
-			label: "Quantity",
 			type: "number",
 			category: ["filter", "create", "edit"],
 			required: true,
 		},
 		{
 			name: "unitPrice",
-			label: "Unit Price",
 			type: "number",
 			category: ["filter", "create", "edit"],
 			required: true,
@@ -158,7 +129,6 @@ const entityFields: Record<string, FieldConfig[]> = {
 		},
 		{
 			name: "totalPrice",
-			label: "Total Price",
 			type: "number",
 			category: ["filter", "create", "edit"],
 			required: true,
@@ -166,14 +136,12 @@ const entityFields: Record<string, FieldConfig[]> = {
 		},
 		{
 			name: "cartId",
-			label: "Cart",
 			type: "foreignKey",
 			category: ["filter", "create", "edit"],
 			required: true,
 		},
 		{
 			name: "productId",
-			label: "Product",
 			type: "foreignKey",
 			category: ["filter", "create", "edit"],
 			required: true,
@@ -182,20 +150,17 @@ const entityFields: Record<string, FieldConfig[]> = {
 	order: [
 		{
 			name: "id",
-			label: "ID",
 			type: "number",
 			category: ["filter"],
 		},
 		{
 			name: "orderDate",
-			label: "Order Date",
 			type: "date",
 			category: ["filter", "create", "edit"],
 			required: true,
 		},
 		{
 			name: "totalAmount",
-			label: "Total Amount",
 			type: "number",
 			category: ["filter", "create", "edit"],
 			required: true,
@@ -204,7 +169,6 @@ const entityFields: Record<string, FieldConfig[]> = {
 		},
 		{
 			name: "orderStatus",
-			label: "Order Status",
 			type: "enum",
 			category: ["filter", "create", "edit"],
 			enumValues: [
@@ -218,7 +182,6 @@ const entityFields: Record<string, FieldConfig[]> = {
 		},
 		{
 			name: "userId",
-			label: "User",
 			type: "foreignKey",
 			category: ["filter", "create", "edit"],
 			required: true,
@@ -227,20 +190,17 @@ const entityFields: Record<string, FieldConfig[]> = {
 	orderItem: [
 		{
 			name: "id",
-			label: "ID",
 			type: "number",
 			category: ["filter"],
 		},
 		{
 			name: "quantity",
-			label: "Quantity",
 			type: "number",
 			category: ["filter", "create", "edit"],
 			required: true,
 		},
 		{
 			name: "price",
-			label: "Price",
 			type: "number",
 			category: ["filter", "create", "edit"],
 			required: true,
@@ -248,14 +208,12 @@ const entityFields: Record<string, FieldConfig[]> = {
 		},
 		{
 			name: "orderId",
-			label: "Order",
 			type: "foreignKey",
 			category: ["filter", "create", "edit"],
 			required: true,
 		},
 		{
 			name: "productId",
-			label: "Product",
 			type: "foreignKey",
 			category: ["filter", "create", "edit"],
 			required: true,
@@ -264,13 +222,11 @@ const entityFields: Record<string, FieldConfig[]> = {
 	category: [
 		{
 			name: "id",
-			label: "ID",
 			type: "number",
 			category: ["filter"],
 		},
 		{
 			name: "name",
-			label: "Name",
 			type: "enum",
 			category: ["filter", "create", "edit"],
 			enumValues: ["T_SHIRTS", "JEANS", "HOODIES", "DRESSES", "JACKETS"],
@@ -278,7 +234,6 @@ const entityFields: Record<string, FieldConfig[]> = {
 		},
 		{
 			name: "gender",
-			label: "Gender",
 			type: "enum",
 			category: ["filter", "create", "edit"],
 			enumValues: ["MALE", "FEMALE"],
@@ -286,6 +241,16 @@ const entityFields: Record<string, FieldConfig[]> = {
 		},
 	],
 };
+
+type EntityType =
+	| "user"
+	| "cart"
+	| "order"
+	| "product"
+	| "category"
+	| "cartItem"
+	| "orderItem"
+	| "";
 
 function CurrentEntity(): EntityType {
 	const pathname = usePathname();
@@ -305,21 +270,15 @@ function CurrentEntity(): EntityType {
 function TooltipEntity(headerName: string): EntityType {
 	let entity: EntityType = "";
 
-	if (headerName === "User ID") entity = "user";
-	else if (headerName === "Product ID") entity = "product";
-	else if (headerName === "Order ID") entity = "order";
-	else if (headerName === "Order Item ID") entity = "orderItem";
-	else if (headerName === "Cart Item ID") entity = "cartItem";
-	else if (headerName === "Cart ID") entity = "cart";
-	else if (headerName === "Category ID") entity = "category";
+	if (headerName === "userId") entity = "user";
+	else if (headerName === "productId") entity = "product";
+	else if (headerName === "orderId") entity = "order";
+	else if (headerName === "orderItemId") entity = "orderItem";
+	else if (headerName === "cartItemId") entity = "cartItem";
+	else if (headerName === "cartId") entity = "cart";
+	else if (headerName === "categoryId") entity = "category";
 
 	return entity;
 }
 
-export {
-	CurrentEntity,
-	type EntityType,
-	entityFields,
-	type FieldConfig,
-	TooltipEntity,
-};
+export { CurrentEntity, type EntityType, entityFields, TooltipEntity };

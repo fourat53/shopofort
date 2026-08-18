@@ -35,6 +35,8 @@ type CartItem = Omit<CartItemType, "unitPrice" | "totalPrice"> & {
 
 type OrderItem = Omit<OrderItemType, "price"> & { price: number };
 
+type ParameterType = Record<string, string | string[] | undefined>;
+
 export type {
 	Cart,
 	CartItem,
@@ -44,6 +46,7 @@ export type {
 	Order,
 	OrderItem,
 	OrderStatus,
+	ParameterType,
 	PreferredUser,
 	Product,
 	User,

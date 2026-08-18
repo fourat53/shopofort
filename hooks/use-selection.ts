@@ -8,11 +8,11 @@ type Row = {
 
 let selectedIds = new Set<number | string>();
 
+const emptySelection = new Set<number | string>();
 const listeners = new Set<() => void>();
 
 function subscribe(listener: () => void) {
 	listeners.add(listener);
-
 	return () => {
 		listeners.delete(listener);
 	};
@@ -23,7 +23,7 @@ function getSnapshot() {
 }
 
 function getServerSnapshot() {
-	return new Set<number | string>();
+	return emptySelection;
 }
 
 function updateSelection(
@@ -36,7 +36,7 @@ function updateSelection(
 	}
 }
 
-export function useSelection<T extends Row>(rows: T[]) {
+function useSelection<T extends Row>(rows: T[]) {
 	const currentSelectedIds = useSyncExternalStore(
 		subscribe,
 		getSnapshot,
@@ -105,3 +105,5 @@ export function useSelection<T extends Row>(rows: T[]) {
 		toggleRow,
 	};
 }
+
+export { useSelection };
