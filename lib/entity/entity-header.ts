@@ -44,7 +44,7 @@ const PRODUCTS_HEADER: HeaderType = [
 	{ name: "brand", width: "120px" },
 	{ name: "inventory", width: "100px" },
 	{ name: "description", width: "264px" },
-	{ name: "categoryIf", width: "100px" },
+	{ name: "categoryId", width: "100px" },
 	{ name: "images", width: "264px" },
 ];
 

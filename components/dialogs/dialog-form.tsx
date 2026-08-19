@@ -37,7 +37,7 @@ export default function DialogForm({
 								name={field.name}
 								label={getHeaderFromName(field.name)}
 								defaultValue={value?.toString() ?? ""}
-								required={field.required}
+								required={!filter && field.required}
 							/>
 						)}
 
@@ -50,7 +50,7 @@ export default function DialogForm({
 								defaultValue={
 									value !== null && value !== undefined ? String(value) : ""
 								}
-								required={field.required}
+								required={!filter && field.required}
 							/>
 						)}
 
@@ -59,7 +59,7 @@ export default function DialogForm({
 								name={field.name}
 								label={getHeaderFromName(field.name)}
 								defaultValue={value ? new Date(value) : undefined}
-								required={field.required}
+								required={!filter && field.required}
 							/>
 						)}
 
@@ -76,7 +76,7 @@ export default function DialogForm({
 										value: enumValue,
 									})) ?? []),
 								]}
-								required={field.required}
+								required={!filter && field.required}
 							/>
 						)}
 

@@ -37,8 +37,6 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 <!-- Biome auto sort imports -->
 
--verify sorting
-
 pnpm biome format --write .
 
   1. fix upload images in product and user table create and edit.
