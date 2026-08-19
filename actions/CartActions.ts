@@ -9,45 +9,39 @@ import type { ParameterType } from "@/lib/entity/types";
 import { prisma } from "@/lib/prisma";
 import type { Prisma } from "@/prisma/generated/prisma/client";
 
-function buildWhereClause(searchParams: ParameterType): Prisma.CartWhereInput {
-	const where: Prisma.CartWhereInput = {};
-	if (searchParams.id) where.id = Number(searchParams.id);
-	if (searchParams.totalAmount)
-		where.totalAmount = Number(searchParams.totalAmount);
-	if (searchParams.userId) where.userId = String(searchParams.userId);
+type FilterBy = Prisma.CartWhereInput;
+
+function buildWhereClause(filterParams: ParameterType): FilterBy {
+	const where: FilterBy = {};
+	if (filterParams.id) where.id = Number(filterParams.id);
+	if (filterParams.totalAmount)
+		where.totalAmount = Number(filterParams.totalAmount);
+	if (filterParams.userId) where.userId = String(filterParams.userId);
 	return where;
 }
 
+type OrderBy = Prisma.CartOrderByWithRelationInput;
+
 function buildOrderClause(
-	orderParams: ParameterType,
-): Prisma.CartOrderByWithRelationInput {
-	const sortBy =
-		typeof orderParams.sortBy === "string" ? orderParams.sortBy : undefined;
-	const order = orderParams.order === "desc" ? "desc" : "asc";
-
-	const sortableColumns = new Set<keyof Prisma.CartOrderByWithRelationInput>(
-		CARTS_HEADER.map(
-			(header) => header.name as keyof Prisma.CartOrderByWithRelationInput,
-		),
+	sortBy: string = "id",
+	order: "asc" | "desc" = "asc",
+): OrderBy {
+	const sortableColumns = new Set<keyof OrderBy>(
+		CARTS_HEADER.map((header) => header.name as keyof OrderBy),
 	);
-
-	if (
-		sortBy &&
-		sortableColumns.has(sortBy as keyof Prisma.CartOrderByWithRelationInput)
-	)
-		return {
-			[sortBy]: order,
-		} as Prisma.CartOrderByWithRelationInput;
+	if (sortableColumns.has(sortBy as keyof OrderBy))
+		return { [sortBy]: order } as OrderBy;
 	return { id: "asc" };
 }
 
 function getCartsPage(
 	page: number,
-	searchParams: ParameterType = {},
-	orderParams: ParameterType = {},
+	filterParams: ParameterType = {},
+	sortBy: string = "id",
+	order: "asc" | "desc" = "asc",
 ) {
-	const where = buildWhereClause(searchParams);
-	const orderBy = buildOrderClause(orderParams);
+	const where = buildWhereClause(filterParams);
+	const orderBy = buildOrderClause(sortBy, order);
 	return unstable_cache(
 		async () =>
 			prisma.cart.findMany({
@@ -59,11 +53,11 @@ function getCartsPage(
 		[
 			"carts-page",
 			String(page),
-			JSON.stringify(searchParams),
-			JSON.stringify(orderParams),
+			JSON.stringify(filterParams),
+			JSON.stringify({ sortBy, order }),
 		],
 		{
-			revalidate: Object.keys(searchParams).length
+			revalidate: Object.keys(filterParams).length
 				? FILTER_CACHE_SECONDS
 				: CACHE_SECONDS,
 			tags: ["carts"],
@@ -71,13 +65,13 @@ function getCartsPage(
 	)();
 }
 
-function getCartCount(searchParams: ParameterType = {}) {
-	const where = buildWhereClause(searchParams);
+function getCartCount(filterParams: ParameterType = {}) {
+	const where = buildWhereClause(filterParams);
 	return unstable_cache(
 		async () => prisma.cart.count({ where }),
-		["carts-count", JSON.stringify(searchParams)],
+		["carts-count", JSON.stringify(filterParams)],
 		{
-			revalidate: Object.keys(searchParams).length
+			revalidate: Object.keys(filterParams).length
 				? FILTER_CACHE_SECONDS
 				: CACHE_SECONDS,
 			tags: ["carts"],

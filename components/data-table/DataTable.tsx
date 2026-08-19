@@ -17,16 +17,6 @@ import {
 import type { HeaderType } from "@/lib/entity/entity-header";
 import DataTableSkeleton from "./DataTableSkeleton";
 
-interface PageProps {
-	searchParams: Promise<{
-		page?: string;
-		sortBy?: string;
-		order?: "asc" | "desc";
-	}>;
-}
-
-type HasImage = "none" | "one" | "multiple";
-
 type BasePathType =
 	| "users"
 	| "products"
@@ -41,8 +31,8 @@ interface DataTableProps<T> {
 	header: HeaderType;
 	rows: T[];
 	basePath: BasePathType;
-	suspenseKey: string;
-	hasImage?: HasImage;
+	suspenseKey: Record<string, unknown>;
+	hasImage?: "none" | "one" | "multiple";
 }
 
 export default function DataTable<T extends { id: number | string }>({
@@ -55,8 +45,14 @@ export default function DataTable<T extends { id: number | string }>({
 }: DataTableProps<T>) {
 	return (
 		<Suspense
-			key={suspenseKey}
-			fallback={<DataTableSkeleton  header={header} basePath={basePath} hasImage={hasImage} />}
+			key={JSON.stringify(suspenseKey)}
+			fallback={
+				<DataTableSkeleton
+					header={header}
+					basePath={basePath}
+					hasImage={hasImage}
+				/>
+			}
 		>
 			<Table>
 				<TableHeader>
@@ -136,5 +132,3 @@ export default function DataTable<T extends { id: number | string }>({
 		</Suspense>
 	);
 }
-
-export type { BasePathType, HasImage, PageProps };

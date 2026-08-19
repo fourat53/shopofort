@@ -2,24 +2,27 @@ import {
 	getOrderItemCount,
 	getOrderItemsPage,
 } from "@/actions/OrderItemActions";
-import DataTable, { type PageProps } from "@/components/data-table/DataTable";
-import { getPaginationParams } from "@/components/data-table/PaginationParams";
+import DataTable from "@/components/data-table/DataTable";
+import {
+	getPaginationParams,
+	type PageProps,
+} from "@/components/data-table/PaginationParams";
 import { ORDER_ITEMS_HEADER } from "@/lib/entity/entity-header";
 import type { OrderItem } from "@/lib/entity/types";
 
 export default async function OrderItemsPage({ searchParams }: PageProps) {
 	const params = await searchParams;
-	const { page: _pageParam, sortBy, order, ...filterParams } = params;
+	const { sortBy, order, ...filterParams } = params;
 
 	const totalCount = await getOrderItemCount(filterParams);
-	const { page, totalPages } = getPaginationParams(params, totalCount);
+	const { page, totalPages } = getPaginationParams(params.page, totalCount);
 
-	const orderItems: OrderItem[] = await getOrderItemsPage(page, filterParams, {
+	const orderItems: OrderItem[] = await getOrderItemsPage(
+		page,
+		filterParams,
 		sortBy,
 		order,
-	});
-
-	const suspenseKey = JSON.stringify(params);
+	);
 
 	return (
 		<DataTable<OrderItem>
@@ -27,7 +30,7 @@ export default async function OrderItemsPage({ searchParams }: PageProps) {
 			totalPages={totalPages}
 			rows={orderItems}
 			basePath="order-items"
-			suspenseKey={suspenseKey}
+			suspenseKey={params}
 		/>
 	);
 }

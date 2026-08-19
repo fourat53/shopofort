@@ -9,47 +9,44 @@ import type { ParameterType } from "@/lib/entity/types";
 import { prisma } from "@/lib/prisma";
 import type { Prisma } from "@/prisma/generated/prisma/client";
 
-function buildWhereClause(
-	searchParams: ParameterType,
-): Prisma.ProductWhereInput {
-	const where: Prisma.ProductWhereInput = {};
-	if (searchParams.id) where.id = Number(searchParams.id);
-	if (searchParams.name)
-		where.name = { contains: String(searchParams.name), mode: "insensitive" };
-	if (searchParams.brand)
-		where.brand = { contains: String(searchParams.brand), mode: "insensitive" };
-	if (searchParams.price) where.price = Number(searchParams.price);
-	if (searchParams.inventory) where.inventory = Number(searchParams.inventory);
-	if (searchParams.categoryId)
-		where.categoryId = Number(searchParams.categoryId);
+type FilterBy = Prisma.ProductWhereInput;
+
+function buildWhereClause(filterParams: ParameterType): FilterBy {
+	const where: FilterBy = {};
+	if (filterParams.id) where.id = Number(filterParams.id);
+	if (filterParams.name)
+		where.name = { contains: String(filterParams.name), mode: "insensitive" };
+	if (filterParams.brand)
+		where.brand = { contains: String(filterParams.brand), mode: "insensitive" };
+	if (filterParams.price) where.price = Number(filterParams.price);
+	if (filterParams.inventory) where.inventory = Number(filterParams.inventory);
+	if (filterParams.categoryId)
+		where.categoryId = Number(filterParams.categoryId);
 	return where;
 }
 
-type ProductOrderInput = Prisma.ProductOrderByWithRelationInput;
+type OrderBy = Prisma.ProductOrderByWithRelationInput;
 
-function buildOrderClause(orderParams: ParameterType): ProductOrderInput {
-	const sortBy =
-		typeof orderParams.sortBy === "string" ? orderParams.sortBy : undefined;
-	const order = orderParams.order === "desc" ? "desc" : "asc";
-
-	const sortableColumns = new Set<keyof ProductOrderInput>(
-		PRODUCTS_HEADER.map((header) => header.name as keyof ProductOrderInput),
+function buildOrderClause(
+	sortBy: string = "id",
+	order: "asc" | "desc" = "asc",
+): OrderBy {
+	const sortableColumns = new Set<keyof OrderBy>(
+		PRODUCTS_HEADER.map((header) => header.name as keyof OrderBy),
 	);
-
-	if (sortBy && sortableColumns.has(sortBy as keyof ProductOrderInput))
-		return {
-			[sortBy]: order,
-		} as ProductOrderInput;
+	if (sortableColumns.has(sortBy as keyof OrderBy))
+		return { [sortBy]: order } as OrderBy;
 	return { id: "asc" };
 }
 
 function getProductsPage(
 	page: number,
-	searchParams: ParameterType = {},
-	orderParams: ParameterType = {},
+	filterParams: ParameterType = {},
+	sortBy: string = "id",
+	order: "asc" | "desc" = "asc",
 ) {
-	const where = buildWhereClause(searchParams);
-	const orderBy = buildOrderClause(orderParams);
+	const where = buildWhereClause(filterParams);
+	const orderBy = buildOrderClause(sortBy, order);
 	return unstable_cache(
 		async () => {
 			const products = await prisma.product.findMany({
@@ -68,11 +65,11 @@ function getProductsPage(
 		[
 			"products-page",
 			String(page),
-			JSON.stringify(searchParams),
-			JSON.stringify(orderParams),
+			JSON.stringify(filterParams),
+			JSON.stringify({ sortBy, order }),
 		],
 		{
-			revalidate: Object.keys(searchParams).length
+			revalidate: Object.keys(filterParams).length
 				? FILTER_CACHE_SECONDS
 				: CACHE_SECONDS,
 			tags: ["products"],
@@ -80,13 +77,13 @@ function getProductsPage(
 	)();
 }
 
-function getProductCount(searchParams: ParameterType = {}) {
-	const where = buildWhereClause(searchParams);
+function getProductCount(filterParams: ParameterType = {}) {
+	const where = buildWhereClause(filterParams);
 	return unstable_cache(
 		async () => prisma.product.count({ where }),
-		["products-count", JSON.stringify(searchParams)],
+		["products-count", JSON.stringify(filterParams)],
 		{
-			revalidate: Object.keys(searchParams).length
+			revalidate: Object.keys(filterParams).length
 				? FILTER_CACHE_SECONDS
 				: CACHE_SECONDS,
 			tags: ["products"],

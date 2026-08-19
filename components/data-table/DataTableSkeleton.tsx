@@ -1,5 +1,4 @@
 import { clsx } from "clsx";
-import type { HasImage } from "@/components/data-table/DataTable";
 import {
 	IMAGE_PAGE_SIZE,
 	PAGE_SIZE,
@@ -22,7 +21,7 @@ import SortableTableHead from "./SortableTableHead";
 interface DataTableSkeletonProps {
 	header: HeaderType;
 	basePath: string;
-	hasImage?: HasImage;
+	hasImage?: "none" | "one" | "multiple";
 }
 
 export default function DataTableSkeleton({
@@ -39,11 +38,11 @@ export default function DataTableSkeleton({
 						<Checkbox />
 					</TableHead>
 					{header.map((item) => (
-							<SortableTableHead
-								key={item.name}
-								name={item.name}
-								basePath={basePath}
-							/>
+						<SortableTableHead
+							key={item.name}
+							name={item.name}
+							basePath={basePath}
+						/>
 					))}
 					<TableHead border className="py-0 text-center">
 						Actions

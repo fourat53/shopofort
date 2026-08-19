@@ -3,9 +3,13 @@ const IMAGE_PAGE_SIZE = 12;
 const CACHE_SECONDS = 1;
 const FILTER_CACHE_SECONDS = 1;
 
-type SearchParams = {
-	[key: string]: string | string[] | undefined;
-};
+interface PageProps {
+	searchParams: Promise<{
+		page?: string;
+		sortBy?: string;
+		order?: "asc" | "desc";
+	}>;
+}
 
 const SORT_ORDERS = ["asc", "desc"] as const;
 
@@ -30,23 +34,21 @@ function parsePage(
 }
 
 function getPaginationParams(
-	searchParams: SearchParams,
+	page: string | string[] | undefined,
 	totalCount: number,
 	hasImage: boolean = false,
 ) {
 	const pageSize = hasImage ? IMAGE_PAGE_SIZE : PAGE_SIZE;
 
-	const pageParam = Array.isArray(searchParams.page)
-		? searchParams.page[0]
-		: searchParams.page;
+	const pageParam = Array.isArray(page) ? page[0] : page;
 	const parsedPage = Number.parseInt(pageParam ?? "1", 10);
 	const requestedPage = Number.isNaN(parsedPage) ? 1 : parsedPage;
 	const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
-	const page = Math.min(Math.max(1, requestedPage), totalPages);
-	const skip = (page - 1) * pageSize;
+	const currentPage = Math.min(Math.max(1, requestedPage), totalPages);
+	const skip = (currentPage - 1) * pageSize;
 
 	return {
-		page,
+		page: currentPage,
 		skip,
 		take: pageSize,
 		totalPages,
@@ -141,6 +143,7 @@ export {
 	getVisiblePages,
 	IMAGE_PAGE_SIZE,
 	PAGE_SIZE,
+	type PageProps,
 	pageHref,
 	parsePage,
 	parseSortOrder,

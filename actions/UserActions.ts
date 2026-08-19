@@ -1,5 +1,6 @@
 import { unstable_cache } from "next/cache";
 import {
+	CACHE_SECONDS,
 	FILTER_CACHE_SECONDS,
 	IMAGE_PAGE_SIZE,
 } from "@/components/data-table/PaginationParams";
@@ -97,17 +98,13 @@ async function getUsers(): Promise<User[]> {
 function filterUsers(
 	users: User[],
 	searchParams: ParameterType,
-	orderParams?: ParameterType,
+	sortBy: string = "id",
+	order: "asc" | "desc" = "asc",
 ) {
 	const id = getParam(searchParams, "id")?.toLowerCase();
 	const email = getParam(searchParams, "email")?.toLowerCase();
 	const firstName = getParam(searchParams, "first_name")?.toLowerCase();
 	const lastName = getParam(searchParams, "last_name")?.toLowerCase();
-
-	const sortBy =
-		typeof orderParams?.sortBy === "string" ? orderParams.sortBy : "id";
-
-	const order = orderParams?.order === "desc" ? "desc" : "asc";
 
 	const filteredUsers = users.filter((user) => {
 		if (id && !user.id.toLowerCase().includes(id)) return false;
@@ -141,28 +138,44 @@ function filterUsers(
 	});
 }
 
-const getFilteredUsers = unstable_cache(
-	async (searchParams: ParameterType, orderParams?: ParameterType) => {
-		const users = await getUsers();
-		return filterUsers(users, searchParams, orderParams);
-	},
-	["kinde-filtered-users"],
-	{ revalidate: FILTER_CACHE_SECONDS },
-);
-
-async function getUserCount(searchParams: ParameterType = {}) {
-	const users = await getFilteredUsers(searchParams);
-	return users.length;
+function getFilteredUsers(
+	filterParams: ParameterType,
+	sortBy: string = "id",
+	order: "asc" | "desc" = "asc",
+) {
+	const cacheKey = [
+		"kinde-filtered-users",
+		JSON.stringify(filterParams),
+		JSON.stringify({ sortBy, order }),
+	];
+	return unstable_cache(
+		async () => {
+			const users = await getUsers();
+			return filterUsers(users, filterParams, sortBy, order);
+		},
+		cacheKey,
+		{
+			revalidate: Object.keys(filterParams).length
+				? FILTER_CACHE_SECONDS
+				: CACHE_SECONDS,
+		},
+	)();
 }
 
 async function getUsersPage(
 	page: number,
-	searchParams: ParameterType = {},
-	orderParams: ParameterType = {},
+	filterParams: ParameterType = {},
+	sortBy: string = "id",
+	order: "asc" | "desc" = "asc",
 ) {
-	const users = await getFilteredUsers(searchParams, orderParams);
+	const users = await getFilteredUsers(filterParams, sortBy, order);
 	const start = (page - 1) * IMAGE_PAGE_SIZE;
 	return users.slice(start, start + IMAGE_PAGE_SIZE).map(mapUser);
+}
+
+async function getUserCount(filterParams: ParameterType = {}) {
+	const users = await getFilteredUsers(filterParams);
+	return users.length;
 }
 
 export {
