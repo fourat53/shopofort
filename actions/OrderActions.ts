@@ -11,20 +11,42 @@ import type { Prisma } from "@/prisma/generated/prisma/client";
 
 type FilterBy = Prisma.OrderWhereInput;
 
+function getParamValues(param: ParameterType[string]): string[] {
+	if (!param) return [];
+	return Array.isArray(param) ? param : [param];
+}
+
 function buildWhereClause(filterParams: ParameterType): FilterBy {
 	const where: FilterBy = {};
 	if (filterParams.id) where.id = Number(filterParams.id);
-	if (filterParams.totalAmount)
-		where.totalAmount = Number(filterParams.totalAmount);
-	if (filterParams.userId) where.userId = String(filterParams.userId);
-	if (filterParams.orderStatus)
-		where.orderStatus = filterParams.orderStatus as OrderStatus;
-	if (filterParams.orderDate) {
-		const date = new Date(String(filterParams.orderDate));
-		if (!Number.isNaN(date.getTime())) {
-			where.orderDate = date;
-		}
+
+	const totalAmountFrom = Number(filterParams.totalAmountFrom);
+	const totalAmountTo = Number(filterParams.totalAmountTo);
+	if (!Number.isNaN(totalAmountFrom) || !Number.isNaN(totalAmountTo)) {
+		where.totalAmount = {};
+		if (!Number.isNaN(totalAmountFrom)) where.totalAmount.gte = totalAmountFrom;
+		if (!Number.isNaN(totalAmountTo)) where.totalAmount.lte = totalAmountTo;
 	}
+
+	const userIds = getParamValues(filterParams.userId);
+	if (userIds.length) where.userId = { in: userIds };
+
+	const orderStatuses = getParamValues(filterParams.orderStatus);
+	if (orderStatuses.length)
+		where.orderStatus = { in: orderStatuses as OrderStatus[] };
+
+	const orderDateFrom = new Date(String(filterParams.orderDateFrom ?? ""));
+	const orderDateTo = new Date(String(filterParams.orderDateTo ?? ""));
+	if (
+		!Number.isNaN(orderDateFrom.getTime()) ||
+		!Number.isNaN(orderDateTo.getTime())
+	) {
+		where.orderDate = {};
+		if (!Number.isNaN(orderDateFrom.getTime()))
+			where.orderDate.gte = orderDateFrom;
+		if (!Number.isNaN(orderDateTo.getTime())) where.orderDate.lte = orderDateTo;
+	}
+
 	return where;
 }
 

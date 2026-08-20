@@ -11,12 +11,22 @@ import type { Prisma } from "@/prisma/generated/prisma/client";
 
 type FilterBy = Prisma.CategoryWhereInput;
 
+function getParamValues(param: ParameterType[string]): string[] {
+	if (!param) return [];
+	return Array.isArray(param) ? param : [param];
+}
+
 function buildWhereClause(filterParams: ParameterType): FilterBy {
 	const where: FilterBy = {};
 	if (filterParams.id && !Number.isNaN(Number(filterParams.id)))
 		where.id = Number(filterParams.id);
-	if (filterParams.name) where.name = String(filterParams.name) as CategoryName;
-	if (filterParams.gender) where.gender = String(filterParams.gender) as Gender;
+
+	const names = getParamValues(filterParams.name);
+	if (names.length) where.name = { in: names as CategoryName[] };
+
+	const genders = getParamValues(filterParams.gender);
+	if (genders.length) where.gender = { in: genders as Gender[] };
+
 	return where;
 }
 

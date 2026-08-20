@@ -38,6 +38,17 @@ export default function FilterDialog() {
 	);
 
 	const hasFilters = currentFields.some((field) => {
+		if (field.type === "number" || field.type === "date") {
+			return (
+				searchParams.get(`${field.name}From`) !== null ||
+				searchParams.get(`${field.name}To`) !== null
+			);
+		}
+
+		if (field.type === "enum" || field.type === "foreignKey") {
+			return searchParams.getAll(field.name).length > 0;
+		}
+
 		const value = searchParams.get(field.name);
 		return value !== null && value !== "";
 	});
@@ -72,6 +83,11 @@ export default function FilterDialog() {
 
 		for (const field of currentFields) {
 			newParams.delete(field.name);
+
+			if (field.type === "number" || field.type === "date") {
+				newParams.delete(`${field.name}From`);
+				newParams.delete(`${field.name}To`);
+			}
 		}
 
 		const qs = newParams.toString();
@@ -91,6 +107,33 @@ export default function FilterDialog() {
 		newParams.delete("page");
 
 		for (const field of currentFields) {
+			if (field.type === "number" || field.type === "date") {
+				for (const suffix of ["From", "To"] as const) {
+					const rangeName = `${field.name}${suffix}`;
+					const rangeValue = formData.get(rangeName)?.toString().trim();
+
+					if (rangeValue) {
+						newParams.set(rangeName, rangeValue);
+					} else {
+						newParams.delete(rangeName);
+					}
+				}
+				continue;
+			}
+
+			if (field.type === "enum" || field.type === "foreignKey") {
+				const values = formData
+					.getAll(field.name)
+					.map((value) => value.toString());
+
+				newParams.delete(field.name);
+
+				for (const value of values) {
+					newParams.append(field.name, value);
+				}
+				continue;
+			}
+
 			const value = formData.get(field.name)?.toString().trim();
 
 			if (value && value !== "ALL") {
@@ -136,11 +179,15 @@ export default function FilterDialog() {
 					handleSubmit={handleSubmit}
 					loading={isPending}
 					setOpen={setOpen}
-					getValue={(field) =>
-						field.type === "date"
-							? field.defaultValue
-							: searchParams.get(field.name) || undefined
-					}
+					getValue={(field, paramName) => {
+						const name = paramName ?? field.name;
+
+						if (field.type === "enum" || field.type === "foreignKey") {
+							return searchParams.getAll(name);
+						}
+
+						return searchParams.get(name) || undefined;
+					}}
 				/>
 			</Dialog>
 		</div>

@@ -32,10 +32,12 @@ interface SelectProps {
 	label?: ReactNode | StringNumber | [StringNumber, StringNumber];
 	placeholder?: string;
 	required?: boolean;
-	value?: string;
-	defaultValue?: string;
+	value?: string | string[];
+	defaultValue?: string | string[];
 	autoDefaultValue?: boolean;
+	multiple?: boolean;
 	onValueChange?: (value: string) => void;
+	onValuesChange?: (values: string[]) => void;
 	disabled?: boolean;
 	className?: string;
 	parentClassName?: string;
@@ -53,7 +55,9 @@ function Select({
 	value,
 	defaultValue,
 	autoDefaultValue = false,
+	multiple = false,
 	onValueChange,
+	onValuesChange,
 	disabled,
 	className,
 	parentClassName,
@@ -63,9 +67,23 @@ function Select({
 	isDefaultOpen,
 }: SelectProps) {
 	const [open, setOpen] = useState(isDefaultOpen || false);
-	const [internalValue, setInternalValue] = useState(defaultValue ?? "");
+	const [internalValue, setInternalValue] = useState<string | string[]>(
+		defaultValue ?? (multiple ? [] : ""),
+	);
 
-	const selectedValue = value ?? internalValue;
+	const selectedValues = multiple
+		? value !== undefined
+			? Array.isArray(value)
+				? value
+				: [value]
+			: Array.isArray(internalValue)
+				? internalValue
+				: internalValue
+					? [internalValue]
+					: []
+		: [];
+
+	const selectedValue = multiple ? "" : (value ?? (internalValue as string));
 
 	useEffect(() => {
 		if (value === undefined && defaultValue !== undefined) {
@@ -74,15 +92,27 @@ function Select({
 	}, [defaultValue, value]);
 
 	useEffect(() => {
-		if (autoDefaultValue && !selectedValue && items.length > 0) {
+		if (autoDefaultValue && !multiple && !selectedValue && items.length > 0) {
 			const firstValue = items[0].value;
 
 			setInternalValue(firstValue);
 			onValueChange?.(firstValue);
 		}
-	}, [autoDefaultValue, selectedValue, items, onValueChange]);
+	}, [autoDefaultValue, multiple, selectedValue, items, onValueChange]);
 
-	const selectedItem = items.find((item) => item.value === selectedValue);
+	const getLabelText = (item: SelectOption) =>
+		Array.isArray(item.label) ? item.label.join(" ") : String(item.label);
+
+	const selectedItem = multiple
+		? undefined
+		: items.find((item) => item.value === selectedValue);
+
+	const selectedItems = multiple
+		? items.filter((item) => selectedValues.includes(item.value))
+		: [];
+
+	const isSelected = (itemValue: string) =>
+		multiple ? selectedValues.includes(itemValue) : selectedValue === itemValue;
 
 	function filterItems(value: string, search: string) {
 		const item = items.find((item) => item.value === value);
@@ -130,6 +160,20 @@ function Select({
 	};
 
 	const renderButtonContent = () => {
+		if (multiple) {
+			if (selectedItems.length === 0) {
+				return placeholder || "Select options";
+			}
+
+			const labels = selectedItems.map(getLabelText);
+
+			return (
+				<span className="truncate max-w-full" title={labels.join(", ")}>
+					{labels.join(", ")}
+				</span>
+			);
+		}
+
 		if (!selectedItem) {
 			return placeholder || "Select an option";
 		}
@@ -165,6 +209,20 @@ function Select({
 	};
 
 	const handleSelect = (currentValue: string) => {
+		if (multiple) {
+			setInternalValue((current) => {
+				const values = Array.isArray(current) ? current : [];
+
+				const next = values.includes(currentValue)
+					? values.filter((value) => value !== currentValue)
+					: [...values, currentValue];
+
+				onValuesChange?.(next);
+				return next;
+			});
+			return;
+		}
+
 		setInternalValue(currentValue);
 		onValueChange?.(currentValue);
 		setOpen(false);
@@ -180,7 +238,19 @@ function Select({
 			{label && <Label required={required}>{label}</Label>}
 
 			<div className="relative">
-				{name && <input type="hidden" name={name} value={selectedValue} />}
+				{name &&
+					(multiple ? (
+						selectedValues.map((itemValue) => (
+							<input
+								key={itemValue}
+								type="hidden"
+								name={name}
+								value={itemValue}
+							/>
+						))
+					) : (
+						<input type="hidden" name={name} value={selectedValue} />
+					))}
 
 				<Popover open={open} onOpenChange={setOpen}>
 					<PopoverTrigger asChild>
@@ -191,7 +261,8 @@ function Select({
 							disabled={disabled}
 							className={cn(
 								"relative border border-border/90 bg-input/20 dark:bg-input/30 rounded-md px-3 h-7 w-full justify-between disabled:cursor-not-allowed",
-								!selectedValue && "text-muted-foreground",
+								(multiple ? selectedValues.length === 0 : !selectedValue) &&
+									"text-muted-foreground",
 								selectedItem &&
 									Array.isArray(selectedItem.label) &&
 									selectedItem.label.length === 2 &&
@@ -220,13 +291,12 @@ function Select({
 											value={item.value}
 											onSelect={handleSelect}
 											className={cn(
-												selectedValue === item.value &&
-													"bg-primary hover:bg-accent",
+												isSelected(item.value) && "bg-primary hover:bg-accent",
 											)}
 										>
 											{renderItemContent(item)}
 
-											{selectedValue === item.value && (
+											{isSelected(item.value) && (
 												<IconCheck className="h-4 w-4 absolute right-2 top-1/2 -translate-y-1/2" />
 											)}
 										</CommandItem>

@@ -11,6 +11,11 @@ import type { Prisma } from "@/prisma/generated/prisma/client";
 
 type FilterBy = Prisma.ProductWhereInput;
 
+function getParamValues(param: ParameterType[string]): string[] {
+	if (!param) return [];
+	return Array.isArray(param) ? param : [param];
+}
+
 function buildWhereClause(filterParams: ParameterType): FilterBy {
 	const where: FilterBy = {};
 	if (filterParams.id) where.id = Number(filterParams.id);
@@ -18,10 +23,26 @@ function buildWhereClause(filterParams: ParameterType): FilterBy {
 		where.name = { contains: String(filterParams.name), mode: "insensitive" };
 	if (filterParams.brand)
 		where.brand = { contains: String(filterParams.brand), mode: "insensitive" };
-	if (filterParams.price) where.price = Number(filterParams.price);
-	if (filterParams.inventory) where.inventory = Number(filterParams.inventory);
-	if (filterParams.categoryId)
-		where.categoryId = Number(filterParams.categoryId);
+
+	const priceFrom = Number(filterParams.priceFrom);
+	const priceTo = Number(filterParams.priceTo);
+	if (!Number.isNaN(priceFrom) || !Number.isNaN(priceTo)) {
+		where.price = {};
+		if (!Number.isNaN(priceFrom)) where.price.gte = priceFrom;
+		if (!Number.isNaN(priceTo)) where.price.lte = priceTo;
+	}
+
+	const inventoryFrom = Number(filterParams.inventoryFrom);
+	const inventoryTo = Number(filterParams.inventoryTo);
+	if (!Number.isNaN(inventoryFrom) || !Number.isNaN(inventoryTo)) {
+		where.inventory = {};
+		if (!Number.isNaN(inventoryFrom)) where.inventory.gte = inventoryFrom;
+		if (!Number.isNaN(inventoryTo)) where.inventory.lte = inventoryTo;
+	}
+
+	const categoryIds = getParamValues(filterParams.categoryId);
+	if (categoryIds.length) where.categoryId = { in: categoryIds.map(Number) };
+
 	return where;
 }
 

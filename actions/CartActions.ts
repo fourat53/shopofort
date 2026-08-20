@@ -11,12 +11,26 @@ import type { Prisma } from "@/prisma/generated/prisma/client";
 
 type FilterBy = Prisma.CartWhereInput;
 
+function getParamValues(param: ParameterType[string]): string[] {
+	if (!param) return [];
+	return Array.isArray(param) ? param : [param];
+}
+
 function buildWhereClause(filterParams: ParameterType): FilterBy {
 	const where: FilterBy = {};
 	if (filterParams.id) where.id = Number(filterParams.id);
-	if (filterParams.totalAmount)
-		where.totalAmount = Number(filterParams.totalAmount);
-	if (filterParams.userId) where.userId = String(filterParams.userId);
+
+	const totalAmountFrom = Number(filterParams.totalAmountFrom);
+	const totalAmountTo = Number(filterParams.totalAmountTo);
+	if (!Number.isNaN(totalAmountFrom) || !Number.isNaN(totalAmountTo)) {
+		where.totalAmount = {};
+		if (!Number.isNaN(totalAmountFrom)) where.totalAmount.gte = totalAmountFrom;
+		if (!Number.isNaN(totalAmountTo)) where.totalAmount.lte = totalAmountTo;
+	}
+
+	const userIds = getParamValues(filterParams.userId);
+	if (userIds.length) where.userId = { in: userIds };
+
 	return where;
 }
 

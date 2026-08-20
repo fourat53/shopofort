@@ -11,15 +11,32 @@ import type { Prisma } from "@/prisma/generated/prisma/client";
 
 type FilterBy = Prisma.CartItemWhereInput;
 
+function getParamValues(param: ParameterType[string]): string[] {
+	if (!param) return [];
+	return Array.isArray(param) ? param : [param];
+}
+
 function buildWhereClause(filterParams: ParameterType): FilterBy {
 	const where: FilterBy = {};
 	if (filterParams.id) where.id = Number(filterParams.id);
-	if (filterParams.quantity) where.quantity = Number(filterParams.quantity);
-	if (filterParams.unitPrice) where.unitPrice = Number(filterParams.unitPrice);
-	if (filterParams.totalPrice)
-		where.totalPrice = Number(filterParams.totalPrice);
-	if (filterParams.cartId) where.cartId = Number(filterParams.cartId);
-	if (filterParams.productId) where.productId = Number(filterParams.productId);
+
+	for (const field of ["quantity", "unitPrice", "totalPrice"] as const) {
+		const from = Number(filterParams[`${field}From`]);
+		const to = Number(filterParams[`${field}To`]);
+
+		if (!Number.isNaN(from) || !Number.isNaN(to)) {
+			const range: { gte?: number; lte?: number } = {};
+			if (!Number.isNaN(from)) range.gte = from;
+			if (!Number.isNaN(to)) range.lte = to;
+			where[field] = range;
+		}
+	}
+
+	for (const field of ["cartId", "productId"] as const) {
+		const values = getParamValues(filterParams[field]);
+		if (values.length) where[field] = { in: values.map(Number) };
+	}
+
 	return where;
 }
 

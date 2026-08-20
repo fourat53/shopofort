@@ -22,13 +22,13 @@ const anyOption: SelectOption = { label: "Any", value: "ALL" } as const;
 
 type EntityField = (typeof entityFields)[string][number];
 
-type ValueType = string | number | Date | undefined;
+type ValueType = string | string[] | number | Date | undefined;
 
 interface DialogFormProps {
 	label: string;
 	fields: EntityField[];
 	optionsCache: Record<string, SelectOption[]>;
-	getValue: (field: EntityField) => ValueType;
+	getValue: (field: EntityField, paramName?: string) => ValueType;
 	images?: ImageItem[];
 	onImagesChange?: (images: ImageItem[]) => void;
 	filter?: boolean;
@@ -49,6 +49,18 @@ export default function DialogForm({
 	loading,
 	setOpen,
 }: DialogFormProps) {
+	const toArrayValue = (value: ValueType): string[] | undefined => {
+		if (value === undefined) return undefined;
+		if (Array.isArray(value)) return value.map(String);
+		return [String(value)];
+	};
+
+	const toDateValue = (value: ValueType): string | Date | undefined => {
+		if (value === undefined || Array.isArray(value)) return undefined;
+		if (typeof value === "number") return undefined;
+		return value;
+	};
+
 	return (
 		<DialogContent
 			onPointerDownOutside={(e) => loading && e.preventDefault()}
@@ -69,6 +81,27 @@ export default function DialogForm({
 							defaultValue={value?.toString() || undefined}
 							required={!filter && field.required}
 						/>
+					) : field.type === "number" && filter ? (
+						<div key={field.name} className="flex gap-2">
+							<Input
+								name={`${field.name}From`}
+								label={`${getHeaderFromName(field.name)} From`}
+								type="number"
+								step={field.step ?? "1"}
+								defaultValue={
+									getValue(field, `${field.name}From`)?.toString() || undefined
+								}
+							/>
+							<Input
+								name={`${field.name}To`}
+								label={`${getHeaderFromName(field.name)} To`}
+								type="number"
+								step={field.step ?? "1"}
+								defaultValue={
+									getValue(field, `${field.name}To`)?.toString() || undefined
+								}
+							/>
+						</div>
 					) : field.type === "number" ? (
 						<Input
 							key={field.name}
@@ -79,12 +112,25 @@ export default function DialogForm({
 							defaultValue={value?.toString() || undefined}
 							required={!filter && field.required}
 						/>
+					) : field.type === "date" && filter ? (
+						<div key={field.name} className="w-full flex gap-2">
+							<DatePicker
+								name={`${field.name}From`}
+								label={`${getHeaderFromName(field.name)} From`}
+								defaultValue={toDateValue(getValue(field, `${field.name}From`))}
+							/>
+							<DatePicker
+								name={`${field.name}To`}
+								label={`${getHeaderFromName(field.name)} To`}
+								defaultValue={toDateValue(getValue(field, `${field.name}To`))}
+							/>
+						</div>
 					) : field.type === "date" ? (
 						<DatePicker
 							key={field.name}
 							name={field.name}
 							label={getHeaderFromName(field.name)}
-							defaultValue={value ? new Date(value) : undefined}
+							defaultValue={toDateValue(value)}
 							required={!filter && field.required}
 						/>
 					) : field.type === "enum" ? (
@@ -92,11 +138,16 @@ export default function DialogForm({
 							key={field.name}
 							name={field.name}
 							label={getHeaderFromName(field.name)}
-							placeholder="Select an option"
-							defaultValue={value?.toString() || "ALL"}
+							placeholder={filter ? "Select options" : "Select an option"}
+							multiple={filter}
+							defaultValue={
+								filter
+									? toArrayValue(getValue(field, field.name))
+									: value?.toString() || "ALL"
+							}
 							required={!filter && field.required}
 							items={[
-								...(filter ? [anyOption] : []),
+								...(filter ? [] : [anyOption]),
 								...(field.options?.map((o) => ({ label: o, value: o })) ?? []),
 							]}
 						/>
@@ -115,11 +166,16 @@ export default function DialogForm({
 								key={field.name}
 								name={field.name}
 								label={getHeaderFromName(field.name)}
-								placeholder="Select an option"
-								defaultValue={value?.toString() || "ALL"}
+								placeholder={filter ? "Select options" : "Select an option"}
+								multiple={filter}
+								defaultValue={
+									filter
+										? toArrayValue(getValue(field, field.name))
+										: value?.toString() || "ALL"
+								}
 								required={!filter && field.required}
 								items={[
-									...(filter ? [anyOption] : []),
+									...(filter ? [] : [anyOption]),
 									...(optionsCache[field.name] ?? []),
 								]}
 							/>
