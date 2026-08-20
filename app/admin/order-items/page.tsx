@@ -2,7 +2,7 @@ import {
 	getOrderItemCount,
 	getOrderItemsPage,
 } from "@/actions/OrderItemActions";
-import DataTable from "@/components/data-table/DataTable";
+import DataTableLayout from "@/components/data-table/DataTableLayout";
 import {
 	getPaginationParams,
 	type PageProps,
@@ -25,7 +25,7 @@ export default async function OrderItemsPage({ searchParams }: PageProps) {
 	);
 
 	return (
-		<DataTable<OrderItem>
+		<DataTableLayout<OrderItem>
 			header={ORDER_ITEMS_HEADER}
 			totalPages={totalPages}
 			rows={orderItems}

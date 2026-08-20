@@ -1,5 +1,5 @@
 import { getCartItemCount, getCartItemsPage } from "@/actions/CartItemActions";
-import DataTable from "@/components/data-table/DataTable";
+import DataTableLayout from "@/components/data-table/DataTableLayout";
 import {
 	getPaginationParams,
 	type PageProps,
@@ -22,7 +22,7 @@ export default async function CartItemsPage({ searchParams }: PageProps) {
 	);
 
 	return (
-		<DataTable<CartItem>
+		<DataTableLayout<CartItem>
 			header={CART_ITEMS_HEADER}
 			totalPages={totalPages}
 			rows={cartItems}

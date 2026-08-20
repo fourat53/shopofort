@@ -1,5 +1,5 @@
 import { getProductCount, getProductsPage } from "@/actions/ProductActions";
-import DataTable from "@/components/data-table/DataTable";
+import DataTableLayout from "@/components/data-table/DataTableLayout";
 import {
 	getPaginationParams,
 	type PageProps,
@@ -26,7 +26,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
 	);
 
 	return (
-		<DataTable<Product>
+		<DataTableLayout<Product>
 			header={PRODUCTS_HEADER}
 			totalPages={totalPages}
 			rows={products}

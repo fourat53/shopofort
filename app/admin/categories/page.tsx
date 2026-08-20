@@ -1,5 +1,5 @@
 import { getCategoriesPage, getCategoryCount } from "@/actions/CategoryActions";
-import DataTable from "@/components/data-table/DataTable";
+import DataTableLayout from "@/components/data-table/DataTableLayout";
 import {
 	getPaginationParams,
 	type PageProps,
@@ -22,7 +22,7 @@ export default async function CategoriesPage({ searchParams }: PageProps) {
 	);
 
 	return (
-		<DataTable<Category>
+		<DataTableLayout<Category>
 			header={CATEGORIES_HEADER}
 			totalPages={totalPages}
 			rows={categories}
