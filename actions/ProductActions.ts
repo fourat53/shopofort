@@ -18,27 +18,22 @@ function getParamValues(param: ParameterType[string]): string[] {
 
 function buildWhereClause(filterParams: ParameterType): FilterBy {
 	const where: FilterBy = {};
-	if (filterParams.id) where.id = Number(filterParams.id);
+
+	for (const field of ["id", "price", "inventory"] as const) {
+		const from = Number(filterParams[`${field}From`]);
+		const to = Number(filterParams[`${field}To`]);
+		if (!Number.isNaN(from) || !Number.isNaN(to)) {
+			const range: { gte?: number; lte?: number } = {};
+			if (!Number.isNaN(from)) range.gte = from;
+			if (!Number.isNaN(to)) range.lte = to;
+			where[field] = range;
+		}
+	}
+
 	if (filterParams.name)
 		where.name = { contains: String(filterParams.name), mode: "insensitive" };
 	if (filterParams.brand)
 		where.brand = { contains: String(filterParams.brand), mode: "insensitive" };
-
-	const priceFrom = Number(filterParams.priceFrom);
-	const priceTo = Number(filterParams.priceTo);
-	if (!Number.isNaN(priceFrom) || !Number.isNaN(priceTo)) {
-		where.price = {};
-		if (!Number.isNaN(priceFrom)) where.price.gte = priceFrom;
-		if (!Number.isNaN(priceTo)) where.price.lte = priceTo;
-	}
-
-	const inventoryFrom = Number(filterParams.inventoryFrom);
-	const inventoryTo = Number(filterParams.inventoryTo);
-	if (!Number.isNaN(inventoryFrom) || !Number.isNaN(inventoryTo)) {
-		where.inventory = {};
-		if (!Number.isNaN(inventoryFrom)) where.inventory.gte = inventoryFrom;
-		if (!Number.isNaN(inventoryTo)) where.inventory.lte = inventoryTo;
-	}
 
 	const categoryIds = getParamValues(filterParams.categoryId);
 	if (categoryIds.length) where.categoryId = { in: categoryIds.map(Number) };

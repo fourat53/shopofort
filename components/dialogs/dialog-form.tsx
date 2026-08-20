@@ -82,58 +82,65 @@ export default function DialogForm({
 							defaultValue={value?.toString() || undefined}
 							required={!filter && field.required}
 						/>
-					) : field.type === "number" && filter ? (
-						<div key={field.name} className="w-full flex gap-2">
-							<Input
-								name={`${field.name}From`}
-								label={`${getHeaderFromName(field.name)} From`}
-								type="number"
-								step={field.step ?? "1"}
-								defaultValue={
-									getValue(field, `${field.name}From`)?.toString() || undefined
-								}
-							/>
-							<Input
-								name={`${field.name}To`}
-								label={`${getHeaderFromName(field.name)} To`}
-								type="number"
-								step={field.step ?? "1"}
-								defaultValue={
-									getValue(field, `${field.name}To`)?.toString() || undefined
-								}
-							/>
-						</div>
 					) : field.type === "number" ? (
-						<Input
-							key={field.name}
-							name={field.name}
-							label={getHeaderFromName(field.name)}
-							type="number"
-							step={field.step ?? "1"}
-							defaultValue={value?.toString() || undefined}
-							required={!filter && field.required}
-						/>
-					) : field.type === "date" && filter ? (
-						<div key={field.name} className="w-full flex gap-2">
-							<DatePicker
-								name={`${field.name}From`}
-								label={`${getHeaderFromName(field.name)} From`}
-								defaultValue={toDateValue(getValue(field, `${field.name}From`))}
+						filter ? (
+							<div key={field.name} className="flex w-full gap-2">
+								<Input
+									name={`${field.name}From`}
+									label={`${getHeaderFromName(field.name)} From`}
+									type="number"
+									step={field.step ?? "1"}
+									defaultValue={
+										getValue(field, `${field.name}From`)?.toString() ||
+										undefined
+									}
+								/>
+								<Input
+									name={`${field.name}To`}
+									label={`${getHeaderFromName(field.name)} To`}
+									type="number"
+									step={field.step ?? "1"}
+									defaultValue={
+										getValue(field, `${field.name}To`)?.toString() || undefined
+									}
+								/>
+							</div>
+						) : (
+							<Input
+								key={field.name}
+								name={field.name}
+								label={getHeaderFromName(field.name)}
+								type="number"
+								step={field.step ?? "1"}
+								defaultValue={value?.toString() || undefined}
+								required={!filter && field.required}
 							/>
-							<DatePicker
-								name={`${field.name}To`}
-								label={`${getHeaderFromName(field.name)} To`}
-								defaultValue={toDateValue(getValue(field, `${field.name}To`))}
-							/>
-						</div>
+						)
 					) : field.type === "date" ? (
-						<DatePicker
-							key={field.name}
-							name={field.name}
-							label={getHeaderFromName(field.name)}
-							defaultValue={toDateValue(value)}
-							required={!filter && field.required}
-						/>
+						filter ? (
+							<div key={field.name} className="w-full flex gap-2">
+								<DatePicker
+									name={`${field.name}From`}
+									label={`${getHeaderFromName(field.name)} From`}
+									defaultValue={toDateValue(
+										getValue(field, `${field.name}From`),
+									)}
+								/>
+								<DatePicker
+									name={`${field.name}To`}
+									label={`${getHeaderFromName(field.name)} To`}
+									defaultValue={toDateValue(getValue(field, `${field.name}To`))}
+								/>
+							</div>
+						) : (
+							<DatePicker
+								key={field.name}
+								name={field.name}
+								label={getHeaderFromName(field.name)}
+								defaultValue={toDateValue(value)}
+								required={field.required}
+							/>
+						)
 					) : field.type === "enum" ? (
 						<Select
 							key={field.name}
@@ -161,27 +168,25 @@ export default function DialogForm({
 							required={!filter && field.required}
 							onChange={onImagesChange ?? (() => {})}
 						/>
-					) : (
-						field.type === "foreignKey" && (
-							<Select
-								key={field.name}
-								name={field.name}
-								label={getHeaderFromName(field.name)}
-								placeholder={filter ? "Select options" : "Select an option"}
-								multiple={filter}
-								defaultValue={
-									filter
-										? toArrayValue(getValue(field, field.name))
-										: value?.toString() || "ALL"
-								}
-								required={!filter && field.required}
-								items={[
-									...(filter ? [] : [anyOption]),
-									...(optionsCache[field.name] ?? []),
-								]}
-							/>
-						)
-					);
+					) : field.type === "foreignKey" ? (
+						<Select
+							key={field.name}
+							name={field.name}
+							label={getHeaderFromName(field.name)}
+							placeholder={filter ? "Select options" : "Select an option"}
+							multiple={filter}
+							defaultValue={
+								filter
+									? toArrayValue(getValue(field, field.name))
+									: value?.toString() || "ALL"
+							}
+							required={!filter && field.required}
+							items={[
+								...(filter ? [] : [anyOption]),
+								...(optionsCache[field.name] ?? []),
+							]}
+						/>
+					) : null;
 				})}
 
 				<DialogFooter className="pt-2">

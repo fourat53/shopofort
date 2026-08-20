@@ -18,14 +18,16 @@ function getParamValues(param: ParameterType[string]): string[] {
 
 function buildWhereClause(filterParams: ParameterType): FilterBy {
 	const where: FilterBy = {};
-	if (filterParams.id) where.id = Number(filterParams.id);
 
-	const totalAmountFrom = Number(filterParams.totalAmountFrom);
-	const totalAmountTo = Number(filterParams.totalAmountTo);
-	if (!Number.isNaN(totalAmountFrom) || !Number.isNaN(totalAmountTo)) {
-		where.totalAmount = {};
-		if (!Number.isNaN(totalAmountFrom)) where.totalAmount.gte = totalAmountFrom;
-		if (!Number.isNaN(totalAmountTo)) where.totalAmount.lte = totalAmountTo;
+	for (const field of ["id", "totalAmount"] as const) {
+		const from = Number(filterParams[`${field}From`]);
+		const to = Number(filterParams[`${field}To`]);
+		if (!Number.isNaN(from) || !Number.isNaN(to)) {
+			const range: { gte?: number; lte?: number } = {};
+			if (!Number.isNaN(from)) range.gte = from;
+			if (!Number.isNaN(to)) range.lte = to;
+			where[field] = range;
+		}
 	}
 
 	const userIds = getParamValues(filterParams.userId);

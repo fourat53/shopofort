@@ -18,12 +18,10 @@ function getParamValues(param: ParameterType[string]): string[] {
 
 function buildWhereClause(filterParams: ParameterType): FilterBy {
 	const where: FilterBy = {};
-	if (filterParams.id) where.id = Number(filterParams.id);
 
-	for (const field of ["quantity", "unitPrice", "totalPrice"] as const) {
+	for (const field of ["id", "quantity", "unitPrice", "totalPrice"] as const) {
 		const from = Number(filterParams[`${field}From`]);
 		const to = Number(filterParams[`${field}To`]);
-
 		if (!Number.isNaN(from) || !Number.isNaN(to)) {
 			const range: { gte?: number; lte?: number } = {};
 			if (!Number.isNaN(from)) range.gte = from;

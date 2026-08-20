@@ -18,8 +18,14 @@ function getParamValues(param: ParameterType[string]): string[] {
 
 function buildWhereClause(filterParams: ParameterType): FilterBy {
 	const where: FilterBy = {};
-	if (filterParams.id && !Number.isNaN(Number(filterParams.id)))
-		where.id = Number(filterParams.id);
+
+	const idFrom = Number(filterParams.idFrom);
+	const idTo = Number(filterParams.idTo);
+	if (!Number.isNaN(idFrom) || !Number.isNaN(idTo)) {
+		where.id = {};
+		if (!Number.isNaN(idFrom)) where.id.gte = idFrom;
+		if (!Number.isNaN(idTo)) where.id.lte = idTo;
+	}
 
 	const names = getParamValues(filterParams.name);
 	if (names.length) where.name = { in: names as CategoryName[] };
