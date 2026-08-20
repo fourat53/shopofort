@@ -1,73 +1,25 @@
 "use client";
 
 import { IconPlus } from "@tabler/icons-react";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { createEntity, getFilterOptions } from "@/actions/EntityActions";
-import type { ImageItem } from "@/components/form-items/image-upload";
-import type { SelectOption } from "@/components/form-items/select";
+import { useMemo, useState } from "react";
+import { createEntity } from "@/actions/EntityActions";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import { CurrentEntity, entityFields } from "@/lib/entity/current-entity";
+import { CurrentEntity, getEntityFields } from "@/lib/entity/current-entity";
 import { getSingleFromName } from "@/lib/entity/entity-header";
-import { appendImagesToFormData } from "@/lib/uploadthing/client";
 import DialogForm from "./dialog-form";
 
 export default function CreateDialog() {
 	const entity = CurrentEntity();
 
-	const fetchedFields = useRef<Set<string>>(new Set());
-
 	const [open, setOpen] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(false);
-	const [optionsCache, setOptionsCache] = useState<
-		Record<string, SelectOption[]>
-	>({});
 
-	const [images, setImages] = useState<ImageItem[]>([]);
+	const fields = useMemo(() => getEntityFields(entity, "create"), [entity]);
 
-	useEffect(() => {
-		if (open) setImages([]);
-	}, [open]);
-
-	const currentFields = useMemo(
-		() =>
-			entity
-				? (entityFields[entity]?.filter((field) =>
-						field.category.includes("create"),
-					) ?? [])
-				: [],
-		[entity],
-	);
-
-	useEffect(() => {
-		if (!open || !entity) return;
-
-		for (const field of currentFields) {
-			if (field.type !== "foreignKey" || fetchedFields.current.has(field.name))
-				continue;
-
-			fetchedFields.current.add(field.name);
-
-			getFilterOptions(field.name)
-				.then((options) => {
-					setOptionsCache((current) => ({
-						...current,
-						[field.name]: options,
-					}));
-				})
-				.catch((error) => {
-					fetchedFields.current.delete(field.name);
-					console.error(error);
-				});
-		}
-	}, [open, entity, currentFields]);
-
-	const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
-		e.preventDefault();
+	const handleSubmit = async (formData: FormData) => {
 		setLoading(true);
 		try {
-			const formData = new FormData(e.currentTarget);
-			await appendImagesToFormData(formData, images);
 			await createEntity(entity, formData);
 		} catch (error) {
 			console.error("Error creating entity:", error);
@@ -86,16 +38,15 @@ export default function CreateDialog() {
 					<IconPlus className="h-4 w-4" />
 				</Button>
 			</DialogTrigger>
-
 			<DialogForm
+				type="create"
+				entity={entity}
 				label={`Create ${getSingleFromName(entity)}`}
-				fields={currentFields}
-				optionsCache={optionsCache}
-				handleSubmit={handleSubmit}
+				fields={fields}
 				loading={loading}
+				open={open}
 				setOpen={setOpen}
-				images={images}
-				onImagesChange={setImages}
+				handleSubmit={handleSubmit}
 				getValue={(field) => field.defaultValue}
 			/>
 		</Dialog>

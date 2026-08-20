@@ -5,11 +5,16 @@ export const { uploadFiles } = generateReactHelpers<OurFileRouter>();
 
 export async function uploadImages(files: File[]): Promise<string[]> {
 	if (files.length === 0) return [];
-	const res = await uploadFiles("productImage", { files });
-	return res.map((file) => file.ufsUrl);
+	try {
+		const res = await uploadFiles("productImage", { files });
+		return res.map((file) => file.ufsUrl);
+	} catch (error) {
+		console.error("Error uploading images:", error);
+		return [];
+	}
 }
 
-export async function appendImagesToFormData(
+export async function addImagesToForm(
 	formData: FormData,
 	images: (string | File)[],
 ) {

@@ -40,8 +40,6 @@ export default function DataTableLayout<T extends { id: number | string }>({
 							key={item.name}
 							name={item.name}
 							basePath={basePath}
-							width={item.width}
-							minWidth={item.width}
 						/>
 					))}
 					<TableHead border className="py-0 text-center">

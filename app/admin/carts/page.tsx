@@ -1,7 +1,7 @@
 import { getCartCount, getCartsPage } from "@/actions/CartActions";
 import DataTableLayout from "@/components/data-table/DataTableLayout";
 import {
-	getTotalPages,
+	getPaginationParams,
 	type PageProps,
 } from "@/components/data-table/PaginationParams";
 import { CARTS_HEADER } from "@/lib/entity/entity-header";
@@ -9,17 +9,12 @@ import type { Cart } from "@/lib/entity/types";
 
 export default async function CartsPage({ searchParams }: PageProps) {
 	const params = await searchParams;
-	const { page, sortBy, order, ...filterParams } = params;
+	const { page: _page, sortBy, order, ...filterParams } = params;
 
 	const totalCount = await getCartCount(filterParams);
-	const totalPages = getTotalPages(totalCount);
+	const { page, totalPages } = getPaginationParams(_page, totalCount);
 
-	const carts: Cart[] = await getCartsPage(
-		Number(page),
-		filterParams,
-		sortBy,
-		order,
-	);
+	const carts: Cart[] = await getCartsPage(page, filterParams, sortBy, order);
 
 	return (
 		<DataTableLayout<Cart>

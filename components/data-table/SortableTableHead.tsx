@@ -15,15 +15,11 @@ import { getHeaderFromName } from "@/lib/entity/entity-header";
 interface SortableTableHeadProps {
 	name: string;
 	basePath: string;
-	width?: string;
-	minWidth?: string;
 }
 
 export default function SortableTableHead({
 	name,
 	basePath,
-	width,
-	minWidth,
 }: SortableTableHeadProps) {
 	const router = useRouter();
 	const searchParams = useSearchParams();
@@ -42,12 +38,7 @@ export default function SortableTableHead({
 	}
 
 	return (
-		<TableHead
-			border
-			aria-disabled={isPending}
-			onClick={handleClick}
-			style={{ width, minWidth }}
-		>
+		<TableHead border aria-disabled={isPending} onClick={handleClick}>
 			<div className="relative w-full">
 				<div>{getHeaderFromName(name)}</div>
 				<div

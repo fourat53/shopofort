@@ -1,7 +1,7 @@
 import { getOrderCount, getOrdersPage } from "@/actions/OrderActions";
 import DataTableLayout from "@/components/data-table/DataTableLayout";
 import {
-	getTotalPages,
+	getPaginationParams,
 	type PageProps,
 } from "@/components/data-table/PaginationParams";
 import { ORDERS_HEADER } from "@/lib/entity/entity-header";
@@ -9,13 +9,13 @@ import type { Order } from "@/lib/entity/types";
 
 export default async function OrdersPage({ searchParams }: PageProps) {
 	const params = await searchParams;
-	const { page, sortBy, order, ...filterParams } = params;
+	const { page: _page, sortBy, order, ...filterParams } = params;
 
 	const totalCount = await getOrderCount(filterParams);
-	const totalPages = getTotalPages(totalCount);
+	const { page, totalPages } = getPaginationParams(_page, totalCount);
 
 	const orders: Order[] = await getOrdersPage(
-		Number(page),
+		page,
 		filterParams,
 		sortBy,
 		order,

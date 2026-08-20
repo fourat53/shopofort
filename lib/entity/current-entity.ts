@@ -2,7 +2,12 @@ import { usePathname } from "next/navigation";
 import type { CategoryName, Gender, OrderStatus } from "@/lib/entity/types";
 
 type FieldCategory = "filter" | "create" | "edit";
+
 type FieldType = "string" | "number" | "date" | "enum" | "foreignKey" | "image";
+
+type ValueType = string | string[] | number | Date | undefined;
+
+type EntityField = (typeof entityFields)[string][number];
 
 type FieldConfig = {
 	name: string;
@@ -275,4 +280,25 @@ function TooltipEntity(headerName: string): EntityType {
 	return entity;
 }
 
-export { CurrentEntity, type EntityType, entityFields, TooltipEntity };
+function getEntityFields(
+	entity: EntityType,
+	type: FieldCategory,
+): FieldConfig[] {
+	return entity
+		? (entityFields[entity]?.filter((field) => field.category.includes(type)) ??
+				[])
+		: [];
+}
+
+export {
+	CurrentEntity,
+	type EntityField,
+	type EntityType,
+	entityFields,
+	type FieldCategory,
+	type FieldConfig,
+	type FieldType,
+	getEntityFields,
+	TooltipEntity,
+	type ValueType,
+};
