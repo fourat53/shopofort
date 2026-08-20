@@ -65,6 +65,7 @@ export default function DialogForm({
 		<DialogContent
 			onPointerDownOutside={(e) => loading && e.preventDefault()}
 			onEscapeKeyDown={(e) => loading && e.preventDefault()}
+			className="max-w-180"
 		>
 			<form onSubmit={handleSubmit} className="flex flex-col gap-4">
 				<DialogHeader>
@@ -82,7 +83,7 @@ export default function DialogForm({
 							required={!filter && field.required}
 						/>
 					) : field.type === "number" && filter ? (
-						<div key={field.name} className="flex gap-2">
+						<div key={field.name} className="w-full flex gap-2">
 							<Input
 								name={`${field.name}From`}
 								label={`${getHeaderFromName(field.name)} From`}

@@ -161,22 +161,16 @@ function Select({
 
 	const renderButtonContent = () => {
 		if (multiple) {
-			if (selectedItems.length === 0) {
-				return placeholder || "Select options";
-			}
-
+			if (selectedItems.length === 0) return placeholder || "Select options";
 			const labels = selectedItems.map(getLabelText);
-
 			return (
-				<span className="truncate max-w-full" title={labels.join(", ")}>
+				<span className="block w-full truncate" title={labels.join(", ")}>
 					{labels.join(", ")}
 				</span>
 			);
 		}
 
-		if (!selectedItem) {
-			return placeholder || "Select an option";
-		}
+		if (!selectedItem) return placeholder || "Select an option";
 
 		if (Array.isArray(selectedItem.label) && selectedItem.label.length === 2) {
 			return (
@@ -270,15 +264,14 @@ function Select({
 								className,
 							)}
 						>
-							<div className="text-xs truncate flex-1 text-left">
+							<div className="min-w-0 w-0 flex-1 overflow-hidden pr-6 text-left text-xs">
 								{renderButtonContent()}
 							</div>
-
 							<IconChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 shrink-0 opacity-50" />
 						</Button>
 					</PopoverTrigger>
 
-					<PopoverContent className={cn("w-82", menuClassName)}>
+					<PopoverContent className={cn("w-86", menuClassName)}>
 						<Command className="bg-transparent" filter={filterItems}>
 							{searchable && <CommandInput placeholder="Search.." />}
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { IconCalendar } from "@tabler/icons-react";
+import { IconCalendar, IconX } from "@tabler/icons-react";
 import { format } from "date-fns";
 import * as React from "react";
 import { Button } from "@/components/ui/button";
@@ -27,7 +27,6 @@ export function DatePicker({
 	required,
 }: DateTimePickerProps) {
 	const [open, setOpen] = React.useState(false);
-
 	const [date, setDate] = React.useState<Date | undefined>(
 		defaultValue ? new Date(defaultValue) : undefined,
 	);
@@ -40,19 +39,15 @@ export function DatePicker({
 
 		setDate((current) => {
 			if (!current) return selectedDate;
-
 			const result = new Date(selectedDate);
-
 			result.setHours(
 				current.getHours(),
 				current.getMinutes(),
 				current.getSeconds(),
 				0,
 			);
-
 			return result;
 		});
-
 		setOpen(false);
 	};
 
@@ -63,36 +58,53 @@ export function DatePicker({
 
 		setDate((current) => {
 			if (!current) return undefined;
-
 			const result = new Date(current);
-
 			result.setHours(hours, minutes, seconds, 0);
-
 			return result;
 		});
 	};
 
+	const handleClear = (e: React.MouseEvent) => {
+		e.preventDefault();
+		e.stopPropagation();
+		setDate(undefined);
+	};
+
 	const displayValue = date
-		? `${format(date, "PPP")} ${format(date, "HH:mm:ss")}`
+		? `${format(date, "MMM d, yyyy")}, ${format(date, "HH:mm:ss")}`
 		: "Select date and time";
 
 	return (
-		<div className="flex flex-col gap-2">
+		<div className="w-full flex flex-col gap-2">
 			<Label required={required}>{label}</Label>
 
 			<input type="hidden" name={name} value={date?.toISOString() ?? ""} />
 
 			<Popover open={open} onOpenChange={setOpen}>
-				<PopoverTrigger asChild>
-					<Button
-						variant="ghost"
-						type="button"
-						className="w-full h-7 bg-input/20 border border-border text-xs rounded-md justify-between"
-					>
-						{displayValue}
-						<IconCalendar />
-					</Button>
-				</PopoverTrigger>
+				<div className="relative w-full">
+					<PopoverTrigger asChild>
+						<Button
+							variant="ghost"
+							type="button"
+							className="w-full h-7 bg-input/20 dark:bg-input/30 border border-border text-xs rounded-md justify-start px-3 pr-8"
+						>
+							<span className="truncate">{displayValue}</span>
+							{!date && (
+								<IconCalendar className="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+							)}
+						</Button>
+					</PopoverTrigger>
+					{date && (
+						<button
+							type="button"
+							onClick={handleClear}
+							aria-label="Clear date"
+							className="absolute right-0.5 top-1/2 -translate-y-1/2 hover:bg-muted rounded-sm p-1 transition-colors text-muted-foreground hover:text-foreground z-10"
+						>
+							<IconX className="h-4 w-4" stroke={2} />
+						</button>
+					)}
+				</div>
 
 				<PopoverContent className="w-auto p-1.5">
 					<Calendar
@@ -106,7 +118,6 @@ export function DatePicker({
 
 					<div className="flex flex-col items-center gap-1.5">
 						<Label className="justify-center">Select Time</Label>
-
 						<Input
 							type="time"
 							step="1"
