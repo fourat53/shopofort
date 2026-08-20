@@ -65,7 +65,7 @@ export default function DialogForm({
 		<DialogContent
 			onPointerDownOutside={(e) => loading && e.preventDefault()}
 			onEscapeKeyDown={(e) => loading && e.preventDefault()}
-			className="max-w-180"
+			className="w-180 max-w-180"
 		>
 			<form onSubmit={handleSubmit} className="flex flex-col gap-4">
 				<DialogHeader>

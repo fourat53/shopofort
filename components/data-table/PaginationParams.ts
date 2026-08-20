@@ -56,6 +56,12 @@ function getPaginationParams(
 	};
 }
 
+function getTotalPages(totalCount: number, hasImage: boolean = false) {
+	const pageSize = hasImage ? IMAGE_PAGE_SIZE : PAGE_SIZE;
+	const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
+	return totalPages;
+}
+
 function pageHref(
 	basePath: string,
 	page: number,
@@ -140,6 +146,7 @@ export {
 	CACHE_SECONDS,
 	FILTER_CACHE_SECONDS,
 	getPaginationParams,
+	getTotalPages,
 	getVisiblePages,
 	IMAGE_PAGE_SIZE,
 	PAGE_SIZE,

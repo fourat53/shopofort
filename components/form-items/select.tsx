@@ -273,26 +273,27 @@ function Select({
 
 					<PopoverContent className={cn("w-86", menuClassName)}>
 						<Command className="bg-transparent" filter={filterItems}>
-							{searchable && <CommandInput placeholder="Search.." />}
+							{searchable && <CommandInput placeholder="Search .." />}
 
 							<CommandList className="z-50 max-h-60 overflow-y-auto">
 								<CommandEmpty>No option found</CommandEmpty>
 								<CommandGroup>
 									{items.map((item, index) => (
-										<CommandItem
-											key={index}
-											value={item.value}
-											onSelect={handleSelect}
-											className={cn(
-												isSelected(item.value) && "bg-primary hover:bg-accent",
-											)}
-										>
-											{renderItemContent(item)}
-
-											{isSelected(item.value) && (
-												<IconCheck className="h-4 w-4 absolute right-2 top-1/2 -translate-y-1/2" />
-											)}
-										</CommandItem>
+										<div key={index} className={index !== 0 ? "pt-1" : ""}>
+											<CommandItem
+												value={item.value}
+												onSelect={handleSelect}
+												className={cn(
+													isSelected(item.value) &&
+														"bg-primary hover:bg-accent",
+												)}
+											>
+												{renderItemContent(item)}
+												{isSelected(item.value) && (
+													<IconCheck className="h-4 w-4 absolute right-2 top-1/2 -translate-y-1/2" />
+												)}
+											</CommandItem>
+										</div>
 									))}
 								</CommandGroup>
 							</CommandList>
