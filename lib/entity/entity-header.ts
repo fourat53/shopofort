@@ -70,11 +70,28 @@ function getHeaderFromName(name: string) {
 		.replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
+function getSingleFromName(name: string) {
+	return name
+		.replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+		.replace(/[_-]+/g, " ")
+		.trim()
+		.toLowerCase();
+}
+
+function getPluralFromName(name: string) {
+	const formatted = getSingleFromName(name);
+	return formatted.endsWith("y")
+		? `${formatted.slice(0, -1)}ies`
+		: `${formatted}s`;
+}
+
 export {
 	CART_ITEMS_HEADER,
 	CARTS_HEADER,
 	CATEGORIES_HEADER,
 	getHeaderFromName,
+	getPluralFromName,
+	getSingleFromName,
 	type HeaderType,
 	ORDER_ITEMS_HEADER,
 	ORDERS_HEADER,

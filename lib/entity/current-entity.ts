@@ -11,7 +11,7 @@ type FieldConfig = {
 	required?: boolean;
 	defaultValue?: string | number;
 	step?: string;
-	enumValues?: readonly (OrderStatus | Gender | CategoryName)[];
+	options?: readonly (OrderStatus | Gender | CategoryName)[];
 };
 
 const entityFields: Record<string, FieldConfig[]> = {
@@ -171,13 +171,7 @@ const entityFields: Record<string, FieldConfig[]> = {
 			name: "orderStatus",
 			type: "enum",
 			category: ["filter", "create", "edit"],
-			enumValues: [
-				"PENDING",
-				"PROCESSING",
-				"SHIPPED",
-				"DELIVERED",
-				"CANCELLED",
-			],
+			options: ["PENDING", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED"],
 			defaultValue: "PENDING",
 		},
 		{
@@ -229,14 +223,14 @@ const entityFields: Record<string, FieldConfig[]> = {
 			name: "name",
 			type: "enum",
 			category: ["filter", "create", "edit"],
-			enumValues: ["T_SHIRTS", "JEANS", "HOODIES", "DRESSES", "JACKETS"],
+			options: ["T_SHIRTS", "JEANS", "HOODIES", "DRESSES", "JACKETS"],
 			required: true,
 		},
 		{
 			name: "gender",
 			type: "enum",
 			category: ["filter", "create", "edit"],
-			enumValues: ["MALE", "FEMALE"],
+			options: ["MALE", "FEMALE"],
 			required: true,
 		},
 	],

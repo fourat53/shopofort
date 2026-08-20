@@ -9,7 +9,7 @@ import type { Product } from "@/lib/entity/types";
 
 export default async function ProductsPage({ searchParams }: PageProps) {
 	const params = await searchParams;
-	const { sortBy, order, ...filterParams } = params;
+	const { page: _page, sortBy, order, ...filterParams } = params;
 
 	const totalCount = await getProductCount(filterParams);
 	const { page, totalPages } = getPaginationParams(

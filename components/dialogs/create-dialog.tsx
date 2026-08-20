@@ -3,21 +3,19 @@
 import { IconPlus } from "@tabler/icons-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createEntity, getFilterOptions } from "@/actions/EntityActions";
+import type { ImageItem } from "@/components/form-items/image-upload";
 import type { SelectOption } from "@/components/form-items/select";
 import { Button } from "@/components/ui/button";
-import {
-	Dialog,
-	DialogContent,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { CurrentEntity, entityFields } from "@/lib/entity/current-entity";
+import { getSingleFromName } from "@/lib/entity/entity-header";
+import { appendImagesToFormData } from "@/lib/uploadthing/client";
 import DialogForm from "./dialog-form";
 
 export default function CreateDialog() {
 	const entity = CurrentEntity();
+
+	const fetchedFields = useRef<Set<string>>(new Set());
 
 	const [open, setOpen] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(false);
@@ -25,7 +23,11 @@ export default function CreateDialog() {
 		Record<string, SelectOption[]>
 	>({});
 
-	const fetchedFields = useRef<Set<string>>(new Set());
+	const [images, setImages] = useState<ImageItem[]>([]);
+
+	useEffect(() => {
+		if (open) setImages([]);
+	}, [open]);
 
 	const currentFields = useMemo(
 		() =>
@@ -38,15 +40,11 @@ export default function CreateDialog() {
 	);
 
 	useEffect(() => {
-		if (!open || !entity || entity === "user") return;
+		if (!open || !entity) return;
 
 		for (const field of currentFields) {
-			if (
-				field.type !== "foreignKey" ||
-				fetchedFields.current.has(field.name)
-			) {
+			if (field.type !== "foreignKey" || fetchedFields.current.has(field.name))
 				continue;
-			}
 
 			fetchedFields.current.add(field.name);
 
@@ -69,6 +67,7 @@ export default function CreateDialog() {
 		setLoading(true);
 		try {
 			const formData = new FormData(e.currentTarget);
+			await appendImagesToFormData(formData, images);
 			await createEntity(entity, formData);
 		} catch (error) {
 			console.error("Error creating entity:", error);
@@ -88,39 +87,17 @@ export default function CreateDialog() {
 				</Button>
 			</DialogTrigger>
 
-			<DialogContent
-				onPointerDownOutside={(e) => loading && e.preventDefault()}
-				onEscapeKeyDown={(e) => loading && e.preventDefault()}
-			>
-				<DialogHeader>
-					<DialogTitle>
-						Create New {entity.charAt(0).toUpperCase() + entity.slice(1)}
-					</DialogTitle>
-				</DialogHeader>
-
-				<form onSubmit={handleSubmit}>
-					<DialogForm
-						fields={currentFields}
-						optionsCache={optionsCache}
-						getValue={(field) => field.defaultValue}
-					/>
-
-					<DialogFooter className="pt-4">
-						<Button
-							variant="outline"
-							onClick={() => setOpen(false)}
-							disabled={loading}
-							type="button"
-						>
-							Cancel
-						</Button>
-
-						<Button loading={loading} type="submit">
-							Create
-						</Button>
-					</DialogFooter>
-				</form>
-			</DialogContent>
+			<DialogForm
+				label={`Create ${getSingleFromName(entity)}`}
+				fields={currentFields}
+				optionsCache={optionsCache}
+				handleSubmit={handleSubmit}
+				loading={loading}
+				setOpen={setOpen}
+				images={images}
+				onImagesChange={setImages}
+				getValue={(field) => field.defaultValue}
+			/>
 		</Dialog>
 	);
 }

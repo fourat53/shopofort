@@ -1,6 +1,9 @@
+import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { Geist, Geist_Mono, Oxanium } from "next/font/google";
+import { extractRouterConfig } from "uploadthing/server";
 import { AutoTitle } from "@/components/title/AutoTitle";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { ourFileRouter } from "@/lib/uploadthing/core";
 import { cn } from "@/lib/utils";
 import { KindeProvider } from "@/providers/kinde-provider";
 import ThemeProvider from "@/providers/theme-provider";
@@ -38,6 +41,7 @@ export default function RootLayout({
 				<ThemeProvider>
 					<KindeProvider>
 						<AutoTitle />
+						<NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
 						<TooltipProvider>{children}</TooltipProvider>
 					</KindeProvider>
 				</ThemeProvider>

@@ -2,17 +2,70 @@
 
 import { IconUpload, IconX } from "@tabler/icons-react";
 import Image from "next/image";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
+export type ImageItem = string | File;
+
 interface ImageUploadProps {
-	images: File[];
-	onChange: (files: File[]) => void;
+	name?: string;
+	label?: string;
+	images: ImageItem[];
+	onChange: (images: ImageItem[]) => void;
 	className?: string;
+	required?: boolean;
 }
 
-export function ImageUpload({ images, onChange, className }: ImageUploadProps) {
+function ImagePreview({
+	item,
+	onRemove,
+}: {
+	item: ImageItem;
+	onRemove: () => void;
+}) {
+	const isFile = item instanceof File;
+	const [objectUrl] = useState<string | null>(() =>
+		isFile ? URL.createObjectURL(item) : null,
+	);
+
+	useEffect(() => {
+		return () => {
+			if (objectUrl) URL.revokeObjectURL(objectUrl);
+		};
+	}, [objectUrl]);
+
+	const src = isFile ? objectUrl : item;
+
+	return (
+		<div className="relative w-28 h-28 border rounded-lg overflow-hidden group">
+			{src ? (
+				<Image
+					src={src}
+					alt={isFile ? item.name : `Image ${src}`}
+					fill
+					className="h-full w-fit object-cover"
+				/>
+			) : null}
+			<button
+				type="button"
+				onClick={onRemove}
+				className="hover:cursor-pointer absolute top-1 right-1 bg-black/60 hover:bg-black text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+			>
+				<IconX className="w-3 h-3" />
+			</button>
+		</div>
+	);
+}
+
+export function ImageUpload({
+	name,
+	label,
+	images,
+	onChange,
+	className,
+	required,
+}: ImageUploadProps) {
 	const fileInputRef = useRef<HTMLInputElement>(null);
 
 	const handleDivClick = () => {
@@ -31,20 +84,15 @@ export function ImageUpload({ images, onChange, className }: ImageUploadProps) {
 		onChange(images.filter((_, index) => index !== indexToRemove));
 	};
 
-	useEffect(() => {
-		return () => {
-			for (const image of images) {
-				URL.revokeObjectURL(URL.createObjectURL(image));
-			}
-		};
-	}, [images]);
-
 	return (
 		<div className={className}>
-			<Label className="pb-1.5">Product Images</Label>
+			<Label className="pb-1.5" required={required}>
+				{label}
+			</Label>
 
 			{/* Hidden File Input */}
 			<input
+				name={name}
 				type="file"
 				ref={fileInputRef}
 				onChange={handleImageChange}
@@ -60,25 +108,16 @@ export function ImageUpload({ images, onChange, className }: ImageUploadProps) {
 				)}
 			>
 				{/* Image Previews */}
-				{images.map((img, idx) => (
-					<div
-						key={idx}
-						className="relative w-28 h-28 border rounded-lg overflow-hidden group"
-					>
-						<Image
-							src={URL.createObjectURL(img)}
-							alt={`Preview ${idx}`}
-							fill
-							className="h-full w-fit object-cover"
-						/>
-						<button
-							type="button"
-							onClick={() => removeImage(idx)}
-							className="hover:cursor-pointer absolute top-1 right-1 bg-black/60 hover:bg-black text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-						>
-							<IconX className="w-3 h-3" />
-						</button>
-					</div>
+				{images.map((item, idx) => (
+					<ImagePreview
+						key={
+							item instanceof File
+								? `${item.name}-${item.lastModified}-${item.size}`
+								: item
+						}
+						item={item}
+						onRemove={() => removeImage(idx)}
+					/>
 				))}
 
 				{/* Clickable Upload Dropzone */}

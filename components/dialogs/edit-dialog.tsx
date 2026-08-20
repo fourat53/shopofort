@@ -4,18 +4,14 @@ import { IconEdit } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { getFilterOptions, updateEntity } from "@/actions/EntityActions";
+import type { ImageItem } from "@/components/form-items/image-upload";
 import type { SelectOption } from "@/components/form-items/select";
 import { Button } from "@/components/ui/button";
-import {
-	Dialog,
-	DialogContent,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { CurrentEntity, entityFields } from "@/lib/entity/current-entity";
-import DialogForm from "./dialog-form";
+import { getSingleFromName } from "@/lib/entity/entity-header";
+import { appendImagesToFormData } from "@/lib/uploadthing/client";
+import DialogForm, { type ValueType } from "./dialog-form";
 
 interface EditDialogProps<T> {
 	row: T;
@@ -29,13 +25,22 @@ export default function EditDialog<T extends { id: number | string }>({
 	const router = useRouter();
 	const entity = CurrentEntity();
 
+	const fetchedFields = useRef<Set<string>>(new Set());
+
 	const [open, setOpen] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(false);
 	const [optionsCache, setOptionsCache] = useState<
 		Record<string, SelectOption[]>
 	>({});
 
-	const fetchedFields = useRef<Set<string>>(new Set());
+	const [images, setImages] = useState<ImageItem[]>([]);
+
+	useEffect(() => {
+		if (open) {
+			const rowImages = (row as Record<string, unknown>).images;
+			setImages(Array.isArray(rowImages) ? (rowImages as string[]) : []);
+		}
+	}, [open, row]);
 
 	const currentFields = useMemo(
 		() =>
@@ -51,12 +56,8 @@ export default function EditDialog<T extends { id: number | string }>({
 		if (!open || !entity) return;
 
 		for (const field of currentFields) {
-			if (
-				field.type !== "foreignKey" ||
-				fetchedFields.current.has(field.name)
-			) {
+			if (field.type !== "foreignKey" || fetchedFields.current.has(field.name))
 				continue;
-			}
 
 			fetchedFields.current.add(field.name);
 
@@ -79,6 +80,7 @@ export default function EditDialog<T extends { id: number | string }>({
 		setLoading(true);
 		try {
 			const formData = new FormData(e.currentTarget);
+			await appendImagesToFormData(formData, images);
 			await updateEntity(entity, row.id, formData);
 
 			setOpen(false);
@@ -98,52 +100,26 @@ export default function EditDialog<T extends { id: number | string }>({
 				<Button
 					variant="ghost"
 					disabled={disabled || loading || !entity}
-					border={false}
 					className="rounded-xl size-6 p-0"
+					border={false}
 				>
 					<IconEdit className="h-4 w-4 text-mist-400" />
 				</Button>
 			</DialogTrigger>
 
-			<DialogContent
-				onPointerDownOutside={(e) => loading && e.preventDefault()}
-				onEscapeKeyDown={(e) => loading && e.preventDefault()}
-			>
-				<DialogHeader>
-					<DialogTitle>
-						Edit {entity.charAt(0).toUpperCase() + entity.slice(1)}
-					</DialogTitle>
-				</DialogHeader>
-
-				<form onSubmit={handleSubmit}>
-					<DialogForm
-						fields={currentFields}
-						optionsCache={optionsCache}
-						getValue={(field) =>
-							(row as Record<string, unknown>)[field.name] as
-								| string
-								| number
-								| Date
-								| undefined
-						}
-					/>
-
-					<DialogFooter className="pt-4">
-						<Button
-							variant="outline"
-							onClick={() => setOpen(false)}
-							disabled={loading}
-							type="button"
-						>
-							Cancel
-						</Button>
-
-						<Button loading={loading} type="submit">
-							Update
-						</Button>
-					</DialogFooter>
-				</form>
-			</DialogContent>
+			<DialogForm
+				label={`Update ${getSingleFromName(entity)}`}
+				fields={currentFields}
+				optionsCache={optionsCache}
+				handleSubmit={handleSubmit}
+				loading={loading}
+				setOpen={setOpen}
+				images={images}
+				onImagesChange={setImages}
+				getValue={(field) =>
+					(row as Record<string, unknown>)[field.name] as ValueType
+				}
+			/>
 		</Dialog>
 	);
 }

@@ -9,7 +9,7 @@ import type { CartItem } from "@/lib/entity/types";
 
 export default async function CartItemsPage({ searchParams }: PageProps) {
 	const params = await searchParams;
-	const { sortBy, order, ...filterParams } = params;
+	const { page: _page, sortBy, order, ...filterParams } = params;
 
 	const totalCount = await getCartItemCount(filterParams);
 	const { page, totalPages } = getPaginationParams(params.page, totalCount);

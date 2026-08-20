@@ -15,6 +15,7 @@ import {
 	DialogTrigger,
 } from "@/components/ui/dialog";
 import { CurrentEntity } from "@/lib/entity/current-entity";
+import { getSingleFromName } from "@/lib/entity/entity-header";
 
 export default function DeleteDialog({
 	id,
@@ -59,6 +60,8 @@ export default function DeleteDialog({
 
 			<DialogContent
 				className="w-90"
+				onPointerDownOutside={(e) => loading && e.preventDefault()}
+				onEscapeKeyDown={(e) => loading && e.preventDefault()}
 				onOpenAutoFocus={(e) => {
 					e.preventDefault();
 					DeleteDialogRef.current?.focus();
@@ -66,10 +69,12 @@ export default function DeleteDialog({
 			>
 				<DialogHeader>
 					<DialogTitle>Are you absolutely sure?</DialogTitle>
-					<DialogDescription>
+					<DialogDescription className="pt-2 pb-1">
 						This action cannot be undone. This will permanently delete this{" "}
-						<span className="font-semibold text-foreground">{entity}</span> and
-						remove its data from our servers.
+						<span className="font-semibold text-foreground">
+							{getSingleFromName(entity)}
+						</span>{" "}
+						and remove its data from our servers.
 					</DialogDescription>
 				</DialogHeader>
 

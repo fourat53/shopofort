@@ -1,103 +1,147 @@
 "use client";
 
+import type { Dispatch, SetStateAction } from "react";
 import { DatePicker } from "@/components/form-items/date-picker";
+import {
+	type ImageItem,
+	ImageUpload,
+} from "@/components/form-items/image-upload";
 import { Input } from "@/components/form-items/input";
 import { Select, type SelectOption } from "@/components/form-items/select";
+import { Button } from "@/components/ui/button";
+import {
+	DialogContent,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+} from "@/components/ui/dialog";
 import type { entityFields } from "@/lib/entity/current-entity";
 import { getHeaderFromName } from "@/lib/entity/entity-header";
 
+const anyOption: SelectOption = { label: "Any", value: "ALL" } as const;
+
 type EntityField = (typeof entityFields)[string][number];
 
+type ValueType = string | number | Date | undefined;
+
 interface DialogFormProps {
+	label: string;
 	fields: EntityField[];
 	optionsCache: Record<string, SelectOption[]>;
-	getValue: (field: EntityField) => string | number | Date | undefined;
+	getValue: (field: EntityField) => ValueType;
+	images?: ImageItem[];
+	onImagesChange?: (images: ImageItem[]) => void;
 	filter?: boolean;
+	handleSubmit: (e: React.SubmitEvent<HTMLFormElement>) => void;
+	loading: boolean;
+	setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
 export default function DialogForm({
+	label,
 	fields,
 	optionsCache,
 	getValue,
+	images,
+	onImagesChange,
 	filter = false,
+	handleSubmit,
+	loading,
+	setOpen,
 }: DialogFormProps) {
 	return (
-		<div
-			className={
-				filter ? "flex flex-col gap-4 py-4" : "flex flex-col gap-2 pt-2"
-			}
+		<DialogContent
+			onPointerDownOutside={(e) => loading && e.preventDefault()}
+			onEscapeKeyDown={(e) => loading && e.preventDefault()}
 		>
-			{fields.map((field) => {
-				const value = getValue(field);
+			<form onSubmit={handleSubmit} className="flex flex-col gap-4">
+				<DialogHeader>
+					<DialogTitle>{label}</DialogTitle>
+				</DialogHeader>
 
-				return (
-					<div key={field.name} className="flex flex-col gap-2">
-						{field.type === "string" && (
-							<Input
-								name={field.name}
-								label={getHeaderFromName(field.name)}
-								defaultValue={value?.toString() ?? ""}
-								required={!filter && field.required}
-							/>
-						)}
-
-						{field.type === "number" && (
-							<Input
-								name={field.name}
-								label={getHeaderFromName(field.name)}
-								type="number"
-								step={field.step ?? "1"}
-								defaultValue={
-									value !== null && value !== undefined ? String(value) : ""
-								}
-								required={!filter && field.required}
-							/>
-						)}
-
-						{field.type === "date" && (
-							<DatePicker
-								name={field.name}
-								label={getHeaderFromName(field.name)}
-								defaultValue={value ? new Date(value) : undefined}
-								required={!filter && field.required}
-							/>
-						)}
-
-						{field.type === "enum" && (
+				{fields.map((field) => {
+					const value = getValue(field);
+					return field.type === "string" ? (
+						<Input
+							key={field.name}
+							name={field.name}
+							label={getHeaderFromName(field.name)}
+							defaultValue={value?.toString() || undefined}
+							required={!filter && field.required}
+						/>
+					) : field.type === "number" ? (
+						<Input
+							key={field.name}
+							name={field.name}
+							label={getHeaderFromName(field.name)}
+							type="number"
+							step={field.step ?? "1"}
+							defaultValue={value?.toString() || undefined}
+							required={!filter && field.required}
+						/>
+					) : field.type === "date" ? (
+						<DatePicker
+							key={field.name}
+							name={field.name}
+							label={getHeaderFromName(field.name)}
+							defaultValue={value ? new Date(value) : undefined}
+							required={!filter && field.required}
+						/>
+					) : field.type === "enum" ? (
+						<Select
+							key={field.name}
+							name={field.name}
+							label={getHeaderFromName(field.name)}
+							placeholder="Select an option"
+							defaultValue={value?.toString() || "ALL"}
+							required={!filter && field.required}
+							items={[
+								...(filter ? [anyOption] : []),
+								...(field.options?.map((o) => ({ label: o, value: o })) ?? []),
+							]}
+						/>
+					) : field.type === "image" ? (
+						<ImageUpload
+							key={field.name}
+							name={field.name}
+							label={getHeaderFromName(field.name)}
+							images={images ?? []}
+							required={!filter && field.required}
+							onChange={onImagesChange ?? (() => {})}
+						/>
+					) : (
+						field.type === "foreignKey" && (
 							<Select
+								key={field.name}
 								name={field.name}
 								label={getHeaderFromName(field.name)}
-								defaultValue={value?.toString() || undefined}
 								placeholder="Select an option"
-								items={[
-									...(filter ? [{ label: "Any", value: "ALL" }] : []),
-									...(field.enumValues?.map((enumValue) => ({
-										label: enumValue,
-										value: enumValue,
-									})) ?? []),
-								]}
+								defaultValue={value?.toString() || "ALL"}
 								required={!filter && field.required}
-							/>
-						)}
-
-						{field.type === "foreignKey" && (
-							<Select
-								name={field.name}
-								label={getHeaderFromName(field.name)}
-								placeholder="Select an option"
-								defaultValue={
-									value !== null && value !== undefined ? String(value) : ""
-								}
 								items={[
-									...(filter ? [{ label: "Any", value: "ALL" }] : []),
+									...(filter ? [anyOption] : []),
 									...(optionsCache[field.name] ?? []),
 								]}
-								required={field.required}
 							/>
-						)}
-					</div>
-				);
-			})}
-		</div>
+						)
+					);
+				})}
+
+				<DialogFooter className="pt-2">
+					<Button
+						variant="outline"
+						onClick={() => setOpen(false)}
+						disabled={loading}
+					>
+						Cancel
+					</Button>
+					<Button type="submit" loading={loading}>
+						{label.split(" ")[0]}
+					</Button>
+				</DialogFooter>
+			</form>
+		</DialogContent>
 	);
 }
+
+export type { ValueType };

@@ -16,7 +16,8 @@ function getFormProduct(formData: FormData) {
 	const inventory = Number(formData.get("inventory"));
 	const description = formData.get("description") as string;
 	const categoryId = Number(formData.get("categoryId"));
-	return { name, brand, price, inventory, description, categoryId };
+	const images = formData.getAll("images").map(String);
+	return { name, brand, price, inventory, description, categoryId, images };
 }
 
 function getFormOrder(formData: FormData) {

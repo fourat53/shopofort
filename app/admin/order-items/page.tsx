@@ -12,7 +12,7 @@ import type { OrderItem } from "@/lib/entity/types";
 
 export default async function OrderItemsPage({ searchParams }: PageProps) {
 	const params = await searchParams;
-	const { sortBy, order, ...filterParams } = params;
+	const { page: _page, sortBy, order, ...filterParams } = params;
 
 	const totalCount = await getOrderItemCount(filterParams);
 	const { page, totalPages } = getPaginationParams(params.page, totalCount);

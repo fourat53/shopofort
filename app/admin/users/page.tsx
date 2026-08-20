@@ -9,7 +9,7 @@ import type { User } from "@/lib/entity/types";
 
 export default async function UsersPage({ searchParams }: PageProps) {
 	const params = await searchParams;
-	const { sortBy, order, ...filterParams } = params;
+	const { page: _page, sortBy, order, ...filterParams } = params;
 
 	const totalCount = await getUserCount(filterParams);
 	const { page, totalPages } = getPaginationParams(

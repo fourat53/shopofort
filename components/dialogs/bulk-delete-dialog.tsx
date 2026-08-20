@@ -1,6 +1,7 @@
 "use client";
 
 import { IconTrash } from "@tabler/icons-react";
+import { clsx } from "clsx";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { deleteEntities } from "@/actions/EntityActions";
@@ -15,6 +16,7 @@ import {
 	DialogTrigger,
 } from "@/components/ui/dialog";
 import { CurrentEntity } from "@/lib/entity/current-entity";
+import { getPluralFromName } from "@/lib/entity/entity-header";
 
 export default function BulkDeleteDialog({
 	ids,
@@ -56,7 +58,9 @@ export default function BulkDeleteDialog({
 			</DialogTrigger>
 
 			<DialogContent
-				className="w-90"
+				className="w-100"
+				onPointerDownOutside={(e) => loading && e.preventDefault()}
+				onEscapeKeyDown={(e) => loading && e.preventDefault()}
 				onOpenAutoFocus={(e) => {
 					e.preventDefault();
 					DeleteDialogRef.current?.focus();
@@ -64,15 +68,30 @@ export default function BulkDeleteDialog({
 			>
 				<DialogHeader>
 					<DialogTitle>Are you absolutely sure?</DialogTitle>
-					<DialogDescription>
+					<DialogDescription className="pt-2">
 						This action cannot be undone. This will permanently delete the{" "}
-						{ids.length} selected{" "}
 						<span className="font-semibold text-foreground">
-							{entity}
-							{ids.length > 1 ? "s" : ""}
+							{ids.length} selected {getPluralFromName(entity)}
 						</span>{" "}
-						and remove their data from our servers.
+						and remove their data from our servers. This is the list of their
+						IDs:
 					</DialogDescription>
+					<div
+						className={clsx(
+							"grid gap-1",
+							entity === "user" ? "grid-cols-2" : "grid-cols-5",
+						)}
+					>
+						{ids.map((id) => (
+							<p
+								key={id}
+								className="font-medium truncate"
+								title={id.toString()}
+							>
+								{id}
+							</p>
+						))}
+					</div>
 				</DialogHeader>
 
 				<DialogFooter>

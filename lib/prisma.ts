@@ -1,12 +1,13 @@
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@/prisma/generated/prisma/client";
+import { checkedEnvVar } from "./checked-env-var";
 
 const globalForPrisma = global as unknown as {
 	prisma: PrismaClient;
 };
 
 const adapter = new PrismaPg({
-	connectionString: process.env.DATABASE_URL,
+	connectionString: checkedEnvVar("DATABASE_URL"),
 });
 
 const prisma =

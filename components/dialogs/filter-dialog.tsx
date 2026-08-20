@@ -7,17 +7,12 @@ import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { getFilterOptions } from "@/actions/EntityActions";
 import type { SelectOption } from "@/components/form-items/select";
 import { Button } from "@/components/ui/button";
-import {
-	Dialog,
-	DialogContent,
-	DialogFooter,
-	DialogTitle,
-	DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { CurrentEntity, entityFields } from "@/lib/entity/current-entity";
+import { getPluralFromName } from "@/lib/entity/entity-header";
 import DialogForm from "./dialog-form";
 
-export default function FilterDialog({ disabled }: { disabled?: boolean }) {
+export default function FilterDialog() {
 	const entity = CurrentEntity();
 	const router = useRouter();
 	const pathname = usePathname();
@@ -51,12 +46,8 @@ export default function FilterDialog({ disabled }: { disabled?: boolean }) {
 		if (!open || !entity) return;
 
 		for (const field of currentFields) {
-			if (
-				field.type !== "foreignKey" ||
-				fetchedFields.current.has(field.name)
-			) {
+			if (field.type !== "foreignKey" || fetchedFields.current.has(field.name))
 				continue;
-			}
 
 			fetchedFields.current.add(field.name);
 
@@ -132,43 +123,25 @@ export default function FilterDialog({ disabled }: { disabled?: boolean }) {
 
 			<Dialog open={open} onOpenChange={setOpen}>
 				<DialogTrigger asChild>
-					<Button disabled={disabled || isPending || !entity}>
+					<Button disabled={isPending || !entity}>
 						<IconFilter className="h-4 w-4" />
 					</Button>
 				</DialogTrigger>
 
-				<DialogContent className="w-90">
-					<form onSubmit={handleSubmit}>
-						<DialogTitle>Filter {entity}</DialogTitle>
-
-						<DialogForm
-							filter
-							fields={currentFields}
-							optionsCache={optionsCache}
-							getValue={(field) =>
-								field.type === "date"
-									? field.defaultValue
-									: searchParams.get(field.name) || undefined
-							}
-						/>
-
-						<DialogFooter>
-							<Button
-								variant="outline"
-								onClick={(e) => {
-									e.preventDefault();
-									setOpen(false);
-								}}
-								disabled={isPending}
-							>
-								Cancel
-							</Button>
-							<Button type="submit" loading={isPending}>
-								Filter
-							</Button>
-						</DialogFooter>
-					</form>
-				</DialogContent>
+				<DialogForm
+					filter
+					label={`Filter ${getPluralFromName(entity)}`}
+					fields={currentFields}
+					optionsCache={optionsCache}
+					handleSubmit={handleSubmit}
+					loading={isPending}
+					setOpen={setOpen}
+					getValue={(field) =>
+						field.type === "date"
+							? field.defaultValue
+							: searchParams.get(field.name) || undefined
+					}
+				/>
 			</Dialog>
 		</div>
 	);
