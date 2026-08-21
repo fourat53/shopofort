@@ -1,7 +1,8 @@
 import { clsx } from "clsx";
 import Image from "next/image";
-import EntityTooltip from "@/components/data-table/EntityTooltip";
+import EntityTooltip from "@/components/data-table/table-cells/EntityTooltip";
 import { formatDateTime, isDate } from "@/lib/date-format";
+import { OrderStatus } from "@/lib/entity/types";
 
 interface CellContentProps {
 	value: unknown;
@@ -11,7 +12,7 @@ interface CellContentProps {
 	tooltip?: boolean;
 }
 
-export default function CellContent({
+export default function ContentCell({
 	value,
 	headerName,
 	cIndex,
@@ -30,15 +31,15 @@ export default function CellContent({
 				<p
 					className={clsx(
 						"w-fit bg-accent rounded-full px-1.75",
-						value === "PENDING" &&
+						value === OrderStatus.PENDING &&
 							"bg-yellow-200/40 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400",
-						value === "PROCESSING" &&
+						value === OrderStatus.PROCESSING &&
 							"bg-blue-200/60 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
-						value === "SHIPPED" &&
+						value === OrderStatus.SHIPPED &&
 							"bg-purple-200/60 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400",
-						value === "DELIVERED" &&
+						value === OrderStatus.DELIVERED &&
 							"bg-green-200/60 text-green-700 dark:bg-green-900/30 dark:text-green-400",
-						value === "CANCELLED" &&
+						value === OrderStatus.CANCELLED &&
 							"bg-red-200/60 text-red-700 dark:bg-red-900/30 dark:text-red-400",
 					)}
 				>
@@ -90,7 +91,7 @@ export default function CellContent({
 							width={imageSize}
 							height={imageSize}
 							className="rounded-md"
-							style={{ height: `${imageSize}px`, width: `${imageSize}px` }}
+							style={{ height: `${imageSize}px`, width: "auto" }}
 						/>
 					))}
 				</div>

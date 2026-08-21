@@ -36,11 +36,13 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
 <!-- Biome auto sort imports -->
+- loading when waiting for image upload to finish
+- make sure required fields are actually required
+- 
 
 pnpm biome format --write .
 
-  1. fix upload images in product and user table create and edit.
-  2. display all cart items for a cart, order items for an order
-  3. make a dashboard design with shadcn UI and display statistics by using the most relevent data from the database.
+  1. display all cart items for a cart, order items for an order
+  2. make a dashboard design with shadcn UI and display statistics by using the most relevent data from the database.
 
 Important: Since I don't have AWS S3 account, the images are saved locally.

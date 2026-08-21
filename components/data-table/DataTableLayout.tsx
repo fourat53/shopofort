@@ -31,22 +31,30 @@ export default function DataTableLayout<T extends { id: number | string }>({
 	hasImage = "none",
 }: DataTableLayoutProps<T>) {
 	return (
-		<Suspense
-			key={JSON.stringify(suspenseKey)}
-			fallback={
-				<DataTableSkeleton
-					header={header}
-					basePath={basePath}
-					hasImage={hasImage}
-				/>
-			}
-		>
-			<DataTable
-				header={header}
-				rows={rows}
-				basePath={basePath}
-				hasImage={hasImage}
-			/>
+		<>
+			<Suspense
+				key={JSON.stringify(suspenseKey)}
+				fallback={
+					<DataTableSkeleton
+						header={header}
+						basePath={basePath}
+						hasImage={hasImage}
+					/>
+				}
+			>
+				{rows.length === 0 ? (
+					<div className="w-full h-60 flex items-center justify-center border rounded-lg text-muted-foreground">
+						No data available
+					</div>
+				) : (
+					<DataTable
+						header={header}
+						rows={rows}
+						basePath={basePath}
+						hasImage={hasImage}
+					/>
+				)}
+			</Suspense>
 			{totalPages > 1 && (
 				<DataTablePagination
 					basePath={basePath}
@@ -54,7 +62,7 @@ export default function DataTableLayout<T extends { id: number | string }>({
 					className="absolute bottom-15"
 				/>
 			)}
-		</Suspense>
+		</>
 	);
 }
 

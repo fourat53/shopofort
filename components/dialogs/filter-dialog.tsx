@@ -4,11 +4,11 @@ import { IconArrowBackUp, IconFilter } from "@tabler/icons-react";
 import clsx from "clsx";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState, useTransition } from "react";
+import FilterForm from "@/components/forms/filter-form";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { CurrentEntity, getEntityFields } from "@/lib/entity/current-entity";
 import { getPluralFromName } from "@/lib/entity/entity-header";
-import DialogForm from "./dialog-form";
 
 export default function FilterDialog() {
 	const entity = CurrentEntity();
@@ -92,7 +92,7 @@ export default function FilterDialog() {
 						<IconFilter className="h-4 w-4" />
 					</Button>
 				</DialogTrigger>
-				<DialogForm
+				<FilterForm
 					type="filter"
 					entity={entity}
 					label={`Filter ${getPluralFromName(entity)}`}

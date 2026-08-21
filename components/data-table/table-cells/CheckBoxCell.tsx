@@ -1,7 +1,7 @@
 "use client";
 
-import BulkDeleteDialog from "@/components/dialogs/bulk-delete-dialog";
-import BulkEditDialog from "@/components/dialogs/bulk-edit-dialog";
+import DeleteBulkDialog from "@/components/dialogs/delete-bulk-dialog";
+import EditBulkDialog from "@/components/dialogs/edit-bulk-dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useSelection } from "@/hooks/use-selection";
 
@@ -39,8 +39,8 @@ export default function CheckBoxCell<T extends { id: number | string }>({
 	if (type === "actions") {
 		return someSelected ? (
 			<div className="flex items-center justify-center gap-1.5">
-				<BulkEditDialog rows={selectedRows} />
-				<BulkDeleteDialog ids={[...selectedIds]} />
+				<EditBulkDialog rows={selectedRows} />
+				<DeleteBulkDialog ids={[...selectedIds]} />
 			</div>
 		) : (
 			"Actions"

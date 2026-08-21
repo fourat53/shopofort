@@ -5,7 +5,7 @@ import {
 	PAGE_SIZE,
 } from "@/components/data-table/PaginationParams";
 import { CATEGORIES_HEADER } from "@/lib/entity/entity-header";
-import type { CategoryName, Gender, ParameterType } from "@/lib/entity/types";
+import type { Gender, ParameterType } from "@/lib/entity/types";
 import { prisma } from "@/lib/prisma";
 import type { Prisma } from "@/prisma/generated/prisma/client";
 
@@ -27,8 +27,8 @@ function buildWhereClause(filterParams: ParameterType): FilterBy {
 		if (!Number.isNaN(idTo)) where.id.lte = idTo;
 	}
 
-	const names = getParamValues(filterParams.name);
-	if (names.length) where.name = { in: names as CategoryName[] };
+	if (filterParams.name)
+		where.name = { contains: String(filterParams.name), mode: "insensitive" };
 
 	const genders = getParamValues(filterParams.gender);
 	if (genders.length) where.gender = { in: genders as Gender[] };

@@ -4,6 +4,7 @@ import { IconEdit } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { updateEntity } from "@/actions/EntityActions";
+import DialogForm from "@/components/forms/create-edit-form";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import {
@@ -12,7 +13,6 @@ import {
 	type ValueType,
 } from "@/lib/entity/current-entity";
 import { getSingleFromName } from "@/lib/entity/entity-header";
-import DialogForm from "./dialog-form";
 
 interface EditDialogProps<T> {
 	row: T;

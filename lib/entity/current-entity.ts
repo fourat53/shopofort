@@ -1,5 +1,5 @@
 import { usePathname } from "next/navigation";
-import type { CategoryName, Gender, OrderStatus } from "@/lib/entity/types";
+import { Gender, OrderStatus } from "@/lib/entity/types";
 
 type FieldCategory = "filter" | "create" | "edit";
 
@@ -16,7 +16,7 @@ type FieldConfig = {
 	required?: boolean;
 	defaultValue?: string | number;
 	step?: string;
-	options?: readonly (OrderStatus | Gender | CategoryName)[];
+	options?: readonly (Gender | OrderStatus)[];
 };
 
 const entityFields: Record<string, FieldConfig[]> = {
@@ -176,8 +176,8 @@ const entityFields: Record<string, FieldConfig[]> = {
 			name: "orderStatus",
 			type: "enum",
 			category: ["filter", "create", "edit"],
-			options: ["PENDING", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED"],
-			defaultValue: "PENDING",
+			options: Object.values(OrderStatus),
+			defaultValue: OrderStatus.PENDING,
 		},
 		{
 			name: "userId",
@@ -226,16 +226,15 @@ const entityFields: Record<string, FieldConfig[]> = {
 		},
 		{
 			name: "name",
-			type: "enum",
+			type: "string",
 			category: ["filter", "create", "edit"],
-			options: ["T_SHIRTS", "JEANS", "HOODIES", "DRESSES", "JACKETS"],
 			required: true,
 		},
 		{
 			name: "gender",
 			type: "enum",
 			category: ["filter", "create", "edit"],
-			options: ["MALE", "FEMALE"],
+			options: Object.values(Gender),
 			required: true,
 		},
 	],

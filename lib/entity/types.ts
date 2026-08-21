@@ -2,13 +2,11 @@ import type {
 	Cart,
 	CartItem as CartItemType,
 	Category,
-	CategoryName,
-	Gender,
 	Order,
 	OrderItem as OrderItemType,
-	OrderStatus,
 	Product as ProductType,
 } from "@/prisma/generated/prisma/client";
+import { Gender, OrderStatus } from "@/prisma/generated/prisma/enums";
 
 type User = {
 	id: string;
@@ -41,13 +39,11 @@ export type {
 	Cart,
 	CartItem,
 	Category,
-	CategoryName,
-	Gender,
 	Order,
 	OrderItem,
-	OrderStatus,
 	ParameterType,
 	PreferredUser,
 	Product,
 	User,
 };
+export { Gender, OrderStatus };

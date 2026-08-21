@@ -2,7 +2,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { config } from "dotenv";
 import { getUsers } from "@/actions/UserActions";
 import { checkedEnvVar } from "@/lib/checked-env-var";
-import type { CategoryName, Gender, OrderStatus } from "@/lib/entity/types";
+import { Gender, OrderStatus } from "@/lib/entity/types";
 import { PrismaClient } from "@/prisma/generated/prisma/client";
 
 config({ path: ".env" });
@@ -27,14 +27,13 @@ const randomImages = (productImages: string[], max = 6) => {
 	return [...productImages].sort(() => Math.random() - 0.5).slice(0, count);
 };
 
-const categoryNames: CategoryName[] = [
+const categoryNames: string[] = [
 	"T_SHIRTS",
 	"JEANS",
 	"HOODIES",
 	"DRESSES",
 	"JACKETS",
 ];
-const genders: Gender[] = ["MALE", "FEMALE"];
 const productNames: string[] = [
 	"Classic Cotton T-Shirt",
 	"Slim Fit Denim Jeans",
@@ -47,22 +46,16 @@ const productNames: string[] = [
 ];
 const brands: string[] = ["Nike", "Adidas", "Puma", "Zara", "H&M"];
 const productImages: string[] = [
-	"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=800&q=80",
-	"https://images.unsplash.com/photo-1576566588028-4147f3842f27?auto=format&fit=crop&w=800&q=80",
-	"https://images.unsplash.com/photo-1608234808654-2a8875faa7fd?auto=format&fit=crop&w=800&q=80",
-	"https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&w=800&q=80",
-	"https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?auto=format&fit=crop&w=800&q=80",
-	"https://images.unsplash.com/photo-1542272604-787c3835535d?auto=format&fit=crop&w=800&q=80",
-	"https://images.unsplash.com/photo-1591195853828-11db59a44f6b?auto=format&fit=crop&w=800&q=80",
-	"https://images.unsplash.com/photo-1509942774463-acf339cf87d5?auto=format&fit=crop&w=800&q=80",
+	"https://w1jla568cs.ufs.sh/f/jOZEJ62sgvo1dSEnXS38UzQDyw3pbxj5NER2dfKCqAiaeTZ4",
+	"https://w1jla568cs.ufs.sh/f/jOZEJ62sgvo1HY2IgAjCr8OP1s6Zek2MxtBjz7J3gWafYvGm",
+	"https://w1jla568cs.ufs.sh/f/jOZEJ62sgvo1OZpUAhisj0Kx9E3cfUeqJPzawNtp1i7Arldn",
+	"https://w1jla568cs.ufs.sh/f/jOZEJ62sgvo1qiBUq5TdePjMhgUx0NG7CZ2QmW6cwVutXrB4",
+	"https://w1jla568cs.ufs.sh/f/jOZEJ62sgvo1r8FbS36VaZTILwc0PQ58hAjNdqBisDmKEobR",
+	"https://w1jla568cs.ufs.sh/f/jOZEJ62sgvo1gF95NvCCknIPeJzQ85qvUb16dfEiKtjhFTDZ",
+	"https://w1jla568cs.ufs.sh/f/jOZEJ62sgvo1K8JmFgqXz6dZfUoSWynaNQ13kGwrcsxRB0ep",
+	"https://w1jla568cs.ufs.sh/f/jOZEJ62sgvo1eMvNvYetLGXQlqnsWAfVUD4icET8mZxkOBJa",
 ];
-const statuses: OrderStatus[] = [
-	"PENDING",
-	"PROCESSING",
-	"SHIPPED",
-	"DELIVERED",
-	"CANCELLED",
-];
+const orderStatuses = Object.values(OrderStatus);
 
 async function main(minId: number, maxId: number) {
 	console.log("🌱 Starting seed...");
@@ -70,7 +63,7 @@ async function main(minId: number, maxId: number) {
 	console.log("📂 Seeding Categories...");
 	const categories = [];
 	for (const name of categoryNames) {
-		for (const gender of genders) {
+		for (const gender of Object.values(Gender)) {
 			categories.push({
 				name: name,
 				gender: gender,
@@ -147,7 +140,7 @@ async function main(minId: number, maxId: number) {
 					Date.now() - Math.floor(Math.random() * 10000000000),
 				),
 				totalAmount: randomPrice(),
-				orderStatus: statuses[i % statuses.length],
+				orderStatus: orderStatuses[i % orderStatuses.length],
 			});
 		}
 		await prisma.order.createMany({

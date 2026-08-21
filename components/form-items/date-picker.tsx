@@ -16,7 +16,7 @@ import {
 interface DateTimePickerProps {
 	name: string;
 	label: string;
-	defaultValue?: string | Date;
+	defaultValue?: string | Date | undefined;
 	required?: boolean;
 }
 
@@ -78,7 +78,13 @@ export function DatePicker({
 		<div className="w-full flex flex-col gap-2">
 			<Label required={required}>{label}</Label>
 
-			<input type="hidden" name={name} value={date?.toISOString() ?? ""} />
+			<input
+				type="hidden"
+				name={name}
+				value={date?.toISOString() ?? ""}
+				required={required}
+				className="translate-y-12 sr-only"
+			/>
 
 			<Popover open={open} onOpenChange={setOpen}>
 				<div className="relative w-full">

@@ -7,7 +7,7 @@ export function Input({ required, ...props }: InputProps) {
 	return (
 		<div className="w-full flex flex-col gap-1.5">
 			<Label required={required}>{props.label}</Label>
-			<BaseInput {...props}></BaseInput>
+			<BaseInput required={required} {...props}></BaseInput>
 		</div>
 	);
 }

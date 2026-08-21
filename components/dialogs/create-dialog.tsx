@@ -3,11 +3,11 @@
 import { IconPlus } from "@tabler/icons-react";
 import { useMemo, useState } from "react";
 import { createEntity } from "@/actions/EntityActions";
+import DialogForm from "@/components/forms/create-edit-form";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { CurrentEntity, getEntityFields } from "@/lib/entity/current-entity";
 import { getSingleFromName } from "@/lib/entity/entity-header";
-import DialogForm from "./dialog-form";
 
 export default function CreateDialog() {
 	const entity = CurrentEntity();

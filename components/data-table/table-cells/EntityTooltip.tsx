@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { getEntityById } from "@/actions/EntityActions";
-import CellContent from "@/components/data-table/CellContent";
+import ContentCell from "@/components/data-table/table-cells/ContentCell";
 import SmallLoader from "@/components/loaders/small-loader";
 import {
 	Tooltip,
@@ -73,7 +73,7 @@ export default function EntityTooltip({
 							{title}
 						</p>
 						{loading ? (
-							<SmallLoader className="pt-1.5" iconClassName="size-4" />
+							<SmallLoader className="pt-1.5" iconClassName="size-5" />
 						) : data ? (
 							<div className="pt-1.5 flex flex-col gap-1">
 								{Object.entries(data).map(([key, value]) => (
@@ -81,7 +81,7 @@ export default function EntityTooltip({
 										<p className="max-w-28 text-xs font-medium text-muted-foreground capitalize">
 											{getHeaderFromName(key)}
 										</p>
-										<CellContent headerName={key} value={value} tooltip />
+										<ContentCell headerName={key} value={value} tooltip />
 									</div>
 								))}
 							</div>

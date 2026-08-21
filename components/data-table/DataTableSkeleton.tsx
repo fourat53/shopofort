@@ -3,6 +3,7 @@ import {
 	IMAGE_PAGE_SIZE,
 	PAGE_SIZE,
 } from "@/components/data-table/PaginationParams";
+import SortableTableHead from "@/components/data-table/table-cells/SortableTableHead";
 import DeleteDialog from "@/components/dialogs/delete-dialog";
 import EditDialog from "@/components/dialogs/edit-dialog";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -16,7 +17,6 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import type { HeaderType } from "@/lib/entity/entity-header";
-import SortableTableHead from "./SortableTableHead";
 
 interface DataTableSkeletonProps {
 	header: HeaderType;

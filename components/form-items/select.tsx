@@ -19,6 +19,9 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 
+const getLabelText = (item: SelectOption) =>
+	Array.isArray(item.label) ? item.label.join(" ") : String(item.label);
+
 type StringNumber = string | number;
 
 type SelectOption = {
@@ -33,7 +36,7 @@ interface SelectProps {
 	placeholder?: string;
 	required?: boolean;
 	value?: string | string[];
-	defaultValue?: string | string[];
+	defaultValue?: string | string[] | undefined;
 	autoDefaultValue?: boolean;
 	multiple?: boolean;
 	onValueChange?: (value: string) => void;
@@ -94,14 +97,10 @@ function Select({
 	useEffect(() => {
 		if (autoDefaultValue && !multiple && !selectedValue && items.length > 0) {
 			const firstValue = items[0].value;
-
 			setInternalValue(firstValue);
 			onValueChange?.(firstValue);
 		}
 	}, [autoDefaultValue, multiple, selectedValue, items, onValueChange]);
-
-	const getLabelText = (item: SelectOption) =>
-		Array.isArray(item.label) ? item.label.join(" ") : String(item.label);
 
 	const selectedItem = multiple
 		? undefined
@@ -237,13 +236,21 @@ function Select({
 						selectedValues.map((itemValue) => (
 							<input
 								key={itemValue}
-								type="hidden"
 								name={name}
 								value={itemValue}
+								required={required}
+								className="translate-y-7 sr-only"
+								onChange={(e) => handleSelect(e.target.value)}
 							/>
 						))
 					) : (
-						<input type="hidden" name={name} value={selectedValue} />
+						<input
+							name={name}
+							value={selectedValue}
+							required={required}
+							className="translate-y-7 sr-only"
+							onChange={(e) => handleSelect(e.target.value)}
+						/>
 					))}
 
 				<Popover open={open} onOpenChange={setOpen}>
@@ -254,7 +261,7 @@ function Select({
 							aria-expanded={open}
 							disabled={disabled}
 							className={cn(
-								"relative border border-border/90 bg-input/20 dark:bg-input/30 rounded-md px-3 h-7 w-full justify-between disabled:cursor-not-allowed",
+								"relative border border-border/80 bg-input/20 dark:bg-input/30 rounded-md px-3 h-7 w-full justify-between disabled:cursor-not-allowed",
 								(multiple ? selectedValues.length === 0 : !selectedValue) &&
 									"text-muted-foreground",
 								selectedItem &&

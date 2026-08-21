@@ -4,6 +4,7 @@ import { IconEdit } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { updateEntities } from "@/actions/EntityActions";
+import DialogForm from "@/components/forms/create-edit-form";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import {
@@ -12,13 +13,12 @@ import {
 	type ValueType,
 } from "@/lib/entity/current-entity";
 import { getPluralFromName } from "@/lib/entity/entity-header";
-import DialogForm from "./dialog-form";
 
 interface BulkEditDialogProps<T> {
 	rows: T[];
 }
 
-export default function BulkEditDialog<
+export default function EditBulkDialog<
 	T extends Record<string, unknown> & { id: number | string },
 >({ rows }: BulkEditDialogProps<T>) {
 	const router = useRouter();

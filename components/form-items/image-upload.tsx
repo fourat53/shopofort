@@ -90,7 +90,6 @@ export function ImageUpload({
 				{label}
 			</Label>
 
-			{/* Hidden File Input */}
 			<input
 				name={name}
 				type="file"
@@ -98,7 +97,8 @@ export function ImageUpload({
 				onChange={handleImageChange}
 				multiple
 				accept="image/*"
-				className="hidden"
+				className="sr-only"
+				required={required}
 			/>
 
 			<div
@@ -107,7 +107,6 @@ export function ImageUpload({
 					images.length === 0 && "grid-cols-1",
 				)}
 			>
-				{/* Image Previews */}
 				{images.map((item, idx) => (
 					<ImagePreview
 						key={
@@ -120,7 +119,6 @@ export function ImageUpload({
 					/>
 				))}
 
-				{/* Clickable Upload Dropzone */}
 				<button
 					type="button"
 					onClick={handleDivClick}

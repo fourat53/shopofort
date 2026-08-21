@@ -18,7 +18,7 @@ import {
 import { CurrentEntity } from "@/lib/entity/current-entity";
 import { getPluralFromName } from "@/lib/entity/entity-header";
 
-export default function BulkDeleteDialog({
+export default function DeleteBulkDialog({
 	ids,
 }: {
 	ids: (number | string)[];
