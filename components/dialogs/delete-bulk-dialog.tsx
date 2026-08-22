@@ -16,13 +16,9 @@ import {
 	DialogTrigger,
 } from "@/components/ui/dialog";
 import { CurrentEntity } from "@/lib/entity/current-entity";
-import { getPluralFromName } from "@/lib/entity/entity-header";
+import { getPluralName } from "@/lib/entity/entity-header";
 
-export default function DeleteBulkDialog({
-	ids,
-}: {
-	ids: (number | string)[];
-}) {
+export default function DeleteDialog({ ids }: { ids: (number | string)[] }) {
 	const router = useRouter();
 	const entity = CurrentEntity();
 
@@ -53,7 +49,7 @@ export default function DeleteBulkDialog({
 					disabled={loading || !entity || ids.length === 0}
 					className="rounded-xl size-6 p-0 text-red-500 hover:text-red-700"
 				>
-					<IconTrash className="h-4 w-4" />
+					<IconTrash className="size-4" />
 				</Button>
 			</DialogTrigger>
 
@@ -71,7 +67,7 @@ export default function DeleteBulkDialog({
 					<DialogDescription className="pt-2">
 						This action cannot be undone. This will permanently delete the{" "}
 						<span className="font-semibold text-foreground">
-							{ids.length} selected {getPluralFromName(entity)}
+							{ids.length} selected {getPluralName(entity)}
 						</span>{" "}
 						and remove their data from our servers. This is the list of their
 						IDs:

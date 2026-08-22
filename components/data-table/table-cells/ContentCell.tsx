@@ -97,7 +97,7 @@ export default function ContentCell({
 				</div>
 			) : isDate(value) ? (
 				formatDateTime(value)
-			) : value === null || value === undefined || value === "" ? (
+			) : value == null || value === "" ? (
 				"-"
 			) : (
 				String(value)

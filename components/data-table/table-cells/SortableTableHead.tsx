@@ -10,7 +10,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useTransition } from "react";
 import { sortHref } from "@/components/data-table/PaginationParams";
 import { TableHead } from "@/components/ui/table";
-import { getHeaderFromName } from "@/lib/entity/entity-header";
+import { getFieldName } from "@/lib/entity/entity-header";
 
 interface SortableTableHeadProps {
 	name: string;
@@ -40,7 +40,7 @@ export default function SortableTableHead({
 	return (
 		<TableHead border aria-disabled={isPending} onClick={handleClick}>
 			<div className="relative w-full">
-				<div>{getHeaderFromName(name)}</div>
+				<div>{getFieldName(name)}</div>
 				<div
 					className={clsx(
 						"absolute right-0 top-1/2 -translate-y-1/2",

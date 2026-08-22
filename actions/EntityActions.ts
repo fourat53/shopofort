@@ -6,10 +6,11 @@ import {
 	getUsers,
 	kindeIssuerUrl,
 	mapUser,
+	updateUser,
 } from "@/actions/UserActions";
 import type { SelectOption } from "@/components/form-items/select";
 import type { EntityType } from "@/lib/entity/current-entity";
-import { getFormEntity, getFormUser } from "@/lib/entity/entity-form";
+import { getFormEntity } from "@/lib/entity/entity-form";
 import { prisma } from "@/lib/prisma";
 
 const tagMap: Record<string, string> = {
@@ -92,45 +93,6 @@ async function createEntity(entity: EntityType, formData: FormData) {
 	}
 }
 
-async function updateEntity(
-	entity: EntityType,
-	id: number | string,
-	formData: FormData,
-) {
-	try {
-		if (typeof id === "string" && entity === "user") {
-			const token = await getKindeToken();
-
-			const { picture, first_name, last_name, is_suspended } =
-				getFormUser(formData);
-
-			await fetch(`${kindeIssuerUrl}/api/v1/user?id=${id}`, {
-				method: "PATCH",
-				headers: {
-					Authorization: `Bearer ${token}`,
-					"Content-Type": "application/json",
-					Accept: "application/json",
-				},
-				body: JSON.stringify({
-					picture,
-					given_name: first_name,
-					family_name: last_name,
-					is_suspended,
-				}),
-			});
-		} else if (typeof id === "number") {
-			// @ts-expect-error - prisma dynamic model access
-			await prisma[entity].update({
-				where: { id },
-				data: getFormEntity(entity, formData),
-			});
-			updateTag("products");
-		}
-	} catch (error) {
-		console.error(error);
-	}
-}
-
 async function getFilterOptions(field: string): Promise<SelectOption[]> {
 	try {
 		switch (field) {
@@ -194,6 +156,28 @@ async function deleteEntities(entity: EntityType, ids: (number | string)[]) {
 	await Promise.allSettled(ids.map((id) => deleteEntity(entity, id)));
 }
 
+async function updateEntity(
+	entity: EntityType,
+	id: number | string,
+	formData: FormData,
+) {
+	try {
+		if (entity === "user") {
+			await updateUser(id as string, formData);
+		} else {
+			const data = getFormEntity(entity, formData);
+			// @ts-expect-error - prisma dynamic model access
+			await prisma[entity].update({
+				where: { id },
+				data,
+			});
+			updateTag("products");
+		}
+	} catch (error) {
+		console.error(error);
+	}
+}
+
 async function updateEntities(
 	entity: EntityType,
 	ids: (number | string)[],
@@ -202,7 +186,7 @@ async function updateEntities(
 	if (ids.length === 0) return;
 	if (entity === "user") {
 		await Promise.allSettled(
-			ids.map((id) => updateEntity(entity, id, formData)),
+			ids.map((id) => updateUser(id as string, formData)),
 		);
 	} else {
 		const data = getFormEntity(entity, formData);

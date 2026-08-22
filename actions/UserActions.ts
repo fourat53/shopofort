@@ -5,6 +5,7 @@ import {
 	IMAGE_PAGE_SIZE,
 } from "@/components/data-table/PaginationParams";
 import { checkedEnvVar } from "@/lib/checked-env-var";
+import { getFormUser } from "@/lib/entity/entity-form";
 import { USERS_HEADER } from "@/lib/entity/entity-header";
 import type { ParameterType, PreferredUser, User } from "@/lib/entity/types";
 
@@ -34,6 +35,74 @@ function getParam(
 	const value = searchParams[name];
 
 	return Array.isArray(value) ? value[0] : value;
+}
+
+function filterUsers(
+	users: User[],
+	searchParams: ParameterType,
+	sortBy?: string,
+	order?: "asc" | "desc",
+) {
+	const id = getParam(searchParams, "id")?.toLowerCase();
+	const email = getParam(searchParams, "email")?.toLowerCase();
+	const firstName = getParam(searchParams, "first_name")?.toLowerCase();
+	const lastName = getParam(searchParams, "last_name")?.toLowerCase();
+
+	const filteredUsers = users.filter((user) => {
+		if (id && !user.id.toLowerCase().includes(id)) return false;
+		if (email && !user.email?.toLowerCase().includes(email)) return false;
+		if (firstName && !user.first_name?.toLowerCase().includes(firstName))
+			return false;
+		if (lastName && !user.last_name?.toLowerCase().includes(lastName))
+			return false;
+		return true;
+	});
+
+	if (!sortBy || !order) return filteredUsers;
+
+	const sortableColumns = new Set(USERS_HEADER.map((header) => header.name));
+
+	if (!sortableColumns.has(sortBy)) return filteredUsers;
+
+	return filteredUsers.toSorted((a, b) => {
+		const aValue = a[sortBy as keyof User];
+		const bValue = b[sortBy as keyof User];
+
+		const aString = String(aValue ?? "").toLowerCase();
+		const bString = String(bValue ?? "").toLowerCase();
+
+		const comparison = aString.localeCompare(bString, undefined, {
+			numeric: true,
+			sensitivity: "base",
+		});
+
+		return order === "desc" ? -comparison : comparison;
+	});
+}
+
+function getFilteredUsers(
+	filterParams: ParameterType,
+	sortBy?: string,
+	order?: "asc" | "desc",
+) {
+	const cacheKey = [
+		"kinde-filtered-users",
+		JSON.stringify(filterParams),
+		JSON.stringify({ sortBy, order }),
+	];
+
+	return unstable_cache(
+		async () => {
+			const users = await getUsers();
+			return filterUsers(users, filterParams, sortBy, order);
+		},
+		cacheKey,
+		{
+			revalidate: Object.keys(filterParams).length
+				? FILTER_CACHE_SECONDS
+				: CACHE_SECONDS,
+		},
+	)();
 }
 
 async function getKindeToken() {
@@ -95,73 +164,6 @@ async function getUsers(): Promise<User[]> {
 	return allUsers;
 }
 
-function filterUsers(
-	users: User[],
-	searchParams: ParameterType,
-	sortBy: string = "id",
-	order: "asc" | "desc" = "asc",
-) {
-	const id = getParam(searchParams, "id")?.toLowerCase();
-	const email = getParam(searchParams, "email")?.toLowerCase();
-	const firstName = getParam(searchParams, "first_name")?.toLowerCase();
-	const lastName = getParam(searchParams, "last_name")?.toLowerCase();
-
-	const filteredUsers = users.filter((user) => {
-		if (id && !user.id.toLowerCase().includes(id)) return false;
-		if (email && !user.email?.toLowerCase().includes(email)) return false;
-		if (firstName && !user.first_name?.toLowerCase().includes(firstName))
-			return false;
-		if (lastName && !user.last_name?.toLowerCase().includes(lastName))
-			return false;
-		return true;
-	});
-
-	const sortableColumns = new Set(USERS_HEADER.map((header) => header.name));
-
-	if (!sortableColumns.has(sortBy)) {
-		return filteredUsers;
-	}
-
-	return filteredUsers.toSorted((a, b) => {
-		const aValue = a[sortBy as keyof User];
-		const bValue = b[sortBy as keyof User];
-
-		const aString = String(aValue ?? "").toLowerCase();
-		const bString = String(bValue ?? "").toLowerCase();
-
-		const comparison = aString.localeCompare(bString, undefined, {
-			numeric: true,
-			sensitivity: "base",
-		});
-
-		return order === "desc" ? -comparison : comparison;
-	});
-}
-
-function getFilteredUsers(
-	filterParams: ParameterType,
-	sortBy: string = "id",
-	order: "asc" | "desc" = "asc",
-) {
-	const cacheKey = [
-		"kinde-filtered-users",
-		JSON.stringify(filterParams),
-		JSON.stringify({ sortBy, order }),
-	];
-	return unstable_cache(
-		async () => {
-			const users = await getUsers();
-			return filterUsers(users, filterParams, sortBy, order);
-		},
-		cacheKey,
-		{
-			revalidate: Object.keys(filterParams).length
-				? FILTER_CACHE_SECONDS
-				: CACHE_SECONDS,
-		},
-	)();
-}
-
 async function getUsersPage(
 	page: number,
 	filterParams: ParameterType = {},
@@ -178,6 +180,22 @@ async function getUserCount(filterParams: ParameterType = {}) {
 	return users.length;
 }
 
+async function updateUser(id: string, formData: FormData) {
+	const token = await getKindeToken();
+
+	const data = getFormUser(formData);
+
+	await fetch(`${kindeIssuerUrl}/api/v1/user?id=${id}`, {
+		method: "PATCH",
+		headers: {
+			Authorization: `Bearer ${token}`,
+			"Content-Type": "application/json",
+			Accept: "application/json",
+		},
+		body: JSON.stringify(data),
+	});
+}
+
 export {
 	getFilteredUsers,
 	getKindeToken,
@@ -186,4 +204,5 @@ export {
 	getUsersPage,
 	kindeIssuerUrl,
 	mapUser,
+	updateUser,
 };

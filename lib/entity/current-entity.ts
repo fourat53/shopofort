@@ -5,7 +5,7 @@ type FieldCategory = "filter" | "create" | "edit";
 
 type FieldType = "string" | "number" | "date" | "enum" | "foreignKey" | "image";
 
-type ValueType = string | string[] | number | Date | undefined;
+type ValueType = string | number | Date | undefined;
 
 type EntityField = (typeof entityFields)[string][number];
 
@@ -29,7 +29,7 @@ const entityFields: Record<string, FieldConfig[]> = {
 		{
 			name: "email",
 			type: "string",
-			category: ["filter", "edit"],
+			category: ["filter"],
 		},
 		{
 			name: "first_name",
@@ -104,7 +104,6 @@ const entityFields: Record<string, FieldConfig[]> = {
 			category: ["filter", "create", "edit"],
 			defaultValue: 1,
 			required: true,
-			step: "0.01",
 		},
 		{
 			name: "userId",
@@ -135,7 +134,7 @@ const entityFields: Record<string, FieldConfig[]> = {
 		{
 			name: "totalPrice",
 			type: "number",
-			category: ["filter", "create", "edit"],
+			category: ["filter"],
 			required: true,
 			step: "0.01",
 		},
@@ -170,7 +169,6 @@ const entityFields: Record<string, FieldConfig[]> = {
 			category: ["filter", "create", "edit"],
 			required: true,
 			defaultValue: 1,
-			step: "0.01",
 		},
 		{
 			name: "orderStatus",
@@ -240,6 +238,16 @@ const entityFields: Record<string, FieldConfig[]> = {
 	],
 };
 
+function getEntityFields(
+	entity: EntityType,
+	type: FieldCategory,
+): FieldConfig[] {
+	return entity
+		? (entityFields[entity]?.filter((field) => field.category.includes(type)) ??
+				[])
+		: [];
+}
+
 type EntityType =
 	| "user"
 	| "cart"
@@ -277,16 +285,6 @@ function TooltipEntity(headerName: string): EntityType {
 	else if (headerName === "categoryId") entity = "category";
 
 	return entity;
-}
-
-function getEntityFields(
-	entity: EntityType,
-	type: FieldCategory,
-): FieldConfig[] {
-	return entity
-		? (entityFields[entity]?.filter((field) => field.category.includes(type)) ??
-				[])
-		: [];
 }
 
 export {

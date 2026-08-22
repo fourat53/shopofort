@@ -1,13 +1,20 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import {
 	type Dispatch,
 	type SetStateAction,
 	useEffect,
+	useMemo,
 	useRef,
 	useState,
 } from "react";
-import { getFilterOptions } from "@/actions/EntityActions";
+import {
+	createEntity,
+	getFilterOptions,
+	updateEntities,
+	updateEntity,
+} from "@/actions/EntityActions";
 import { DatePicker } from "@/components/form-items/date-picker";
 import {
 	type ImageItem,
@@ -22,72 +29,58 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
-import type {
-	EntityField,
-	FieldCategory,
-	ValueType,
+import {
+	type EntityType,
+	type FieldConfig,
+	getEntityFields,
+	type ValueType,
 } from "@/lib/entity/current-entity";
-import { getHeaderFromName } from "@/lib/entity/entity-header";
+import {
+	getFieldName,
+	getPluralName,
+	getSingleName,
+} from "@/lib/entity/entity-header";
 import { addImagesToForm } from "@/lib/uploadthing/client";
 
-const toArrayValue = (value: ValueType): string[] | undefined => {
-	if (value === undefined) return undefined;
-	if (Array.isArray(value)) return value.map(String);
-	return [String(value)];
-};
-
-const toDateValue = (value: ValueType): string | Date | undefined => {
-	if (value === undefined || Array.isArray(value)) return undefined;
-	if (typeof value === "number") return undefined;
-	return value;
-};
-
-interface DialogFormProps {
-	entity: string;
-	label: string;
-	fields: EntityField[];
-	loading: boolean;
-	open: boolean;
+interface DialogFormProps<T> {
+	entity: EntityType;
 	setOpen: Dispatch<SetStateAction<boolean>>;
-	handleSubmit: (formData: FormData) => void;
-	type: FieldCategory;
-	rowImages?: string[];
-	getValue: (field: EntityField, paramName?: string) => ValueType;
+	rows?: T[];
 }
 
-export default function CreateEditForm({
-	entity,
-	label,
-	fields,
-	loading,
-	open,
-	setOpen,
-	handleSubmit,
-	type,
-	rowImages,
-	getValue,
-}: DialogFormProps) {
+export default function CreateEditForm<
+	T extends Record<string, unknown> & { id: number | string },
+>({ entity, setOpen, rows }: DialogFormProps<T>) {
+	const router = useRouter();
+
+	const [loading, setLoading] = useState<boolean>(false);
 	const [images, setImages] = useState<ImageItem[]>([]);
 	const [optionsCache, setOptionsCache] = useState<
 		Record<string, SelectOption[]>
 	>({});
 
+	const ids = rows?.map((row) => row.id);
+	const row = rows?.[0] ?? undefined;
+
 	const fetchedFields = useRef<Set<string>>(new Set());
+	const fields = useMemo(() => getEntityFields(entity, "edit"), [entity]);
+
+	const single = rows?.length === 1;
+	const label = ids
+		? single
+			? "Update " + getSingleName(entity)
+			: "Update the " + rows?.length + " selected " + getPluralName(entity)
+		: "Create " + getSingleName(entity);
 
 	useEffect(() => {
-		if (!open || type === "filter" || entity !== "product") return;
-
-		if (type === "create") {
-			setImages([]);
+		if (entity !== "product") return;
+		else if (ids) {
+			setImages(Array.isArray(row?.images) ? row.images : []);
 			return;
-		}
-
-		if (type === "edit") setImages(Array.isArray(rowImages) ? rowImages : []);
-	}, [open, type, entity, rowImages]);
+		} else setImages([]);
+	}, [entity, row, ids]);
 
 	useEffect(() => {
-		if (!open || !entity) return;
-
 		async function loadOptions() {
 			for (const field of fields) {
 				if (
@@ -108,18 +101,32 @@ export default function CreateEditForm({
 				}
 			}
 		}
-
 		loadOptions();
-	}, [open, entity, fields]);
+	}, [fields]);
 
-	async function onSubmit(e: React.SubmitEvent<HTMLFormElement>) {
+	async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
 		e.preventDefault();
 		const formData = new FormData(e.currentTarget);
-		await addImagesToForm(formData, images);
-		await handleSubmit(formData);
+		setLoading(true);
+		try {
+			await addImagesToForm(formData, images);
+			if (ids) {
+				single
+					? await updateEntity(entity, ids[0], formData)
+					: await updateEntities(entity, ids, formData);
+				entity === "user" && router.refresh();
+			} else await createEntity(entity, formData);
+		} catch (error) {
+			console.error("Error creating entity:", error);
+		} finally {
+			setLoading(false);
+			setOpen(false);
+		}
 	}
 
-	const filter = type === "filter";
+	function getValue(field: FieldConfig) {
+		return ids ? (row?.[field.name] as ValueType) : field.defaultValue;
+	}
 
 	return (
 		<DialogContent
@@ -127,128 +134,75 @@ export default function CreateEditForm({
 			onEscapeKeyDown={(e) => loading && e.preventDefault()}
 			className="w-180 max-w-180"
 		>
-			<form onSubmit={onSubmit} className="flex flex-col gap-4">
+			<form onSubmit={handleSubmit} className="flex flex-col gap-4">
 				<DialogHeader>
 					<DialogTitle>{label}</DialogTitle>
 				</DialogHeader>
-
 				{fields.map((field) => {
 					const value = getValue(field);
 					return field.type === "string" ? (
 						<Input
 							key={field.name}
 							name={field.name}
-							label={getHeaderFromName(field.name)}
+							label={getFieldName(field.name)}
 							defaultValue={value?.toString() || undefined}
-							required={!filter && field.required}
+							required={field.required}
 						/>
 					) : field.type === "number" ? (
-						filter ? (
-							<div key={field.name} className="flex w-full gap-2">
-								<Input
-									name={`${field.name}From`}
-									label={`${getHeaderFromName(field.name)} From`}
-									type="number"
-									step={field.step ?? "1"}
-									defaultValue={
-										getValue(field, `${field.name}From`)?.toString() ||
-										undefined
-									}
-								/>
-								<Input
-									name={`${field.name}To`}
-									label={`${getHeaderFromName(field.name)} To`}
-									type="number"
-									step={field.step ?? "1"}
-									defaultValue={
-										getValue(field, `${field.name}To`)?.toString() || undefined
-									}
-								/>
-							</div>
-						) : (
-							<Input
-								key={field.name}
-								name={field.name}
-								label={getHeaderFromName(field.name)}
-								type="number"
-								step={field.step ?? "1"}
-								defaultValue={value?.toString() || undefined}
-								required={!filter && field.required}
-							/>
-						)
-					) : field.type === "date" ? (
-						filter ? (
-							<div key={field.name} className="w-full flex gap-2">
-								<DatePicker
-									name={`${field.name}From`}
-									label={`${getHeaderFromName(field.name)} From`}
-									defaultValue={toDateValue(
-										getValue(field, `${field.name}From`),
-									)}
-								/>
-								<DatePicker
-									name={`${field.name}To`}
-									label={`${getHeaderFromName(field.name)} To`}
-									defaultValue={toDateValue(getValue(field, `${field.name}To`))}
-								/>
-							</div>
-						) : (
-							<DatePicker
-								key={field.name}
-								name={field.name}
-								label={getHeaderFromName(field.name)}
-								defaultValue={toDateValue(value)}
-								required={field.required}
-							/>
-						)
-					) : field.type === "enum" ? (
-						<Select
+						<Input
 							key={field.name}
 							name={field.name}
-							label={getHeaderFromName(field.name)}
-							placeholder={filter ? "Select options" : "Select an option"}
-							multiple={filter}
-							defaultValue={
-								filter
-									? toArrayValue(getValue(field, field.name))
-									: value?.toString() || "ALL"
-							}
-							required={!filter && field.required}
-							items={[
-								...(filter ? [] : [{ label: "Any", value: "ALL" }]),
-								...(field.options?.map((o) => ({ label: o, value: o })) ?? []),
-							]}
+							label={getFieldName(field.name)}
+							type="number"
+							step={field.step ?? "1"}
+							defaultValue={value?.toString() || undefined}
+							required={field.required}
+						/>
+					) : field.type === "date" ? (
+						<DatePicker
+							key={field.name}
+							name={field.name}
+							label={getFieldName(field.name)}
+							defaultValue={value as string | Date | undefined}
+							required={field.required}
 						/>
 					) : field.type === "image" ? (
 						<ImageUpload
 							key={field.name}
 							name={field.name}
-							label={getHeaderFromName(field.name)}
-							images={images ?? []}
-							required={!filter && field.required}
-							onChange={setImages ?? (() => {})}
+							label={getFieldName(field.name)}
+							images={images}
+							onChange={setImages}
+							required={field.required}
+						/>
+					) : field.type === "enum" ? (
+						<Select
+							key={field.name}
+							name={field.name}
+							label={getFieldName(field.name)}
+							placeholder={"Select an option"}
+							defaultValue={value?.toString() || "NONE"}
+							required={field.required}
+							items={[
+								{ label: "None", value: "NONE" },
+								...(field.options?.map((o) => ({ label: o, value: o })) ?? []),
+							]}
 						/>
 					) : field.type === "foreignKey" ? (
 						<Select
 							key={field.name}
 							name={field.name}
-							label={getHeaderFromName(field.name)}
-							placeholder={filter ? "Select options" : "Select an option"}
-							required={!filter && field.required}
-							multiple={filter}
-							defaultValue={
-								filter
-									? toArrayValue(getValue(field, field.name))
-									: value?.toString() || "ALL"
-							}
+							label={getFieldName(field.name)}
+							placeholder={"Select an option"}
+							required={field.required}
+							defaultValue={value?.toString() || "NONE"}
 							items={[
-								...(filter ? [] : [{ label: "Any", value: "ALL" }]),
+								{ label: "None", value: "NONE" },
 								...(optionsCache[field.name] ?? []),
 							]}
 						/>
 					) : null;
 				})}
-
 				<DialogFooter className="pt-2">
 					<Button
 						variant="outline"
@@ -258,7 +212,7 @@ export default function CreateEditForm({
 						Cancel
 					</Button>
 					<Button type="submit" loading={loading}>
-						{label.split(" ")[0]}
+						{ids ? "Update" : "Create"}
 					</Button>
 				</DialogFooter>
 			</form>

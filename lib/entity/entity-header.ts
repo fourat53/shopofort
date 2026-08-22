@@ -62,7 +62,7 @@ const USERS_HEADER: HeaderType = [
 	{ name: "updated_on", width: "160px" },
 ];
 
-function getHeaderFromName(name: string) {
+function getFieldName(name: string) {
 	return name
 		.replace(/([a-z0-9])([A-Z])/g, "$1 $2")
 		.replace(/[_-]+/g, " ")
@@ -70,7 +70,7 @@ function getHeaderFromName(name: string) {
 		.replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
-function getSingleFromName(name: string) {
+function getSingleName(name: string) {
 	return name
 		.replace(/([a-z0-9])([A-Z])/g, "$1 $2")
 		.replace(/[_-]+/g, " ")
@@ -78,8 +78,8 @@ function getSingleFromName(name: string) {
 		.toLowerCase();
 }
 
-function getPluralFromName(name: string) {
-	const formatted = getSingleFromName(name);
+function getPluralName(name: string) {
+	const formatted = getSingleName(name);
 	return formatted.endsWith("y")
 		? `${formatted.slice(0, -1)}ies`
 		: `${formatted}s`;
@@ -89,9 +89,9 @@ export {
 	CART_ITEMS_HEADER,
 	CARTS_HEADER,
 	CATEGORIES_HEADER,
-	getHeaderFromName,
-	getPluralFromName,
-	getSingleFromName,
+	getFieldName,
+	getPluralName,
+	getSingleName,
 	type HeaderType,
 	ORDER_ITEMS_HEADER,
 	ORDERS_HEADER,

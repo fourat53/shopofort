@@ -1,9 +1,10 @@
 "use client";
 
 import { IconTrash } from "@tabler/icons-react";
+import { clsx } from "clsx";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
-import { deleteEntity } from "@/actions/EntityActions";
+import { deleteEntities, deleteEntity } from "@/actions/EntityActions";
 import { Button } from "@/components/ui/button";
 import {
 	Dialog,
@@ -15,15 +16,10 @@ import {
 	DialogTrigger,
 } from "@/components/ui/dialog";
 import { CurrentEntity } from "@/lib/entity/current-entity";
-import { getSingleFromName } from "@/lib/entity/entity-header";
+import { getPluralName, getSingleName } from "@/lib/entity/entity-header";
+import EntityTooltip from "../data-table/table-cells/EntityTooltip";
 
-export default function DeleteDialog({
-	id,
-	disabled,
-}: {
-	id: number | string;
-	disabled?: boolean;
-}) {
+export default function DeleteDialog({ ids }: { ids?: (number | string)[] }) {
 	const router = useRouter();
 	const entity = CurrentEntity();
 
@@ -31,35 +27,39 @@ export default function DeleteDialog({
 	const [loading, setLoading] = useState<boolean>(false);
 	const DeleteDialogRef = useRef<HTMLButtonElement>(null);
 
+	const single = ids?.length === 1;
+
 	const handleDelete = async (e: React.MouseEvent) => {
 		e.preventDefault();
 		setLoading(true);
 		try {
-			await deleteEntity(entity, id);
-
+			single
+				? await deleteEntity(entity, ids[0])
+				: await deleteEntities(entity, ids as (number | string)[]);
 			setOpen(false);
 			entity === "user" && router.refresh();
 		} catch (error) {
-			console.error("Failed to delete entity", error);
+			console.error("Failed to delete entities", error);
 		} finally {
 			setLoading(false);
 		}
 	};
+
+	if (!entity || !ids || ids.length === 0) return null;
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
 				<Button
 					variant="ghost"
-					disabled={disabled || loading || !entity}
+					disabled={loading || !entity || ids.length === 0}
 					className="rounded-xl size-6 p-0 text-red-500 hover:text-red-700"
 				>
-					<IconTrash className="h-4 w-4" />
+					<IconTrash className="size-4" />
 				</Button>
 			</DialogTrigger>
-
 			<DialogContent
-				className="w-90"
+				className="w-100"
 				onPointerDownOutside={(e) => loading && e.preventDefault()}
 				onEscapeKeyDown={(e) => loading && e.preventDefault()}
 				onOpenAutoFocus={(e) => {
@@ -69,15 +69,37 @@ export default function DeleteDialog({
 			>
 				<DialogHeader>
 					<DialogTitle>Are you absolutely sure?</DialogTitle>
-					<DialogDescription className="pt-2 pb-1">
-						This action cannot be undone. This will permanently delete this{" "}
-						<span className="font-semibold text-foreground">
-							{getSingleFromName(entity)}
-						</span>{" "}
-						and remove its data from our servers.
-					</DialogDescription>
 				</DialogHeader>
-
+				<DialogDescription>
+					This action cannot be undone. This will permanently delete the{" "}
+					{single ? (
+						<span className="font-semibold text-foreground">
+							{getSingleName(entity)} with Id {ids[0]}.
+						</span>
+					) : (
+						<>
+							<span className="font-semibold text-foreground">
+								{ids.length} selected {getPluralName(entity)}
+							</span>{" "}
+							and remove their data from our servers. This is the list of their
+							Ids:
+							<div
+								className={clsx(
+									"py-3 grid gap-1",
+									entity === "user" ? "grid-cols-2" : "grid-cols-5",
+								)}
+							>
+								{ids.map((id) => (
+									<EntityTooltip
+										key={id}
+										idValue={id}
+										headerName={entity + "Id"}
+									/>
+								))}
+							</div>
+						</>
+					)}
+				</DialogDescription>
 				<DialogFooter>
 					<Button
 						variant="outline"
@@ -92,7 +114,7 @@ export default function DeleteDialog({
 						onClick={handleDelete}
 						loading={loading}
 					>
-						Delete
+						Delete{!single && " All"}
 					</Button>
 				</DialogFooter>
 			</DialogContent>

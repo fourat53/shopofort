@@ -1,7 +1,7 @@
 "use client";
 
-import DeleteBulkDialog from "@/components/dialogs/delete-bulk-dialog";
-import EditBulkDialog from "@/components/dialogs/edit-bulk-dialog";
+import DeleteDialog from "@/components/dialogs/delete-dialog";
+import EditDialog from "@/components/dialogs/edit-dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useSelection } from "@/hooks/use-selection";
 
@@ -9,14 +9,14 @@ type CheckboxType = "select-all" | "select-one" | "actions";
 
 interface CheckBoxCellProps<T extends { id: number | string }> {
 	rows: T[];
-	row?: T;
 	type: CheckboxType;
+	id?: number | string;
 }
 
 export default function CheckBoxCell<T extends { id: number | string }>({
 	rows,
-	row,
 	type,
+	id,
 }: CheckBoxCellProps<T>) {
 	const {
 		selectedIds,
@@ -39,19 +39,19 @@ export default function CheckBoxCell<T extends { id: number | string }>({
 	if (type === "actions") {
 		return someSelected ? (
 			<div className="flex items-center justify-center gap-1.5">
-				<EditBulkDialog rows={selectedRows} />
-				<DeleteBulkDialog ids={[...selectedIds]} />
+				<EditDialog rows={selectedRows} />
+				<DeleteDialog ids={[...selectedIds]} />
 			</div>
 		) : (
 			"Actions"
 		);
 	}
 
-	if (type === "select-one" && row) {
+	if (type === "select-one" && id) {
 		return (
 			<Checkbox
-				checked={selectedIds.has(row.id)}
-				onCheckedChange={(checked) => toggleRow(row.id, checked === true)}
+				checked={selectedIds.has(id)}
+				onCheckedChange={(checked) => toggleRow(id, checked === true)}
 			/>
 		);
 	}

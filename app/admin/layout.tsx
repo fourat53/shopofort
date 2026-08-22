@@ -1,7 +1,7 @@
 import CreateDialog from "@/components/dialogs/create-dialog";
 import FilterDialog from "@/components/dialogs/filter-dialog";
 import AdminSidebar from "@/components/sidebar/AdminSidebar";
-import DocumentTitle from "@/components/title/DocumentTitle";
+import PageTitle from "@/components/title/PageTitle";
 import {
 	SidebarInset,
 	SidebarProvider,
@@ -21,8 +21,8 @@ export default async function AdminLayout({
 					<div className="h-[calc(100vh-38px)] bg-sidebar rounded-3xl border">
 						<div className="p-2.5 flex items-center justify-between">
 							<div className="text-xl font-semibold text-chart-2 flex items-center gap-2">
-								<SidebarTrigger size="lg" className="size-7.5 rounded-xl" />
-								<DocumentTitle />
+								<SidebarTrigger />
+								<PageTitle />
 							</div>
 							<div className="flex gap-1.5">
 								<FilterDialog />

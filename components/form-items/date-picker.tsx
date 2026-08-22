@@ -96,7 +96,7 @@ export function DatePicker({
 						>
 							<span className="truncate">{displayValue}</span>
 							{!date && (
-								<IconCalendar className="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+								<IconCalendar className="absolute right-2 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
 							)}
 						</Button>
 					</PopoverTrigger>
@@ -107,7 +107,7 @@ export function DatePicker({
 							aria-label="Clear date"
 							className="absolute right-0.5 top-1/2 -translate-y-1/2 hover:bg-muted rounded-sm p-1 transition-colors text-muted-foreground hover:text-foreground z-10"
 						>
-							<IconX className="h-4 w-4" stroke={2} />
+							<IconX className="size-4" stroke={2} />
 						</button>
 					)}
 				</div>

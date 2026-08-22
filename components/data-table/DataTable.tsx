@@ -51,7 +51,7 @@ export default function DataTableLayout<T extends { id: number | string }>({
 				{rows.map((row) => (
 					<TableRow key={row.id}>
 						<TableCell className="w-8 min-w-8 max-w-8">
-							<CheckBoxCell<T> rows={rows} row={row} type="select-one" />
+							<CheckBoxCell<T> rows={rows} id={row.id} type="select-one" />
 						</TableCell>
 						{Object.values(row).map((value, cIndex) => (
 							<TableCell
@@ -78,8 +78,8 @@ export default function DataTableLayout<T extends { id: number | string }>({
 						))}
 						<TableCell border className="py-0.5 w-26 max-w-26 min-w-26">
 							<div className="flex items-center justify-center gap-1.5">
-								<EditDialog<T> row={row} />
-								<DeleteDialog id={row.id} />
+								<EditDialog<T> rows={[row]} />
+								<DeleteDialog ids={[row.id]} />
 							</div>
 						</TableCell>
 					</TableRow>

@@ -65,6 +65,7 @@ function SidebarProvider({
 	const [_open, _setOpen] = React.useState<boolean>(defaultOpen);
 
 	const open = openProp ?? _open;
+
 	const setOpen = React.useCallback(
 		(value: boolean | ((value: boolean) => boolean)) => {
 			const openState = typeof value === "function" ? value(open) : value;
@@ -242,8 +243,8 @@ function SidebarTrigger({
 			data-sidebar="trigger"
 			data-slot="sidebar-trigger"
 			variant="ghost"
-			size="icon-sm"
-			className={cn("hover:border border-border", className)}
+			size="icon-lg"
+			className={cn("size-8 rounded-xl hover:border border-border", className)}
 			onClick={(event) => {
 				onClick?.(event);
 				toggleSidebar();

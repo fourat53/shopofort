@@ -8,7 +8,6 @@ import FilterForm from "@/components/forms/filter-form";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { CurrentEntity, getEntityFields } from "@/lib/entity/current-entity";
-import { getPluralFromName } from "@/lib/entity/entity-header";
 
 export default function FilterDialog() {
 	const entity = CurrentEntity();
@@ -16,8 +15,8 @@ export default function FilterDialog() {
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
 
-	const [open, setOpen] = useState<boolean>(false);
 	const [isPending, startTransition] = useTransition();
+	const [open, setOpen] = useState<boolean>(false);
 
 	const fields = useMemo(() => getEntityFields(entity, "filter"), [entity]);
 
@@ -25,24 +24,22 @@ export default function FilterDialog() {
 		(key) => !["page", "sortBy", "order"].includes(key),
 	);
 
-	const handleClear = () => {
-		const newParams = new URLSearchParams(searchParams.toString());
-		newParams.delete("page");
-		for (const field of fields) {
-			newParams.delete(field.name);
-			if (field.type === "number" || field.type === "date") {
-				newParams.delete(`${field.name}From`);
-				newParams.delete(`${field.name}To`);
-			}
+	function handleClear() {
+		const newParams = new URLSearchParams();
+		for (const key of ["page", "sortBy", "order"]) {
+			const value = searchParams.get(key);
+			if (value !== null) newParams.set(key, value);
 		}
 		const qs = newParams.toString();
 		const newUrl = qs ? `${pathname}?${qs}` : pathname;
 		startTransition(() => {
 			router.push(newUrl);
 		});
-	};
+	}
 
-	const handleSubmit = (formData: FormData) => {
+	function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
+		e.preventDefault();
+		const formData = new FormData(e.currentTarget);
 		const newParams = new URLSearchParams(searchParams.toString());
 		newParams.delete("page");
 		for (const field of fields) {
@@ -58,7 +55,8 @@ export default function FilterDialog() {
 			if (field.type === "enum" || field.type === "foreignKey") {
 				const values = formData
 					.getAll(field.name)
-					.map((value) => value.toString());
+					.map((value) => value.toString())
+					.filter((value) => value !== "ALL");
 				newParams.delete(field.name);
 				for (const value of values) newParams.append(field.name, value);
 				continue;
@@ -73,7 +71,7 @@ export default function FilterDialog() {
 			router.push(newUrl);
 			setOpen(false);
 		});
-	};
+	}
 
 	if (!entity) return null;
 
@@ -83,30 +81,21 @@ export default function FilterDialog() {
 		>
 			{hasFilters && (
 				<Button variant="outline" onClick={handleClear} disabled={isPending}>
-					<IconArrowBackUp className="h-4 w-4" />
+					<IconArrowBackUp className="size-4" />
 				</Button>
 			)}
 			<Dialog open={open} onOpenChange={setOpen}>
 				<DialogTrigger asChild>
 					<Button disabled={isPending || !entity}>
-						<IconFilter className="h-4 w-4" />
+						<IconFilter className="size-4" />
 					</Button>
 				</DialogTrigger>
 				<FilterForm
-					type="filter"
-					entity={entity}
-					label={`Filter ${getPluralFromName(entity)}`}
 					fields={fields}
-					handleSubmit={handleSubmit}
-					loading={isPending}
-					open={open}
+					entity={entity}
 					setOpen={setOpen}
-					getValue={(field, paramName) => {
-						const name = paramName ?? field.name;
-						if (field.type === "enum" || field.type === "foreignKey")
-							return searchParams.getAll(name);
-						return searchParams.get(name) || undefined;
-					}}
+					isPending={isPending}
+					handleSubmit={handleSubmit}
 				/>
 			</Dialog>
 		</div>

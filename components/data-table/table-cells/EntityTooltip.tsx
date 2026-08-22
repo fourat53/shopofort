@@ -11,7 +11,7 @@ import {
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { TooltipEntity } from "@/lib/entity/current-entity";
-import { getHeaderFromName } from "@/lib/entity/entity-header";
+import { getFieldName } from "@/lib/entity/entity-header";
 
 export default function EntityTooltip({
 	headerName,
@@ -24,10 +24,11 @@ export default function EntityTooltip({
 	const [loading, setLoading] = useState<boolean>(false);
 	const [open, setOpen] = useState<boolean>(false);
 
-	const title = `${headerName
-		.replace("Id", "")
-		.replace(/([A-Z])/g, " $1")
-		.trim()}  Details`;
+	const title =
+		headerName
+			.replace("Id", "")
+			.replace(/([A-Z])/g, " $1")
+			.trim() + " Details";
 
 	const handleOpenChange = async (isOpen: boolean) => {
 		try {
@@ -55,7 +56,7 @@ export default function EntityTooltip({
 				<TooltipTrigger asChild>
 					<button
 						type="button"
-						className="underline cursor-pointer hover:text-primary transition-colors text-left"
+						className="w-fit underline cursor-pointer hover:text-primary transition-colors text-left"
 						onClick={(e) => {
 							e.preventDefault();
 							handleOpenChange(true);
@@ -79,7 +80,7 @@ export default function EntityTooltip({
 								{Object.entries(data).map(([key, value]) => (
 									<div key={key} className="grid grid-cols-[2fr_5fr] gap-1.5">
 										<p className="max-w-28 text-xs font-medium text-muted-foreground capitalize">
-											{getHeaderFromName(key)}
+											{getFieldName(key)}
 										</p>
 										<ContentCell headerName={key} value={value} tooltip />
 									</div>

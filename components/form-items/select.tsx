@@ -297,7 +297,7 @@ function Select({
 											>
 												{renderItemContent(item)}
 												{isSelected(item.value) && (
-													<IconCheck className="h-4 w-4 absolute right-2 top-1/2 -translate-y-1/2" />
+													<IconCheck className="size-4 absolute right-2 top-1/2 -translate-y-1/2" />
 												)}
 											</CommandItem>
 										</div>

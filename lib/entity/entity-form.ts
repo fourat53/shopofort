@@ -3,10 +3,10 @@ import type { Gender, OrderStatus } from "@/lib/entity/types";
 
 function getFormUser(formData: FormData) {
 	const picture = formData.get("picture") as string;
-	const first_name = formData.get("first_name") as string;
-	const last_name = formData.get("last_name") as string;
+	const given_name = formData.get("first_name") as string;
+	const family_name = formData.get("last_name") as string;
 	const is_suspended = formData.get("is_suspended") as string;
-	return { picture, first_name, last_name, is_suspended };
+	return { picture, given_name, family_name, is_suspended };
 }
 
 function getFormProduct(formData: FormData) {
@@ -43,7 +43,7 @@ function getFormCategory(formData: FormData) {
 function getFormCartItem(formData: FormData) {
 	const quantity = Number(formData.get("quantity"));
 	const unitPrice = Number(formData.get("unitPrice"));
-	const totalPrice = Number(formData.get("totalPrice"));
+	const totalPrice = quantity * unitPrice;
 	const cartId = Number(formData.get("cartId"));
 	const productId = Number(formData.get("productId"));
 	return { quantity, unitPrice, totalPrice, cartId, productId };
