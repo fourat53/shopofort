@@ -36,9 +36,6 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
 <!-- Biome auto sort imports -->
-- loading when waiting for image upload to finish
-- make sure required fields are actually required
-- 
 
 pnpm biome format --write .
 

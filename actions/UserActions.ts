@@ -1,4 +1,4 @@
-import { unstable_cache } from "next/cache";
+import { unstable_cache, updateTag } from "next/cache";
 import {
 	CACHE_SECONDS,
 	FILTER_CACHE_SECONDS,
@@ -8,6 +8,7 @@ import { checkedEnvVar } from "@/lib/checked-env-var";
 import { getFormUser } from "@/lib/entity/entity-form";
 import { USERS_HEADER } from "@/lib/entity/entity-header";
 import type { ParameterType, PreferredUser, User } from "@/lib/entity/types";
+import { prisma } from "@/lib/prisma";
 
 const kindeIssuerUrl = checkedEnvVar("KINDE_ISSUER_URL");
 
@@ -180,6 +181,40 @@ async function getUserCount(filterParams: ParameterType = {}) {
 	return users.length;
 }
 
+async function getUserById(id: string) {
+	const token = await getKindeToken();
+
+	const res = await fetch(`${kindeIssuerUrl}/api/v1/user?id=${id}`, {
+		method: "GET",
+		headers: {
+			Authorization: `Bearer ${token}`,
+			Accept: "application/json",
+		},
+		cache: "no-store",
+	});
+
+	const user = await res.json();
+	return mapUser(user);
+}
+
+async function deleteUser(id: string) {
+	const token = await getKindeToken();
+
+	await fetch(`${kindeIssuerUrl}/api/v1/user?id=${id}`, {
+		method: "DELETE",
+		headers: {
+			Authorization: `Bearer ${token}`,
+			Accept: "application/json",
+		},
+	});
+
+	await prisma.cart.delete({ where: { userId: id } });
+	updateTag("carts");
+
+	await prisma.order.deleteMany({ where: { userId: id } });
+	updateTag("orders");
+}
+
 async function updateUser(id: string, formData: FormData) {
 	const token = await getKindeToken();
 
@@ -197,8 +232,10 @@ async function updateUser(id: string, formData: FormData) {
 }
 
 export {
+	deleteUser,
 	getFilteredUsers,
 	getKindeToken,
+	getUserById,
 	getUserCount,
 	getUsers,
 	getUsersPage,

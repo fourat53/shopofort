@@ -2,10 +2,9 @@
 
 import { updateTag } from "next/cache";
 import {
-	getKindeToken,
+	deleteUser,
+	getUserById,
 	getUsers,
-	kindeIssuerUrl,
-	mapUser,
 	updateUser,
 } from "@/actions/UserActions";
 import type { SelectOption } from "@/components/form-items/select";
@@ -13,7 +12,7 @@ import type { EntityType } from "@/lib/entity/current-entity";
 import { getFormEntity } from "@/lib/entity/entity-form";
 import { prisma } from "@/lib/prisma";
 
-const tagMap: Record<string, string> = {
+const tagMap: Record<EntityType, string> = {
 	user: "users",
 	product: "products",
 	order: "orders",
@@ -25,69 +24,15 @@ const tagMap: Record<string, string> = {
 
 async function getEntityById(entity: EntityType, id: number | string) {
 	try {
-		if (entity === "user" && typeof id === "string") {
-			const token = await getKindeToken();
-
-			const res = await fetch(`${kindeIssuerUrl}/api/v1/user?id=${id}`, {
-				method: "GET",
-				headers: {
-					Authorization: `Bearer ${token}`,
-					Accept: "application/json",
-				},
-				cache: "no-store",
-			});
-
-			const user = await res.json();
-			return mapUser(user);
-		} else if (typeof id === "number") {
-			// @ts-expect-error - prisma dynamic model access
-			const res = await prisma[entity].findUnique({ where: { id } });
-			return JSON.parse(JSON.stringify(res));
+		if (entity === "user") {
+			return await getUserById(id as string);
 		}
-	} catch (error) {
-		console.error(error);
-	}
-}
-
-async function deleteEntity(entity: EntityType, id: number | string) {
-	try {
-		if (typeof id === "string" && entity === "user") {
-			const token = await getKindeToken();
-
-			await fetch(`${kindeIssuerUrl}/api/v1/user?id=${id}`, {
-				method: "DELETE",
-				headers: {
-					Authorization: `Bearer ${token}`,
-					Accept: "application/json",
-				},
-			});
-
-			await prisma.cart.delete({ where: { userId: id } });
-			updateTag("carts");
-
-			await prisma.order.deleteMany({ where: { userId: id } });
-			updateTag("orders");
-		} else if (typeof id === "number") {
-			// @ts-expect-error - prisma dynamic model access
-			await prisma[entity].delete({ where: { id } });
-
-			const tag = tagMap[entity];
-			if (tag) {
-				updateTag(tag);
-			}
-		}
-	} catch (error) {
-		console.error(error);
-	}
-}
-
-async function createEntity(entity: EntityType, formData: FormData) {
-	try {
 		// @ts-expect-error - prisma dynamic model access
-		await prisma[entity].create({
-			data: getFormEntity(entity, formData),
+		const res = await prisma[entity].findUnique({
+			where: { id },
 		});
-		updateTag(tagMap[entity]);
+
+		return JSON.parse(JSON.stringify(res));
 	} catch (error) {
 		console.error(error);
 	}
@@ -142,8 +87,9 @@ async function getFilterOptions(field: string): Promise<SelectOption[]> {
 					label: [u.id, u.email],
 				}));
 			}
-			default:
+			default: {
 				return [];
+			}
 		}
 	} catch (error) {
 		console.error("Failed to fetch filter options", error);
@@ -151,9 +97,49 @@ async function getFilterOptions(field: string): Promise<SelectOption[]> {
 	}
 }
 
+async function createEntity(
+	entity: Exclude<EntityType, "user">,
+	formData: FormData,
+) {
+	try {
+		// @ts-expect-error - prisma dynamic model access
+		await prisma[entity].create({
+			data: getFormEntity(entity, formData),
+		});
+		updateTag(tagMap[entity]);
+	} catch (error) {
+		console.error(error);
+	}
+}
+
+async function deleteEntity(entity: EntityType, id: number | string) {
+	try {
+		if (entity === "user") {
+			await deleteUser(id as string);
+		} else {
+			// @ts-expect-error - prisma dynamic model access
+			await prisma[entity].delete({ where: { id } });
+			updateTag(tagMap[entity]);
+		}
+	} catch (error) {
+		console.error(error);
+	}
+}
+
 async function deleteEntities(entity: EntityType, ids: (number | string)[]) {
 	if (ids.length === 0) return;
-	await Promise.allSettled(ids.map((id) => deleteEntity(entity, id)));
+
+	try {
+		if (entity === "user") {
+			await Promise.allSettled(ids.map((id) => deleteUser(id as string)));
+		} else {
+			// @ts-expect-error - prisma dynamic model access
+			await prisma[entity].deleteMany({ where: { id: { in: ids } } });
+			updateTag(tagMap[entity]);
+		}
+	} catch (error) {
+		console.error(error);
+	}
 }
 
 async function updateEntity(
@@ -171,7 +157,7 @@ async function updateEntity(
 				where: { id },
 				data,
 			});
-			updateTag("products");
+			updateTag(tagMap[entity]);
 		}
 	} catch (error) {
 		console.error(error);
@@ -195,8 +181,7 @@ async function updateEntities(
 			where: { id: { in: ids as number[] } },
 			data,
 		});
-		const tag = tagMap[entity];
-		if (tag) updateTag(tag);
+		updateTag(tagMap[entity]);
 	}
 }
 

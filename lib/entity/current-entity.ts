@@ -7,36 +7,32 @@ type EntityType =
 	| "product"
 	| "category"
 	| "cartItem"
-	| "orderItem"
-	| "";
+	| "orderItem";
 
-function CurrentEntity(): EntityType {
+function CurrentEntity(): EntityType | "" {
 	const pathname = usePathname();
-	let entity: EntityType = "";
 
-	if (pathname.includes("/users")) entity = "user";
-	else if (pathname.includes("/products")) entity = "product";
-	else if (pathname.includes("/orders")) entity = "order";
-	else if (pathname.includes("/carts")) entity = "cart";
-	else if (pathname.includes("/categories")) entity = "category";
-	else if (pathname.includes("/cart-items")) entity = "cartItem";
-	else if (pathname.includes("/order-items")) entity = "orderItem";
+	if (pathname.includes("/users")) return "user";
+	else if (pathname.includes("/products")) return "product";
+	else if (pathname.includes("/orders")) return "order";
+	else if (pathname.includes("/carts")) return "cart";
+	else if (pathname.includes("/categories")) return "category";
+	else if (pathname.includes("/cart-items")) return "cartItem";
+	else if (pathname.includes("/order-items")) return "orderItem";
 
-	return entity;
+	return "";
 }
 
-function getTooltipEntity(headerName: string): EntityType {
-	let entity: EntityType = "";
+function getTooltipEntity(headerName: string): EntityType | "" {
+	if (headerName === "userId") return "user";
+	else if (headerName === "productId") return "product";
+	else if (headerName === "orderId") return "order";
+	else if (headerName === "orderItemId") return "orderItem";
+	else if (headerName === "cartItemId") return "cartItem";
+	else if (headerName === "cartId") return "cart";
+	else if (headerName === "categoryId") return "category";
 
-	if (headerName === "userId") entity = "user";
-	else if (headerName === "productId") entity = "product";
-	else if (headerName === "orderId") entity = "order";
-	else if (headerName === "orderItemId") entity = "orderItem";
-	else if (headerName === "cartItemId") entity = "cartItem";
-	else if (headerName === "cartId") entity = "cart";
-	else if (headerName === "categoryId") entity = "category";
-
-	return entity;
+	return "";
 }
 
 function getFieldName(name: string) {
