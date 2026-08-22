@@ -239,7 +239,7 @@ const entityFields: Record<string, FieldConfig[]> = {
 };
 
 function getEntityFields(
-	entity: EntityType,
+	entity: EntityType | "",
 	type: FieldCategory,
 ): FieldConfig[] {
 	return entity
