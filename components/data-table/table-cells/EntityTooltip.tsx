@@ -10,8 +10,7 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { TooltipEntity } from "@/lib/entity/current-entity";
-import { getFieldName } from "@/lib/entity/entity-header";
+import { getFieldName, getTooltipEntity } from "@/lib/entity/current-entity";
 
 export default function EntityTooltip({
 	headerName,
@@ -36,7 +35,7 @@ export default function EntityTooltip({
 			if (isOpen && !data && !loading) {
 				setLoading(true);
 
-				const entity = TooltipEntity(headerName);
+				const entity = getTooltipEntity(headerName);
 
 				if (entity) {
 					const result = await getEntityById(entity, idValue);

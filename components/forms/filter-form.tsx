@@ -18,8 +18,12 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
-import type { EntityField, EntityType } from "@/lib/entity/current-entity";
-import { getFieldName, getPluralName } from "@/lib/entity/entity-header";
+import {
+	type EntityType,
+	getFieldName,
+	getPluralName,
+} from "@/lib/entity/current-entity";
+import type { EntityField } from "@/lib/entity/entity-fields";
 
 interface DialogFormProps {
 	fields: EntityField[];

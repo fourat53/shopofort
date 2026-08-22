@@ -2,7 +2,6 @@
 
 import { IconTrash } from "@tabler/icons-react";
 import { clsx } from "clsx";
-import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { deleteEntities, deleteEntity } from "@/actions/EntityActions";
 import { Button } from "@/components/ui/button";
@@ -15,12 +14,19 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
-import { CurrentEntity } from "@/lib/entity/current-entity";
-import { getPluralName, getSingleName } from "@/lib/entity/entity-header";
+import {
+	CurrentEntity,
+	getPluralName,
+	getSingleName,
+} from "@/lib/entity/current-entity";
 import EntityTooltip from "../data-table/table-cells/EntityTooltip";
 
-export default function DeleteDialog({ ids }: { ids?: (number | string)[] }) {
-	const router = useRouter();
+interface DeleteDialogProps {
+	ids?: (number | string)[];
+	disabled?: boolean;
+}
+
+export default function DeleteDialog({ ids, disabled }: DeleteDialogProps) {
 	const entity = CurrentEntity();
 
 	const [open, setOpen] = useState<boolean>(false);
@@ -37,7 +43,6 @@ export default function DeleteDialog({ ids }: { ids?: (number | string)[] }) {
 				? await deleteEntity(entity, ids[0])
 				: await deleteEntities(entity, ids as (number | string)[]);
 			setOpen(false);
-			entity === "user" && router.refresh();
 		} catch (error) {
 			console.error("Failed to delete entities", error);
 		} finally {
@@ -52,7 +57,7 @@ export default function DeleteDialog({ ids }: { ids?: (number | string)[] }) {
 			<DialogTrigger asChild>
 				<Button
 					variant="ghost"
-					disabled={loading || !entity || ids.length === 0}
+					disabled={loading || !entity || ids.length === 0 || disabled}
 					className="rounded-xl size-6 p-0 text-red-500 hover:text-red-700"
 				>
 					<IconTrash className="size-4" />

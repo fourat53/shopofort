@@ -10,7 +10,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useTransition } from "react";
 import { sortHref } from "@/components/data-table/PaginationParams";
 import { TableHead } from "@/components/ui/table";
-import { getFieldName } from "@/lib/entity/entity-header";
+import { getFieldName } from "@/lib/entity/current-entity";
 
 interface SortableTableHeadProps {
 	name: string;

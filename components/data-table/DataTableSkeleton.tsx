@@ -80,8 +80,8 @@ export default function DataTableSkeleton({
 						))}
 						<TableCell border className="py-0.5 w-26 max-w-26 min-w-26">
 							<div className="flex items-center justify-center gap-1.5">
-								<EditDialog row={{ id: "" }} disabled />
-								<DeleteDialog id={""} disabled />
+								<EditDialog disabled />
+								<DeleteDialog disabled />
 							</div>
 						</TableCell>
 					</TableRow>

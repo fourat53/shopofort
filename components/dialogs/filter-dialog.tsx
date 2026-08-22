@@ -7,7 +7,8 @@ import { useMemo, useState, useTransition } from "react";
 import FilterForm from "@/components/forms/filter-form";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import { CurrentEntity, getEntityFields } from "@/lib/entity/current-entity";
+import { CurrentEntity } from "@/lib/entity/current-entity";
+import { getEntityFields } from "@/lib/entity/entity-fields";
 
 export default function FilterDialog() {
 	const entity = CurrentEntity();

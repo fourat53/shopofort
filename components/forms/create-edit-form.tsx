@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import {
 	type Dispatch,
 	type SetStateAction,
@@ -31,15 +30,15 @@ import {
 } from "@/components/ui/dialog";
 import {
 	type EntityType,
-	type FieldConfig,
-	getEntityFields,
-	type ValueType,
-} from "@/lib/entity/current-entity";
-import {
 	getFieldName,
 	getPluralName,
 	getSingleName,
-} from "@/lib/entity/entity-header";
+} from "@/lib/entity/current-entity";
+import {
+	type FieldConfig,
+	getEntityFields,
+	type ValueType,
+} from "@/lib/entity/entity-fields";
 import { addImagesToForm } from "@/lib/uploadthing/client";
 
 interface DialogFormProps<T> {
@@ -51,8 +50,6 @@ interface DialogFormProps<T> {
 export default function CreateEditForm<
 	T extends Record<string, unknown> & { id: number | string },
 >({ entity, setOpen, rows }: DialogFormProps<T>) {
-	const router = useRouter();
-
 	const [loading, setLoading] = useState<boolean>(false);
 	const [images, setImages] = useState<ImageItem[]>([]);
 	const [optionsCache, setOptionsCache] = useState<
@@ -114,7 +111,6 @@ export default function CreateEditForm<
 				single
 					? await updateEntity(entity, ids[0], formData)
 					: await updateEntities(entity, ids, formData);
-				entity === "user" && router.refresh();
 			} else await createEntity(entity, formData);
 		} catch (error) {
 			console.error("Error creating entity:", error);

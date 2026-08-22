@@ -7,9 +7,14 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { CurrentEntity } from "@/lib/entity/current-entity";
 
+interface EditDialogProps<T> {
+	rows?: T[];
+	disabled?: boolean;
+}
+
 export default function EditDialog<
 	T extends Record<string, unknown> & { id: number | string },
->({ rows }: { rows?: T[] }) {
+>({ rows, disabled }: EditDialogProps<T>) {
 	const entity = CurrentEntity();
 	const [open, setOpen] = useState<boolean>(false);
 
@@ -20,7 +25,7 @@ export default function EditDialog<
 			<DialogTrigger asChild>
 				<Button
 					variant="ghost"
-					disabled={!entity}
+					disabled={!entity || disabled}
 					className="rounded-xl size-6 p-0"
 					border={false}
 				>
