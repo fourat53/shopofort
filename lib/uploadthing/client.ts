@@ -9,7 +9,7 @@ export async function uploadImages(files: File[]): Promise<string[]> {
 		const res = await uploadFiles("productImage", { files });
 		return res.map((file) => file.ufsUrl);
 	} catch (error) {
-		console.error("Error uploading images:", error);
+		console.error(error);
 		return [];
 	}
 }

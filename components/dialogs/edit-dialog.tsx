@@ -18,14 +18,28 @@ export default function EditDialog<
 	const entity = CurrentEntity();
 	const [open, setOpen] = useState<boolean>(false);
 
-	if (!entity || !rows || rows.length === 0) return null;
+	const display = rows && rows.length > 0;
+
+	if (!entity) return null;
+
+	if (!display)
+		return (
+			<Button
+				variant="ghost"
+				disabled={disabled}
+				className="rounded-xl size-6 p-0"
+				border={false}
+			>
+				<IconEdit className="size-4 text-mist-400" />
+			</Button>
+		);
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
 				<Button
 					variant="ghost"
-					disabled={!entity || disabled}
+					disabled={disabled}
 					className="rounded-xl size-6 p-0"
 					border={false}
 				>

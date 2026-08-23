@@ -58,7 +58,7 @@ const productImages: string[] = [
 const orderStatuses = Object.values(OrderStatus);
 
 async function main(minId: number, maxId: number) {
-	console.log("🌱 Starting seed...");
+	console.log("🌱 Starting seed...\n");
 
 	console.log("📂 Seeding Categories...");
 	const categories = [];
@@ -171,7 +171,7 @@ async function main(minId: number, maxId: number) {
 		);
 	}
 
-	console.log("✅ Seed finished successfully!");
+	console.log("\n✅ Seed finished successfully!");
 }
 
 async function clearDatabase() {

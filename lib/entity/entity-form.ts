@@ -1,6 +1,16 @@
 import type { EntityType } from "@/lib/entity/current-entity";
 import type { Gender, OrderStatus } from "@/lib/entity/types";
 
+const tagMap: Record<EntityType, string> = {
+	user: "users",
+	product: "products",
+	order: "orders",
+	cart: "carts",
+	category: "categories",
+	cartItem: "cart-items",
+	orderItem: "order-items",
+};
+
 function getFormUser(formData: FormData) {
 	const picture = formData.get("picture") as string;
 	const given_name = formData.get("first_name") as string;
@@ -74,4 +84,4 @@ function getFormEntity(entity: EntityType, formData: FormData) {
 	}
 }
 
-export { getFormEntity, getFormUser };
+export { getFormEntity, getFormUser, tagMap };

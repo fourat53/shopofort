@@ -1,3 +1,4 @@
+import { updateCache } from "@/actions/EntityActions";
 import { Button } from "@/components/ui/button";
 
 const colors = [
@@ -45,7 +46,11 @@ const variants = [
 
 export default function ColorsPage() {
 	return (
-		<main className="flex flex-col gap-4">
+		<main className="w-full flex flex-col gap-4 overflow-y-auto max-h-[calc(100vh-120px)]">
+			<Button onClick={updateCache} className="w-60">
+				Update cache
+			</Button>
+
 			<div className="grid grid-cols-2 gap-4 pb-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7">
 				{colors.map((color) => (
 					<div

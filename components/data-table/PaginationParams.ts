@@ -1,7 +1,7 @@
 const PAGE_SIZE = 20;
 const IMAGE_PAGE_SIZE = 10;
-const CACHE_SECONDS = 1;
-const FILTER_CACHE_SECONDS = 1;
+const CACHE_SECONDS = 600;
+const FILTER_CACHE_SECONDS = 60;
 
 interface PageProps {
 	searchParams: Promise<{

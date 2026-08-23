@@ -9,18 +9,18 @@ import {
 } from "@/actions/UserActions";
 import type { SelectOption } from "@/components/form-items/select";
 import type { EntityType } from "@/lib/entity/current-entity";
-import { getFormEntity } from "@/lib/entity/entity-form";
+import { getFormEntity, tagMap } from "@/lib/entity/entity-form";
 import { prisma } from "@/lib/prisma";
 
-const tagMap: Record<EntityType, string> = {
-	user: "users",
-	product: "products",
-	order: "orders",
-	cart: "carts",
-	category: "categories",
-	cartItem: "cart-items",
-	orderItem: "order-items",
-};
+async function updateCache() {
+	try {
+		for (const tag of Object.values(tagMap)) {
+			updateTag(tag);
+		}
+	} catch (error) {
+		console.error(error);
+	}
+}
 
 async function getEntityById(entity: EntityType, id: number | string) {
 	try {
@@ -92,7 +92,7 @@ async function getFilterOptions(field: string): Promise<SelectOption[]> {
 			}
 		}
 	} catch (error) {
-		console.error("Failed to fetch filter options", error);
+		console.error(error);
 		return [];
 	}
 }
@@ -191,6 +191,7 @@ export {
 	deleteEntity,
 	getEntityById,
 	getFilterOptions,
+	updateCache,
 	updateEntities,
 	updateEntity,
 };

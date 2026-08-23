@@ -45,20 +45,33 @@ export default function DeleteDialog({ ids, disabled }: DeleteDialogProps) {
 				: await deleteEntities(entity, ids as (number | string)[]);
 			setOpen(false);
 		} catch (error) {
-			console.error("Failed to delete entities", error);
+			console.error(error);
 		} finally {
 			setLoading(false);
 		}
 	};
 
-	if (!entity || !ids || ids.length === 0) return null;
+	const display = ids && ids.length > 0;
+
+	if (!entity) return null;
+
+	if (!display)
+		return (
+			<Button
+				variant="ghost"
+				disabled={disabled}
+				className="rounded-xl size-6 p-0 text-red-500 hover:text-red-700"
+			>
+				<IconTrash className="size-4" />
+			</Button>
+		);
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
 				<Button
 					variant="ghost"
-					disabled={loading || !entity || ids.length === 0 || disabled}
+					disabled={disabled}
 					className="rounded-xl size-6 p-0 text-red-500 hover:text-red-700"
 				>
 					<IconTrash className="size-4" />

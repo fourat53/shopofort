@@ -86,7 +86,7 @@ export default function FilterDialog() {
 			)}
 			<Dialog open={open} onOpenChange={setOpen}>
 				<DialogTrigger asChild>
-					<Button disabled={isPending || !entity}>
+					<Button disabled={isPending || !entity} className="p-0">
 						<IconFilter className="size-4" />
 					</Button>
 				</DialogTrigger>

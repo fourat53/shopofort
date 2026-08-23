@@ -117,7 +117,7 @@ export default function CreateEditForm<
 					: await updateEntities(entity, ids, formData);
 			} else if (entity !== "user") await createEntity(entity, formData);
 		} catch (error) {
-			console.error("Error creating entity:", error);
+			console.error(error);
 		} finally {
 			setLoading(false);
 			setOpen(false);
