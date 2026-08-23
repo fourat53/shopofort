@@ -37,6 +37,7 @@ import {
 import {
 	type FieldConfig,
 	getEntityFields,
+	type OptionField,
 	type ValueType,
 } from "@/lib/entity/entity-fields";
 import { addImagesToForm } from "@/lib/uploadthing/client";
@@ -91,7 +92,7 @@ export default function CreateEditForm<
 					continue;
 				fetchedFields.current.add(field.name);
 				try {
-					const options = await getFilterOptions(field.name);
+					const options = await getFilterOptions(field.name as OptionField);
 					setOptionsCache((current) => ({
 						...current,
 						[field.name]: options,

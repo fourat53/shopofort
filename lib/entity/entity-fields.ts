@@ -9,6 +9,8 @@ type ValueType = string | number | Date | undefined;
 
 type EntityField = (typeof entityFields)[string][number];
 
+type OptionField = "categoryId" | "productId" | "cartId" | "orderId" | "userId";
+
 type FieldConfig = {
 	name: string;
 	type: FieldType;
@@ -248,12 +250,24 @@ function getEntityFields(
 		: [];
 }
 
+type StringNumber = string | number;
+
+function formatOptions(
+	v: StringNumber,
+	l: StringNumber | [StringNumber, StringNumber],
+) {
+	return { value: v.toString(), label: l };
+}
+
 export {
 	type EntityField,
 	entityFields,
 	type FieldCategory,
 	type FieldConfig,
 	type FieldType,
+	formatOptions,
 	getEntityFields,
+	type OptionField,
+	type StringNumber,
 	type ValueType,
 };

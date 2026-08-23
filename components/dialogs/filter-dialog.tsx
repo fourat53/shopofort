@@ -26,12 +26,15 @@ export default function FilterDialog() {
 
 	function handleClear() {
 		const newParams = new URLSearchParams();
+
 		for (const key of ["page", "sortBy", "order"]) {
 			const value = searchParams.get(key);
 			if (value !== null) newParams.set(key, value);
 		}
+
 		const qs = newParams.toString();
 		const newUrl = qs ? `${pathname}?${qs}` : pathname;
+
 		startTransition(() => {
 			router.push(newUrl);
 		});
@@ -42,6 +45,7 @@ export default function FilterDialog() {
 		const formData = new FormData(e.currentTarget);
 		const newParams = new URLSearchParams(searchParams.toString());
 		newParams.delete("page");
+
 		for (const field of fields) {
 			if (field.type === "number" || field.type === "date") {
 				for (const suffix of ["From", "To"] as const) {
@@ -52,6 +56,7 @@ export default function FilterDialog() {
 				}
 				continue;
 			}
+
 			if (field.type === "enum" || field.type === "foreignKey") {
 				const values = formData
 					.getAll(field.name)
@@ -61,12 +66,14 @@ export default function FilterDialog() {
 				for (const value of values) newParams.append(field.name, value);
 				continue;
 			}
+
 			const value = formData.get(field.name)?.toString().trim();
 			if (value && value !== "ALL") newParams.set(field.name, value);
 			else newParams.delete(field.name);
 		}
 		const qs = newParams.toString();
 		const newUrl = qs ? `${pathname}?${qs}` : pathname;
+
 		startTransition(() => {
 			router.push(newUrl);
 			setOpen(false);
@@ -80,15 +87,17 @@ export default function FilterDialog() {
 			className={clsx("flex gap-1.5", entity !== "user" && "pr-1.5 border-r")}
 		>
 			{hasFilters && (
-				<Button variant="outline" onClick={handleClear} disabled={isPending}>
+				<Button variant="outline" onClick={handleClear}>
 					<IconArrowBackUp className="size-4" />
 				</Button>
 			)}
 			<Dialog open={open} onOpenChange={setOpen}>
 				<DialogTrigger asChild>
-					<Button disabled={isPending || !entity} className="p-0">
-						<IconFilter className="size-4" />
-					</Button>
+					<Button
+						disabled={!entity}
+						className="size-8 p-2"
+						icon={<IconFilter className="size-4" />}
+					/>
 				</DialogTrigger>
 				<FilterForm
 					fields={fields}

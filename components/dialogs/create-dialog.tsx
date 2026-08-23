@@ -16,9 +16,11 @@ export default function CreateDialog() {
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
-				<Button variant="outline">
-					<IconPlus className="size-4" />
-				</Button>
+				<Button
+					variant="outline"
+					className="size-8 p-2"
+					icon={<IconPlus className="size-4" />}
+				/>
 			</DialogTrigger>
 			<CreateEditForm entity={entity} open={open} setOpen={setOpen} />
 		</Dialog>

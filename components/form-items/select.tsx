@@ -17,12 +17,11 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from "@/components/ui/popover";
+import type { StringNumber } from "@/lib/entity/entity-fields";
 import { cn } from "@/lib/utils";
 
 const getLabelText = (item: SelectOption) =>
 	Array.isArray(item.label) ? item.label.join(" ") : String(item.label);
-
-type StringNumber = string | number;
 
 type SelectOption = {
 	value: string;

@@ -23,7 +23,7 @@ import {
 	getFieldName,
 	getPluralName,
 } from "@/lib/entity/current-entity";
-import type { EntityField } from "@/lib/entity/entity-fields";
+import type { EntityField, OptionField } from "@/lib/entity/entity-fields";
 
 interface DialogFormProps {
 	fields: EntityField[];
@@ -60,7 +60,7 @@ export default function FilterForm({
 					continue;
 				fetchedFields.current.add(field.name);
 				try {
-					const options = await getFilterOptions(field.name);
+					const options = await getFilterOptions(field.name as OptionField);
 					setOptionsCache((current) => ({
 						...current,
 						[field.name]: options,

@@ -27,11 +27,9 @@ export default function EditDialog<
 			<Button
 				variant="ghost"
 				disabled={disabled}
-				className="rounded-xl size-6 p-0"
-				border={false}
-			>
-				<IconEdit className="size-4 text-mist-400" />
-			</Button>
+				className="size-6 p-1"
+				icon={<IconEdit className="size-4 text-mist-400" />}
+			/>
 		);
 
 	return (
@@ -40,11 +38,9 @@ export default function EditDialog<
 				<Button
 					variant="ghost"
 					disabled={disabled}
-					className="rounded-xl size-6 p-0"
-					border={false}
-				>
-					<IconEdit className="size-4 text-mist-400" />
-				</Button>
+					className="size-6 p-1"
+					icon={<IconEdit className="size-4 text-mist-400" />}
+				/>
 			</DialogTrigger>
 			<CreateEditForm<T>
 				entity={entity}

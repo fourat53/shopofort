@@ -60,10 +60,9 @@ export default function DeleteDialog({ ids, disabled }: DeleteDialogProps) {
 			<Button
 				variant="ghost"
 				disabled={disabled}
-				className="rounded-xl size-6 p-0 text-red-500 hover:text-red-700"
-			>
-				<IconTrash className="size-4" />
-			</Button>
+				className="size-6 p-0"
+				icon={<IconTrash className="size-4 text-red-500" />}
+			/>
 		);
 
 	return (
@@ -72,10 +71,9 @@ export default function DeleteDialog({ ids, disabled }: DeleteDialogProps) {
 				<Button
 					variant="ghost"
 					disabled={disabled}
-					className="rounded-xl size-6 p-0 text-red-500 hover:text-red-700"
-				>
-					<IconTrash className="size-4" />
-				</Button>
+					className="size-6 p-0"
+					icon={<IconTrash className="size-4 text-red-500" />}
+				/>
 			</DialogTrigger>
 			<DialogContent
 				className="w-100"
