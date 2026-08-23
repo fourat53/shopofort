@@ -20,7 +20,7 @@ export default function CreateDialog() {
 					<IconPlus className="size-4" />
 				</Button>
 			</DialogTrigger>
-			<CreateEditForm entity={entity} setOpen={setOpen} />
+			<CreateEditForm entity={entity} open={open} setOpen={setOpen} />
 		</Dialog>
 	);
 }

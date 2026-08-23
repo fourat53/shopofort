@@ -105,11 +105,8 @@ export default function DataTablePagination({
 				<PaginationItem>
 					<PaginationPrevious
 						href={pageHref(path, currentPage - 1, searchParams)}
-						aria-disabled={currentPage <= 1 || isPending}
-						className={cn(
-							(currentPage <= 1 || isPending) &&
-								"pointer-events-none opacity-50",
-						)}
+						aria-disabled={currentPage <= 1}
+						className={cn(currentPage <= 1 && "pointer-events-none opacity-50")}
 						onClick={(event) => {
 							event.preventDefault();
 							navigate(currentPage - 1);
@@ -136,10 +133,9 @@ export default function DataTablePagination({
 				<PaginationItem>
 					<PaginationNext
 						href={pageHref(path, currentPage + 1, searchParams)}
-						aria-disabled={currentPage >= totalPages || isPending}
+						aria-disabled={currentPage >= totalPages}
 						className={cn(
-							(currentPage >= totalPages || isPending) &&
-								"pointer-events-none opacity-50",
+							currentPage >= totalPages && "pointer-events-none opacity-50",
 						)}
 						onClick={(event) => {
 							event.preventDefault();

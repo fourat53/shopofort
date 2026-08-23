@@ -32,7 +32,12 @@ export default function EditDialog<
 					<IconEdit className="size-4 text-mist-400" />
 				</Button>
 			</DialogTrigger>
-			<CreateEditForm entity={entity} setOpen={setOpen} rows={rows} />
+			<CreateEditForm<T>
+				entity={entity}
+				open={open}
+				setOpen={setOpen}
+				rows={rows}
+			/>
 		</Dialog>
 	);
 }

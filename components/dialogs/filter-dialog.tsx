@@ -20,7 +20,6 @@ export default function FilterDialog() {
 	const [open, setOpen] = useState<boolean>(false);
 
 	const fields = useMemo(() => getEntityFields(entity, "filter"), [entity]);
-
 	const hasFilters = [...searchParams.keys()].some(
 		(key) => !["page", "sortBy", "order"].includes(key),
 	);
@@ -94,6 +93,7 @@ export default function FilterDialog() {
 				<FilterForm
 					fields={fields}
 					entity={entity}
+					open={open}
 					setOpen={setOpen}
 					isPending={isPending}
 					handleSubmit={handleSubmit}

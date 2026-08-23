@@ -43,41 +43,45 @@ import { addImagesToForm } from "@/lib/uploadthing/client";
 
 interface DialogFormProps<T> {
 	entity: EntityType;
+	open: boolean;
 	setOpen: Dispatch<SetStateAction<boolean>>;
 	rows?: T[];
 }
 
 export default function CreateEditForm<
 	T extends Record<string, unknown> & { id: number | string },
->({ entity, setOpen, rows }: DialogFormProps<T>) {
+>({ entity, open, setOpen, rows }: DialogFormProps<T>) {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [images, setImages] = useState<ImageItem[]>([]);
 	const [optionsCache, setOptionsCache] = useState<
 		Record<string, SelectOption[]>
 	>({});
 
-	const ids = rows?.map((row) => row.id);
-	const row = rows?.[0] ?? undefined;
-
 	const fetchedFields = useRef<Set<string>>(new Set());
-	const fields = useMemo(() => getEntityFields(entity, "edit"), [entity]);
+
+	const ids = useMemo(() => rows?.map((row) => row.id), [rows]);
+	const fields = useMemo(
+		() => getEntityFields(entity, rows ? "edit" : "create"),
+		[entity, rows],
+	);
 
 	const single = rows?.length === 1;
-	const label = ids
+	const label = rows
 		? single
 			? "Update " + getSingleName(entity)
 			: "Update the " + rows?.length + " selected " + getPluralName(entity)
 		: "Create " + getSingleName(entity);
 
 	useEffect(() => {
-		if (entity !== "product") return;
-		else if (ids) {
-			setImages(Array.isArray(row?.images) ? row.images : []);
+		if (!open || entity !== "product") return;
+		else if (rows) {
+			setImages(Array.isArray(rows[0]?.images) ? rows[0].images : []);
 			return;
 		} else setImages([]);
-	}, [entity, row, ids]);
+	}, [open, entity, rows]);
 
 	useEffect(() => {
+		if (!open) return;
 		async function loadOptions() {
 			for (const field of fields) {
 				if (
@@ -99,7 +103,7 @@ export default function CreateEditForm<
 			}
 		}
 		loadOptions();
-	}, [fields]);
+	}, [open, fields]);
 
 	async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
 		e.preventDefault();
@@ -121,8 +125,10 @@ export default function CreateEditForm<
 	}
 
 	function getValue(field: FieldConfig) {
-		return ids ? (row?.[field.name] as ValueType) : field.defaultValue;
+		return rows ? (rows[0]?.[field.name] as ValueType) : field.defaultValue;
 	}
+
+	if (!open) return null;
 
 	return (
 		<DialogContent
@@ -208,7 +214,7 @@ export default function CreateEditForm<
 						Cancel
 					</Button>
 					<Button type="submit" loading={loading}>
-						{ids ? "Update" : "Create"}
+						{rows ? "Update" : "Create"}
 					</Button>
 				</DialogFooter>
 			</form>

@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect } from "react";
+import { useLayoutEffect } from "react";
 import PageTitle from "./PageTitle";
 
 export default function DocumentTitle() {
 	const title = PageTitle();
 
-	useEffect(() => {
+	useLayoutEffect(() => {
 		document.title = "Shopofort - " + title;
 	}, [title]);
 

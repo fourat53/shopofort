@@ -29,6 +29,7 @@ interface DialogFormProps {
 	fields: EntityField[];
 	entity: EntityType;
 	isPending: boolean;
+	open: boolean;
 	setOpen: Dispatch<SetStateAction<boolean>>;
 	handleSubmit: (e: React.SubmitEvent<HTMLFormElement>) => void;
 }
@@ -37,6 +38,7 @@ export default function FilterForm({
 	fields,
 	entity,
 	isPending,
+	open,
 	setOpen,
 	handleSubmit,
 }: DialogFormProps) {
@@ -47,6 +49,8 @@ export default function FilterForm({
 	const fetchedFields = useRef<Set<string>>(new Set());
 
 	useEffect(() => {
+		if (!open) return;
+
 		async function loadOptions() {
 			for (const field of fields) {
 				if (
@@ -67,8 +71,11 @@ export default function FilterForm({
 				}
 			}
 		}
+
 		loadOptions();
-	}, [fields]);
+	}, [open, fields]);
+
+	if (!open) return;
 
 	return (
 		<DialogContent
