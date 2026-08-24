@@ -47,14 +47,23 @@ export default function FilterDialog() {
 		newParams.delete("page");
 
 		for (const field of fields) {
-			if (field.type === "number" || field.type === "date") {
-				for (const suffix of ["From", "To"] as const) {
-					const rangeName = `${field.name}${suffix}`;
-					const rangeValue = formData.get(rangeName)?.toString().trim();
-					if (rangeValue) newParams.set(rangeName, rangeValue);
-					else newParams.delete(rangeName);
-				}
-				continue;
+			for (const field of fields) {
+				if (field.type !== "number") continue;
+
+				const min = field.min ?? 0;
+				const max = field.max ?? 10000;
+
+				const fromName = `${field.name}From`;
+				const toName = `${field.name}To`;
+
+				const from = formData.get(fromName)?.toString() ?? "";
+				const to = formData.get(toName)?.toString() ?? "";
+
+				if (Number(from) !== min) newParams.set(fromName, from);
+				else newParams.delete(fromName);
+
+				if (Number(to) !== max) newParams.set(toName, to);
+				else newParams.delete(toName);
 			}
 
 			if (field.type === "enum" || field.type === "foreignKey") {

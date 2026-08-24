@@ -34,8 +34,15 @@ function getParam(
 	name: string,
 ): string | undefined {
 	const value = searchParams[name];
-
 	return Array.isArray(value) ? value[0] : value;
+}
+
+function getAllParams(
+	searchParams: ParameterType,
+	name: string,
+): string[] | undefined {
+	const value = searchParams[name];
+	return Array.isArray(value) ? value : value ? [value] : undefined;
 }
 
 function filterUsers(
@@ -44,13 +51,13 @@ function filterUsers(
 	sortBy?: string,
 	order?: "asc" | "desc",
 ) {
-	const id = getParam(searchParams, "id")?.toLowerCase();
+	const ids = getAllParams(searchParams, "id");
 	const email = getParam(searchParams, "email")?.toLowerCase();
 	const firstName = getParam(searchParams, "first_name")?.toLowerCase();
 	const lastName = getParam(searchParams, "last_name")?.toLowerCase();
 
 	const filteredUsers = users.filter((user) => {
-		if (id && !user.id.toLowerCase().includes(id)) return false;
+		if (ids?.length && !ids.includes(user.id)) return false;
 		if (email && !user.email?.toLowerCase().includes(email)) return false;
 		if (firstName && !user.first_name?.toLowerCase().includes(firstName))
 			return false;

@@ -19,7 +19,7 @@ function getParamValues(param: ParameterType[string]): string[] {
 function buildWhereClause(filterParams: ParameterType): FilterBy {
 	const where: FilterBy = {};
 
-	for (const field of ["id", "quantity", "unitPrice", "totalPrice"] as const) {
+	for (const field of ["quantity", "unitPrice", "totalPrice"] as const) {
 		const from = Number(filterParams[`${field}From`]);
 		const to = Number(filterParams[`${field}To`]);
 		if (!Number.isNaN(from) || !Number.isNaN(to)) {
@@ -30,7 +30,7 @@ function buildWhereClause(filterParams: ParameterType): FilterBy {
 		}
 	}
 
-	for (const field of ["cartId", "productId"] as const) {
+	for (const field of ["id", "cartId", "productId"] as const) {
 		const values = getParamValues(filterParams[field]);
 		if (values.length) where[field] = { in: values.map(Number) };
 	}

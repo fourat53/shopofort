@@ -24,6 +24,7 @@ import {
 } from "@/lib/entity/current-entity";
 import type { EntityField, OptionField } from "@/lib/entity/entity-fields";
 import RangePicker from "../form-items/range-picker";
+import { RangeSlider } from "../form-items/range-slider";
 
 interface DialogFormProps {
 	fields: EntityField[];
@@ -52,30 +53,27 @@ export default function FilterForm({
 
 	useEffect(() => {
 		if (!open) return;
-
 		async function loadOptions() {
 			for (const field of fields) {
-				if (
-					field.type !== "foreignKey" ||
-					fetchedFields.current.has(field.name)
-				)
-					continue;
-				fetchedFields.current.add(field.name);
+				if (field.type !== "foreignKey") continue;
+				const optionField = field.name === "id" ? `${entity}Id` : field.name;
+
+				if (fetchedFields.current.has(optionField)) continue;
+				fetchedFields.current.add(optionField);
 				try {
-					const options = await getFilterOptions(field.name as OptionField);
+					const options = await getFilterOptions(optionField as OptionField);
 					setOptionsCache((current) => ({
 						...current,
 						[field.name]: options,
 					}));
 				} catch (error) {
-					fetchedFields.current.delete(field.name);
+					fetchedFields.current.delete(optionField);
 					console.error(error);
 				}
 			}
 		}
-
 		loadOptions();
-	}, [open, fields]);
+	}, [open, fields, entity]);
 
 	if (!open) return;
 
@@ -95,27 +93,25 @@ export default function FilterForm({
 						<Input
 							key={field.name}
 							name={field.name}
+							placeholder={`Search ${getFieldName(field.name).toLowerCase()}`}
 							type={field.name === "email" ? "email" : "text"}
 							label={getFieldName(field.name)}
 							defaultValue={searchParams.get(name) ?? undefined}
 						/>
 					) : field.type === "number" ? (
-						<div key={field.name} className="flex w-full gap-2">
-							<Input
-								type="number"
-								name={`${field.name}From`}
-								label={`${getFieldName(field.name)} from`}
-								defaultValue={searchParams.get(`${name}From`) ?? undefined}
-								step={field.step ?? "1"}
-							/>
-							<Input
-								type="number"
-								name={`${field.name}To`}
-								label={`${getFieldName(field.name)} to`}
-								defaultValue={searchParams.get(`${name}To`) ?? undefined}
-								step={field.step ?? "1"}
-							/>
-						</div>
+						<RangeSlider
+							key={field.name}
+							fromName={`${field.name}From`}
+							toName={`${field.name}To`}
+							label={getFieldName(field.name)}
+							min={field.min ?? 0}
+							max={field.max ?? 10000}
+							step={field.step ?? 1}
+							defaultValue={[
+								Number(searchParams.get(`${name}From`)) || field.min || 0,
+								Number(searchParams.get(`${name}To`) || field.max || 10000),
+							]}
+						/>
 					) : field.type === "date" ? (
 						<RangePicker
 							key={field.name}

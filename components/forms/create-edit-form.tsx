@@ -148,6 +148,7 @@ export default function CreateEditForm<
 							key={field.name}
 							name={field.name}
 							label={getFieldName(field.name)}
+							placeholder={`Enter ${getFieldName(field.name).toLowerCase()}`}
 							defaultValue={value?.toString() || undefined}
 							required={field.required}
 						/>
@@ -158,6 +159,7 @@ export default function CreateEditForm<
 							label={getFieldName(field.name)}
 							type="number"
 							step={field.step ?? "1"}
+							placeholder={`Enter ${getFieldName(field.name).toLowerCase()}`}
 							defaultValue={value?.toString() || undefined}
 							required={field.required}
 						/>

@@ -17,6 +17,7 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import type { HeaderType } from "@/lib/entity/entity-header";
+import ListDialog from "../dialogs/list-dialog";
 
 interface DataTableSkeletonProps {
 	header: HeaderType;
@@ -80,6 +81,7 @@ export default function DataTableSkeleton({
 						))}
 						<TableCell border className="py-0.5 w-26 max-w-26 min-w-26">
 							<div className="flex items-center justify-center gap-1.5">
+								<ListDialog disabled />
 								<EditDialog disabled />
 								<DeleteDialog disabled />
 							</div>

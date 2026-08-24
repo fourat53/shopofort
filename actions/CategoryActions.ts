@@ -19,13 +19,8 @@ function getParamValues(param: ParameterType[string]): string[] {
 function buildWhereClause(filterParams: ParameterType): FilterBy {
 	const where: FilterBy = {};
 
-	const idFrom = Number(filterParams.idFrom);
-	const idTo = Number(filterParams.idTo);
-	if (!Number.isNaN(idFrom) || !Number.isNaN(idTo)) {
-		where.id = {};
-		if (!Number.isNaN(idFrom)) where.id.gte = idFrom;
-		if (!Number.isNaN(idTo)) where.id.lte = idTo;
-	}
+	const ids = getParamValues(filterParams.id);
+	if (ids.length) where.id = { in: ids.map(Number) };
 
 	if (filterParams.name)
 		where.name = { contains: String(filterParams.name), mode: "insensitive" };

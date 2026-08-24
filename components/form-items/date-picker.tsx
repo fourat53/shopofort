@@ -129,7 +129,6 @@ export function DatePicker({
 						className={clsx(time && "pb-0")}
 						onSelect={handleDateChange}
 					/>
-
 					{time && (
 						<div className="-translate-y-1 px-1 pb-2 flex flex-col gap-2">
 							<Label className="justify-center">Select Time</Label>

@@ -9,7 +9,14 @@ type ValueType = string | number | Date | undefined;
 
 type EntityField = (typeof entityFields)[string][number];
 
-type OptionField = "categoryId" | "productId" | "cartId" | "orderId" | "userId";
+type OptionField =
+	| "categoryId"
+	| "productId"
+	| "cartId"
+	| "orderId"
+	| "userId"
+	| "cartItemId"
+	| "orderItemId";
 
 type FieldConfig = {
 	name: string;
@@ -17,7 +24,9 @@ type FieldConfig = {
 	category: FieldCategory[];
 	required?: boolean;
 	defaultValue?: string;
-	step?: string;
+	step?: number;
+	min?: number;
+	max?: number;
 	options?: readonly (Gender | OrderStatus)[];
 };
 
@@ -25,7 +34,7 @@ const entityFields: Record<string, FieldConfig[]> = {
 	user: [
 		{
 			name: "id",
-			type: "string",
+			type: "foreignKey",
 			category: ["filter"],
 		},
 		{
@@ -49,7 +58,7 @@ const entityFields: Record<string, FieldConfig[]> = {
 	product: [
 		{
 			name: "id",
-			type: "number",
+			type: "foreignKey",
 			category: ["filter"],
 		},
 		{
@@ -69,7 +78,7 @@ const entityFields: Record<string, FieldConfig[]> = {
 			category: ["filter", "create", "edit"],
 			defaultValue: "5",
 			required: true,
-			step: "0.01",
+			step: 0.01,
 		},
 		{
 			name: "inventory",
@@ -77,6 +86,8 @@ const entityFields: Record<string, FieldConfig[]> = {
 			category: ["filter", "create", "edit"],
 			defaultValue: "1",
 			required: true,
+			min: 0,
+			max: 1000,
 		},
 		{
 			name: "description",
@@ -97,7 +108,7 @@ const entityFields: Record<string, FieldConfig[]> = {
 	cart: [
 		{
 			name: "id",
-			type: "number",
+			type: "foreignKey",
 			category: ["filter"],
 		},
 		{
@@ -106,6 +117,8 @@ const entityFields: Record<string, FieldConfig[]> = {
 			category: ["filter", "create", "edit"],
 			defaultValue: "1",
 			required: true,
+			min: 0,
+			max: 1000,
 		},
 		{
 			name: "userId",
@@ -117,7 +130,7 @@ const entityFields: Record<string, FieldConfig[]> = {
 	cartItem: [
 		{
 			name: "id",
-			type: "number",
+			type: "foreignKey",
 			category: ["filter"],
 		},
 		{
@@ -125,20 +138,22 @@ const entityFields: Record<string, FieldConfig[]> = {
 			type: "number",
 			category: ["filter", "create", "edit"],
 			required: true,
+			min: 0,
+			max: 1000,
 		},
 		{
 			name: "unitPrice",
 			type: "number",
 			category: ["filter", "create", "edit"],
 			required: true,
-			step: "0.01",
+			step: 0.01,
 		},
 		{
 			name: "totalPrice",
 			type: "number",
 			category: ["filter"],
 			required: true,
-			step: "0.01",
+			step: 0.01,
 		},
 		{
 			name: "cartId",
@@ -156,7 +171,7 @@ const entityFields: Record<string, FieldConfig[]> = {
 	order: [
 		{
 			name: "id",
-			type: "number",
+			type: "foreignKey",
 			category: ["filter"],
 		},
 		{
@@ -171,6 +186,8 @@ const entityFields: Record<string, FieldConfig[]> = {
 			category: ["filter", "create", "edit"],
 			required: true,
 			defaultValue: "1",
+			min: 0,
+			max: 1000,
 		},
 		{
 			name: "orderStatus",
@@ -189,7 +206,7 @@ const entityFields: Record<string, FieldConfig[]> = {
 	orderItem: [
 		{
 			name: "id",
-			type: "number",
+			type: "foreignKey",
 			category: ["filter"],
 		},
 		{
@@ -197,13 +214,15 @@ const entityFields: Record<string, FieldConfig[]> = {
 			type: "number",
 			category: ["filter", "create", "edit"],
 			required: true,
+			min: 0,
+			max: 1000,
 		},
 		{
 			name: "price",
 			type: "number",
 			category: ["filter", "create", "edit"],
 			required: true,
-			step: "0.01",
+			step: 0.01,
 		},
 		{
 			name: "orderId",
@@ -221,7 +240,7 @@ const entityFields: Record<string, FieldConfig[]> = {
 	category: [
 		{
 			name: "id",
-			type: "number",
+			type: "foreignKey",
 			category: ["filter"],
 		},
 		{

@@ -32,16 +32,32 @@ async function getFilterOptions(field: OptionField): Promise<SelectOption[]> {
 				select: { id: true, userId: true },
 				orderBy: { id: "asc" },
 			});
-			return carts.map((c) => formatOptions(c.id, [c.id, c.userId]));
+			return carts.map((c) => formatOptions(c.id, [c.id, `UID: ${c.userId}`]));
 		} else if (field === "orderId") {
 			const orders = await prisma.order.findMany({
 				select: { id: true, userId: true },
 				orderBy: { id: "asc" },
 			});
-			return orders.map((o) => formatOptions(o.id, [o.id, o.userId]));
+			return orders.map((o) => formatOptions(o.id, [o.id, `UID: ${o.userId}`]));
 		} else if (field === "userId") {
 			const users = await getUsers();
 			return users.map((u) => formatOptions(u.id, [u.id, u.email]));
+		} else if (field === "cartItemId") {
+			const cartItems = await prisma.cartItem.findMany({
+				select: { id: true, cartId: true, productId: true },
+				orderBy: { id: "asc" },
+			});
+			return cartItems.map((c) =>
+				formatOptions(c.id, [c.id, `CID: ${c.cartId} - PID: ${c.productId}`]),
+			);
+		} else if (field === "orderItemId") {
+			const orderItems = await prisma.orderItem.findMany({
+				select: { id: true, orderId: true, productId: true },
+				orderBy: { id: "asc" },
+			});
+			return orderItems.map((o) =>
+				formatOptions(o.id, [o.id, `OID: ${o.orderId} - PID: ${o.productId}`]),
+			);
 		} else return [];
 	} catch (error) {
 		console.error(error);

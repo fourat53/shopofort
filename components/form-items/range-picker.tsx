@@ -136,7 +136,6 @@ export default function RangePicker({
 							)}
 						</Button>
 					</PopoverTrigger>
-
 					{range?.from && (
 						<button
 							type="button"
@@ -148,7 +147,6 @@ export default function RangePicker({
 						</button>
 					)}
 				</div>
-
 				<PopoverContent className={clsx("w-auto p-1.5", time && "pb-0")}>
 					<Calendar
 						mode="range"
@@ -158,7 +156,6 @@ export default function RangePicker({
 						defaultMonth={range?.from}
 						className={clsx(time && "pb-0")}
 					/>
-
 					{time && (
 						<div className="-translate-y-1 px-1 pb-2 flex flex-col gap-2">
 							<div className="flex flex-col items-center gap-1.5">
@@ -172,7 +169,6 @@ export default function RangePicker({
 									className="text-center appearance-none bg-background [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
 								/>
 							</div>
-
 							<div className="flex flex-col items-center gap-1.5">
 								<Label className="justify-center">End Time</Label>
 
