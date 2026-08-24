@@ -37,6 +37,7 @@ export default function AdminSidebar({
 									alt="logo"
 									width={32}
 									height={32}
+									loading="eager"
 									className="relative -right-0.5 -top-0.5 size-8!"
 								/>
 								<p className="relative -left-0.5 text-[22px]">ShopoFort</p>

@@ -12,12 +12,14 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from "@/components/ui/popover";
+import { clsx } from "clsx";
 
 interface DateTimePickerProps {
 	name: string;
 	label: string;
 	defaultValue?: string | Date | undefined;
 	required?: boolean;
+	time?: boolean;
 }
 
 export function DatePicker({
@@ -25,8 +27,10 @@ export function DatePicker({
 	label,
 	defaultValue,
 	required,
+	time = false,
 }: DateTimePickerProps) {
 	const [open, setOpen] = React.useState(false);
+
 	const [date, setDate] = React.useState<Date | undefined>(
 		defaultValue ? new Date(defaultValue) : undefined,
 	);
@@ -71,8 +75,12 @@ export function DatePicker({
 	};
 
 	const displayValue = date
-		? `${format(date, "MMM d, yyyy")}, ${format(date, "HH:mm:ss")}`
-		: "Select date and time";
+		? time
+			? `${format(date, "MMM d, yyyy")}, ${format(date, "HH:mm:ss")}`
+			: format(date, "MMM d, yyyy")
+		: time
+			? "Select date and time"
+			: "Select date";
 
 	return (
 		<div className="w-full flex flex-col gap-2">
@@ -112,26 +120,29 @@ export function DatePicker({
 					)}
 				</div>
 
-				<PopoverContent className="w-auto p-1.5">
+				<PopoverContent className={clsx("w-auto p-1.5", time && "pb-0")}>
 					<Calendar
 						mode="single"
 						selected={date}
 						captionLayout="dropdown"
 						defaultMonth={date}
-						className="pb-0"
+						className={clsx(time && "pb-0")}
 						onSelect={handleDateChange}
 					/>
 
-					<div className="flex flex-col items-center gap-1.5">
-						<Label className="justify-center">Select Time</Label>
-						<Input
-							type="time"
-							step="1"
-							value={date ? format(date, "HH:mm:ss") : ""}
-							onChange={handleTimeChange}
-							className="text-center appearance-none bg-background [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
-						/>
-					</div>
+					{time && (
+						<div className="-translate-y-1 px-1 pb-2 flex flex-col gap-2">
+							<Label className="justify-center">Select Time</Label>
+							<Input
+								type="time"
+								step="1"
+								value={date ? format(date, "HH:mm:ss") : ""}
+								disabled={!date}
+								onChange={handleTimeChange}
+								className="text-center appearance-none bg-background [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
+							/>
+						</div>
+					)}
 				</PopoverContent>
 			</Popover>
 		</div>

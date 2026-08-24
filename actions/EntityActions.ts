@@ -14,6 +14,41 @@ import { getFormEntity, tagMap } from "@/lib/entity/entity-form";
 import { prisma } from "@/lib/prisma";
 import type { Prisma } from "@/prisma/generated/prisma/client";
 
+async function getFilterOptions(field: OptionField): Promise<SelectOption[]> {
+	try {
+		if (field === "categoryId") {
+			const categories = await prisma.category.findMany({
+				orderBy: { name: "asc" },
+			});
+			return categories.map((c) => formatOptions(c.id, [c.name, c.gender]));
+		} else if (field === "productId") {
+			const products = await prisma.product.findMany({
+				select: { id: true, name: true },
+				orderBy: { name: "asc" },
+			});
+			return products.map((p) => formatOptions(p.id, [p.id, p.name]));
+		} else if (field === "cartId") {
+			const carts = await prisma.cart.findMany({
+				select: { id: true, userId: true },
+				orderBy: { id: "asc" },
+			});
+			return carts.map((c) => formatOptions(c.id, [c.id, c.userId]));
+		} else if (field === "orderId") {
+			const orders = await prisma.order.findMany({
+				select: { id: true, userId: true },
+				orderBy: { id: "asc" },
+			});
+			return orders.map((o) => formatOptions(o.id, [o.id, o.userId]));
+		} else if (field === "userId") {
+			const users = await getUsers();
+			return users.map((u) => formatOptions(u.id, [u.id, u.email]));
+		} else return [];
+	} catch (error) {
+		console.error(error);
+		return [];
+	}
+}
+
 async function getEntityById(entity: EntityType, id: number | string) {
 	const where = { where: { id: id as number } };
 	try {
@@ -164,7 +199,6 @@ async function updateEntity(
 				data: data as Prisma.OrderItemUpdateInput,
 			});
 		}
-
 		updateTag(tagMap[entity]);
 	} catch (error) {
 		console.error(error);
@@ -218,41 +252,6 @@ async function updateEntities(
 		updateTag(tagMap[entity]);
 	} catch (error) {
 		console.error(error);
-	}
-}
-
-async function getFilterOptions(field: OptionField): Promise<SelectOption[]> {
-	try {
-		if (field === "categoryId") {
-			const categories = await prisma.category.findMany({
-				orderBy: { name: "asc" },
-			});
-			return categories.map((c) => formatOptions(c.id, [c.name, c.gender]));
-		} else if (field === "productId") {
-			const products = await prisma.product.findMany({
-				select: { id: true, name: true },
-				orderBy: { name: "asc" },
-			});
-			return products.map((p) => formatOptions(p.id, [p.id, p.name]));
-		} else if (field === "cartId") {
-			const carts = await prisma.cart.findMany({
-				select: { id: true, userId: true },
-				orderBy: { id: "asc" },
-			});
-			return carts.map((c) => formatOptions(c.id, [c.id, c.userId]));
-		} else if (field === "orderId") {
-			const orders = await prisma.order.findMany({
-				select: { id: true, userId: true },
-				orderBy: { id: "asc" },
-			});
-			return orders.map((o) => formatOptions(o.id, [o.id, o.userId]));
-		} else if (field === "userId") {
-			const users = await getUsers();
-			return users.map((u) => formatOptions(u.id, [u.id, u.email]));
-		} else return [];
-	} catch (error) {
-		console.error(error);
-		return [];
 	}
 }
 

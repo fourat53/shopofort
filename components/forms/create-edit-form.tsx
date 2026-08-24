@@ -168,6 +168,7 @@ export default function CreateEditForm<
 							label={getFieldName(field.name)}
 							defaultValue={value as string | Date | undefined}
 							required={field.required}
+							time
 						/>
 					) : field.type === "image" ? (
 						<ImageUpload

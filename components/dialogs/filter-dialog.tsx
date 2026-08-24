@@ -87,9 +87,12 @@ export default function FilterDialog() {
 			className={clsx("flex gap-1.5", entity !== "user" && "pr-1.5 border-r")}
 		>
 			{hasFilters && (
-				<Button variant="outline" onClick={handleClear}>
-					<IconArrowBackUp className="size-4" />
-				</Button>
+				<Button
+					variant="outline"
+					onClick={handleClear}
+					className="size-8 p-2"
+					icon={<IconArrowBackUp className="size-4" />}
+				/>
 			)}
 			<Dialog open={open} onOpenChange={setOpen}>
 				<DialogTrigger asChild>
@@ -106,6 +109,7 @@ export default function FilterDialog() {
 					setOpen={setOpen}
 					isPending={isPending}
 					handleSubmit={handleSubmit}
+					searchParams={searchParams}
 				/>
 			</Dialog>
 		</div>

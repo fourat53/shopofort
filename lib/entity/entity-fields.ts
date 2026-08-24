@@ -16,7 +16,7 @@ type FieldConfig = {
 	type: FieldType;
 	category: FieldCategory[];
 	required?: boolean;
-	defaultValue?: string | number;
+	defaultValue?: string;
 	step?: string;
 	options?: readonly (Gender | OrderStatus)[];
 };
@@ -67,7 +67,7 @@ const entityFields: Record<string, FieldConfig[]> = {
 			name: "price",
 			type: "number",
 			category: ["filter", "create", "edit"],
-			defaultValue: 5,
+			defaultValue: "5",
 			required: true,
 			step: "0.01",
 		},
@@ -75,13 +75,13 @@ const entityFields: Record<string, FieldConfig[]> = {
 			name: "inventory",
 			type: "number",
 			category: ["filter", "create", "edit"],
-			defaultValue: 1,
+			defaultValue: "1",
 			required: true,
 		},
 		{
 			name: "description",
 			type: "string",
-			category: ["create", "edit"],
+			category: ["filter", "create", "edit"],
 		},
 		{
 			name: "categoryId",
@@ -104,7 +104,7 @@ const entityFields: Record<string, FieldConfig[]> = {
 			name: "totalAmount",
 			type: "number",
 			category: ["filter", "create", "edit"],
-			defaultValue: 1,
+			defaultValue: "1",
 			required: true,
 		},
 		{
@@ -170,7 +170,7 @@ const entityFields: Record<string, FieldConfig[]> = {
 			type: "number",
 			category: ["filter", "create", "edit"],
 			required: true,
-			defaultValue: 1,
+			defaultValue: "1",
 		},
 		{
 			name: "orderStatus",

@@ -8,7 +8,6 @@ import {
 	useState,
 } from "react";
 import { getFilterOptions } from "@/actions/EntityActions";
-import { DatePicker } from "@/components/form-items/date-picker";
 import { Input } from "@/components/form-items/input";
 import { Select, type SelectOption } from "@/components/form-items/select";
 import { Button } from "@/components/ui/button";
@@ -24,6 +23,7 @@ import {
 	getPluralName,
 } from "@/lib/entity/current-entity";
 import type { EntityField, OptionField } from "@/lib/entity/entity-fields";
+import RangePicker from "../form-items/range-picker";
 
 interface DialogFormProps {
 	fields: EntityField[];
@@ -32,6 +32,7 @@ interface DialogFormProps {
 	open: boolean;
 	setOpen: Dispatch<SetStateAction<boolean>>;
 	handleSubmit: (e: React.SubmitEvent<HTMLFormElement>) => void;
+	searchParams: URLSearchParams;
 }
 
 export default function FilterForm({
@@ -41,6 +42,7 @@ export default function FilterForm({
 	open,
 	setOpen,
 	handleSubmit,
+	searchParams,
 }: DialogFormProps) {
 	const [optionsCache, setOptionsCache] = useState<
 		Record<string, SelectOption[]>
@@ -88,46 +90,52 @@ export default function FilterForm({
 					<DialogTitle>Filter {getPluralName(entity)}</DialogTitle>
 				</DialogHeader>
 				{fields.map((field) => {
+					const name = field.name;
 					return field.type === "string" ? (
 						<Input
 							key={field.name}
 							name={field.name}
+							type={field.name === "email" ? "email" : "text"}
 							label={getFieldName(field.name)}
+							defaultValue={searchParams.get(name) ?? undefined}
 						/>
 					) : field.type === "number" ? (
 						<div key={field.name} className="flex w-full gap-2">
 							<Input
-								name={`${field.name}From`}
-								label={`${getFieldName(field.name)} From`}
 								type="number"
+								name={`${field.name}From`}
+								label={`${getFieldName(field.name)} from`}
+								defaultValue={searchParams.get(`${name}From`) ?? undefined}
 								step={field.step ?? "1"}
 							/>
 							<Input
-								name={`${field.name}To`}
-								label={`${getFieldName(field.name)} To`}
 								type="number"
+								name={`${field.name}To`}
+								label={`${getFieldName(field.name)} to`}
+								defaultValue={searchParams.get(`${name}To`) ?? undefined}
 								step={field.step ?? "1"}
 							/>
 						</div>
 					) : field.type === "date" ? (
-						<div key={field.name} className="w-full flex gap-2">
-							<DatePicker
-								name={`${field.name}From`}
-								label={`${getFieldName(field.name)} From`}
-							/>
-							<DatePicker
-								name={`${field.name}To`}
-								label={`${getFieldName(field.name)} To`}
-							/>
-						</div>
+						<RangePicker
+							key={field.name}
+							fromName={`${field.name}From`}
+							toName={`${field.name}To`}
+							label={getFieldName(field.name)}
+							defaultValues={{
+								from: searchParams.get(`${name}From`) ?? undefined,
+								to: searchParams.get(`${name}To`) ?? undefined,
+							}}
+							time
+						/>
 					) : field.type === "enum" ? (
 						<Select
+							multiple
 							key={field.name}
 							name={field.name}
-							label={getFieldName(field.name)}
 							placeholder={"Select options"}
-							multiple
-							defaultValue="ALL"
+							label={getFieldName(field.name)}
+							defaultValue={searchParams.getAll(name) ?? ["ALL"]}
 							items={[
 								{ label: "Any", value: "ALL" },
 								...(field.options?.map((o) => ({ label: o, value: o })) ?? []),
@@ -135,12 +143,12 @@ export default function FilterForm({
 						/>
 					) : field.type === "foreignKey" ? (
 						<Select
+							multiple
 							key={field.name}
 							name={field.name}
-							label={getFieldName(field.name)}
 							placeholder={"Select options"}
-							multiple
-							defaultValue="ALL"
+							label={getFieldName(field.name)}
+							defaultValue={searchParams.getAll(name) ?? ["ALL"]}
 							items={[
 								{ label: "Any", value: "ALL" },
 								...(optionsCache[field.name] ?? []),

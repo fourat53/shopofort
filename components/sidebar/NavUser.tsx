@@ -45,6 +45,7 @@ function AvatarImage({ user }: { user: KindeUser<Record<string, unknown>> }) {
 					alt=""
 					width={32}
 					height={32}
+					loading="eager"
 					className="bg-mist-500 rounded-lg p-0.5"
 				/>
 			)}

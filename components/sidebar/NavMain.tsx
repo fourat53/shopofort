@@ -71,12 +71,6 @@ const navMain: NavItem[] = [
 	},
 ] as const;
 
-function linkUrl(url: string) {
-	return url === "dashboard"
-		? `/admin/${url}`
-		: `/admin/${url}?page=1&sortBy=id&order=asc`;
-}
-
 function NavMain({
 	items,
 }: {
@@ -101,7 +95,7 @@ function NavMain({
 										"bg-primary dark:bg-primary/90 hover:bg-primary/90 dark:hover:bg-primary text-mist-50 hover:text-mist-50",
 								)}
 							>
-								<Link href={linkUrl(item.url)}>
+								<Link href={`/admin/${item.url}`}>
 									{item.icon && <item.icon />}
 									{item.title}
 								</Link>
