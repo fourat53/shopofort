@@ -96,7 +96,7 @@ function TableCell({
 		<td
 			data-slot="table-cell"
 			className={cn(
-				"h-8.5 p-2 truncate max-w-66 align-middle whitespace-nowrap has-[[role=checkbox]]:pr-0",
+				"p-2 truncate max-w-66 align-middle whitespace-nowrap has-[[role=checkbox]]:pr-0",
 				border && "border-l",
 				className,
 			)}

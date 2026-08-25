@@ -1,5 +1,14 @@
 import { usePathname } from "next/navigation";
 
+type Entity =
+	| "users"
+	| "carts"
+	| "orders"
+	| "products"
+	| "categories"
+	| "cart-items"
+	| "order-items";
+
 type EntityType =
 	| "user"
 	| "cart"
@@ -60,6 +69,7 @@ function getPluralName(name: string) {
 
 export {
 	CurrentEntity,
+	type Entity,
 	type EntityType,
 	getFieldName,
 	getPluralName,

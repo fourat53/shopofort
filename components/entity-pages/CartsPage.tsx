@@ -1,28 +1,20 @@
 import { getCartCount, getCartsPage } from "@/actions/CartActions";
+import type { PageProps } from "@/app/admin/[entity]/page";
 import DataTableLayout from "@/components/data-table/DataTableLayout";
-import {
-	getPaginationParams,
-	type PageProps,
-} from "@/components/data-table/PaginationParams";
-import { CARTS_HEADER } from "@/lib/entity/entity-header";
+import { getPaginationParams } from "@/components/data-table/PaginationParams";
 import type { Cart } from "@/lib/entity/types";
 
-export default async function CartsPage({ searchParams }: PageProps) {
-	const params = await searchParams;
-	const { page: _page, sortBy, order, ...filterParams } = params;
-
+export default async function CartsPage({ searchParams, header }: PageProps) {
+	const { page: _page, sortBy, order, ...filterParams } = searchParams;
 	const totalCount = await getCartCount(filterParams);
 	const { page, totalPages } = getPaginationParams(_page, totalCount);
-
 	const carts: Cart[] = await getCartsPage(page, filterParams, sortBy, order);
-
 	return (
 		<DataTableLayout<Cart>
-			header={CARTS_HEADER}
+			header={header}
 			totalPages={totalPages}
 			rows={carts}
-			basePath="carts"
-			suspenseKey={params}
+			entity="carts"
 		/>
 	);
 }

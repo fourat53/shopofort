@@ -1,15 +1,9 @@
+import type { Entity } from "@/lib/entity/current-entity";
+
 const PAGE_SIZE = 20;
-const IMAGE_PAGE_SIZE = 10;
+const IMAGE_PAGE_SIZE = 9;
 const CACHE_SECONDS = 600;
 const FILTER_CACHE_SECONDS = 60;
-
-interface PageProps {
-	searchParams: Promise<{
-		page?: string;
-		sortBy?: string;
-		order?: "asc" | "desc";
-	}>;
-}
 
 const SORT_ORDERS = ["asc", "desc"] as const;
 
@@ -57,11 +51,11 @@ function getPaginationParams(
 }
 
 function pageHref(
-	basePath: string,
+	entity: `/${Entity}`,
 	page: number,
 	searchParams?: URLSearchParams,
 ) {
-	const path = `/admin/${basePath}`;
+	const path = `/admin/${entity}`;
 	const newParams = new URLSearchParams(searchParams?.toString());
 
 	newParams.set("page", page.toString());
@@ -71,11 +65,11 @@ function pageHref(
 }
 
 function sortHref(
-	basePath: string,
+	entity: Entity,
 	searchParams: URLSearchParams,
 	field: string,
 ) {
-	const path = `/admin/${basePath}`;
+	const path = `/admin/${entity}`;
 	const newParams = new URLSearchParams(searchParams.toString());
 
 	const sortBy = newParams.get("sortBy");
@@ -143,7 +137,6 @@ export {
 	getVisiblePages,
 	IMAGE_PAGE_SIZE,
 	PAGE_SIZE,
-	type PageProps,
 	pageHref,
 	parsePage,
 	parseSortOrder,

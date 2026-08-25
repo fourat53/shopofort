@@ -22,8 +22,6 @@ type User = {
 	updated_on: Date;
 };
 
-type PreferredUser = Omit<User, "email"> & { preferred_email: string };
-
 type Product = Omit<ProductType, "price"> & { price: number };
 
 type CartItem = Omit<CartItemType, "unitPrice" | "totalPrice"> & {
@@ -33,17 +31,5 @@ type CartItem = Omit<CartItemType, "unitPrice" | "totalPrice"> & {
 
 type OrderItem = Omit<OrderItemType, "price"> & { price: number };
 
-type ParameterType = Record<string, string | string[] | undefined>;
-
-export type {
-	Cart,
-	CartItem,
-	Category,
-	Order,
-	OrderItem,
-	ParameterType,
-	PreferredUser,
-	Product,
-	User,
-};
+export type { Cart, CartItem, Category, Order, OrderItem, Product, User };
 export { Gender, OrderStatus };

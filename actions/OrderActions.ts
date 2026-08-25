@@ -4,17 +4,16 @@ import {
 	FILTER_CACHE_SECONDS,
 	PAGE_SIZE,
 } from "@/components/data-table/PaginationParams";
-import { ORDERS_HEADER } from "@/lib/entity/entity-header";
-import type { OrderStatus, ParameterType } from "@/lib/entity/types";
+import {
+	getParamValues,
+	ORDERS_HEADER,
+	type ParameterType,
+} from "@/lib/entity/entity-header";
+import type { OrderStatus } from "@/lib/entity/types";
 import { prisma } from "@/lib/prisma";
 import type { Prisma } from "@/prisma/generated/prisma/client";
 
 type FilterBy = Prisma.OrderWhereInput;
-
-function getParamValues(param: ParameterType[string]): string[] {
-	if (!param) return [];
-	return Array.isArray(param) ? param : [param];
-}
 
 function buildWhereClause(filterParams: ParameterType): FilterBy {
 	const where: FilterBy = {};

@@ -6,18 +6,17 @@ import {
 } from "@/components/data-table/PaginationParams";
 import { checkedEnvVar } from "@/lib/checked-env-var";
 import { getFormUser } from "@/lib/entity/entity-form";
-import { USERS_HEADER } from "@/lib/entity/entity-header";
-import type { ParameterType, PreferredUser, User } from "@/lib/entity/types";
+import { type ParameterType, USERS_HEADER } from "@/lib/entity/entity-header";
+import type { User } from "@/lib/entity/types";
 import { prisma } from "@/lib/prisma";
 
 const kindeIssuerUrl = checkedEnvVar("KINDE_ISSUER_URL");
 
-function mapUser(user: PreferredUser | User): User {
-	const email = "email" in user ? user.email : user.preferred_email;
+function mapUser(user: User): User {
 	return {
 		id: user.id,
 		picture: user.picture,
-		email,
+		email: user.email,
 		first_name: user.first_name,
 		last_name: user.last_name,
 		is_suspended: user.is_suspended,

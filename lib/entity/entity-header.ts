@@ -1,3 +1,7 @@
+import type { Entity } from "./current-entity";
+
+type HasImage = "none" | "one" | "multiple";
+
 type HeaderType = { name: string; width?: string }[];
 
 const CARTS_HEADER: HeaderType = [
@@ -62,13 +66,35 @@ const USERS_HEADER: HeaderType = [
 	{ name: "updated_on", width: "160px" },
 ];
 
+function getHeader(entity: Entity): HeaderType {
+	if (entity === "users") return USERS_HEADER;
+	else if (entity === "carts") return CARTS_HEADER;
+	else if (entity === "cart-items") return CART_ITEMS_HEADER;
+	else if (entity === "categories") return CATEGORIES_HEADER;
+	else if (entity === "orders") return ORDERS_HEADER;
+	else if (entity === "order-items") return ORDER_ITEMS_HEADER;
+	else if (entity === "products") return PRODUCTS_HEADER;
+	return [];
+}
+
+type ParameterType = Record<string, string | string[] | undefined>;
+
+function getParamValues(param: ParameterType[string]): string[] {
+	if (!param) return [];
+	return Array.isArray(param) ? param : [param];
+}
+
 export {
 	CART_ITEMS_HEADER,
 	CARTS_HEADER,
 	CATEGORIES_HEADER,
+	getHeader,
+	getParamValues,
+	type HasImage,
 	type HeaderType,
 	ORDER_ITEMS_HEADER,
 	ORDERS_HEADER,
+	type ParameterType,
 	PRODUCTS_HEADER,
 	USERS_HEADER,
 };

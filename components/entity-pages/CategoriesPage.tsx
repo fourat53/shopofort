@@ -1,33 +1,28 @@
 import { getCategoriesPage, getCategoryCount } from "@/actions/CategoryActions";
+import type { PageProps } from "@/app/admin/[entity]/page";
 import DataTableLayout from "@/components/data-table/DataTableLayout";
-import {
-	getPaginationParams,
-	type PageProps,
-} from "@/components/data-table/PaginationParams";
-import { CATEGORIES_HEADER } from "@/lib/entity/entity-header";
+import { getPaginationParams } from "@/components/data-table/PaginationParams";
 import type { Category } from "@/lib/entity/types";
 
-export default async function CategoriesPage({ searchParams }: PageProps) {
-	const params = await searchParams;
-	const { page: _page, sortBy, order, ...filterParams } = params;
-
+export default async function CategoriesPage({
+	searchParams,
+	header,
+}: PageProps) {
+	const { page: _page, sortBy, order, ...filterParams } = searchParams;
 	const totalCount = await getCategoryCount(filterParams);
 	const { page, totalPages } = getPaginationParams(_page, totalCount);
-
 	const categories: Category[] = await getCategoriesPage(
 		page,
 		filterParams,
 		sortBy,
 		order,
 	);
-
 	return (
 		<DataTableLayout<Category>
-			header={CATEGORIES_HEADER}
+			header={header}
 			totalPages={totalPages}
 			rows={categories}
-			basePath="categories"
-			suspenseKey={params}
+			entity="categories"
 		/>
 	);
 }

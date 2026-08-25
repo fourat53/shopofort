@@ -19,7 +19,7 @@ export default function ContentCell({
 	rowId,
 	tooltip = false,
 }: CellContentProps) {
-	const imageSize = tooltip ? 32 : 56;
+	const imageSize = tooltip ? 32 : 58;
 	return (
 		<>
 			{cIndex &&
@@ -79,7 +79,7 @@ export default function ContentCell({
 				<div
 					className={clsx(
 						"flex overflow-x-auto items-center",
-						tooltip ? "gap-1" : "w-62 gap-2",
+						tooltip ? "gap-1" : "gap-2",
 					)}
 				>
 					{value.map((imgSrc) => (

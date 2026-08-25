@@ -16,21 +16,22 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import type { HeaderType } from "@/lib/entity/entity-header";
+import type { Entity } from "@/lib/entity/current-entity";
+import type { HasImage, HeaderType } from "@/lib/entity/entity-header";
 import ListDialog from "../dialogs/list-dialog";
 
 interface DataTableSkeletonProps {
+	entity: Entity;
 	header: HeaderType;
-	basePath: string;
-	hasImage?: "none" | "one" | "multiple";
+	hasImage?: HasImage;
 }
 
 export default function DataTableSkeleton({
+	entity,
 	header,
-	basePath,
 	hasImage = "none",
 }: DataTableSkeletonProps) {
-	const rowCount = hasImage !== "none" ? IMAGE_PAGE_SIZE : PAGE_SIZE;
+	const rowCount = hasImage === "none" ? PAGE_SIZE : IMAGE_PAGE_SIZE;
 	return (
 		<Table>
 			<TableHeader>
@@ -42,7 +43,7 @@ export default function DataTableSkeleton({
 						<SortableTableHead
 							key={item.name}
 							name={item.name}
-							basePath={basePath}
+							entity={entity}
 						/>
 					))}
 					<TableHead border className="py-0 text-center">
@@ -60,21 +61,20 @@ export default function DataTableSkeleton({
 							<TableCell
 								key={item.name}
 								border
-								className={clsx(hasImage !== "none" && "h-18")}
+								className={clsx(hasImage === "none" ? "h-[33.6px]" : "h-18.5")}
 								style={{ width: item.width, minWidth: item.width }}
 							>
 								{item.name === "images" ? (
-									<div className="w-fit flex gap-2">
+									<div className="flex gap-2">
 										{Array.from({ length: 4 }).map((_, cIndex) => (
-											<Skeleton key={cIndex} className="size-14" />
+											<Skeleton key={cIndex} className="size-14.5" />
 										))}
 									</div>
 								) : (
 									<Skeleton
-										className={clsx(
-											"h-4",
-											item.name === "picture" && "h-14 rounded-xl",
-										)}
+										className={
+											item.name === "picture" ? "h-14.5 rounded-xl" : "h-4"
+										}
 									/>
 								)}
 							</TableCell>

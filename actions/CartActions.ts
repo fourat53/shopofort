@@ -4,17 +4,15 @@ import {
 	FILTER_CACHE_SECONDS,
 	PAGE_SIZE,
 } from "@/components/data-table/PaginationParams";
-import { CARTS_HEADER } from "@/lib/entity/entity-header";
-import type { ParameterType } from "@/lib/entity/types";
+import {
+	CARTS_HEADER,
+	getParamValues,
+	type ParameterType,
+} from "@/lib/entity/entity-header";
 import { prisma } from "@/lib/prisma";
 import type { Prisma } from "@/prisma/generated/prisma/client";
 
 type FilterBy = Prisma.CartWhereInput;
-
-function getParamValues(param: ParameterType[string]): string[] {
-	if (!param) return [];
-	return Array.isArray(param) ? param : [param];
-}
 
 function buildWhereClause(filterParams: ParameterType): FilterBy {
 	const where: FilterBy = {};

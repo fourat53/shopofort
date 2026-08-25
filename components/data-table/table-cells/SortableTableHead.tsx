@@ -10,16 +10,16 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useTransition } from "react";
 import { sortHref } from "@/components/data-table/PaginationParams";
 import { TableHead } from "@/components/ui/table";
-import { getFieldName } from "@/lib/entity/current-entity";
+import { type Entity, getFieldName } from "@/lib/entity/current-entity";
 
 interface SortableTableHeadProps {
 	name: string;
-	basePath: string;
+	entity: Entity;
 }
 
 export default function SortableTableHead({
 	name,
-	basePath,
+	entity,
 }: SortableTableHeadProps) {
 	const router = useRouter();
 	const searchParams = useSearchParams();
@@ -31,7 +31,7 @@ export default function SortableTableHead({
 	function handleClick() {
 		if (name === "picture") return;
 		startTransition(() => {
-			router.push(sortHref(basePath, searchParams, name), {
+			router.push(sortHref(entity, searchParams, name), {
 				scroll: false,
 			});
 		});

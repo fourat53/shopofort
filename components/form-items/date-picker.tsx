@@ -1,6 +1,7 @@
 "use client";
 
 import { IconCalendar, IconX } from "@tabler/icons-react";
+import { clsx } from "clsx";
 import { format } from "date-fns";
 import * as React from "react";
 import { Button } from "@/components/ui/button";
@@ -12,7 +13,6 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from "@/components/ui/popover";
-import { clsx } from "clsx";
 
 interface DateTimePickerProps {
 	name: string;

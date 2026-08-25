@@ -1,5 +1,4 @@
 import { clsx } from "clsx";
-import type { BasePathType } from "@/components/data-table/DataTableLayout";
 import CheckBoxCell from "@/components/data-table/table-cells/CheckBoxCell";
 import ContentCell from "@/components/data-table/table-cells/ContentCell";
 import SortableTableHead from "@/components/data-table/table-cells/SortableTableHead";
@@ -13,22 +12,29 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import type { HeaderType } from "@/lib/entity/entity-header";
+import type { Entity } from "@/lib/entity/current-entity";
+import type { HasImage, HeaderType } from "@/lib/entity/entity-header";
 import ListDialog from "../dialogs/list-dialog";
 
 interface DataTableProps<T> {
 	header: HeaderType;
 	rows: T[];
-	basePath: BasePathType;
-	hasImage?: "none" | "one" | "multiple";
+	entity: Entity;
+	hasImage?: HasImage;
 }
 
 export default function DataTableLayout<T extends { id: number | string }>({
 	header,
 	rows,
-	basePath,
+	entity,
 	hasImage = "none",
 }: DataTableProps<T>) {
+	function getCellTitle(index: number, value: string | number) {
+		return ["images", "picture"].includes(header[index].name)
+			? undefined
+			: String(value);
+	}
+
 	return (
 		<Table>
 			<TableHeader>
@@ -40,7 +46,7 @@ export default function DataTableLayout<T extends { id: number | string }>({
 						<SortableTableHead
 							key={item.name}
 							name={item.name}
-							basePath={basePath}
+							entity={entity}
 						/>
 					))}
 					<TableHead border className="py-0 text-center">
@@ -56,14 +62,10 @@ export default function DataTableLayout<T extends { id: number | string }>({
 						</TableCell>
 						{Object.values(row).map((value, cIndex) => (
 							<TableCell
-								key={`cell-${row.id}-${cIndex}`}
 								border
-								title={
-									["images", "picture"].includes(header[cIndex].name)
-										? undefined
-										: String(value)
-								}
-								className={clsx(hasImage !== "none" && "h-18")}
+								key={`cell-${row.id}-${cIndex}`}
+								title={getCellTitle(cIndex, value)}
+								className={clsx(hasImage === "none" ? "h-[33.6px]" : "h-18.5")}
 								style={{
 									width: header[cIndex].width,
 									minWidth: header[cIndex].width,
