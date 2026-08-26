@@ -1,88 +1,96 @@
 import { Suspense } from "react";
+import { getEntityCount } from "@/actions/EntityActions";
+import DataTablePagination from "@/components/data-table/DataTablePagination";
 import DataTableSkeleton from "@/components/data-table/DataTableSkeleton";
-import CartItemsPage from "@/components/entity-pages/CartItemsPage";
-import CartsPage from "@/components/entity-pages/CartsPage";
-import CategoriesPage from "@/components/entity-pages/CategoriesPage";
-import OrderItemsPage from "@/components/entity-pages/OrderItemsPage";
-import OrdersPage from "@/components/entity-pages/OrdersPage";
-import ProductsPage from "@/components/entity-pages/ProductsPage";
-import UsersPage from "@/components/entity-pages/UsersPage";
-import type { Entity } from "@/lib/entity/current-entity";
-import {
-	getHeader,
-	type HasImage,
-	type HeaderType,
-} from "@/lib/entity/entity-header";
+import { getPaginationParams } from "@/components/data-table/PaginationParams";
+import CartItemsTable from "@/components/entity-tables/CartItemsTable";
+import CartsTable from "@/components/entity-tables/CartsTable";
+import CategoriesTable from "@/components/entity-tables/CategoriesTable";
+import OrderItemsTable from "@/components/entity-tables/OrderItemsTable";
+import OrdersTable from "@/components/entity-tables/OrdersTable";
+import ProductsTable from "@/components/entity-tables/ProductsTable";
+import UsersTable from "@/components/entity-tables/UsersTable";
+import { getHeader, type HeaderItem } from "@/lib/entity/entity-header";
+import { EntityType } from "@/lib/entity/types";
 
-type SearchParams = {
-	page?: string;
-	sortBy?: string;
-	order?: "asc" | "desc";
-} & Record<string, string | string[] | undefined>;
-
-interface EntitySectionProps {
-	params: Promise<{ entity: Entity }>;
-	searchParams: Promise<SearchParams>;
+interface EntityPageProps {
+	params: Promise<{ entity: EntityType }>;
+	searchParams: Promise<
+		{
+			page?: string;
+			order?: "asc" | "desc";
+			sortBy?: string;
+		} & Record<string, string | string[] | undefined>
+	>;
 }
 
-export default async function EntitySection({
+export default async function EntityPage({
 	params,
 	searchParams,
-}: EntitySectionProps) {
+}: EntityPageProps) {
 	const { entity } = await params;
-	const resolvedParams = await searchParams;
+	const { page: _page, sortBy, order, ...filterParams } = await searchParams;
+	const hasImage = ["users", "products"].includes(entity);
+
+	const totalCount = await getEntityCount(entity, filterParams);
+	const { page, totalPages } = getPaginationParams(_page, totalCount, hasImage);
+
 	const header = getHeader(entity);
 
-	const hasImage: HasImage =
-		entity === "products" ? "multiple" : entity === "users" ? "one" : "none";
+	const entityParams = {
+		entity,
+		header,
+		page,
+		order,
+		sortBy,
+		...filterParams,
+	};
+
 	return (
-		<Suspense
-			key={JSON.stringify(resolvedParams)}
-			fallback={
-				<DataTableSkeleton
+		<>
+			<Suspense
+				key={JSON.stringify(entityParams)}
+				fallback={<DataTableSkeleton entity={entity} header={header} />}
+			>
+				<EntityTable {...entityParams} />
+			</Suspense>
+			{totalPages > 1 && (
+				<DataTablePagination
 					entity={entity}
-					header={header}
-					hasImage={hasImage}
+					totalPages={totalPages}
+					className="absolute bottom-15"
 				/>
-			}
-		>
-			<EntityPage
-				entity={entity}
-				header={header}
-				searchParams={resolvedParams}
-			/>
-		</Suspense>
+			)}
+		</>
 	);
 }
 
-interface PageProps {
-	searchParams: SearchParams;
-	header: HeaderType;
+interface EntityTableProps {
+	entity: EntityType;
+	header: HeaderItem[];
+	page?: number;
+	order?: "asc" | "desc";
+	sortBy?: string;
+	filterParams?: Record<string, string | string[] | undefined>;
 }
 
-interface EntityPageProps extends PageProps {
-	entity: Entity;
-}
-
-async function EntityPage({ entity, header, searchParams }: EntityPageProps) {
-	// await new Promise((resolve) => setTimeout(resolve, 2000));
-
-	switch (entity) {
-		case "users":
-			return <UsersPage header={header} searchParams={searchParams} />;
-		case "products":
-			return <ProductsPage header={header} searchParams={searchParams} />;
-		case "orders":
-			return <OrdersPage header={header} searchParams={searchParams} />;
-		case "carts":
-			return <CartsPage header={header} searchParams={searchParams} />;
-		case "categories":
-			return <CategoriesPage header={header} searchParams={searchParams} />;
-		case "cart-items":
-			return <CartItemsPage header={header} searchParams={searchParams} />;
-		case "order-items":
-			return <OrderItemsPage header={header} searchParams={searchParams} />;
+async function EntityTable({ ...pageParams }: EntityTableProps) {
+	switch (pageParams.entity) {
+		case EntityType.users:
+			return <UsersTable {...pageParams} />;
+		case EntityType.products:
+			return <ProductsTable {...pageParams} />;
+		case EntityType.orders:
+			return <OrdersTable {...pageParams} />;
+		case EntityType.carts:
+			return <CartsTable {...pageParams} />;
+		case EntityType.categories:
+			return <CategoriesTable {...pageParams} />;
+		case EntityType["cart-items"]:
+			return <CartItemsTable {...pageParams} />;
+		case EntityType["order-items"]:
+			return <OrderItemsTable {...pageParams} />;
 	}
 }
 
-export type { PageProps };
+export type { EntityTableProps };

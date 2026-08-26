@@ -3,45 +3,39 @@
 import { useState } from "react";
 import { getEntityById } from "@/actions/EntityActions";
 import ContentCell from "@/components/data-table/table-cells/ContentCell";
-import SmallLoader from "@/components/loaders/small-loader";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
 	Tooltip,
 	TooltipContent,
 	TooltipProvider,
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { getFieldName, getTooltipEntity } from "@/lib/entity/current-entity";
+import {
+	getFieldName,
+	getSingleName,
+	getTooltipEntity,
+} from "@/lib/entity/entity-functions";
 
 export default function EntityTooltip({
 	headerName,
 	idValue,
 }: {
 	headerName: string;
-	idValue: number | string;
+	idValue: string;
 }) {
+	const entity = getTooltipEntity(headerName);
 	const [data, setData] = useState<unknown>();
 	const [loading, setLoading] = useState<boolean>(false);
 	const [open, setOpen] = useState<boolean>(false);
 
-	const title =
-		headerName
-			.replace("Id", "")
-			.replace(/([A-Z])/g, " $1")
-			.trim() + " Details";
-
-	const handleOpenChange = async (isOpen: boolean) => {
+	const handleOpenChange = async (open: boolean) => {
+		if (!entity) return;
+		setOpen(open);
+		if (!open || data || loading) return;
 		try {
-			setOpen(isOpen);
-			if (isOpen && !data && !loading) {
-				setLoading(true);
-
-				const entity = getTooltipEntity(headerName);
-
-				if (entity) {
-					const result = await getEntityById(entity, idValue);
-					setData(result);
-				}
-			}
+			setLoading(true);
+			const result = await getEntityById(entity, idValue);
+			setData(result);
 		} catch (error) {
 			console.error(error);
 		} finally {
@@ -49,9 +43,11 @@ export default function EntityTooltip({
 		}
 	};
 
+	if (!entity) return;
+
 	return (
 		<TooltipProvider>
-			<Tooltip open={open} onOpenChange={handleOpenChange} delayDuration={300}>
+			<Tooltip open={open} onOpenChange={handleOpenChange}>
 				<TooltipTrigger asChild>
 					<button
 						type="button"
@@ -66,31 +62,37 @@ export default function EntityTooltip({
 				</TooltipTrigger>
 				<TooltipContent
 					side="left"
-					className="max-w-100 shadow-lg bg-background border text-foreground rounded-lg"
+					className="w-80 flex flex-col shadow-lg bg-background border text-foreground rounded-lg"
 				>
-					<div className="w-full">
-						<p className="w-full text-sm text-primary text-center font-semibold border-b pb-1 capitalize">
-							{title}
-						</p>
-						{loading ? (
-							<SmallLoader className="pt-1.5" iconClassName="size-5" />
-						) : data ? (
-							<div className="pt-1.5 flex flex-col gap-1">
-								{Object.entries(data).map(([key, value]) => (
-									<div key={key} className="grid grid-cols-[2fr_5fr] gap-1.5">
-										<p className="max-w-28 text-xs font-medium text-muted-foreground capitalize">
-											{getFieldName(key)}
-										</p>
-										<ContentCell headerName={key} value={value} tooltip />
-									</div>
-								))}
-							</div>
-						) : (
-							<div className="pt-1.5 text-muted-foreground text-center">
-								No details available
-							</div>
-						)}
-					</div>
+					<p className="w-full text-primary text-center font-semibold border-b pb-1 capitalize">
+						{getSingleName(entity) + " details"}
+					</p>
+					{loading ? (
+						<div className="grid grid-cols-[2fr_5fr] gap-1.5">
+							{Array.from({ length: 6 }).map((_, i) => (
+								<Skeleton key={i} className={i % 2 === 0 ? "w-22" : ""} />
+							))}
+						</div>
+					) : data ? (
+						<div>
+							{Object.entries(data).map(([name, value]) => (
+								<div key={name} className="grid grid-cols-[2fr_5fr] gap-1.5">
+									<p className="w-22 font-medium text-muted-foreground">
+										{getFieldName(name)}:
+									</p>
+									<ContentCell
+										headerName={name}
+										value={Array.isArray(value) ? [...value] : String(value)}
+										tooltip
+									/>
+								</div>
+							))}
+						</div>
+					) : (
+						<div className="pt-1.5 text-muted-foreground text-center">
+							No details available
+						</div>
+					)}
 				</TooltipContent>
 			</Tooltip>
 		</TooltipProvider>

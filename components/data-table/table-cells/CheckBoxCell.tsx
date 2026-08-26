@@ -4,16 +4,19 @@ import DeleteDialog from "@/components/dialogs/delete-dialog";
 import EditDialog from "@/components/dialogs/edit-dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useSelection } from "@/hooks/use-selection";
+import type { EntityType, StringNumber } from "@/lib/entity/types";
 
 type CheckboxType = "select-all" | "select-one" | "actions";
 
-interface CheckBoxCellProps<T extends { id: number | string }> {
+interface CheckBoxCellProps<T extends { id: StringNumber }> {
+	entity: EntityType;
 	rows: T[];
 	type: CheckboxType;
-	id?: number | string;
+	id?: StringNumber;
 }
 
-export default function CheckBoxCell<T extends { id: number | string }>({
+export default function CheckBoxCell<T extends { id: StringNumber }>({
+	entity,
 	rows,
 	type,
 	id,
@@ -39,8 +42,8 @@ export default function CheckBoxCell<T extends { id: number | string }>({
 	if (type === "actions") {
 		return someSelected ? (
 			<div className="flex items-center justify-center gap-1.5">
-				<EditDialog rows={selectedRows} />
-				<DeleteDialog ids={[...selectedIds]} />
+				<EditDialog entity={entity} rows={selectedRows} />
+				<DeleteDialog entity={entity} ids={[...selectedIds]} />
 			</div>
 		) : (
 			"Actions"

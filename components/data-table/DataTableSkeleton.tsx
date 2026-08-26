@@ -16,14 +16,14 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import type { Entity } from "@/lib/entity/current-entity";
-import type { HasImage, HeaderType } from "@/lib/entity/entity-header";
+import type { HeaderItem } from "@/lib/entity/entity-header";
+import type { EntityType } from "@/lib/entity/types";
 import ListDialog from "../dialogs/list-dialog";
 
 interface DataTableSkeletonProps {
-	entity: Entity;
-	header: HeaderType;
-	hasImage?: HasImage;
+	entity: EntityType;
+	header: HeaderItem[];
+	hasImage?: "none" | "one" | "multiple";
 }
 
 export default function DataTableSkeleton({

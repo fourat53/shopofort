@@ -1,13 +1,8 @@
-import { Gender, OrderStatus } from "@/lib/entity/types";
-import type { EntityType } from "./current-entity";
-
-type FieldCategory = "filter" | "create" | "edit";
+import { type EntityType, Gender, OrderStatus } from "@/lib/entity/types";
 
 type FieldType = "string" | "number" | "date" | "enum" | "foreignKey" | "image";
 
-type ValueType = string | number | Date | undefined;
-
-type EntityField = (typeof entityFields)[string][number];
+type FieldCategory = "filter" | "create" | "edit";
 
 type OptionField =
 	| "categoryId"
@@ -30,8 +25,10 @@ type FieldConfig = {
 	options?: readonly (Gender | OrderStatus)[];
 };
 
-const entityFields: Record<string, FieldConfig[]> = {
-	user: [
+type EntityField = (typeof entityFields)[EntityType][number];
+
+const entityFields: Record<EntityType, FieldConfig[]> = {
+	users: [
 		{
 			name: "id",
 			type: "foreignKey",
@@ -55,7 +52,7 @@ const entityFields: Record<string, FieldConfig[]> = {
 			required: true,
 		},
 	],
-	product: [
+	products: [
 		{
 			name: "id",
 			type: "foreignKey",
@@ -105,7 +102,7 @@ const entityFields: Record<string, FieldConfig[]> = {
 			category: ["create", "edit"],
 		},
 	],
-	cart: [
+	carts: [
 		{
 			name: "id",
 			type: "foreignKey",
@@ -127,7 +124,62 @@ const entityFields: Record<string, FieldConfig[]> = {
 			required: true,
 		},
 	],
-	cartItem: [
+	orders: [
+		{
+			name: "id",
+			type: "foreignKey",
+			category: ["filter"],
+		},
+		{
+			name: "orderDate",
+			type: "date",
+			category: ["filter", "create", "edit"],
+			required: true,
+		},
+		{
+			name: "totalAmount",
+			type: "number",
+			category: ["filter", "create", "edit"],
+			required: true,
+			defaultValue: "1",
+			min: 0,
+			max: 1000,
+		},
+		{
+			name: "orderStatus",
+			type: "enum",
+			category: ["filter", "create", "edit"],
+			options: Object.values(OrderStatus),
+			defaultValue: OrderStatus.PENDING,
+		},
+		{
+			name: "userId",
+			type: "foreignKey",
+			category: ["filter", "create", "edit"],
+			required: true,
+		},
+	],
+	categories: [
+		{
+			name: "id",
+			type: "foreignKey",
+			category: ["filter"],
+		},
+		{
+			name: "name",
+			type: "string",
+			category: ["filter", "create", "edit"],
+			required: true,
+		},
+		{
+			name: "gender",
+			type: "enum",
+			category: ["filter", "create", "edit"],
+			options: Object.values(Gender),
+			required: true,
+		},
+	],
+	"cart-items": [
 		{
 			name: "id",
 			type: "foreignKey",
@@ -168,42 +220,7 @@ const entityFields: Record<string, FieldConfig[]> = {
 			required: true,
 		},
 	],
-	order: [
-		{
-			name: "id",
-			type: "foreignKey",
-			category: ["filter"],
-		},
-		{
-			name: "orderDate",
-			type: "date",
-			category: ["filter", "create", "edit"],
-			required: true,
-		},
-		{
-			name: "totalAmount",
-			type: "number",
-			category: ["filter", "create", "edit"],
-			required: true,
-			defaultValue: "1",
-			min: 0,
-			max: 1000,
-		},
-		{
-			name: "orderStatus",
-			type: "enum",
-			category: ["filter", "create", "edit"],
-			options: Object.values(OrderStatus),
-			defaultValue: OrderStatus.PENDING,
-		},
-		{
-			name: "userId",
-			type: "foreignKey",
-			category: ["filter", "create", "edit"],
-			required: true,
-		},
-	],
-	orderItem: [
+	"order-items": [
 		{
 			name: "id",
 			type: "foreignKey",
@@ -237,45 +254,14 @@ const entityFields: Record<string, FieldConfig[]> = {
 			required: true,
 		},
 	],
-	category: [
-		{
-			name: "id",
-			type: "foreignKey",
-			category: ["filter"],
-		},
-		{
-			name: "name",
-			type: "string",
-			category: ["filter", "create", "edit"],
-			required: true,
-		},
-		{
-			name: "gender",
-			type: "enum",
-			category: ["filter", "create", "edit"],
-			options: Object.values(Gender),
-			required: true,
-		},
-	],
 };
 
 function getEntityFields(
 	entity: EntityType | "",
 	type: FieldCategory,
 ): FieldConfig[] {
-	return entity
-		? (entityFields[entity]?.filter((field) => field.category.includes(type)) ??
-				[])
-		: [];
-}
-
-type StringNumber = string | number;
-
-function formatOptions(
-	v: StringNumber,
-	l: StringNumber | [StringNumber, StringNumber],
-) {
-	return { value: v.toString(), label: l };
+	if (!entity) return [];
+	return entityFields[entity].filter((field) => field.category.includes(type));
 }
 
 export {
@@ -283,10 +269,6 @@ export {
 	entityFields,
 	type FieldCategory,
 	type FieldConfig,
-	type FieldType,
-	formatOptions,
 	getEntityFields,
 	type OptionField,
-	type StringNumber,
-	type ValueType,
 };

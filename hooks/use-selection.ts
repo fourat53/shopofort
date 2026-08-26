@@ -1,14 +1,13 @@
 "use client";
 
 import { useEffect, useSyncExternalStore } from "react";
+import type { StringNumber } from "@/lib/entity/types";
 
-type Row = {
-	id: number | string;
-};
+type Row = { id: StringNumber };
 
-let selectedIds = new Set<number | string>();
+let selectedIds = new Set<StringNumber>();
 
-const emptySelection = new Set<number | string>();
+const emptySelection = new Set<StringNumber>();
 const listeners = new Set<() => void>();
 
 function subscribe(listener: () => void) {
@@ -27,7 +26,7 @@ function getServerSnapshot() {
 }
 
 function updateSelection(
-	updater: (current: Set<number | string>) => Set<number | string>,
+	updater: (current: Set<StringNumber>) => Set<StringNumber>,
 ) {
 	selectedIds = updater(selectedIds);
 
@@ -80,7 +79,7 @@ function useSelection<T extends Row>(rows: T[]) {
 		});
 	};
 
-	const toggleRow = (id: number | string, checked: boolean) => {
+	const toggleRow = (id: StringNumber, checked: boolean) => {
 		updateSelection((current) => {
 			const next = new Set(current);
 

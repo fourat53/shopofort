@@ -1,9 +1,9 @@
-import { clsx } from "clsx";
 import CheckBoxCell from "@/components/data-table/table-cells/CheckBoxCell";
 import ContentCell from "@/components/data-table/table-cells/ContentCell";
 import SortableTableHead from "@/components/data-table/table-cells/SortableTableHead";
 import DeleteDialog from "@/components/dialogs/delete-dialog";
 import EditDialog from "@/components/dialogs/edit-dialog";
+import ListDialog from "@/components/dialogs/list-dialog";
 import {
 	Table,
 	TableBody,
@@ -12,83 +12,90 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import type { Entity } from "@/lib/entity/current-entity";
-import type { HasImage, HeaderType } from "@/lib/entity/entity-header";
-import ListDialog from "../dialogs/list-dialog";
+import type { HeaderItem } from "@/lib/entity/entity-header";
+import type { EntityType, StringNumber } from "@/lib/entity/types";
 
 interface DataTableProps<T> {
-	header: HeaderType;
+	entity: EntityType;
+	header: HeaderItem[];
 	rows: T[];
-	entity: Entity;
-	hasImage?: HasImage;
 }
 
-export default function DataTableLayout<T extends { id: number | string }>({
+export default function DataTable<T extends { id: StringNumber }>({
+	entity,
 	header,
 	rows,
-	entity,
-	hasImage = "none",
 }: DataTableProps<T>) {
-	function getCellTitle(index: number, value: string | number) {
-		return ["images", "picture"].includes(header[index].name)
-			? undefined
-			: String(value);
-	}
-
 	return (
-		<Table>
-			<TableHeader>
-				<TableRow>
-					<TableHead>
-						<CheckBoxCell<T> rows={rows} type="select-all" />
-					</TableHead>
-					{header.map((item) => (
-						<SortableTableHead
-							key={item.name}
-							name={item.name}
-							entity={entity}
-						/>
-					))}
-					<TableHead border className="py-0 text-center">
-						<CheckBoxCell<T> rows={rows} type="actions" />
-					</TableHead>
-				</TableRow>
-			</TableHeader>
-			<TableBody>
-				{rows.map((row) => (
-					<TableRow key={row.id}>
-						<TableCell className="w-8 min-w-8 max-w-8">
-							<CheckBoxCell<T> rows={rows} id={row.id} type="select-one" />
-						</TableCell>
-						{Object.values(row).map((value, cIndex) => (
-							<TableCell
-								border
-								key={`cell-${row.id}-${cIndex}`}
-								title={getCellTitle(cIndex, value)}
-								className={clsx(hasImage === "none" ? "h-[33.6px]" : "h-18.5")}
-								style={{
-									width: header[cIndex].width,
-									minWidth: header[cIndex].width,
-								}}
-							>
-								<ContentCell
-									value={value}
-									headerName={header[cIndex].name}
-									cIndex={cIndex}
-									rowId={row.id}
+		<>
+			{rows.length === 0 ? (
+				<div className="w-full bg-sidebar h-60 flex items-center justify-center border rounded-lg text-muted-foreground">
+					No data available
+				</div>
+			) : (
+				<Table>
+					<TableHeader>
+						<TableRow>
+							<TableHead>
+								<CheckBoxCell<T>
+									entity={entity}
+									rows={rows}
+									type="select-all"
 								/>
-							</TableCell>
+							</TableHead>
+							{header.map((item) => (
+								<SortableTableHead
+									key={item.name}
+									name={item.name}
+									entity={entity}
+								/>
+							))}
+							<TableHead border className="py-0 text-center">
+								<CheckBoxCell<T> entity={entity} rows={rows} type="actions" />
+							</TableHead>
+						</TableRow>
+					</TableHeader>
+					<TableBody>
+						{rows.map((row) => (
+							<TableRow key={row.id}>
+								<TableCell className="w-8 min-w-8 max-w-8">
+									<CheckBoxCell<T>
+										entity={entity}
+										rows={rows}
+										id={row.id}
+										type="select-one"
+									/>
+								</TableCell>
+								{Object.values(row).map((value, cIndex) => (
+									<TableCell
+										key={`cell-${row.id}-${cIndex}`}
+										border
+										className="h-[33.6px]"
+										style={{
+											width: header[cIndex].width,
+											minWidth: header[cIndex].width,
+										}}
+									>
+										<ContentCell
+											cIndex={cIndex}
+											rowId={row.id}
+											headerName={header[cIndex].name}
+											value={Array.isArray(value) ? [...value] : String(value)}
+										/>
+									</TableCell>
+								))}
+								<TableCell border className="w-26 min-w-26 max-w-26 py-0.5">
+									<div className="flex items-center justify-center gap-1.5">
+										<ListDialog entity={entity} id={row.id} />
+										<EditDialog<T> entity={entity} rows={[row]} />
+										<DeleteDialog entity={entity} ids={[row.id]} />
+									</div>
+								</TableCell>
+							</TableRow>
 						))}
-						<TableCell border className="py-0.5 w-26 max-w-26 min-w-26">
-							<div className="flex items-center justify-center gap-1.5">
-								<ListDialog id={row.id} />
-								<EditDialog<T> rows={[row]} />
-								<DeleteDialog ids={[row.id]} />
-							</div>
-						</TableCell>
-					</TableRow>
-				))}
-			</TableBody>
-		</Table>
+					</TableBody>
+				</Table>
+			)}
+		</>
 	);
 }

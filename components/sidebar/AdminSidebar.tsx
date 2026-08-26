@@ -3,8 +3,8 @@ import Link from "next/link";
 import type * as React from "react";
 import { Suspense } from "react";
 import SmallLoader from "@/components/loaders/small-loader";
-import { NavMain, navMain } from "@/components/sidebar/NavMain";
-import { NavUser } from "@/components/sidebar/NavUser";
+import NavMain from "@/components/sidebar/NavMain";
+import NavUser from "@/components/sidebar/NavUser";
 import {
 	Sidebar,
 	SidebarContent,
@@ -35,10 +35,10 @@ export default function AdminSidebar({
 								<Image
 									src="/svgs/shopofort.svg"
 									alt="logo"
-									width={32}
-									height={32}
+									width={1000}
+									height={1000}
 									loading="eager"
-									className="relative -right-0.5 -top-0.5 size-8!"
+									className="size-8! relative -right-0.5 -top-0.5"
 								/>
 								<p className="relative -left-0.5 text-[22px]">ShopoFort</p>
 							</Link>
@@ -47,7 +47,7 @@ export default function AdminSidebar({
 				</SidebarMenu>
 			</SidebarHeader>
 			<SidebarContent>
-				<NavMain items={navMain} />
+				<NavMain />
 			</SidebarContent>
 			<SidebarFooter>
 				<SidebarSeparator />

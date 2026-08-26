@@ -8,6 +8,8 @@ import type {
 } from "@/prisma/generated/prisma/client";
 import { Gender, OrderStatus } from "@/prisma/generated/prisma/enums";
 
+// MODEL TYPES ----------------------------------------------------------------------
+
 type User = {
 	id: string;
 	picture: string;
@@ -31,5 +33,31 @@ type CartItem = Omit<CartItemType, "unitPrice" | "totalPrice"> & {
 
 type OrderItem = Omit<OrderItemType, "price"> & { price: number };
 
-export type { Cart, CartItem, Category, Order, OrderItem, Product, User };
-export { Gender, OrderStatus };
+// OTHER TYPES ---------------------------------------------------------------------
+
+enum EntityType {
+	users = "users",
+	carts = "carts",
+	orders = "orders",
+	products = "products",
+	categories = "categories",
+	"cart-items" = "cart-items",
+	"order-items" = "order-items",
+}
+
+type StringNumber = string | number;
+
+type ParameterType = Record<string, string | string[] | undefined>;
+
+export type {
+	Cart,
+	CartItem,
+	Category,
+	Order,
+	OrderItem,
+	ParameterType,
+	Product,
+	StringNumber,
+	User,
+};
+export { EntityType, Gender, OrderStatus };

@@ -10,11 +10,12 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useTransition } from "react";
 import { sortHref } from "@/components/data-table/PaginationParams";
 import { TableHead } from "@/components/ui/table";
-import { type Entity, getFieldName } from "@/lib/entity/current-entity";
+import { getFieldName } from "@/lib/entity/entity-functions";
+import type { EntityType } from "@/lib/entity/types";
 
 interface SortableTableHeadProps {
 	name: string;
-	entity: Entity;
+	entity: EntityType;
 }
 
 export default function SortableTableHead({

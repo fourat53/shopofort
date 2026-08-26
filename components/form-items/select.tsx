@@ -17,7 +17,7 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from "@/components/ui/popover";
-import type { StringNumber } from "@/lib/entity/entity-fields";
+import type { StringNumber } from "@/lib/entity/types";
 import { cn } from "@/lib/utils";
 
 const getLabelText = (item: SelectOption) =>

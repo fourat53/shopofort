@@ -4,12 +4,9 @@ import {
 	FILTER_CACHE_SECONDS,
 	PAGE_SIZE,
 } from "@/components/data-table/PaginationParams";
-import {
-	getParamValues,
-	ORDERS_HEADER,
-	type ParameterType,
-} from "@/lib/entity/entity-header";
-import type { OrderStatus } from "@/lib/entity/types";
+import { getParamValues } from "@/lib/entity/entity-functions";
+import { ORDERS_HEADER } from "@/lib/entity/entity-header";
+import type { OrderStatus, ParameterType } from "@/lib/entity/types";
 import { prisma } from "@/lib/prisma";
 import type { Prisma } from "@/prisma/generated/prisma/client";
 
@@ -67,9 +64,9 @@ function buildOrderClause(
 
 function getOrdersPage(
 	page: number = 1,
-	filterParams: ParameterType = {},
-	sortBy: string = "id",
 	order: "asc" | "desc" = "asc",
+	sortBy: string = "id",
+	filterParams: ParameterType = {},
 ) {
 	const where = buildWhereClause(filterParams);
 	const orderBy = buildOrderClause(sortBy, order);

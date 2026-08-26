@@ -5,9 +5,9 @@ import clsx from "clsx";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState, useTransition } from "react";
 import FilterForm from "@/components/forms/filter-form";
+import CurrentEntity from "@/components/title/CurrentEntity";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import { CurrentEntity } from "@/lib/entity/current-entity";
 import { getEntityFields } from "@/lib/entity/entity-fields";
 
 export default function FilterDialog() {
@@ -42,6 +42,7 @@ export default function FilterDialog() {
 
 	function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
 		e.preventDefault();
+
 		const formData = new FormData(e.currentTarget);
 		const newParams = new URLSearchParams(searchParams.toString());
 		newParams.delete("page");
@@ -89,11 +90,11 @@ export default function FilterDialog() {
 		});
 	}
 
-	if (!entity) return null;
+	if (!entity) return;
 
 	return (
 		<div
-			className={clsx("flex gap-1.5", entity !== "user" && "pr-1.5 border-r")}
+			className={clsx("flex gap-1.5", entity !== "users" && "pr-1.5 border-r")}
 		>
 			{hasFilters && (
 				<Button
@@ -106,7 +107,6 @@ export default function FilterDialog() {
 			<Dialog open={open} onOpenChange={setOpen}>
 				<DialogTrigger asChild>
 					<Button
-						disabled={!entity}
 						className="size-8 p-2"
 						icon={<IconFilter className="size-4" />}
 					/>

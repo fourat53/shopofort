@@ -1,4 +1,4 @@
-import type { Entity } from "@/lib/entity/current-entity";
+import type { EntityType } from "@/lib/entity/types";
 
 const PAGE_SIZE = 20;
 const IMAGE_PAGE_SIZE = 9;
@@ -51,7 +51,7 @@ function getPaginationParams(
 }
 
 function pageHref(
-	entity: `/${Entity}`,
+	entity: `/${EntityType}`,
 	page: number,
 	searchParams?: URLSearchParams,
 ) {
@@ -65,7 +65,7 @@ function pageHref(
 }
 
 function sortHref(
-	entity: Entity,
+	entity: EntityType,
 	searchParams: URLSearchParams,
 	field: string,
 ) {

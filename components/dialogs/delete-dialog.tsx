@@ -4,31 +4,30 @@ import { IconTrash } from "@tabler/icons-react";
 import { clsx } from "clsx";
 import { useRef, useState } from "react";
 import { deleteEntities, deleteEntity } from "@/actions/EntityActions";
+import EntityTooltip from "@/components/data-table/table-cells/EntityTooltip";
 import { Button } from "@/components/ui/button";
 import {
 	Dialog,
 	DialogContent,
-	DialogDescription,
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-	CurrentEntity,
-	getPluralName,
-	getSingleName,
-} from "@/lib/entity/current-entity";
-import EntityTooltip from "../data-table/table-cells/EntityTooltip";
+import { getPluralName, getSingleName } from "@/lib/entity/entity-functions";
+import { EntityType, type StringNumber } from "@/lib/entity/types";
 
 interface DeleteDialogProps {
-	ids?: (number | string)[];
+	entity?: EntityType;
+	ids?: StringNumber[];
 	disabled?: boolean;
 }
 
-export default function DeleteDialog({ ids, disabled }: DeleteDialogProps) {
-	const entity = CurrentEntity();
-
+export default function DeleteDialog({
+	entity,
+	ids,
+	disabled,
+}: DeleteDialogProps) {
 	const [open, setOpen] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(false);
 	const DeleteDialogRef = useRef<HTMLButtonElement>(null);
@@ -37,12 +36,13 @@ export default function DeleteDialog({ ids, disabled }: DeleteDialogProps) {
 
 	const handleDelete = async (e: React.MouseEvent) => {
 		e.preventDefault();
-		if (!entity) return;
+		if (!entity || !ids) return;
+
 		setLoading(true);
 		try {
 			single
 				? await deleteEntity(entity, ids[0])
-				: await deleteEntities(entity, ids as (number | string)[]);
+				: await deleteEntities(entity, ids);
 			setOpen(false);
 		} catch (error) {
 			console.error(error);
@@ -51,9 +51,7 @@ export default function DeleteDialog({ ids, disabled }: DeleteDialogProps) {
 		}
 	};
 
-	const display = ids && ids.length > 0;
-
-	if (!entity) return null;
+	const display = ids && ids.length > 0 && entity;
 
 	if (!display)
 		return (
@@ -87,36 +85,34 @@ export default function DeleteDialog({ ids, disabled }: DeleteDialogProps) {
 				<DialogHeader>
 					<DialogTitle>Are you absolutely sure?</DialogTitle>
 				</DialogHeader>
-				<DialogDescription>
-					This action cannot be undone. This will permanently delete the{" "}
-					{single ? (
+				This action cannot be undone. This will permanently delete the{" "}
+				{single ? (
+					<span className="font-semibold text-foreground">
+						{getSingleName(entity)} with Id {ids[0]}.
+					</span>
+				) : (
+					<div>
 						<span className="font-semibold text-foreground">
-							{getSingleName(entity)} with Id {ids[0]}.
+							{ids.length} selected {getPluralName(entity)}
+						</span>{" "}
+						and remove their data from our servers. This is the list of their
+						Ids:
+						<span
+							className={clsx(
+								"py-3 grid gap-1",
+								entity === EntityType.users ? "grid-cols-2" : "grid-cols-5",
+							)}
+						>
+							{ids.map((id) => (
+								<EntityTooltip
+									key={id}
+									idValue={String(id)}
+									headerName={entity + "Id"}
+								/>
+							))}
 						</span>
-					) : (
-						<>
-							<span className="font-semibold text-foreground">
-								{ids.length} selected {getPluralName(entity)}
-							</span>{" "}
-							and remove their data from our servers. This is the list of their
-							Ids:
-							<div
-								className={clsx(
-									"py-3 grid gap-1",
-									entity === "user" ? "grid-cols-2" : "grid-cols-5",
-								)}
-							>
-								{ids.map((id) => (
-									<EntityTooltip
-										key={id}
-										idValue={id}
-										headerName={entity + "Id"}
-									/>
-								))}
-							</div>
-						</>
-					)}
-				</DialogDescription>
+					</div>
+				)}
 				<DialogFooter>
 					<Button
 						variant="outline"

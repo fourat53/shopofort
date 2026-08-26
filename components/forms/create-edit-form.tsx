@@ -29,17 +29,16 @@ import {
 	DialogTitle,
 } from "@/components/ui/dialog";
 import {
-	type EntityType,
-	getFieldName,
-	getPluralName,
-	getSingleName,
-} from "@/lib/entity/current-entity";
-import {
 	type FieldConfig,
 	getEntityFields,
 	type OptionField,
-	type ValueType,
 } from "@/lib/entity/entity-fields";
+import {
+	getFieldName,
+	getPluralName,
+	getSingleName,
+} from "@/lib/entity/entity-functions";
+import type { EntityType, StringNumber } from "@/lib/entity/types";
 import { addImagesToForm } from "@/lib/uploadthing/client";
 
 interface DialogFormProps<T> {
@@ -50,7 +49,7 @@ interface DialogFormProps<T> {
 }
 
 export default function CreateEditForm<
-	T extends Record<string, unknown> & { id: number | string },
+	T extends Record<string, unknown> & { id: StringNumber },
 >({ entity, open, setOpen, rows }: DialogFormProps<T>) {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [images, setImages] = useState<ImageItem[]>([]);
@@ -74,7 +73,7 @@ export default function CreateEditForm<
 		: "Create " + getSingleName(entity);
 
 	useEffect(() => {
-		if (!open || entity !== "product") return;
+		if (!open || entity !== "products") return;
 		else if (rows) {
 			setImages(Array.isArray(rows[0]?.images) ? rows[0].images : []);
 			return;
@@ -85,20 +84,18 @@ export default function CreateEditForm<
 		if (!open) return;
 		async function loadOptions() {
 			for (const field of fields) {
-				if (
-					field.type !== "foreignKey" ||
-					fetchedFields.current.has(field.name)
-				)
+				const name = field.name;
+				if (field.type !== "foreignKey" || fetchedFields.current.has(name))
 					continue;
-				fetchedFields.current.add(field.name);
+				fetchedFields.current.add(name);
 				try {
-					const options = await getFilterOptions(field.name as OptionField);
+					const options = await getFilterOptions(name as OptionField);
 					setOptionsCache((current) => ({
 						...current,
-						[field.name]: options,
+						[name]: options,
 					}));
 				} catch (error) {
-					fetchedFields.current.delete(field.name);
+					fetchedFields.current.delete(name);
 					console.error(error);
 				}
 			}
@@ -116,7 +113,7 @@ export default function CreateEditForm<
 				single
 					? await updateEntity(entity, ids[0], formData)
 					: await updateEntities(entity, ids, formData);
-			} else if (entity !== "user") await createEntity(entity, formData);
+			} else if (entity !== "users") await createEntity(entity, formData);
 		} catch (error) {
 			console.error(error);
 		} finally {
@@ -125,8 +122,8 @@ export default function CreateEditForm<
 		}
 	}
 
-	function getValue(field: FieldConfig) {
-		return rows ? (rows[0]?.[field.name] as ValueType) : field.defaultValue;
+	function getEditValue(field: FieldConfig) {
+		return rows ? rows[0]?.[field.name] : field.defaultValue;
 	}
 
 	if (!open) return null;
@@ -142,51 +139,52 @@ export default function CreateEditForm<
 					<DialogTitle>{label}</DialogTitle>
 				</DialogHeader>
 				{fields.map((field) => {
-					const value = getValue(field);
-					return field.type === "string" ? (
+					const value = getEditValue(field);
+					const { type, name } = field;
+					const label = getFieldName(name);
+					return type === "string" ? (
 						<Input
-							key={field.name}
-							name={field.name}
-							label={getFieldName(field.name)}
-							placeholder={`Enter ${getFieldName(field.name).toLowerCase()}`}
+							key={name}
+							name={name}
+							label={label}
+							placeholder={`Enter ${label.toLowerCase()}`}
 							defaultValue={value?.toString() || undefined}
 							required={field.required}
 						/>
-					) : field.type === "number" ? (
+					) : type === "number" ? (
 						<Input
-							key={field.name}
-							name={field.name}
-							label={getFieldName(field.name)}
+							key={name}
+							name={name}
+							label={label}
 							type="number"
 							step={field.step ?? "1"}
-							placeholder={`Enter ${getFieldName(field.name).toLowerCase()}`}
+							placeholder={`Enter ${label.toLowerCase()}`}
 							defaultValue={value?.toString() || undefined}
 							required={field.required}
 						/>
-					) : field.type === "date" ? (
+					) : type === "date" ? (
 						<DatePicker
-							key={field.name}
-							name={field.name}
-							label={getFieldName(field.name)}
+							key={name}
+							name={name}
+							label={label}
 							defaultValue={value as string | Date | undefined}
 							required={field.required}
 							time
 						/>
-					) : field.type === "image" ? (
+					) : type === "image" ? (
 						<ImageUpload
-							key={field.name}
-							name={field.name}
-							label={getFieldName(field.name)}
+							key={name}
+							name={name}
+							label={label}
 							images={images}
 							onChange={setImages}
 							required={field.required}
 						/>
-					) : field.type === "enum" ? (
+					) : type === "enum" ? (
 						<Select
-							key={field.name}
-							name={field.name}
-							label={getFieldName(field.name)}
-							placeholder={"Select an option"}
+							key={name}
+							name={name}
+							label={label}
 							defaultValue={value?.toString() || "NONE"}
 							required={field.required}
 							items={[
@@ -194,17 +192,16 @@ export default function CreateEditForm<
 								...(field.options?.map((o) => ({ label: o, value: o })) ?? []),
 							]}
 						/>
-					) : field.type === "foreignKey" ? (
+					) : type === "foreignKey" ? (
 						<Select
-							key={field.name}
-							name={field.name}
-							label={getFieldName(field.name)}
-							placeholder={"Select an option"}
+							key={name}
+							name={name}
+							label={label}
 							required={field.required}
 							defaultValue={value?.toString() || "NONE"}
 							items={[
 								{ label: "None", value: "NONE" },
-								...(optionsCache[field.name] ?? []),
+								...(optionsCache[name] ?? []),
 							]}
 						/>
 					) : null;

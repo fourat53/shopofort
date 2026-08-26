@@ -4,19 +4,16 @@ import { IconList } from "@tabler/icons-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { CurrentEntity } from "@/lib/entity/current-entity";
+import type { EntityType, StringNumber } from "@/lib/entity/types";
 
 interface EditDialogProps {
-	id?: number | string;
+	entity?: EntityType;
+	id?: StringNumber;
 	disabled?: boolean;
 }
 
 export default function ListDialog({ id, disabled }: EditDialogProps) {
-	const entity = CurrentEntity();
 	const [open, setOpen] = useState<boolean>(false);
-
-	if (!entity) return null;
-
 	if (!id)
 		return (
 			<Button

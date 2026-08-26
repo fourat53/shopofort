@@ -4,11 +4,9 @@ import {
 	FILTER_CACHE_SECONDS,
 	PAGE_SIZE,
 } from "@/components/data-table/PaginationParams";
-import {
-	CART_ITEMS_HEADER,
-	getParamValues,
-	type ParameterType,
-} from "@/lib/entity/entity-header";
+import { getParamValues } from "@/lib/entity/entity-functions";
+import { CART_ITEMS_HEADER } from "@/lib/entity/entity-header";
+import type { ParameterType } from "@/lib/entity/types";
 import { prisma } from "@/lib/prisma";
 import type { Prisma } from "@/prisma/generated/prisma/client";
 
@@ -52,9 +50,9 @@ function buildOrderClause(
 
 function getCartItemsPage(
 	page: number = 1,
-	filterParams: ParameterType = {},
-	sortBy: string = "id",
 	order: "asc" | "desc" = "asc",
+	sortBy: string = "id",
+	filterParams: ParameterType = {},
 ) {
 	const where = buildWhereClause(filterParams);
 	const orderBy = buildOrderClause(sortBy, order);

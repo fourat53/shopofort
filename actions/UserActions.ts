@@ -6,8 +6,8 @@ import {
 } from "@/components/data-table/PaginationParams";
 import { checkedEnvVar } from "@/lib/checked-env-var";
 import { getFormUser } from "@/lib/entity/entity-form";
-import { type ParameterType, USERS_HEADER } from "@/lib/entity/entity-header";
-import type { User } from "@/lib/entity/types";
+import { USERS_HEADER } from "@/lib/entity/entity-header";
+import type { ParameterType, User } from "@/lib/entity/types";
 import { prisma } from "@/lib/prisma";
 
 const kindeIssuerUrl = checkedEnvVar("KINDE_ISSUER_URL");
@@ -172,10 +172,10 @@ async function getUsers(): Promise<User[]> {
 }
 
 async function getUsersPage(
-	page: number,
-	filterParams: ParameterType = {},
-	sortBy: string = "id",
+	page: number = 1,
 	order: "asc" | "desc" = "asc",
+	sortBy: string = "id",
+	filterParams: ParameterType = {},
 ) {
 	const users = await getFilteredUsers(filterParams, sortBy, order);
 	const start = (page - 1) * IMAGE_PAGE_SIZE;

@@ -16,7 +16,7 @@ import {
 	PaginationNext,
 	PaginationPrevious,
 } from "@/components/ui/pagination";
-import type { Entity } from "@/lib/entity/current-entity";
+import type { EntityType } from "@/lib/entity/types";
 import { cn } from "@/lib/utils";
 
 interface PaginationButtonProps {
@@ -43,7 +43,7 @@ function PaginationButton({ page, isActive, onClick }: PaginationButtonProps) {
 }
 
 interface DataTablePaginationProps {
-	entity: Entity;
+	entity: EntityType;
 	totalPages: number;
 	className?: string;
 }
@@ -53,7 +53,7 @@ export default function DataTablePagination({
 	totalPages,
 	className,
 }: DataTablePaginationProps) {
-	const path: `/${Entity}` = `/${entity}`;
+	const path: `/${EntityType}` = `/${entity}`;
 
 	const router = useRouter();
 	const searchParams = useSearchParams();

@@ -28,45 +28,7 @@ import {
 	SidebarMenuItem,
 } from "@/components/ui/sidebar";
 
-function AvatarImage({ user }: { user: KindeUser<Record<string, unknown>> }) {
-	return (
-		<div className="size-8 flex items-center justify-center rounded-lg">
-			{user.picture ? (
-				<Image
-					src={user.picture}
-					alt=""
-					width={32}
-					height={32}
-					className="rounded-lg"
-				/>
-			) : (
-				<Image
-					src="/svgs/shopofort.svg"
-					alt=""
-					width={32}
-					height={32}
-					loading="eager"
-					className="bg-mist-500 rounded-lg p-0.5"
-				/>
-			)}
-		</div>
-	);
-}
-
-function UserInfo({ user }: { user: KindeUser<Record<string, unknown>> }) {
-	return (
-		<div className="grid flex-1 text-left text-sm leading-tight">
-			<span className="truncate font-medium">
-				{user.given_name} {user.family_name}
-			</span>
-			<span className="truncate text-xs text-muted-foreground">
-				{user.email}
-			</span>
-		</div>
-	);
-}
-
-async function NavUser() {
+export default async function NavUser() {
 	const { isAuthenticated, getUser } = getKindeServerSession();
 	const user: KindeUser<Record<string, unknown>> | null = await getUser();
 	const isLoggedIn = await isAuthenticated();
@@ -137,4 +99,40 @@ async function NavUser() {
 	);
 }
 
-export { AvatarImage, NavUser, UserInfo };
+function AvatarImage({ user }: { user: KindeUser<Record<string, unknown>> }) {
+	return (
+		<div className="size-8 flex items-center justify-center rounded-lg">
+			{user.picture ? (
+				<Image
+					src={user.picture}
+					alt=""
+					width={1000}
+					height={1000}
+					className="rounded-lg"
+				/>
+			) : (
+				<Image
+					src="/svgs/shopofort.svg"
+					alt=""
+					width={32}
+					height={32}
+					loading="eager"
+					className="bg-mist-500 rounded-lg p-0.5"
+				/>
+			)}
+		</div>
+	);
+}
+
+function UserInfo({ user }: { user: KindeUser<Record<string, unknown>> }) {
+	return (
+		<div className="grid flex-1 text-left text-sm leading-tight">
+			<span className="truncate font-medium">
+				{user.given_name} {user.family_name}
+			</span>
+			<span className="truncate text-xs text-muted-foreground">
+				{user.email}
+			</span>
+		</div>
+	);
+}

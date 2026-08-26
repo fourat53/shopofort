@@ -9,6 +9,8 @@ import {
 } from "react";
 import { getFilterOptions } from "@/actions/EntityActions";
 import { Input } from "@/components/form-items/input";
+import RangePicker from "@/components/form-items/range-picker";
+import { RangeSlider } from "@/components/form-items/range-slider";
 import { Select, type SelectOption } from "@/components/form-items/select";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,14 +19,9 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
-import {
-	type EntityType,
-	getFieldName,
-	getPluralName,
-} from "@/lib/entity/current-entity";
 import type { EntityField, OptionField } from "@/lib/entity/entity-fields";
-import RangePicker from "../form-items/range-picker";
-import { RangeSlider } from "../form-items/range-slider";
+import { getFieldName, getPluralName } from "@/lib/entity/entity-functions";
+import type { EntityType } from "@/lib/entity/types";
 
 interface DialogFormProps {
 	fields: EntityField[];
@@ -88,22 +85,23 @@ export default function FilterForm({
 					<DialogTitle>Filter {getPluralName(entity)}</DialogTitle>
 				</DialogHeader>
 				{fields.map((field) => {
-					const name = field.name;
-					return field.type === "string" ? (
+					const { type, name } = field;
+					const label = getFieldName(name);
+					return type === "string" ? (
 						<Input
-							key={field.name}
-							name={field.name}
-							placeholder={`Search ${getFieldName(field.name).toLowerCase()}`}
-							type={field.name === "email" ? "email" : "text"}
-							label={getFieldName(field.name)}
+							key={name}
+							name={name}
+							placeholder={`Search ${label.toLowerCase()}`}
+							type={name === "email" ? "email" : "text"}
+							label={label}
 							defaultValue={searchParams.get(name) ?? undefined}
 						/>
-					) : field.type === "number" ? (
+					) : type === "number" ? (
 						<RangeSlider
-							key={field.name}
-							fromName={`${field.name}From`}
-							toName={`${field.name}To`}
-							label={getFieldName(field.name)}
+							key={name}
+							fromName={`${name}From`}
+							toName={`${name}To`}
+							label={label}
 							min={field.min ?? 0}
 							max={field.max ?? 10000}
 							step={field.step ?? 1}
@@ -112,42 +110,40 @@ export default function FilterForm({
 								Number(searchParams.get(`${name}To`) || field.max || 10000),
 							]}
 						/>
-					) : field.type === "date" ? (
+					) : type === "date" ? (
 						<RangePicker
-							key={field.name}
-							fromName={`${field.name}From`}
-							toName={`${field.name}To`}
-							label={getFieldName(field.name)}
+							key={name}
+							fromName={`${name}From`}
+							toName={`${name}To`}
+							label={label}
 							defaultValues={{
 								from: searchParams.get(`${name}From`) ?? undefined,
 								to: searchParams.get(`${name}To`) ?? undefined,
 							}}
 							time
 						/>
-					) : field.type === "enum" ? (
+					) : type === "enum" ? (
 						<Select
 							multiple
-							key={field.name}
-							name={field.name}
-							placeholder={"Select options"}
-							label={getFieldName(field.name)}
+							key={name}
+							name={name}
+							label={label}
 							defaultValue={searchParams.getAll(name) ?? ["ALL"]}
 							items={[
 								{ label: "Any", value: "ALL" },
 								...(field.options?.map((o) => ({ label: o, value: o })) ?? []),
 							]}
 						/>
-					) : field.type === "foreignKey" ? (
+					) : type === "foreignKey" ? (
 						<Select
 							multiple
-							key={field.name}
-							name={field.name}
-							placeholder={"Select options"}
-							label={getFieldName(field.name)}
+							key={name}
+							name={name}
+							label={label}
 							defaultValue={searchParams.getAll(name) ?? ["ALL"]}
 							items={[
 								{ label: "Any", value: "ALL" },
-								...(optionsCache[field.name] ?? []),
+								...(optionsCache[name] ?? []),
 							]}
 						/>
 					) : null;

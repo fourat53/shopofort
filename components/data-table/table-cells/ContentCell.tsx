@@ -2,14 +2,20 @@ import { clsx } from "clsx";
 import Image from "next/image";
 import EntityTooltip from "@/components/data-table/table-cells/EntityTooltip";
 import { formatDateTime, isDate } from "@/lib/date-format";
-import { OrderStatus } from "@/lib/entity/types";
+import { OrderStatus, type StringNumber } from "@/lib/entity/types";
 
 interface CellContentProps {
-	value: unknown;
+	value: string | string[];
 	headerName: string;
 	cIndex?: number;
-	rowId?: number | string;
+	rowId?: StringNumber;
 	tooltip?: boolean;
+}
+
+function cellTitle(value: unknown, name: string) {
+	if (Array.isArray(value) || name.endsWith("Id")) return undefined;
+	if (isDate(value)) return formatDateTime(value);
+	return String(value);
 }
 
 export default function ContentCell({
@@ -19,15 +25,14 @@ export default function ContentCell({
 	rowId,
 	tooltip = false,
 }: CellContentProps) {
-	const imageSize = tooltip ? 32 : 58;
+	const imageSize = tooltip ? "32px" : "58px";
+	const isForeignKey =
+		cIndex && cIndex > 0 && !Array.isArray(value) && headerName.endsWith("Id");
 	return (
-		<>
-			{cIndex &&
-			cIndex > 0 &&
-			headerName.includes("Id") &&
-			(typeof value === "number" || typeof value === "string") ? (
+		<div title={cellTitle(value, headerName)} className="truncate">
+			{isForeignKey ? (
 				<EntityTooltip headerName={headerName} idValue={value} />
-			) : ["orderStatus"].includes(headerName) ? (
+			) : headerName === "orderStatus" ? (
 				<p
 					className={clsx(
 						"w-fit bg-accent rounded-full px-1.75",
@@ -43,65 +48,65 @@ export default function ContentCell({
 							"bg-red-200/60 text-red-700 dark:bg-red-900/30 dark:text-red-400",
 					)}
 				>
-					{String(value)}
+					{value}
 				</p>
 			) : headerName === "picture" ? (
 				value ? (
 					<Image
 						src={String(value)}
 						alt={String(value)}
-						width={imageSize}
-						height={imageSize}
+						width={1000}
+						height={1000}
 						loading="eager"
 						className="rounded-xl"
-						style={{
-							height: `${imageSize}px`,
-							width: `${imageSize}px`,
-						}}
+						style={{ height: imageSize, width: imageSize }}
 					/>
 				) : (
 					<Image
 						src="/svgs/shopofort.svg"
 						alt="picture"
-						width={imageSize}
-						height={imageSize}
+						width={1000}
+						height={1000}
 						loading="eager"
 						className="rounded-xl"
-						style={{
-							height: `${imageSize}px`,
-							width: `${imageSize}px`,
-						}}
+						style={{ height: imageSize, width: imageSize }}
 					/>
 				)
-			) : headerName === "images" &&
-				Array.isArray(value) &&
-				value.length > 0 ? (
-				<div
-					className={clsx(
-						"flex overflow-x-auto items-center",
-						tooltip ? "gap-1" : "gap-2",
-					)}
-				>
-					{value.map((imgSrc) => (
-						<Image
-							key={`${rowId}-${imgSrc}`}
-							src={String(imgSrc)}
-							alt={`image-${imgSrc}`}
-							loading="eager"
-							width={imageSize}
-							height={imageSize}
-							className="rounded-md"
-							style={{ height: `${imageSize}px`, width: "auto" }}
-						/>
-					))}
-				</div>
+			) : headerName === "images" ? (
+				Array.isArray(value) && value.length > 0 ? (
+					<div
+						className={clsx(
+							"flex overflow-x-auto items-center",
+							tooltip ? "gap-1" : "gap-2",
+						)}
+					>
+						{value.map((img) => (
+							<Image
+								key={`${rowId}-${img}`}
+								src={img}
+								alt={`image-${img}`}
+								loading="eager"
+								width={1000}
+								height={1000}
+								className="rounded-md"
+								style={{ height: imageSize, width: "auto" }}
+							/>
+						))}
+					</div>
+				) : tooltip ? (
+					"-"
+				) : (
+					<div className="w-full h-14.5 flex items-center justify-center text-muted-foreground">
+						No images
+					</div>
+				)
 			) : isDate(value) ? (
 				formatDateTime(value)
-			) : value == null || value === "" ? (
+			) : !value ? (
 				"-"
 			) : (
-				String(value)
+				value
 			)}
-		</>
+		</div>
 	);
 }
