@@ -21,7 +21,7 @@ import type { StringNumber } from "@/lib/entity/types";
 import { cn } from "@/lib/utils";
 
 const getLabelText = (item: SelectOption) =>
-	Array.isArray(item.label) ? item.label.join(" ") : String(item.label);
+	Array.isArray(item.label) ? item.label.join(" - ") : String(item.label);
 
 type SelectOption = {
 	value: string;

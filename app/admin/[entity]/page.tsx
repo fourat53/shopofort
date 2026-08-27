@@ -30,10 +30,14 @@ export default async function EntityPage({
 }: EntityPageProps) {
 	const { entity } = await params;
 	const { page: _page, sortBy, order, ...filterParams } = await searchParams;
-	const hasImage = ["users", "products"].includes(entity);
+	const withImage = ["users", "products"].includes(entity);
 
 	const totalCount = await getEntityCount(entity, filterParams);
-	const { page, totalPages } = getPaginationParams(_page, totalCount, hasImage);
+	const { page, totalPages } = getPaginationParams(
+		_page,
+		totalCount,
+		withImage,
+	);
 
 	const header = getHeader(entity);
 
@@ -43,7 +47,7 @@ export default async function EntityPage({
 		page,
 		order,
 		sortBy,
-		...filterParams,
+		filterParams,
 	};
 
 	return (

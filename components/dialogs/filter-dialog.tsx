@@ -48,9 +48,7 @@ export default function FilterDialog() {
 		newParams.delete("page");
 
 		for (const field of fields) {
-			for (const field of fields) {
-				if (field.type !== "number") continue;
-
+			if (field.type === "number") {
 				const min = field.min ?? 0;
 				const max = field.max ?? 10000;
 
@@ -65,6 +63,7 @@ export default function FilterDialog() {
 
 				if (Number(to) !== max) newParams.set(toName, to);
 				else newParams.delete(toName);
+				continue;
 			}
 
 			if (field.type === "enum" || field.type === "foreignKey") {

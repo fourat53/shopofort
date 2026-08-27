@@ -14,7 +14,7 @@ import {
 import { clsx } from "clsx";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { SidebarMenuButton, SidebarMenuItem } from "../ui/sidebar";
+import { SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 
 type NavItem = {
 	title: string;
@@ -22,7 +22,7 @@ type NavItem = {
 	icon?: Icon;
 };
 
-const navMain: NavItem[] = [
+const navMenu: NavItem[] = [
 	{
 		title: "Dashboard",
 		url: "dashboard",
@@ -66,7 +66,7 @@ const navMain: NavItem[] = [
 ] as const;
 
 export default function NavMenu() {
-	return navMain.map((item) => (
+	return navMenu.map((item) => (
 		<SidebarMenuItem key={item.title}>
 			<SidebarNavButton item={item} />
 		</SidebarMenuItem>

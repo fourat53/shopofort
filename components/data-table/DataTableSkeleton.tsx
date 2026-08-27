@@ -6,6 +6,7 @@ import {
 import SortableTableHead from "@/components/data-table/table-cells/SortableTableHead";
 import DeleteDialog from "@/components/dialogs/delete-dialog";
 import EditDialog from "@/components/dialogs/edit-dialog";
+import ListDialog from "@/components/dialogs/list-dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -18,7 +19,6 @@ import {
 } from "@/components/ui/table";
 import type { HeaderItem } from "@/lib/entity/entity-header";
 import type { EntityType } from "@/lib/entity/types";
-import ListDialog from "../dialogs/list-dialog";
 
 interface DataTableSkeletonProps {
 	entity: EntityType;
