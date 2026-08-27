@@ -19,12 +19,12 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
-import type { EntityField, OptionField } from "@/lib/entity/entity-fields";
+import type { ENTITY_FIELDS } from "@/lib/entity/entity-fields";
 import { getFieldName, getPluralName } from "@/lib/entity/entity-functions";
-import type { EntityType } from "@/lib/entity/types";
+import type { EntityType, OptionField } from "@/lib/entity/types";
 
 interface DialogFormProps {
-	fields: EntityField[];
+	fields: (typeof ENTITY_FIELDS)[EntityType][number][];
 	entity: EntityType;
 	isPending: boolean;
 	open: boolean;

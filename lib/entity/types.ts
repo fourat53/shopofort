@@ -45,6 +45,15 @@ enum EntityType {
 	"order-items" = "order-items",
 }
 
+type OptionField =
+	| "categoryId"
+	| "productId"
+	| "cartId"
+	| "orderId"
+	| "userId"
+	| "cartItemId"
+	| "orderItemId";
+
 type StringNumber = string | number;
 
 type ParameterType = Record<string, string | string[] | undefined>;
@@ -53,6 +62,7 @@ export type {
 	Cart,
 	CartItem,
 	Category,
+	OptionField,
 	Order,
 	OrderItem,
 	ParameterType,

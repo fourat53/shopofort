@@ -28,17 +28,13 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
-import {
-	type FieldConfig,
-	getEntityFields,
-	type OptionField,
-} from "@/lib/entity/entity-fields";
+import { type FieldConfig, getEntityFields } from "@/lib/entity/entity-fields";
 import {
 	getFieldName,
 	getPluralName,
 	getSingleName,
 } from "@/lib/entity/entity-functions";
-import type { EntityType, StringNumber } from "@/lib/entity/types";
+import type { EntityType, OptionField, StringNumber } from "@/lib/entity/types";
 import { addImagesToForm } from "@/lib/uploadthing/client";
 
 interface DialogFormProps<T> {
@@ -122,7 +118,7 @@ export default function CreateEditForm<
 		}
 	}
 
-	function getEditValue(field: FieldConfig) {
+	function getValue(field: FieldConfig) {
 		return rows ? rows[0]?.[field.name] : field.defaultValue;
 	}
 
@@ -139,8 +135,8 @@ export default function CreateEditForm<
 					<DialogTitle>{label}</DialogTitle>
 				</DialogHeader>
 				{fields.map((field) => {
-					const value = getEditValue(field);
-					const { type, name } = field;
+					const value = getValue(field);
+					const { type, name, required } = field;
 					const label = getFieldName(name);
 					return type === "string" ? (
 						<Input
@@ -149,7 +145,7 @@ export default function CreateEditForm<
 							label={label}
 							placeholder={`Enter ${label.toLowerCase()}`}
 							defaultValue={value?.toString() || undefined}
-							required={field.required}
+							required={required}
 						/>
 					) : type === "number" ? (
 						<Input
@@ -160,7 +156,7 @@ export default function CreateEditForm<
 							step={field.step ?? "1"}
 							placeholder={`Enter ${label.toLowerCase()}`}
 							defaultValue={value?.toString() || undefined}
-							required={field.required}
+							required={required}
 						/>
 					) : type === "date" ? (
 						<DatePicker
@@ -168,7 +164,7 @@ export default function CreateEditForm<
 							name={name}
 							label={label}
 							defaultValue={value as string | Date | undefined}
-							required={field.required}
+							required={required}
 							time
 						/>
 					) : type === "image" ? (
@@ -178,7 +174,7 @@ export default function CreateEditForm<
 							label={label}
 							images={images}
 							onChange={setImages}
-							required={field.required}
+							required={required}
 						/>
 					) : type === "enum" ? (
 						<Select
@@ -186,7 +182,7 @@ export default function CreateEditForm<
 							name={name}
 							label={label}
 							defaultValue={value?.toString() || "NONE"}
-							required={field.required}
+							required={required}
 							items={[
 								{ label: "None", value: "NONE" },
 								...(field.options?.map((o) => ({ label: o, value: o })) ?? []),
@@ -197,7 +193,7 @@ export default function CreateEditForm<
 							key={name}
 							name={name}
 							label={label}
-							required={field.required}
+							required={required}
 							defaultValue={value?.toString() || "NONE"}
 							items={[
 								{ label: "None", value: "NONE" },

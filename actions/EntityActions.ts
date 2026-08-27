@@ -9,11 +9,11 @@ import {
 	updateUser,
 } from "@/actions/UserActions";
 import type { SelectOption } from "@/components/form-items/select";
-import type { OptionField } from "@/lib/entity/entity-fields";
 import { getFormEntity } from "@/lib/entity/entity-form";
 import { formatOption } from "@/lib/entity/entity-functions";
 import {
 	EntityType,
+	type OptionField,
 	type ParameterType,
 	type StringNumber,
 } from "@/lib/entity/types";

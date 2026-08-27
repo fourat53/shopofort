@@ -15,6 +15,7 @@ import {
 	getSingleName,
 	getTooltipEntity,
 } from "@/lib/entity/entity-functions";
+import { getSkeletonCount } from "@/lib/entity/entity-header";
 
 export default function EntityTooltip({
 	headerName,
@@ -24,6 +25,7 @@ export default function EntityTooltip({
 	idValue: string;
 }) {
 	const entity = getTooltipEntity(headerName);
+	const skeletonCount = getSkeletonCount(entity);
 	const [data, setData] = useState<unknown>();
 	const [loading, setLoading] = useState<boolean>(false);
 	const [open, setOpen] = useState<boolean>(false);
@@ -47,7 +49,7 @@ export default function EntityTooltip({
 
 	return (
 		<TooltipProvider>
-			<Tooltip open={open} onOpenChange={handleOpenChange}>
+			<Tooltip open={open} onOpenChange={handleOpenChange} delayDuration={100}>
 				<TooltipTrigger asChild>
 					<button
 						type="button"
@@ -62,39 +64,51 @@ export default function EntityTooltip({
 				</TooltipTrigger>
 				<TooltipContent
 					side="left"
-					className="w-80 flex flex-col shadow-lg bg-background border text-foreground rounded-lg"
+					className="w-70 flex flex-col gap-px shadow-lg bg-background border text-foreground rounded-lg"
 				>
-					<p className="w-full text-primary text-center font-semibold border-b pb-1 capitalize">
+					<p className="w-full pb-1 text-primary text-center font-semibold capitalize">
 						{getSingleName(entity) + " details"}
 					</p>
+					<div className="w-full border-t pb-0.5" />
 					{loading ? (
-						<div className="grid grid-cols-[2fr_5fr] gap-1.5">
-							{Array.from({ length: 6 }).map((_, i) => (
-								<Skeleton key={i} className={i % 2 === 0 ? "w-22" : ""} />
-							))}
-						</div>
+						Array.from({ length: skeletonCount }).map((_, i) => (
+							<SkeletonRow key={i} />
+						))
 					) : data ? (
-						<div>
-							{Object.entries(data).map(([name, value]) => (
-								<div key={name} className="grid grid-cols-[2fr_5fr] gap-1.5">
-									<p className="w-22 font-medium text-muted-foreground">
-										{getFieldName(name)}:
-									</p>
-									<ContentCell
-										headerName={name}
-										value={Array.isArray(value) ? [...value] : String(value)}
-										tooltip
-									/>
-								</div>
-							))}
-						</div>
+						Object.entries(data).map(([name, value]) => (
+							<DataRow key={name} name={name} value={value} />
+						))
 					) : (
-						<div className="pt-1.5 text-muted-foreground text-center">
+						<div className="text-muted-foreground text-center">
 							No details available
 						</div>
 					)}
 				</TooltipContent>
 			</Tooltip>
 		</TooltipProvider>
+	);
+}
+
+function SkeletonRow() {
+	return (
+		<div className="grid grid-cols-[2fr_5fr] gap-x-1 h-4 py-0.75 items-center">
+			<Skeleton className="h-3.25 w-22" />
+			<Skeleton className="h-3.25 w-full" />
+		</div>
+	);
+}
+
+function DataRow({ name, value }: { name: string; value: unknown }) {
+	return (
+		<div className="grid grid-cols-[2fr_5fr] gap-x-1">
+			<p className="w-22 font-medium text-muted-foreground">
+				{getFieldName(name)}:
+			</p>
+			<ContentCell
+				headerName={name}
+				value={Array.isArray(value) ? [...value] : String(value)}
+				tooltip
+			/>
+		</div>
 	);
 }

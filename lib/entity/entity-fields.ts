@@ -4,15 +4,6 @@ type FieldType = "string" | "number" | "date" | "enum" | "foreignKey" | "image";
 
 type FieldCategory = "filter" | "create" | "edit";
 
-type OptionField =
-	| "categoryId"
-	| "productId"
-	| "cartId"
-	| "orderId"
-	| "userId"
-	| "cartItemId"
-	| "orderItemId";
-
 type FieldConfig = {
 	name: string;
 	type: FieldType;
@@ -25,9 +16,7 @@ type FieldConfig = {
 	options?: readonly (Gender | OrderStatus)[];
 };
 
-type EntityField = (typeof entityFields)[EntityType][number];
-
-const entityFields: Record<EntityType, FieldConfig[]> = {
+const ENTITY_FIELDS: Record<EntityType, FieldConfig[]> = {
 	users: [
 		{
 			name: "id",
@@ -261,14 +250,7 @@ function getEntityFields(
 	type: FieldCategory,
 ): FieldConfig[] {
 	if (!entity) return [];
-	return entityFields[entity].filter((field) => field.category.includes(type));
+	return ENTITY_FIELDS[entity].filter((field) => field.category.includes(type));
 }
 
-export {
-	type EntityField,
-	entityFields,
-	type FieldCategory,
-	type FieldConfig,
-	getEntityFields,
-	type OptionField,
-};
+export { ENTITY_FIELDS, type FieldCategory, type FieldConfig, getEntityFields };
