@@ -57,9 +57,9 @@ function formatOption(
 export {
 	formatOption,
 	getFieldName,
+	getForeignKeyName,
 	getParamValues,
 	getPluralName,
 	getSingleName,
 	getTooltipEntity,
-	getForeignKeyName,
 };

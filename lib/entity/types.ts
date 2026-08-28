@@ -70,4 +70,4 @@ export type {
 	StringNumber,
 	User,
 };
-export { OptionField, EntityType, Gender, OrderStatus };
+export { EntityType, Gender, OptionField, OrderStatus };

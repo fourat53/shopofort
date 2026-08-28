@@ -1,6 +1,6 @@
 import { getUsersPage } from "@/actions/UserActions";
-import type { EntityTableProps } from "@/app/admin/[entity]/page";
 import DataTable from "@/components/data-table/DataTable";
+import type { EntityTableProps } from "@/components/entity-tables/EntityTable";
 import type { User } from "@/lib/entity/types";
 
 export default async function UsersTable({

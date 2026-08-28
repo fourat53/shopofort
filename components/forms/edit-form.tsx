@@ -8,8 +8,8 @@ import {
 	useRef,
 	useState,
 } from "react";
+import { toast } from "sonner";
 import {
-	createEntity,
 	getFilterOptions,
 	updateEntities,
 	updateEntity,
@@ -28,20 +28,21 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
-import { type FieldConfig, getEntityFields } from "@/lib/entity/entity-fields";
+import { getEntityFields } from "@/lib/entity/entity-fields";
 import {
 	getFieldName,
 	getPluralName,
 	getSingleName,
 } from "@/lib/entity/entity-functions";
 import type { EntityType, OptionField, StringNumber } from "@/lib/entity/types";
+import { getError } from "@/lib/mutation";
 import { addImagesToForm } from "@/lib/uploadthing/client";
 
 interface DialogFormProps<T> {
 	entity: EntityType;
 	open: boolean;
 	setOpen: Dispatch<SetStateAction<boolean>>;
-	rows?: T[];
+	rows: T[];
 }
 
 export default function CreateEditForm<
@@ -54,26 +55,18 @@ export default function CreateEditForm<
 	>({});
 
 	const fetchedFields = useRef<Set<string>>(new Set());
+	const ids = useMemo(() => rows.map((row) => row.id), [rows]);
+	const fields = useMemo(() => getEntityFields(entity, "edit"), [entity]);
 
-	const ids = useMemo(() => rows?.map((row) => row.id), [rows]);
-	const fields = useMemo(
-		() => getEntityFields(entity, rows ? "edit" : "create"),
-		[entity, rows],
-	);
-
-	const single = rows?.length === 1;
-	const label = rows
-		? single
-			? "Update " + getSingleName(entity)
-			: "Update the " + rows?.length + " selected " + getPluralName(entity)
-		: "Create " + getSingleName(entity);
+	const single = rows.length === 1;
+	const label = single
+		? "Update " + getSingleName(entity)
+		: "Update the " + rows.length + " selected " + getPluralName(entity);
 
 	useEffect(() => {
 		if (!open || entity !== "products") return;
-		else if (rows) {
-			setImages(Array.isArray(rows[0]?.images) ? rows[0].images : []);
-			return;
-		} else setImages([]);
+		setImages(Array.isArray(rows[0].images) ? rows[0].images : []);
+		return;
 	}, [open, entity, rows]);
 
 	useEffect(() => {
@@ -90,9 +83,9 @@ export default function CreateEditForm<
 						...current,
 						[name]: options,
 					}));
-				} catch (error) {
+				} catch (e) {
+					toast.error(`Error fetching ${name}s: ${getError(e)}`);
 					fetchedFields.current.delete(name);
-					console.error(error);
 				}
 			}
 		}
@@ -105,21 +98,17 @@ export default function CreateEditForm<
 		setLoading(true);
 		try {
 			await addImagesToForm(formData, images);
-			if (ids) {
-				single
-					? await updateEntity(entity, ids[0], formData)
-					: await updateEntities(entity, ids, formData);
-			} else if (entity !== "users") await createEntity(entity, formData);
-		} catch (error) {
-			console.error(error);
+			single
+				? await updateEntity(entity, ids[0], formData)
+				: await updateEntities(entity, ids, formData);
+		} catch (e) {
+			toast.error(
+				`Error updating ${single ? getSingleName(entity) : getPluralName(entity)}: ${getError(e)}`,
+			);
 		} finally {
 			setLoading(false);
 			setOpen(false);
 		}
-	}
-
-	function getValue(field: FieldConfig) {
-		return rows ? rows[0]?.[field.name] : field.defaultValue;
 	}
 
 	if (!open) return null;
@@ -135,7 +124,7 @@ export default function CreateEditForm<
 					<DialogTitle>{label}</DialogTitle>
 				</DialogHeader>
 				{fields.map((field) => {
-					const value = getValue(field);
+					const value = rows[0][field.name];
 					const { type, name, required } = field;
 					const label = getFieldName(name);
 					return type === "string" ? (
@@ -211,7 +200,7 @@ export default function CreateEditForm<
 						Cancel
 					</Button>
 					<Button type="submit" loading={loading}>
-						{rows ? "Update" : "Create"}
+						Update
 					</Button>
 				</DialogFooter>
 			</form>

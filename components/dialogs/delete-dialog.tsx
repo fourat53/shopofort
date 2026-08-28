@@ -3,6 +3,7 @@
 import { IconTrash } from "@tabler/icons-react";
 import { clsx } from "clsx";
 import { useRef, useState } from "react";
+import { toast } from "sonner";
 import { deleteEntities, deleteEntity } from "@/actions/EntityActions";
 import EntityTooltip from "@/components/data-table/table-cells/EntityTooltip";
 import { Button } from "@/components/ui/button";
@@ -20,6 +21,7 @@ import {
 	getSingleName,
 } from "@/lib/entity/entity-functions";
 import { EntityType, type StringNumber } from "@/lib/entity/types";
+import { getError } from "@/lib/mutation";
 
 interface DeleteDialogProps {
 	entity?: EntityType;
@@ -48,8 +50,10 @@ export default function DeleteDialog({
 				? await deleteEntity(entity, ids[0])
 				: await deleteEntities(entity, ids);
 			setOpen(false);
-		} catch (error) {
-			console.error(error);
+		} catch (e) {
+			toast.error(
+				`Error deleting ${single ? getSingleName(entity) : getPluralName(entity)}: ${getError(e)}`,
+			);
 		} finally {
 			setLoading(false);
 		}

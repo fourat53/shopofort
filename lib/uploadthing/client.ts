@@ -1,5 +1,7 @@
 import { generateReactHelpers } from "@uploadthing/react";
+import { toast } from "sonner";
 import type { OurFileRouter } from "@/lib/uploadthing/core";
+import { getError } from "../mutation";
 
 export const { uploadFiles } = generateReactHelpers<OurFileRouter>();
 
@@ -8,8 +10,8 @@ export async function uploadImages(files: File[]): Promise<string[]> {
 	try {
 		const res = await uploadFiles("productImage", { files });
 		return res.map((file) => file.ufsUrl);
-	} catch (error) {
-		console.error(error);
+	} catch (e) {
+		toast.error(`Error uploading files: ${getError(e)}`);
 		return [];
 	}
 }

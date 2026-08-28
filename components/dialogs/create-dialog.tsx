@@ -2,7 +2,7 @@
 
 import { IconPlus } from "@tabler/icons-react";
 import { useState } from "react";
-import CreateEditForm from "@/components/forms/create-edit-form";
+import CreateForm from "@/components/forms/create-form";
 import CurrentEntity from "@/components/title/CurrentEntity";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
@@ -23,7 +23,7 @@ export default function CreateDialog() {
 					icon={<IconPlus className="size-4" />}
 				/>
 			</DialogTrigger>
-			<CreateEditForm entity={entity} open={open} setOpen={setOpen} />
+			<CreateForm entity={entity} open={open} setOpen={setOpen} />
 		</Dialog>
 	);
 }

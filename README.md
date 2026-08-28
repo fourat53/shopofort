@@ -14,7 +14,7 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](https://shopofort-b91s.vercel.app in prod) with your browser to see the result.
+Open [http://localhost:3000](https://shopofort.vercel.app in prod) with your browser to see the result.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
@@ -34,15 +34,11 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+pnpm biome format --write .
 
 <!-- Biome auto sort imports -->
 - verify required fields
-- add error ui with sonner toast
-- add ListDialog with the items that needs listing like cart -> cart items, order -> order items
+- display all cart items for a cart, order items for an order
+- make a dashboard design with shadcn UI and display statistics
 
-pnpm biome format --write .
-
-  1. display all cart items for a cart, order items for an order in ListDialog
-  2. make a dashboard design with shadcn UI and display statistics by using the most relevent data from the database.
-
-Important: Since I don't have AWS S3 account, the images are saved locally.
+Important: Since I don't have AWS S3 account, the images in uploadthing file service free tier.

@@ -7,6 +7,7 @@ import {
 	useRef,
 	useState,
 } from "react";
+import { toast } from "sonner";
 import { getFilterOptions } from "@/actions/EntityActions";
 import { Input } from "@/components/form-items/input";
 import RangePicker from "@/components/form-items/range-picker";
@@ -26,6 +27,7 @@ import {
 	getPluralName,
 } from "@/lib/entity/entity-functions";
 import type { EntityType, OptionField } from "@/lib/entity/types";
+import { getError } from "@/lib/mutation";
 
 interface DialogFormProps {
 	fields: (typeof ENTITY_FIELDS)[EntityType][number][];
@@ -68,9 +70,11 @@ export default function FilterForm({
 						...current,
 						[field.name]: options,
 					}));
-				} catch (error) {
+				} catch (e) {
+					toast.error(
+						`Error filtering ${getPluralName(entity)}: ${getError(e)}`,
+					);
 					fetchedFields.current.delete(optionField);
-					console.error(error);
 				}
 			}
 		}

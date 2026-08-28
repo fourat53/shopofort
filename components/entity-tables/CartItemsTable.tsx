@@ -1,6 +1,6 @@
 import { getCartItemsPage } from "@/actions/CartItemActions";
-import type { EntityTableProps } from "@/app/admin/[entity]/page";
 import DataTable from "@/components/data-table/DataTable";
+import type { EntityTableProps } from "@/components/entity-tables/EntityTable";
 import type { CartItem } from "@/lib/entity/types";
 
 export default async function CartItemsTable({

@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { KindeProvider } from "@/providers/kinde-provider";
 import ThemeProvider from "@/providers/theme-provider";
 import "@/app/globals.css";
+import { Toaster } from "@/components/ui/sonner";
 
 const oxanium = Oxanium({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -41,6 +42,7 @@ export default function RootLayout({
 				<DocumentTitle />
 				<ThemeProvider>
 					<KindeProvider>
+						<Toaster />
 						<UploadPlugin routerConfig={extractConfig(fileRouter)} />
 						<TooltipProvider>{children}</TooltipProvider>
 					</KindeProvider>

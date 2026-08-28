@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { toast } from "sonner";
 import { getEntityById } from "@/actions/EntityActions";
 import ContentCell from "@/components/data-table/table-cells/ContentCell";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -17,6 +18,7 @@ import {
 } from "@/lib/entity/entity-functions";
 import { getSkeletonCount } from "@/lib/entity/entity-header";
 import type { OptionField } from "@/lib/entity/types";
+import { getError } from "@/lib/mutation";
 
 export default function EntityTooltip({
 	headerName,
@@ -39,8 +41,8 @@ export default function EntityTooltip({
 			setLoading(true);
 			const result = await getEntityById(entity, idValue);
 			setData(result);
-		} catch (error) {
-			console.error(error);
+		} catch (e) {
+			toast.error(`Error fetching ${getSingleName(entity)}: ${getError(e)}`);
 		} finally {
 			setLoading(false);
 		}
