@@ -20,7 +20,11 @@ import {
 	DialogTitle,
 } from "@/components/ui/dialog";
 import type { ENTITY_FIELDS } from "@/lib/entity/entity-fields";
-import { getFieldName, getPluralName } from "@/lib/entity/entity-functions";
+import {
+	getFieldName,
+	getForeignKeyName,
+	getPluralName,
+} from "@/lib/entity/entity-functions";
 import type { EntityType, OptionField } from "@/lib/entity/types";
 
 interface DialogFormProps {
@@ -53,7 +57,8 @@ export default function FilterForm({
 		async function loadOptions() {
 			for (const field of fields) {
 				if (field.type !== "foreignKey") continue;
-				const optionField = field.name === "id" ? `${entity}Id` : field.name;
+				const optionField =
+					field.name === "id" ? getForeignKeyName(entity) : field.name;
 
 				if (fetchedFields.current.has(optionField)) continue;
 				fetchedFields.current.add(optionField);

@@ -37,11 +37,12 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 <!-- Biome auto sort imports -->
 - verify required fields
-- verify dialogs work correctely everywhere
+- add error ui with sonner toast
+- add ListDialog with the items that needs listing like cart -> cart items, order -> order items
 
 pnpm biome format --write .
 
-  1. display all cart items for a cart, order items for an order
+  1. display all cart items for a cart, order items for an order in ListDialog
   2. make a dashboard design with shadcn UI and display statistics by using the most relevent data from the database.
 
 Important: Since I don't have AWS S3 account, the images are saved locally.

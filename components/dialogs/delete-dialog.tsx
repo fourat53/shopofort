@@ -14,7 +14,11 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
-import { getPluralName, getSingleName } from "@/lib/entity/entity-functions";
+import {
+	getForeignKeyName,
+	getPluralName,
+	getSingleName,
+} from "@/lib/entity/entity-functions";
 import { EntityType, type StringNumber } from "@/lib/entity/types";
 
 interface DeleteDialogProps {
@@ -107,7 +111,7 @@ export default function DeleteDialog({
 								<EntityTooltip
 									key={id}
 									idValue={String(id)}
-									headerName={entity + "Id"}
+									headerName={getForeignKeyName(entity)}
 								/>
 							))}
 						</span>

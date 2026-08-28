@@ -1,14 +1,28 @@
-import { EntityType, type ParameterType, type StringNumber } from "./types";
+import {
+	EntityType,
+	OptionField,
+	type ParameterType,
+	type StringNumber,
+} from "./types";
 
-function getTooltipEntity(headerName: string): EntityType | "" {
-	if (headerName === "userId") return EntityType.users;
-	else if (headerName === "productId") return EntityType.products;
-	else if (headerName === "orderId") return EntityType.orders;
-	else if (headerName === "cartId") return EntityType.carts;
-	else if (headerName === "categoryId") return EntityType.categories;
-	else if (headerName === "cartItemId") return EntityType["cart-items"];
-	else if (headerName === "orderItemId") return EntityType["order-items"];
-	return "";
+function getTooltipEntity(name: OptionField): EntityType {
+	if (name === "userId") return EntityType.users;
+	else if (name === "productId") return EntityType.products;
+	else if (name === "orderId") return EntityType.orders;
+	else if (name === "cartId") return EntityType.carts;
+	else if (name === "categoryId") return EntityType.categories;
+	else if (name === "cartItemId") return EntityType["cart-items"];
+	else return EntityType["order-items"];
+}
+
+function getForeignKeyName(name: EntityType): OptionField {
+	if (name === EntityType.users) return OptionField.userId;
+	else if (name === EntityType.products) return OptionField.productId;
+	else if (name === EntityType.orders) return OptionField.orderId;
+	else if (name === EntityType.carts) return OptionField.cartId;
+	else if (name === EntityType.categories) return OptionField.categoryId;
+	else if (name === EntityType["cart-items"]) return OptionField.cartItemId;
+	else return OptionField.orderItemId;
 }
 
 function getFieldName(name: string) {
@@ -47,4 +61,5 @@ export {
 	getPluralName,
 	getSingleName,
 	getTooltipEntity,
+	getForeignKeyName,
 };

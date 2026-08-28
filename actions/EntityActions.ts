@@ -13,7 +13,7 @@ import { getFormEntity } from "@/lib/entity/entity-form";
 import { formatOption } from "@/lib/entity/entity-functions";
 import {
 	EntityType,
-	type OptionField,
+	OptionField,
 	type ParameterType,
 	type StringNumber,
 } from "@/lib/entity/types";
@@ -29,27 +29,27 @@ import { getProductCount } from "./ProductActions";
 async function getFilterOptions(field: OptionField): Promise<SelectOption[]> {
 	try {
 		switch (field) {
-			case "categoryId": {
+			case OptionField.categoryId: {
 				const categories = await prisma.category.findMany({
 					orderBy: { name: "asc" },
 				});
 				return categories.map((c) => formatOption(c.id, [c.name, c.gender]));
 			}
-			case "productId": {
+			case OptionField.productId: {
 				const products = await prisma.product.findMany({
 					select: { id: true, name: true },
 					orderBy: { name: "asc" },
 				});
 				return products.map((p) => formatOption(p.id, [p.id, p.name]));
 			}
-			case "cartId": {
+			case OptionField.cartId: {
 				const carts = await prisma.cart.findMany({
 					select: { id: true, userId: true },
 					orderBy: { id: "asc" },
 				});
 				return carts.map((c) => formatOption(c.id, [c.id, `UID: ${c.userId}`]));
 			}
-			case "orderId": {
+			case OptionField.orderId: {
 				const orders = await prisma.order.findMany({
 					select: { id: true, userId: true },
 					orderBy: { id: "asc" },
@@ -58,11 +58,11 @@ async function getFilterOptions(field: OptionField): Promise<SelectOption[]> {
 					formatOption(o.id, [o.id, `UID: ${o.userId}`]),
 				);
 			}
-			case "userId": {
+			case OptionField.userId: {
 				const users = await getUsers();
 				return users.map((u) => formatOption(u.id, [u.id, u.email]));
 			}
-			case "cartItemId": {
+			case OptionField.cartItemId: {
 				const cartItems = await prisma.cartItem.findMany({
 					select: { id: true, cartId: true, productId: true },
 					orderBy: { id: "asc" },
@@ -71,7 +71,7 @@ async function getFilterOptions(field: OptionField): Promise<SelectOption[]> {
 					formatOption(c.id, [c.id, `CID: ${c.cartId} - PID: ${c.productId}`]),
 				);
 			}
-			case "orderItemId": {
+			case OptionField.orderItemId: {
 				const orderItems = await prisma.orderItem.findMany({
 					select: { id: true, orderId: true, productId: true },
 					orderBy: { id: "asc" },

@@ -77,7 +77,6 @@ export default function DataTable<T extends { id: StringNumber }>({
 										}}
 									>
 										<ContentCell
-											cIndex={cIndex}
 											rowId={row.id}
 											headerName={header[cIndex].name}
 											value={Array.isArray(value) ? [...value] : String(value)}

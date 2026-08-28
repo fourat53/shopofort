@@ -16,12 +16,13 @@ import {
 	getTooltipEntity,
 } from "@/lib/entity/entity-functions";
 import { getSkeletonCount } from "@/lib/entity/entity-header";
+import type { OptionField } from "@/lib/entity/types";
 
 export default function EntityTooltip({
 	headerName,
 	idValue,
 }: {
-	headerName: string;
+	headerName: OptionField;
 	idValue: string;
 }) {
 	const entity = getTooltipEntity(headerName);

@@ -108,6 +108,7 @@ function getFilteredUsers(
 			revalidate: Object.keys(filterParams).length
 				? FILTER_CACHE_SECONDS
 				: CACHE_SECONDS,
+			tags: ["users"],
 		},
 	)();
 }
@@ -213,6 +214,7 @@ async function deleteUser(id: string) {
 			Accept: "application/json",
 		},
 	});
+	updateTag("users");
 
 	await prisma.cart.delete({ where: { userId: id } });
 	updateTag("carts");
@@ -235,6 +237,7 @@ async function updateUser(id: string, formData: FormData) {
 		},
 		body: JSON.stringify(data),
 	});
+	updateTag("users");
 }
 
 export {

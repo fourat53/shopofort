@@ -45,14 +45,15 @@ enum EntityType {
 	"order-items" = "order-items",
 }
 
-type OptionField =
-	| "categoryId"
-	| "productId"
-	| "cartId"
-	| "orderId"
-	| "userId"
-	| "cartItemId"
-	| "orderItemId";
+enum OptionField {
+	userId = "userId",
+	cartId = "cartId",
+	orderId = "orderId",
+	productId = "productId",
+	categoryId = "categoryId",
+	cartItemId = "cartItemId",
+	orderItemId = "orderItemId",
+}
 
 type StringNumber = string | number;
 
@@ -62,7 +63,6 @@ export type {
 	Cart,
 	CartItem,
 	Category,
-	OptionField,
 	Order,
 	OrderItem,
 	ParameterType,
@@ -70,4 +70,4 @@ export type {
 	StringNumber,
 	User,
 };
-export { EntityType, Gender, OrderStatus };
+export { OptionField, EntityType, Gender, OrderStatus };

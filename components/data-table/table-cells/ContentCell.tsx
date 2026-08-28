@@ -2,12 +2,15 @@ import { clsx } from "clsx";
 import Image from "next/image";
 import EntityTooltip from "@/components/data-table/table-cells/EntityTooltip";
 import { formatDateTime, isDate } from "@/lib/date-format";
-import { OrderStatus, type StringNumber } from "@/lib/entity/types";
+import {
+	OptionField,
+	OrderStatus,
+	type StringNumber,
+} from "@/lib/entity/types";
 
 interface CellContentProps {
 	value: string | string[];
 	headerName: string;
-	cIndex?: number;
 	rowId?: StringNumber;
 	tooltip?: boolean;
 }
@@ -21,17 +24,17 @@ function cellTitle(value: unknown, name: string) {
 export default function ContentCell({
 	value,
 	headerName,
-	cIndex,
 	rowId,
 	tooltip = false,
 }: CellContentProps) {
 	const imageSize = tooltip ? "32px" : "58px";
 	const isForeignKey =
-		cIndex && cIndex > 0 && !Array.isArray(value) && headerName.endsWith("Id");
+		!Array.isArray(value) &&
+		Object.values(OptionField).includes(headerName as OptionField);
 	return (
 		<div title={cellTitle(value, headerName)} className="truncate">
 			{isForeignKey ? (
-				<EntityTooltip headerName={headerName} idValue={value} />
+				<EntityTooltip headerName={headerName as OptionField} idValue={value} />
 			) : headerName === "orderStatus" ? (
 				<p
 					className={clsx(
