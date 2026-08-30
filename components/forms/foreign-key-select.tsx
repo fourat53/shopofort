@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { getFilterOptions } from "@/actions/EntityActions";
+import { Select, type SelectOption } from "@/components/form-items/select";
 import type { FieldConfig } from "@/lib/entity/entity-fields";
 import {
 	getFieldName,
@@ -8,7 +9,6 @@ import {
 	getPluralName,
 } from "@/lib/entity/entity-functions";
 import type { EntityType, OptionField } from "@/lib/entity/types";
-import { Select, type SelectOption } from "../form-items/select";
 
 interface ForeignKeySelectProps {
 	field: FieldConfig;

@@ -1,10 +1,8 @@
 import { IconList } from "@tabler/icons-react";
 import { Suspense } from "react";
-
-import { getEntityCount } from "@/actions/EntityActions";
 import DataTableSkeleton from "@/components/data-table/DataTableSkeleton";
 import CartItemsTable from "@/components/entity-tables/CartItemsTable";
-import { getPaginationParams } from "@/components/pagination/PaginationParams";
+import OrderItemsTable from "@/components/entity-tables/OrderItemsTable";
 import { Button } from "@/components/ui/button";
 import {
 	Dialog,
@@ -20,8 +18,6 @@ import {
 	ORDER_ITEMS_HEADER,
 } from "@/lib/entity/entity-header";
 import { EntityType } from "@/lib/entity/types";
-import OrderItemsTable from "../entity-tables/OrderItemsTable";
-import ItemsTablePagination from "../pagination/ItemsTablePagination";
 
 interface ListDialogProps {
 	entity: EntityType;
@@ -60,7 +56,7 @@ export default async function ListDialog({
 
 			<DialogContent
 				showCloseButton
-				className="min-h-[95vh] min-w-[95vw] flex flex-col gap-4"
+				className="min-h-[90vh] min-w-[90vw] flex flex-col gap-4"
 			>
 				<DialogHeader>
 					<DialogTitle className="py-0 capitalize">
@@ -90,33 +86,28 @@ async function EntityItemsLayout({
 		header = ORDER_ITEMS_HEADER;
 		filterParams = { orderId: String(id) };
 	}
-
-	const totalCount = await getEntityCount(entity, filterParams);
-	const { totalPages } = getPaginationParams("1", totalCount);
-
 	return (
-		<>
-			<Suspense
-				key={JSON.stringify({ entity, id })}
-				fallback={<DataTableSkeleton entity={entity} header={header} />}
-			>
-				{isCart ? (
-					<CartItemsTable
-						entity={entity}
-						header={header}
-						filterParams={filterParams}
-					/>
-				) : (
-					<OrderItemsTable
-						entity={entity}
-						header={header}
-						filterParams={filterParams}
-					/>
-				)}
-			</Suspense>
-			{totalPages > 1 && (
-				<ItemsTablePagination entity={entity} totalPages={totalPages} />
+		<Suspense
+			key={JSON.stringify({ entity, id })}
+			fallback={<DataTableSkeleton entity={entity} header={header} />}
+		>
+			{isCart ? (
+				<CartItemsTable
+					entity={entity}
+					header={header}
+					pageSize={10000}
+					sortable={false}
+					filterParams={filterParams}
+				/>
+			) : (
+				<OrderItemsTable
+					entity={entity}
+					header={header}
+					pageSize={10000}
+					sortable={false}
+					filterParams={filterParams}
+				/>
 			)}
-		</>
+		</Suspense>
 	);
 }

@@ -24,7 +24,7 @@ export default function EntityTooltip({
 	idValue,
 }: {
 	headerName: OptionField;
-	idValue: string;
+	idValue: string | number;
 }) {
 	const entity = getTooltipEntity(headerName);
 	const skeletonCount = getSkeletonCount(entity);

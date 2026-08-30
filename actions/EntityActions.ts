@@ -89,11 +89,11 @@ async function getFilterOptions(field: OptionField): Promise<SelectOption[]> {
 	}
 }
 
-async function getEntityById(entity: EntityType, id: string) {
+async function getEntityById(entity: EntityType, id: StringNumber) {
 	const where = { where: { id: Number(id) } };
 	let result: unknown;
 	try {
-		if (entity === EntityType.users) result = await getUserById(id);
+		if (entity === EntityType.users) result = await getUserById(id as string);
 		else if (entity === EntityType.carts)
 			result = await prisma.cart.findUnique(where);
 		else if (entity === EntityType.orders)

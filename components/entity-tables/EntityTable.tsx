@@ -15,6 +15,8 @@ interface EntityTableProps {
 	order?: "asc" | "desc";
 	sortBy?: string;
 	filterParams?: Record<string, string | string[] | undefined>;
+	pageSize?: number;
+	sortable?: boolean;
 }
 
 export default async function EntityTable({ ...pageParams }: EntityTableProps) {

@@ -12,6 +12,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
+import { getFieldName } from "@/lib/entity/entity-functions";
 import type { HeaderItem } from "@/lib/entity/entity-header";
 import type { EntityType, StringNumber } from "@/lib/entity/types";
 
@@ -19,17 +20,19 @@ interface DataTableProps<T> {
 	entity: EntityType;
 	header: HeaderItem[];
 	rows: T[];
+	sortable?: boolean;
 }
 
 export default function DataTable<T extends { id: StringNumber }>({
 	entity,
 	header,
 	rows,
+	sortable = true,
 }: DataTableProps<T>) {
 	return (
 		<>
 			{rows.length === 0 ? (
-				<div className="w-full bg-sidebar h-60 flex items-center justify-center border rounded-lg text-muted-foreground">
+				<div className="w-full h-[calc(100vh-152px)] bg-sidebar flex items-center justify-center border rounded-lg text-muted-foreground">
 					No data available
 				</div>
 			) : (
@@ -43,13 +46,19 @@ export default function DataTable<T extends { id: StringNumber }>({
 									type="select-all"
 								/>
 							</TableHead>
-							{header.map((item) => (
-								<SortableTableHead
-									key={item.name}
-									name={item.name}
-									entity={entity}
-								/>
-							))}
+							{header.map((item) =>
+								sortable ? (
+									<SortableTableHead
+										key={item.name}
+										name={item.name}
+										entity={entity}
+									/>
+								) : (
+									<TableHead key={item.name} border>
+										{getFieldName(item.name)}
+									</TableHead>
+								),
+							)}
 							<TableHead border className="py-0 text-center">
 								<CheckBoxCell<T> entity={entity} rows={rows} type="actions" />
 							</TableHead>
@@ -79,7 +88,7 @@ export default function DataTable<T extends { id: StringNumber }>({
 										<ContentCell
 											rowId={row.id}
 											headerName={header[cIndex].name}
-											value={Array.isArray(value) ? [...value] : String(value)}
+											value={value}
 										/>
 									</TableCell>
 								))}

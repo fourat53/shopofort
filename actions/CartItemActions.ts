@@ -53,6 +53,7 @@ function getCartItemsPage(
 	order: "asc" | "desc" = "asc",
 	sortBy: string = "id",
 	filterParams: ParameterType = {},
+	pageSize: number = PAGE_SIZE,
 ) {
 	const where = buildWhereClause(filterParams);
 	const orderBy = buildOrderClause(sortBy, order);
@@ -60,8 +61,8 @@ function getCartItemsPage(
 		async () => {
 			const cartItems = await prisma.cartItem.findMany({
 				where,
-				skip: (page - 1) * PAGE_SIZE,
-				take: PAGE_SIZE,
+				skip: (page - 1) * pageSize,
+				take: pageSize,
 				orderBy,
 			});
 			return cartItems.map(

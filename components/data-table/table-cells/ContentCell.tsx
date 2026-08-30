@@ -1,27 +1,30 @@
 import { clsx } from "clsx";
+import { isDate } from "date-fns";
 import Image from "next/image";
 import EntityTooltip from "@/components/data-table/table-cells/EntityTooltip";
-import { formatDateTime, isDate } from "@/lib/date-format";
+import { formatDate } from "@/lib/date-format";
 import {
 	OptionField,
 	OrderStatus,
 	type StringNumber,
 } from "@/lib/entity/types";
 
+type ValueType = StringNumber | string[] | Date | undefined;
+
 interface CellContentProps {
-	value: string | string[];
+	value: ValueType;
 	headerName: string;
 	rowId?: StringNumber;
 	tooltip?: boolean;
 }
 
-function cellTitle(value: string | string[], name: string) {
+function cellTitle(value: ValueType, name: string) {
 	if (
 		Array.isArray(value) ||
 		Object.values(OptionField).includes(name as OptionField)
 	)
 		return undefined;
-	if (isDate(value)) return formatDateTime(value);
+	if (isDate(value)) return formatDate(value);
 	return String(value);
 }
 
@@ -62,6 +65,10 @@ export default function ContentCell({
 						No images
 					</div>
 				)
+			) : !value || value === "null" ? (
+				"-"
+			) : isDate(value) ? (
+				formatDate(value)
 			) : Object.values(OptionField).includes(headerName as OptionField) ? (
 				<EntityTooltip headerName={headerName as OptionField} idValue={value} />
 			) : headerName === "orderStatus" ? (
@@ -104,10 +111,6 @@ export default function ContentCell({
 						style={{ height: imageSize, width: imageSize }}
 					/>
 				)
-			) : isDate(value) ? (
-				formatDateTime(value)
-			) : !value ? (
-				"-"
 			) : (
 				value
 			)}

@@ -80,7 +80,6 @@ export default function FilterForm({
 								from: searchParams.get(`${name}From`) ?? undefined,
 								to: searchParams.get(`${name}To`) ?? undefined,
 							}}
-							time
 						/>
 					) : type === "enum" ? (
 						<Select

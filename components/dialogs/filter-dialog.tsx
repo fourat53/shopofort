@@ -2,6 +2,7 @@
 
 import { IconArrowBackUp, IconFilter } from "@tabler/icons-react";
 import clsx from "clsx";
+import { isDate } from "date-fns";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState, useTransition } from "react";
 import FilterForm from "@/components/forms/filter-form";
@@ -27,13 +28,15 @@ export default function FilterDialog() {
 	function handleClear() {
 		const newParams = new URLSearchParams();
 
-		for (const key of ["page", "sortBy", "order"]) {
+		newParams.set("page", "1");
+
+		for (const key of ["sortBy", "order"]) {
 			const value = searchParams.get(key);
 			if (value !== null) newParams.set(key, value);
 		}
 
 		const qs = newParams.toString();
-		const newUrl = qs ? `${pathname}?${qs}` : pathname;
+		const newUrl = `${pathname}?${qs}`;
 
 		startTransition(() => {
 			router.push(newUrl);
@@ -45,41 +48,83 @@ export default function FilterDialog() {
 
 		const formData = new FormData(e.currentTarget);
 		const newParams = new URLSearchParams(searchParams.toString());
+
 		newParams.delete("page");
 
 		for (const field of fields) {
-			if (field.type === "number") {
+			const { name, type } = field;
+
+			if (type === "number") {
 				const min = field.min ?? 0;
 				const max = field.max ?? 10000;
 
-				const fromName = `${field.name}From`;
-				const toName = `${field.name}To`;
+				const fromName = `${name}From`;
+				const toName = `${name}To`;
 
 				const from = formData.get(fromName)?.toString() ?? "";
 				const to = formData.get(toName)?.toString() ?? "";
 
-				if (Number(from) !== min) newParams.set(fromName, from);
-				else newParams.delete(fromName);
+				if (from && Number(from) !== min) {
+					newParams.set(fromName, from);
+				} else {
+					newParams.delete(fromName);
+				}
 
-				if (Number(to) !== max) newParams.set(toName, to);
-				else newParams.delete(toName);
+				if (to && Number(to) !== max) {
+					newParams.set(toName, to);
+				} else {
+					newParams.delete(toName);
+				}
+
 				continue;
 			}
 
-			if (field.type === "enum" || field.type === "foreignKey") {
+			if (type === "date") {
+				const fromName = `${name}From`;
+				const toName = `${name}To`;
+
+				const from = formData.get(fromName)?.toString() ?? "";
+				const to = formData.get(toName)?.toString() ?? "";
+
+				if (from && isDate(from)) {
+					newParams.set(fromName, from);
+				} else {
+					newParams.delete(fromName);
+				}
+
+				if (to && isDate(to)) {
+					newParams.set(toName, to);
+				} else {
+					newParams.delete(toName);
+				}
+
+				continue;
+			}
+
+			if (type === "enum" || type === "foreignKey") {
 				const values = formData
-					.getAll(field.name)
+					.getAll(name)
 					.map((value) => value.toString())
 					.filter((value) => value !== "ALL");
-				newParams.delete(field.name);
-				for (const value of values) newParams.append(field.name, value);
+
+				newParams.delete(name);
+
+				for (const value of values) {
+					newParams.append(name, value);
+				}
+
 				continue;
 			}
 
-			const value = formData.get(field.name)?.toString().trim();
-			if (value && value !== "ALL") newParams.set(field.name, value);
-			else newParams.delete(field.name);
+			const value = formData.get(name)?.toString().trim();
+
+			if (value && value !== "ALL") {
+				newParams.set(name, value);
+			} else {
+				newParams.delete(name);
+			}
 		}
+
 		const qs = newParams.toString();
 		const newUrl = qs ? `${pathname}?${qs}` : pathname;
 
