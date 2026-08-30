@@ -24,14 +24,15 @@ interface DataTableSkeletonProps {
 	entity: EntityType;
 	header: HeaderItem[];
 	hasImage?: "none" | "one" | "multiple";
+	pageSize?: number;
 }
 
 export default function DataTableSkeleton({
 	entity,
 	header,
 	hasImage = "none",
+	pageSize = hasImage === "none" ? PAGE_SIZE : IMAGE_PAGE_SIZE,
 }: DataTableSkeletonProps) {
-	const rowCount = hasImage === "none" ? PAGE_SIZE : IMAGE_PAGE_SIZE;
 	return (
 		<Table>
 			<TableHeader>
@@ -52,7 +53,7 @@ export default function DataTableSkeleton({
 				</TableRow>
 			</TableHeader>
 			<TableBody>
-				{Array.from({ length: rowCount }, (_, rIndex) => (
+				{Array.from({ length: pageSize }, (_, rIndex) => (
 					<TableRow key={rIndex}>
 						<TableCell className="w-8 min-w-8 max-w-8">
 							<Checkbox />

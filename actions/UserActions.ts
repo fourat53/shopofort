@@ -87,7 +87,7 @@ function filterUsers(
 	});
 }
 
-function getFilteredUsers(
+async function getFilteredUsers(
 	filterParams: ParameterType,
 	sortBy?: string,
 	order?: "asc" | "desc",
@@ -177,10 +177,11 @@ async function getUsersPage(
 	order: "asc" | "desc" = "asc",
 	sortBy: string = "id",
 	filterParams: ParameterType = {},
+	pageSize: number = IMAGE_PAGE_SIZE,
 ) {
 	const users = await getFilteredUsers(filterParams, sortBy, order);
-	const start = (page - 1) * IMAGE_PAGE_SIZE;
-	return users.slice(start, start + IMAGE_PAGE_SIZE).map(mapUser);
+	const start = (page - 1) * pageSize;
+	return users.slice(start, start + pageSize).map(mapUser);
 }
 
 async function getUserCount(filterParams: ParameterType = {}) {

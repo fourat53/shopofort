@@ -47,11 +47,12 @@ function buildOrderClause(
 	return { id: "asc" };
 }
 
-function getCartsPage(
+async function getCartsPage(
 	page: number = 1,
 	order: "asc" | "desc" = "asc",
 	sortBy: string = "id",
 	filterParams: ParameterType = {},
+	pageSize: number = PAGE_SIZE,
 ) {
 	const where = buildWhereClause(filterParams);
 	const orderBy = buildOrderClause(sortBy, order);
@@ -59,8 +60,8 @@ function getCartsPage(
 		async () =>
 			prisma.cart.findMany({
 				where,
-				skip: (page - 1) * PAGE_SIZE,
-				take: PAGE_SIZE,
+				skip: (page - 1) * pageSize,
+				take: pageSize,
 				orderBy,
 			}),
 		[
@@ -78,10 +79,10 @@ function getCartsPage(
 	)();
 }
 
-function getCartCount(filterParams: ParameterType = {}) {
+async function getCartCount(filterParams: ParameterType = {}) {
 	const where = buildWhereClause(filterParams);
 	return unstable_cache(
-		async () => prisma.cart.count({ where }),
+		() => prisma.cart.count({ where }),
 		["carts-count", JSON.stringify(filterParams)],
 		{
 			revalidate: Object.keys(filterParams).length

@@ -41,11 +41,12 @@ function buildOrderClause(
 	return { id: "asc" };
 }
 
-function getCategoriesPage(
+async function getCategoriesPage(
 	page: number = 1,
 	order: "asc" | "desc" = "asc",
 	sortBy: string = "id",
 	filterParams: ParameterType = {},
+	pageSize: number = PAGE_SIZE,
 ) {
 	const where = buildWhereClause(filterParams);
 	const orderBy = buildOrderClause(sortBy, order);
@@ -53,8 +54,8 @@ function getCategoriesPage(
 		async () =>
 			prisma.category.findMany({
 				where,
-				skip: (page - 1) * PAGE_SIZE,
-				take: PAGE_SIZE,
+				skip: (page - 1) * pageSize,
+				take: pageSize,
 				orderBy,
 			}),
 		[
@@ -72,10 +73,10 @@ function getCategoriesPage(
 	)();
 }
 
-function getCategoryCount(filterParams: ParameterType = {}) {
+async function getCategoryCount(filterParams: ParameterType = {}) {
 	const where = buildWhereClause(filterParams);
 	return unstable_cache(
-		async () => prisma.category.count({ where }),
+		() => prisma.category.count({ where }),
 		["categories-count", JSON.stringify(filterParams)],
 		{
 			revalidate: Object.keys(filterParams).length

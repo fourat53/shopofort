@@ -1,8 +1,6 @@
 import { IconList } from "@tabler/icons-react";
 import { Suspense } from "react";
 import DataTableSkeleton from "@/components/data-table/DataTableSkeleton";
-import CartItemsTable from "@/components/entity-tables/CartItemsTable";
-import OrderItemsTable from "@/components/entity-tables/OrderItemsTable";
 import { Button } from "@/components/ui/button";
 import {
 	Dialog,
@@ -14,23 +12,30 @@ import {
 import { getSingleName } from "@/lib/entity/entity-functions";
 import {
 	CART_ITEMS_HEADER,
-	type HeaderItem,
 	ORDER_ITEMS_HEADER,
 } from "@/lib/entity/entity-header";
-import { EntityType } from "@/lib/entity/types";
+import { type CartItem, EntityType, type OrderItem } from "@/lib/entity/types";
+import DataTable from "../data-table/DataTable";
+import { getOrderItemsByOrderId } from "@/actions/OrderItemActions";
+import { getCartItemsByCartId } from "@/actions/CartItemActions";
 
 interface ListDialogProps {
 	entity: EntityType;
 	id?: number;
 	disabled?: boolean;
+	dialog?: boolean;
 }
 
 export default async function ListDialog({
 	id,
 	entity,
 	disabled,
+	dialog,
 }: ListDialogProps) {
-	if (![EntityType.carts, EntityType.orders].includes(entity)) return null;
+	const isCart = entity === EntityType.carts;
+
+	if (dialog || ![EntityType.carts, EntityType.orders].includes(entity))
+		return null;
 
 	if (!id || disabled) {
 		return (
@@ -63,51 +68,44 @@ export default async function ListDialog({
 						{getSingleName(entity)} items
 					</DialogTitle>
 				</DialogHeader>
-				<EntityItemsLayout id={id} entity={entity} />
+
+				<Suspense
+					fallback={
+						<DataTableSkeleton
+							entity={entity}
+							header={isCart ? CART_ITEMS_HEADER : ORDER_ITEMS_HEADER}
+						/>
+					}
+				>
+					{isCart ? <CartItemsTable id={id} /> : <OrderItemsTable id={id} />}
+				</Suspense>
 			</DialogContent>
 		</Dialog>
 	);
 }
 
-async function EntityItemsLayout({
-	id,
-	entity,
-}: {
-	id: number;
-	entity: EntityType;
-}) {
-	const isCart = entity === EntityType.carts;
-	let header: HeaderItem[];
-	let filterParams: Record<string, string | string[] | undefined>;
-	if (isCart) {
-		header = CART_ITEMS_HEADER;
-		filterParams = { cartId: String(id) };
-	} else {
-		header = ORDER_ITEMS_HEADER;
-		filterParams = { orderId: String(id) };
-	}
+async function CartItemsTable({ id }: { id: number }) {
+	const rows: CartItem[] = await getCartItemsByCartId(id);
 	return (
-		<Suspense
-			key={JSON.stringify({ entity, id })}
-			fallback={<DataTableSkeleton entity={entity} header={header} />}
-		>
-			{isCart ? (
-				<CartItemsTable
-					entity={entity}
-					header={header}
-					pageSize={10000}
-					sortable={false}
-					filterParams={filterParams}
-				/>
-			) : (
-				<OrderItemsTable
-					entity={entity}
-					header={header}
-					pageSize={10000}
-					sortable={false}
-					filterParams={filterParams}
-				/>
-			)}
-		</Suspense>
+		<DataTable<CartItem>
+			entity={EntityType["cart-items"]}
+			header={CART_ITEMS_HEADER}
+			sortable={false}
+			rows={rows}
+			dialog
+		/>
+	);
+}
+
+async function OrderItemsTable({ id }: { id: number }) {
+	const rows: OrderItem[] = await getOrderItemsByOrderId(id);
+	return (
+		<DataTable<OrderItem>
+			entity={EntityType["order-items"]}
+			header={ORDER_ITEMS_HEADER}
+			sortable={false}
+			rows={rows}
+			dialog
+		/>
 	);
 }

@@ -48,7 +48,7 @@ function buildOrderClause(
 	return { id: "asc" };
 }
 
-function getOrderItemsPage(
+async function getOrderItemsPage(
 	page: number = 1,
 	order: "asc" | "desc" = "asc",
 	sortBy: string = "id",
@@ -86,10 +86,10 @@ function getOrderItemsPage(
 	)();
 }
 
-function getOrderItemCount(filterParams: ParameterType = {}) {
+async function getOrderItemCount(filterParams: ParameterType = {}) {
 	const where = buildWhereClause(filterParams);
 	return unstable_cache(
-		async () => prisma.orderItem.count({ where }),
+		() => prisma.orderItem.count({ where }),
 		["order-items-count", JSON.stringify(filterParams)],
 		{
 			revalidate: Object.keys(filterParams).length
@@ -100,4 +100,21 @@ function getOrderItemCount(filterParams: ParameterType = {}) {
 	)();
 }
 
-export { getOrderItemCount, getOrderItemsPage };
+async function getOrderItemsByOrderId(id: number) {
+	return unstable_cache(
+		async () => {
+			const orderItems = await prisma.orderItem.findMany({
+				where: { orderId: id },
+			});
+			return orderItems.map(({ id, price, ...rest }) => ({
+				id,
+				price: Number(price),
+				...rest,
+			}));
+		},
+		["order-items-page", JSON.stringify({ id })],
+		{ revalidate: CACHE_SECONDS, tags: ["order-items"] },
+	)();
+}
+
+export { getOrderItemCount, getOrderItemsByOrderId, getOrderItemsPage };

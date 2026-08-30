@@ -21,6 +21,7 @@ interface DataTableProps<T> {
 	header: HeaderItem[];
 	rows: T[];
 	sortable?: boolean;
+	dialog?: boolean;
 }
 
 export default function DataTable<T extends { id: StringNumber }>({
@@ -28,6 +29,7 @@ export default function DataTable<T extends { id: StringNumber }>({
 	header,
 	rows,
 	sortable = true,
+	dialog = false,
 }: DataTableProps<T>) {
 	return (
 		<>
@@ -94,7 +96,11 @@ export default function DataTable<T extends { id: StringNumber }>({
 								))}
 								<TableCell border className="w-26 min-w-26 max-w-26 py-0.5">
 									<div className="flex items-center justify-center gap-1.5">
-										<ListDialog id={row.id as number} entity={entity} />
+										<ListDialog
+											id={row.id as number}
+											entity={entity}
+											dialog={dialog}
+										/>
 										<EditDialog<T> entity={entity} rows={[row]} />
 										<DeleteDialog entity={entity} ids={[row.id]} />
 									</div>

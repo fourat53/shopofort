@@ -48,7 +48,7 @@ function buildOrderClause(
 	return { id: "asc" };
 }
 
-function getCartItemsPage(
+async function getCartItemsPage(
 	page: number = 1,
 	order: "asc" | "desc" = "asc",
 	sortBy: string = "id",
@@ -90,10 +90,10 @@ function getCartItemsPage(
 	)();
 }
 
-function getCartItemCount(filterParams: ParameterType = {}) {
+async function getCartItemCount(filterParams: ParameterType = {}) {
 	const where = buildWhereClause(filterParams);
 	return unstable_cache(
-		async () => prisma.cartItem.count({ where }),
+		() => prisma.cartItem.count({ where }),
 		["cart-items-count", JSON.stringify(filterParams)],
 		{
 			revalidate: Object.keys(filterParams).length
@@ -104,4 +104,25 @@ function getCartItemCount(filterParams: ParameterType = {}) {
 	)();
 }
 
-export { getCartItemCount, getCartItemsPage };
+async function getCartItemsByCartId(id: number) {
+	return unstable_cache(
+		async () => {
+			const cartItems = await prisma.cartItem.findMany({
+				where: { cartId: id },
+			});
+			return cartItems.map(
+				({ id, quantity, unitPrice, totalPrice, ...rest }) => ({
+					id,
+					unitPrice: Number(unitPrice),
+					quantity,
+					totalPrice: Number(totalPrice),
+					...rest,
+				}),
+			);
+		},
+		["cart-items-page", JSON.stringify({ id })],
+		{ revalidate: CACHE_SECONDS, tags: ["cart-items"] },
+	)();
+}
+
+export { getCartItemCount, getCartItemsByCartId, getCartItemsPage };

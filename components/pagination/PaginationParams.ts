@@ -31,9 +31,8 @@ function getPaginationParams(
 	page: string | string[] | undefined,
 	totalCount: number,
 	withImage: boolean = false,
+	pageSize: number = withImage ? IMAGE_PAGE_SIZE : PAGE_SIZE,
 ) {
-	const pageSize = withImage ? IMAGE_PAGE_SIZE : PAGE_SIZE;
-
 	const pageParam = Array.isArray(page) ? page[0] : page;
 	const parsedPage = Number.parseInt(pageParam ?? "1", 10);
 	const requestedPage = Number.isNaN(parsedPage) ? 1 : parsedPage;
