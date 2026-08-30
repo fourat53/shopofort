@@ -85,7 +85,7 @@ async function getFilterOptions(field: OptionField): Promise<SelectOption[]> {
 		}
 	} catch (error) {
 		console.error(error);
-		return [];
+		throw error;
 	}
 }
 
@@ -110,6 +110,7 @@ async function getEntityById(entity: EntityType, id: string) {
 		return JSON.parse(JSON.stringify(result));
 	} catch (error) {
 		console.error(error);
+		throw error;
 	}
 }
 
@@ -147,6 +148,7 @@ async function createEntity(
 		return JSON.parse(JSON.stringify(result));
 	} catch (error) {
 		console.error(error);
+		throw error;
 	} finally {
 		updateTag(entity);
 	}
@@ -172,6 +174,7 @@ async function deleteEntity(entity: EntityType, id: StringNumber) {
 		return JSON.parse(JSON.stringify(result));
 	} catch (error) {
 		console.error(error);
+		throw error;
 	} finally {
 		updateTag(entity);
 	}
@@ -201,6 +204,7 @@ async function deleteEntities(entity: EntityType, ids: StringNumber[]) {
 		return JSON.parse(JSON.stringify(result));
 	} catch (error) {
 		console.error(error);
+		throw error;
 	} finally {
 		updateTag(entity);
 	}
@@ -250,6 +254,7 @@ async function updateEntity(
 		return JSON.parse(JSON.stringify(result));
 	} catch (error) {
 		console.error(error);
+		throw error;
 	} finally {
 		updateTag(entity);
 	}
@@ -302,6 +307,7 @@ async function updateEntities(
 		return JSON.parse(JSON.stringify(result));
 	} catch (error) {
 		console.error(error);
+		throw error;
 	} finally {
 		updateTag(entity);
 	}
@@ -324,7 +330,7 @@ async function getEntityCount(
 			return await getCategoryCount(filterParams);
 		case EntityType["cart-items"]:
 			return await getCartItemCount(filterParams);
-		case "order-items":
+		case EntityType["order-items"]:
 			return await getOrderItemCount(filterParams);
 		default:
 			return 0;
@@ -336,6 +342,7 @@ async function updateCache() {
 		for (const tag of Object.values(EntityType)) updateTag(tag);
 	} catch (error) {
 		console.error(error);
+		throw error;
 	}
 }
 

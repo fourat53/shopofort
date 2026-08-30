@@ -3,7 +3,7 @@ import {
 	CACHE_SECONDS,
 	FILTER_CACHE_SECONDS,
 	IMAGE_PAGE_SIZE,
-} from "@/components/data-table/PaginationParams";
+} from "@/components/pagination/PaginationParams";
 import { checkedEnvVar } from "@/lib/checked-env-var";
 import { getFormUser } from "@/lib/entity/entity-form";
 import { USERS_HEADER } from "@/lib/entity/entity-header";

@@ -1,12 +1,12 @@
 import { clsx } from "clsx";
-import {
-	IMAGE_PAGE_SIZE,
-	PAGE_SIZE,
-} from "@/components/data-table/PaginationParams";
 import SortableTableHead from "@/components/data-table/table-cells/SortableTableHead";
 import DeleteDialog from "@/components/dialogs/delete-dialog";
 import EditDialog from "@/components/dialogs/edit-dialog";
 import ListDialog from "@/components/dialogs/list-dialog";
+import {
+	IMAGE_PAGE_SIZE,
+	PAGE_SIZE,
+} from "@/components/pagination/PaginationParams";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -62,7 +62,10 @@ export default function DataTableSkeleton({
 								key={item.name}
 								border
 								className={clsx(hasImage === "none" ? "h-[33.6px]" : "h-18.5")}
-								style={{ width: item.width, minWidth: item.width }}
+								style={{
+									width: item.width,
+									minWidth: item.width,
+								}}
 							>
 								{item.name === "images" ? (
 									<div className="flex gap-2">
@@ -81,7 +84,7 @@ export default function DataTableSkeleton({
 						))}
 						<TableCell border className="py-0.5 w-26 max-w-26 min-w-26">
 							<div className="flex items-center justify-center gap-1.5">
-								<ListDialog disabled />
+								<ListDialog entity={entity} disabled />
 								<EditDialog disabled />
 								<DeleteDialog disabled />
 							</div>

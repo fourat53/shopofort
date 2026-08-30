@@ -21,7 +21,6 @@ import {
 	getSingleName,
 } from "@/lib/entity/entity-functions";
 import { EntityType, type StringNumber } from "@/lib/entity/types";
-import { getError } from "@/lib/mutation";
 
 interface DeleteDialogProps {
 	entity?: EntityType;
@@ -43,18 +42,17 @@ export default function DeleteDialog({
 	const handleDelete = async (e: React.MouseEvent) => {
 		e.preventDefault();
 		if (!entity || !ids) return;
-
 		setLoading(true);
 		try {
 			single
 				? await deleteEntity(entity, ids[0])
 				: await deleteEntities(entity, ids);
-			setOpen(false);
-		} catch (e) {
+		} catch {
 			toast.error(
-				`Error deleting ${single ? getSingleName(entity) : getPluralName(entity)}: ${getError(e)}`,
+				`Error deleting ${single ? getSingleName(entity) : getPluralName(entity)}.`,
 			);
 		} finally {
+			setOpen(false);
 			setLoading(false);
 		}
 	};

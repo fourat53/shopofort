@@ -3,7 +3,7 @@ import {
 	CACHE_SECONDS,
 	FILTER_CACHE_SECONDS,
 	PAGE_SIZE,
-} from "@/components/data-table/PaginationParams";
+} from "@/components/pagination/PaginationParams";
 import { getParamValues } from "@/lib/entity/entity-functions";
 import { ORDER_ITEMS_HEADER } from "@/lib/entity/entity-header";
 import type { ParameterType } from "@/lib/entity/types";

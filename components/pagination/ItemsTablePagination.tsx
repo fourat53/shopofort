@@ -6,7 +6,7 @@ import {
 	getVisiblePages,
 	pageHref,
 	parsePage,
-} from "@/components/data-table/PaginationParams";
+} from "@/components/pagination/PaginationParams";
 import { buttonVariants } from "@/components/ui/button-variants";
 import {
 	Pagination,
@@ -42,17 +42,17 @@ function PaginationButton({ page, isActive, onClick }: PaginationButtonProps) {
 	);
 }
 
-interface DataTablePaginationProps {
+interface ItemstablePaginationProps {
 	entity: EntityType;
 	totalPages: number;
 	className?: string;
 }
 
-export default function DataTablePagination({
+export default function ItemstablePagination({
 	entity,
 	totalPages,
 	className,
-}: DataTablePaginationProps) {
+}: ItemstablePaginationProps) {
 	const path: `/${EntityType}` = `/${entity}`;
 
 	const router = useRouter();

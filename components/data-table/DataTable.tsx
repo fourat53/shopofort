@@ -85,7 +85,7 @@ export default function DataTable<T extends { id: StringNumber }>({
 								))}
 								<TableCell border className="w-26 min-w-26 max-w-26 py-0.5">
 									<div className="flex items-center justify-center gap-1.5">
-										<ListDialog entity={entity} id={row.id} />
+										<ListDialog id={row.id as number} entity={entity} />
 										<EditDialog<T> entity={entity} rows={[row]} />
 										<DeleteDialog entity={entity} ids={[row.id]} />
 									</div>

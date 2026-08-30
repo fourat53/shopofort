@@ -1,20 +1,42 @@
-"use client";
-
 import { IconList } from "@tabler/icons-react";
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import type { EntityType, StringNumber } from "@/lib/entity/types";
+import { Suspense } from "react";
 
-interface EditDialogProps {
-	entity?: EntityType;
-	id?: StringNumber;
+import { getEntityCount } from "@/actions/EntityActions";
+import DataTableSkeleton from "@/components/data-table/DataTableSkeleton";
+import CartItemsTable from "@/components/entity-tables/CartItemsTable";
+import { getPaginationParams } from "@/components/pagination/PaginationParams";
+import { Button } from "@/components/ui/button";
+import {
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "@/components/ui/dialog";
+import { getSingleName } from "@/lib/entity/entity-functions";
+import {
+	CART_ITEMS_HEADER,
+	type HeaderItem,
+	ORDER_ITEMS_HEADER,
+} from "@/lib/entity/entity-header";
+import { EntityType } from "@/lib/entity/types";
+import OrderItemsTable from "../entity-tables/OrderItemsTable";
+import ItemsTablePagination from "../pagination/ItemsTablePagination";
+
+interface ListDialogProps {
+	entity: EntityType;
+	id?: number;
 	disabled?: boolean;
 }
 
-export default function ListDialog({ id, disabled }: EditDialogProps) {
-	const [open, setOpen] = useState<boolean>(false);
-	if (!id)
+export default async function ListDialog({
+	id,
+	entity,
+	disabled,
+}: ListDialogProps) {
+	if (![EntityType.carts, EntityType.orders].includes(entity)) return null;
+
+	if (!id || disabled) {
 		return (
 			<Button
 				variant="ghost"
@@ -23,9 +45,10 @@ export default function ListDialog({ id, disabled }: EditDialogProps) {
 				icon={<IconList className="size-4 text-mist-400" />}
 			/>
 		);
+	}
 
 	return (
-		<Dialog open={open} onOpenChange={setOpen}>
+		<Dialog>
 			<DialogTrigger asChild>
 				<Button
 					variant="ghost"
@@ -34,7 +57,66 @@ export default function ListDialog({ id, disabled }: EditDialogProps) {
 					icon={<IconList className="size-4 text-mist-400" />}
 				/>
 			</DialogTrigger>
-			<DialogContent></DialogContent>
+
+			<DialogContent
+				showCloseButton
+				className="min-h-[95vh] min-w-[95vw] flex flex-col gap-4"
+			>
+				<DialogHeader>
+					<DialogTitle className="py-0 capitalize">
+						{getSingleName(entity)} items
+					</DialogTitle>
+				</DialogHeader>
+				<EntityItemsLayout id={id} entity={entity} />
+			</DialogContent>
 		</Dialog>
+	);
+}
+
+async function EntityItemsLayout({
+	id,
+	entity,
+}: {
+	id: number;
+	entity: EntityType;
+}) {
+	const isCart = entity === EntityType.carts;
+	let header: HeaderItem[];
+	let filterParams: Record<string, string | string[] | undefined>;
+	if (isCart) {
+		header = CART_ITEMS_HEADER;
+		filterParams = { cartId: String(id) };
+	} else {
+		header = ORDER_ITEMS_HEADER;
+		filterParams = { orderId: String(id) };
+	}
+
+	const totalCount = await getEntityCount(entity, filterParams);
+	const { totalPages } = getPaginationParams("1", totalCount);
+
+	return (
+		<>
+			<Suspense
+				key={JSON.stringify({ entity, id })}
+				fallback={<DataTableSkeleton entity={entity} header={header} />}
+			>
+				{isCart ? (
+					<CartItemsTable
+						entity={entity}
+						header={header}
+						filterParams={filterParams}
+					/>
+				) : (
+					<OrderItemsTable
+						entity={entity}
+						header={header}
+						filterParams={filterParams}
+					/>
+				)}
+			</Suspense>
+			{totalPages > 1 && (
+				<ItemsTablePagination entity={entity} totalPages={totalPages} />
+			)}
+		</>
 	);
 }

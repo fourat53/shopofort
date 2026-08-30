@@ -45,7 +45,7 @@ const variants = [
 
 export default function ColorsPage() {
 	return (
-		<main className="w-full flex flex-col">
+		<main className="overflow-auto max-h-[calc(100vh-64px)] w-full flex flex-col">
 			<div className="grid grid-cols-2 gap-4 pb-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7">
 				{colors.map((color) => (
 					<div
@@ -56,11 +56,17 @@ export default function ColorsPage() {
 							className="w-full h-20 border rounded-md dark:border-white/10"
 							style={{ backgroundColor: `var(--${color})` }}
 						/>
-
 						<span className="font-mono text-xs font-medium text-center truncate text-card-foreground">
 							{color}
 						</span>
 					</div>
+				))}
+			</div>
+			<div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+				{variants.map((variant) => (
+					<Button key={variant} variant={variant}>
+						{variant}
+					</Button>
 				))}
 			</div>
 			<div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">

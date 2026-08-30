@@ -15,8 +15,12 @@ interface CellContentProps {
 	tooltip?: boolean;
 }
 
-function cellTitle(value: unknown, name: string) {
-	if (Array.isArray(value) || name.endsWith("Id")) return undefined;
+function cellTitle(value: string | string[], name: string) {
+	if (
+		Array.isArray(value) ||
+		Object.values(OptionField).includes(name as OptionField)
+	)
+		return undefined;
 	if (isDate(value)) return formatDateTime(value);
 	return String(value);
 }
@@ -28,12 +32,37 @@ export default function ContentCell({
 	tooltip = false,
 }: CellContentProps) {
 	const imageSize = tooltip ? "32px" : "58px";
-	const isForeignKey =
-		!Array.isArray(value) &&
-		Object.values(OptionField).includes(headerName as OptionField);
 	return (
 		<div title={cellTitle(value, headerName)} className="truncate">
-			{isForeignKey ? (
+			{Array.isArray(value) ? (
+				headerName === "images" && value.length > 0 ? (
+					<div
+						className={clsx(
+							"flex overflow-x-auto items-center",
+							tooltip ? "gap-1" : "gap-2",
+						)}
+					>
+						{value.map((img) => (
+							<Image
+								key={`${rowId}-${img}`}
+								src={img}
+								alt={`image-${img}`}
+								loading="eager"
+								width={1000}
+								height={1000}
+								className="rounded-md"
+								style={{ height: imageSize, width: "auto" }}
+							/>
+						))}
+					</div>
+				) : tooltip ? (
+					"-"
+				) : (
+					<div className="w-full h-14.5 flex items-center justify-center text-muted-foreground">
+						No images
+					</div>
+				)
+			) : Object.values(OptionField).includes(headerName as OptionField) ? (
 				<EntityTooltip headerName={headerName as OptionField} idValue={value} />
 			) : headerName === "orderStatus" ? (
 				<p
@@ -74,34 +103,6 @@ export default function ContentCell({
 						className="rounded-xl"
 						style={{ height: imageSize, width: imageSize }}
 					/>
-				)
-			) : headerName === "images" ? (
-				Array.isArray(value) && value.length > 0 ? (
-					<div
-						className={clsx(
-							"flex overflow-x-auto items-center",
-							tooltip ? "gap-1" : "gap-2",
-						)}
-					>
-						{value.map((img) => (
-							<Image
-								key={`${rowId}-${img}`}
-								src={img}
-								alt={`image-${img}`}
-								loading="eager"
-								width={1000}
-								height={1000}
-								className="rounded-md"
-								style={{ height: imageSize, width: "auto" }}
-							/>
-						))}
-					</div>
-				) : tooltip ? (
-					"-"
-				) : (
-					<div className="w-full h-14.5 flex items-center justify-center text-muted-foreground">
-						No images
-					</div>
 				)
 			) : isDate(value) ? (
 				formatDateTime(value)

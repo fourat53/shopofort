@@ -70,10 +70,10 @@ function DialogContent({
 					<DialogPrimitive.Close data-slot="dialog-close" asChild>
 						<Button
 							variant="ghost"
-							className="absolute top-2 inset-e-2"
+							className="absolute top-3 inset-e-3"
 							size="icon-sm"
 						>
-							<IconX />
+							<IconX className="size-4" />
 							<span className="sr-only">Close</span>
 						</Button>
 					</DialogPrimitive.Close>

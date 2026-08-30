@@ -12,8 +12,7 @@ import {
 	IconUsers,
 } from "@tabler/icons-react";
 import { clsx } from "clsx";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 
 type NavItem = {
@@ -75,19 +74,18 @@ export default function NavMenu() {
 
 function SidebarNavButton({ item }: { item: NavItem }) {
 	const pathname = usePathname();
+	const router = useRouter();
 	return (
 		<SidebarMenuButton
-			asChild
 			tooltip={item.title}
+			onClick={() => router.push(`/admin/${item.url}`)}
 			className={clsx(
 				pathname === `/admin/${item.url}` &&
 					"bg-primary dark:bg-primary/90 hover:bg-primary/90 dark:hover:bg-primary text-mist-50 hover:text-mist-50",
 			)}
 		>
-			<Link href={`/admin/${item.url}`}>
-				{item.icon && <item.icon />}
-				{item.title}
-			</Link>
+			{item.icon && <item.icon />}
+			{item.title}
 		</SidebarMenuButton>
 	);
 }

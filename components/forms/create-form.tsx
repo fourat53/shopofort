@@ -5,18 +5,17 @@ import {
 	type SetStateAction,
 	useEffect,
 	useMemo,
-	useRef,
 	useState,
 } from "react";
 import { toast } from "sonner";
-import { createEntity, getFilterOptions } from "@/actions/EntityActions";
+import { createEntity } from "@/actions/EntityActions";
 import { DatePicker } from "@/components/form-items/date-picker";
 import {
 	type ImageItem,
 	ImageUpload,
 } from "@/components/form-items/image-upload";
 import { Input } from "@/components/form-items/input";
-import { Select, type SelectOption } from "@/components/form-items/select";
+import { Select } from "@/components/form-items/select";
 import { Button } from "@/components/ui/button";
 import {
 	DialogContent,
@@ -26,9 +25,10 @@ import {
 } from "@/components/ui/dialog";
 import { getEntityFields } from "@/lib/entity/entity-fields";
 import { getFieldName, getSingleName } from "@/lib/entity/entity-functions";
-import type { EntityType, OptionField } from "@/lib/entity/types";
-import { getError } from "@/lib/mutation";
+import type { EntityType } from "@/lib/entity/types";
+
 import { addImagesToForm } from "@/lib/uploadthing/client";
+import ForeignKeySelect from "./foreign-key-select";
 
 interface CreateFormProps {
 	entity: EntityType;
@@ -39,11 +39,6 @@ interface CreateFormProps {
 export default function CreateForm({ entity, open, setOpen }: CreateFormProps) {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [images, setImages] = useState<ImageItem[]>([]);
-	const [optionsCache, setOptionsCache] = useState<
-		Record<string, SelectOption[]>
-	>({});
-
-	const fetchedFields = useRef<Set<string>>(new Set());
 
 	const fields = useMemo(() => getEntityFields(entity, "create"), [entity]);
 
@@ -53,29 +48,6 @@ export default function CreateForm({ entity, open, setOpen }: CreateFormProps) {
 		return;
 	}, [open, entity]);
 
-	useEffect(() => {
-		if (!open) return;
-		async function loadOptions() {
-			for (const field of fields) {
-				const name = field.name;
-				if (field.type !== "foreignKey" || fetchedFields.current.has(name))
-					continue;
-				fetchedFields.current.add(name);
-				try {
-					const options = await getFilterOptions(name as OptionField);
-					setOptionsCache((current) => ({
-						...current,
-						[name]: options,
-					}));
-				} catch (e) {
-					toast.error(`Error fetching ${name}s: ${getError(e)}`);
-					fetchedFields.current.delete(name);
-				}
-			}
-		}
-		loadOptions();
-	}, [open, fields]);
-
 	async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
 		e.preventDefault();
 		const formData = new FormData(e.currentTarget);
@@ -83,11 +55,11 @@ export default function CreateForm({ entity, open, setOpen }: CreateFormProps) {
 		try {
 			await addImagesToForm(formData, images);
 			if (entity !== "users") await createEntity(entity, formData);
-		} catch (e) {
-			toast.error(`Error creating ${getSingleName(entity)}: ${getError(e)}`);
+		} catch {
+			toast.error(`Error creating ${getSingleName(entity)}.`);
 		} finally {
-			setLoading(false);
 			setOpen(false);
+			setLoading(false);
 		}
 	}
 
@@ -157,16 +129,13 @@ export default function CreateForm({ entity, open, setOpen }: CreateFormProps) {
 							]}
 						/>
 					) : type === "foreignKey" ? (
-						<Select
+						<ForeignKeySelect
 							key={name}
-							name={name}
-							label={label}
-							required={required}
+							field={field}
+							entity={entity}
+							fields={fields}
 							defaultValue={value?.toString() || "NONE"}
-							items={[
-								{ label: "None", value: "NONE" },
-								...(optionsCache[name] ?? []),
-							]}
+							firstItem={{ label: "None", value: "NONE" }}
 						/>
 					) : null;
 				})}

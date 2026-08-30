@@ -5,22 +5,17 @@ import {
 	type SetStateAction,
 	useEffect,
 	useMemo,
-	useRef,
 	useState,
 } from "react";
 import { toast } from "sonner";
-import {
-	getFilterOptions,
-	updateEntities,
-	updateEntity,
-} from "@/actions/EntityActions";
+import { updateEntities, updateEntity } from "@/actions/EntityActions";
 import { DatePicker } from "@/components/form-items/date-picker";
 import {
 	type ImageItem,
 	ImageUpload,
 } from "@/components/form-items/image-upload";
 import { Input } from "@/components/form-items/input";
-import { Select, type SelectOption } from "@/components/form-items/select";
+import { Select } from "@/components/form-items/select";
 import { Button } from "@/components/ui/button";
 import {
 	DialogContent,
@@ -34,9 +29,9 @@ import {
 	getPluralName,
 	getSingleName,
 } from "@/lib/entity/entity-functions";
-import type { EntityType, OptionField, StringNumber } from "@/lib/entity/types";
-import { getError } from "@/lib/mutation";
+import type { EntityType, StringNumber } from "@/lib/entity/types";
 import { addImagesToForm } from "@/lib/uploadthing/client";
+import ForeignKeySelect from "./foreign-key-select";
 
 interface DialogFormProps<T> {
 	entity: EntityType;
@@ -50,11 +45,7 @@ export default function CreateEditForm<
 >({ entity, open, setOpen, rows }: DialogFormProps<T>) {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [images, setImages] = useState<ImageItem[]>([]);
-	const [optionsCache, setOptionsCache] = useState<
-		Record<string, SelectOption[]>
-	>({});
 
-	const fetchedFields = useRef<Set<string>>(new Set());
 	const ids = useMemo(() => rows.map((row) => row.id), [rows]);
 	const fields = useMemo(() => getEntityFields(entity, "edit"), [entity]);
 
@@ -69,29 +60,6 @@ export default function CreateEditForm<
 		return;
 	}, [open, entity, rows]);
 
-	useEffect(() => {
-		if (!open) return;
-		async function loadOptions() {
-			for (const field of fields) {
-				const name = field.name;
-				if (field.type !== "foreignKey" || fetchedFields.current.has(name))
-					continue;
-				fetchedFields.current.add(name);
-				try {
-					const options = await getFilterOptions(name as OptionField);
-					setOptionsCache((current) => ({
-						...current,
-						[name]: options,
-					}));
-				} catch (e) {
-					toast.error(`Error fetching ${name}s: ${getError(e)}`);
-					fetchedFields.current.delete(name);
-				}
-			}
-		}
-		loadOptions();
-	}, [open, fields]);
-
 	async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
 		e.preventDefault();
 		const formData = new FormData(e.currentTarget);
@@ -101,13 +69,13 @@ export default function CreateEditForm<
 			single
 				? await updateEntity(entity, ids[0], formData)
 				: await updateEntities(entity, ids, formData);
-		} catch (e) {
+		} catch {
 			toast.error(
-				`Error updating ${single ? getSingleName(entity) : getPluralName(entity)}: ${getError(e)}`,
+				`Error updating ${single ? getSingleName(entity) : getPluralName(entity)}.`,
 			);
 		} finally {
-			setLoading(false);
 			setOpen(false);
+			setLoading(false);
 		}
 	}
 
@@ -178,16 +146,13 @@ export default function CreateEditForm<
 							]}
 						/>
 					) : type === "foreignKey" ? (
-						<Select
+						<ForeignKeySelect
 							key={name}
-							name={name}
-							label={label}
-							required={required}
+							field={field}
+							entity={entity}
+							fields={fields}
 							defaultValue={value?.toString() || "NONE"}
-							items={[
-								{ label: "None", value: "NONE" },
-								...(optionsCache[name] ?? []),
-							]}
+							firstItem={{ label: "None", value: "NONE" }}
 						/>
 					) : null;
 				})}

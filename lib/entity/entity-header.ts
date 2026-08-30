@@ -1,10 +1,10 @@
 import { EntityType } from "./types";
 
-type HeaderItem = { name: string; width?: string };
+type HeaderItem = { name: string; width: `${number}px` | "auto" };
 
 const CARTS_HEADER: HeaderItem[] = [
 	{ name: "id", width: "150px" },
-	{ name: "totalAmount" },
+	{ name: "totalAmount", width: "auto" },
 	{ name: "userId", width: "300px" },
 ];
 
@@ -12,14 +12,14 @@ const CART_ITEMS_HEADER: HeaderItem[] = [
 	{ name: "id", width: "150px" },
 	{ name: "unitPrice", width: "150px" },
 	{ name: "quantity", width: "150px" },
-	{ name: "totalPrice" },
+	{ name: "totalPrice", width: "auto" },
 	{ name: "cartId", width: "150px" },
 	{ name: "productId", width: "150px" },
 ];
 
 const CATEGORIES_HEADER: HeaderItem[] = [
 	{ name: "id", width: "150px" },
-	{ name: "name" },
+	{ name: "name", width: "auto" },
 	{ name: "gender", width: "300px" },
 ];
 
@@ -27,13 +27,13 @@ const ORDERS_HEADER: HeaderItem[] = [
 	{ name: "id", width: "150px" },
 	{ name: "orderDate", width: "160px" },
 	{ name: "totalAmount", width: "150px" },
-	{ name: "orderStatus" },
+	{ name: "orderStatus", width: "auto" },
 	{ name: "userId", width: "255px" },
 ];
 
 const ORDER_ITEMS_HEADER: HeaderItem[] = [
 	{ name: "id", width: "150px" },
-	{ name: "price" },
+	{ name: "price", width: "auto" },
 	{ name: "quantity", width: "150px" },
 	{ name: "orderId", width: "150px" },
 	{ name: "productId", width: "150px" },

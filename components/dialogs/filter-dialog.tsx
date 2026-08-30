@@ -113,7 +113,6 @@ export default function FilterDialog() {
 				<FilterForm
 					fields={fields}
 					entity={entity}
-					open={open}
 					setOpen={setOpen}
 					isPending={isPending}
 					handleSubmit={handleSubmit}

@@ -1,18 +1,10 @@
 "use client";
 
-import {
-	type Dispatch,
-	type SetStateAction,
-	useEffect,
-	useRef,
-	useState,
-} from "react";
-import { toast } from "sonner";
-import { getFilterOptions } from "@/actions/EntityActions";
+import type { Dispatch, SetStateAction } from "react";
 import { Input } from "@/components/form-items/input";
 import RangePicker from "@/components/form-items/range-picker";
 import { RangeSlider } from "@/components/form-items/range-slider";
-import { Select, type SelectOption } from "@/components/form-items/select";
+import { Select } from "@/components/form-items/select";
 import { Button } from "@/components/ui/button";
 import {
 	DialogContent,
@@ -21,19 +13,14 @@ import {
 	DialogTitle,
 } from "@/components/ui/dialog";
 import type { ENTITY_FIELDS } from "@/lib/entity/entity-fields";
-import {
-	getFieldName,
-	getForeignKeyName,
-	getPluralName,
-} from "@/lib/entity/entity-functions";
-import type { EntityType, OptionField } from "@/lib/entity/types";
-import { getError } from "@/lib/mutation";
+import { getFieldName, getPluralName } from "@/lib/entity/entity-functions";
+import type { EntityType } from "@/lib/entity/types";
+import ForeignKeySelect from "./foreign-key-select";
 
 interface DialogFormProps {
 	fields: (typeof ENTITY_FIELDS)[EntityType][number][];
 	entity: EntityType;
 	isPending: boolean;
-	open: boolean;
 	setOpen: Dispatch<SetStateAction<boolean>>;
 	handleSubmit: (e: React.SubmitEvent<HTMLFormElement>) => void;
 	searchParams: URLSearchParams;
@@ -43,46 +30,10 @@ export default function FilterForm({
 	fields,
 	entity,
 	isPending,
-	open,
 	setOpen,
 	handleSubmit,
 	searchParams,
 }: DialogFormProps) {
-	const [optionsCache, setOptionsCache] = useState<
-		Record<string, SelectOption[]>
-	>({});
-
-	const fetchedFields = useRef<Set<string>>(new Set());
-
-	useEffect(() => {
-		if (!open) return;
-		async function loadOptions() {
-			for (const field of fields) {
-				if (field.type !== "foreignKey") continue;
-				const optionField =
-					field.name === "id" ? getForeignKeyName(entity) : field.name;
-
-				if (fetchedFields.current.has(optionField)) continue;
-				fetchedFields.current.add(optionField);
-				try {
-					const options = await getFilterOptions(optionField as OptionField);
-					setOptionsCache((current) => ({
-						...current,
-						[field.name]: options,
-					}));
-				} catch (e) {
-					toast.error(
-						`Error filtering ${getPluralName(entity)}: ${getError(e)}`,
-					);
-					fetchedFields.current.delete(optionField);
-				}
-			}
-		}
-		loadOptions();
-	}, [open, fields, entity]);
-
-	if (!open) return;
-
 	return (
 		<DialogContent
 			onPointerDownOutside={(e) => isPending && e.preventDefault()}
@@ -144,16 +95,13 @@ export default function FilterForm({
 							]}
 						/>
 					) : type === "foreignKey" ? (
-						<Select
-							multiple
+						<ForeignKeySelect
 							key={name}
-							name={name}
-							label={label}
+							field={field}
+							entity={entity}
+							fields={fields}
 							defaultValue={searchParams.getAll(name) ?? ["ALL"]}
-							items={[
-								{ label: "Any", value: "ALL" },
-								...(optionsCache[name] ?? []),
-							]}
+							firstItem={{ label: "All", value: "ALL" }}
 						/>
 					) : null;
 				})}

@@ -1,25 +1,19 @@
 import { generateReactHelpers } from "@uploadthing/react";
-import { toast } from "sonner";
 import type { OurFileRouter } from "@/lib/uploadthing/core";
-import { getError } from "../mutation";
 
-export const { uploadFiles } = generateReactHelpers<OurFileRouter>();
+const { uploadFiles } = generateReactHelpers<OurFileRouter>();
 
-export async function uploadImages(files: File[]): Promise<string[]> {
+async function uploadImages(files: File[]): Promise<string[]> {
 	if (files.length === 0) return [];
 	try {
 		const res = await uploadFiles("productImage", { files });
 		return res.map((file) => file.ufsUrl);
-	} catch (e) {
-		toast.error(`Error uploading files: ${getError(e)}`);
-		return [];
+	} catch {
+		throw new Error(`Error uploading files.`);
 	}
 }
 
-export async function addImagesToForm(
-	formData: FormData,
-	images: (string | File)[],
-) {
+async function addImagesToForm(formData: FormData, images: (string | File)[]) {
 	const existingUrls = images.filter(
 		(img): img is string => typeof img === "string",
 	);
@@ -31,3 +25,5 @@ export async function addImagesToForm(
 		formData.append("images", url);
 	}
 }
+
+export { addImagesToForm, uploadFiles, uploadImages };

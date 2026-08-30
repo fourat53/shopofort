@@ -18,7 +18,6 @@ import {
 } from "@/lib/entity/entity-functions";
 import { getSkeletonCount } from "@/lib/entity/entity-header";
 import type { OptionField } from "@/lib/entity/types";
-import { getError } from "@/lib/mutation";
 
 export default function EntityTooltip({
 	headerName,
@@ -41,8 +40,8 @@ export default function EntityTooltip({
 			setLoading(true);
 			const result = await getEntityById(entity, idValue);
 			setData(result);
-		} catch (e) {
-			toast.error(`Error fetching ${getSingleName(entity)}: ${getError(e)}`);
+		} catch {
+			toast.error(`Error fetching ${getSingleName(entity)}.`);
 		} finally {
 			setLoading(false);
 		}
