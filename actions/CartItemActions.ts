@@ -104,25 +104,4 @@ async function getCartItemCount(filterParams: ParameterType = {}) {
 	)();
 }
 
-async function getCartItemsByCartId(id: number) {
-	return unstable_cache(
-		async () => {
-			const cartItems = await prisma.cartItem.findMany({
-				where: { cartId: id },
-			});
-			return cartItems.map(
-				({ id, quantity, unitPrice, totalPrice, ...rest }) => ({
-					id,
-					unitPrice: Number(unitPrice),
-					quantity,
-					totalPrice: Number(totalPrice),
-					...rest,
-				}),
-			);
-		},
-		["cart-items-page", JSON.stringify({ id })],
-		{ revalidate: CACHE_SECONDS, tags: ["cart-items"] },
-	)();
-}
-
-export { getCartItemCount, getCartItemsByCartId, getCartItemsPage };
+export { getCartItemCount, getCartItemsPage };

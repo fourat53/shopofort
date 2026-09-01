@@ -10,7 +10,22 @@ export default async function OrdersTable({
 	order,
 	sortBy,
 	filterParams,
+	pageSize,
+	dialog,
 }: EntityTableProps) {
-	const rows: Order[] = await getOrdersPage(page, order, sortBy, filterParams);
-	return <DataTable<Order> header={header} rows={rows} entity={entity} />;
+	const rows: Order[] = await getOrdersPage(
+		page,
+		order,
+		sortBy,
+		filterParams,
+		pageSize,
+	);
+	return (
+		<DataTable<Order>
+			header={header}
+			rows={rows}
+			entity={entity}
+			dialog={dialog}
+		/>
+	);
 }

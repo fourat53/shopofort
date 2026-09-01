@@ -159,7 +159,7 @@ export default function RangePicker({
 									value={range?.from ? format(range.from, "HH:mm:ss") : ""}
 									disabled={!range?.from}
 									onChange={(event) => handleTimeChange("from", event)}
-									className="text-center appearance-none bg-background [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
+									className="text-center appearance-none dark:bg-background [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
 								/>
 							</div>
 							<div className="flex flex-col items-center gap-1.5">
@@ -171,7 +171,7 @@ export default function RangePicker({
 									value={range?.to ? format(range.to, "HH:mm:ss") : ""}
 									disabled={!range?.to}
 									onChange={(event) => handleTimeChange("to", event)}
-									className="text-center appearance-none bg-background [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
+									className="text-center appearance-none dark:bg-background [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
 								/>
 							</div>
 						</div>

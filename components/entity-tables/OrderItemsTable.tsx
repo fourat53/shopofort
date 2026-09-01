@@ -10,12 +10,22 @@ export default async function OrderItemsTable({
 	order,
 	sortBy,
 	filterParams,
+	pageSize,
+	dialog,
 }: EntityTableProps) {
 	const rows: OrderItem[] = await getOrderItemsPage(
 		page,
 		order,
 		sortBy,
 		filterParams,
+		pageSize,
 	);
-	return <DataTable<OrderItem> header={header} rows={rows} entity={entity} />;
+	return (
+		<DataTable<OrderItem>
+			header={header}
+			rows={rows}
+			entity={entity}
+			dialog={dialog}
+		/>
+	);
 }

@@ -1,7 +1,5 @@
 import { IconList } from "@tabler/icons-react";
 import { Suspense } from "react";
-import { getCartItemsByCartId } from "@/actions/CartItemActions";
-import { getOrderItemsByOrderId } from "@/actions/OrderItemActions";
 import DataTableSkeleton from "@/components/data-table/DataTableSkeleton";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,28 +12,50 @@ import {
 import { getSingleName } from "@/lib/entity/entity-functions";
 import {
 	CART_ITEMS_HEADER,
+	type HeaderItem,
 	ORDER_ITEMS_HEADER,
 } from "@/lib/entity/entity-header";
-import { type CartItem, EntityType, type OrderItem } from "@/lib/entity/types";
-import DataTable from "../data-table/DataTable";
+import { EntityType, OptionField } from "@/lib/entity/types";
+import EntityTable from "@/components/entity-tables/EntityTable";
 
 interface ListDialogProps {
 	entity: EntityType;
 	id?: number;
-	disabled?: boolean;
 	dialog?: boolean;
+	disabled?: boolean;
 }
 
 export default async function ListDialog({
 	id,
 	entity,
-	disabled,
 	dialog,
+	disabled,
 }: ListDialogProps) {
-	const isCart = entity === EntityType.carts;
+	if (dialog) return null;
 
-	if (dialog || ![EntityType.carts, EntityType.orders].includes(entity))
-		return null;
+	let header: HeaderItem[];
+	let idField: OptionField;
+	let tableEntity: EntityType;
+
+	switch (entity) {
+		case EntityType.carts:
+			header = CART_ITEMS_HEADER;
+			idField = OptionField.cartId;
+			tableEntity = EntityType["cart-items"];
+			break;
+		case EntityType.products:
+			header = CART_ITEMS_HEADER;
+			idField = OptionField.productId;
+			tableEntity = EntityType["cart-items"];
+			break;
+		case EntityType.orders:
+			header = ORDER_ITEMS_HEADER;
+			idField = OptionField.orderId;
+			tableEntity = EntityType["order-items"];
+			break;
+		default:
+			return null;
+	}
 
 	if (!id || disabled) {
 		return (
@@ -58,54 +78,27 @@ export default async function ListDialog({
 					icon={<IconList className="size-4 text-mist-400" />}
 				/>
 			</DialogTrigger>
-
 			<DialogContent
 				showCloseButton
-				className="min-h-[90vh] min-w-[90vw] flex flex-col gap-4"
+				className="min-h-57 max-h-[85vh] min-w-[85vw] flex flex-col gap-4"
 			>
 				<DialogHeader>
 					<DialogTitle className="py-0 capitalize">
-						{getSingleName(entity)} items
+						{getSingleName(tableEntity)}
 					</DialogTitle>
 				</DialogHeader>
-
 				<Suspense
-					fallback={
-						<DataTableSkeleton
-							entity={entity}
-							header={isCart ? CART_ITEMS_HEADER : ORDER_ITEMS_HEADER}
-						/>
-					}
+					fallback={<DataTableSkeleton entity={tableEntity} header={header} />}
 				>
-					{isCart ? <CartItemsTable id={id} /> : <OrderItemsTable id={id} />}
+					<EntityTable
+						dialog
+						entity={tableEntity}
+						header={header}
+						pageSize={10000}
+						filterParams={{ [idField]: String(id) }}
+					/>
 				</Suspense>
 			</DialogContent>
 		</Dialog>
-	);
-}
-
-async function CartItemsTable({ id }: { id: number }) {
-	const rows: CartItem[] = await getCartItemsByCartId(id);
-	return (
-		<DataTable<CartItem>
-			entity={EntityType["cart-items"]}
-			header={CART_ITEMS_HEADER}
-			sortable={false}
-			rows={rows}
-			dialog
-		/>
-	);
-}
-
-async function OrderItemsTable({ id }: { id: number }) {
-	const rows: OrderItem[] = await getOrderItemsByOrderId(id);
-	return (
-		<DataTable<OrderItem>
-			entity={EntityType["order-items"]}
-			header={ORDER_ITEMS_HEADER}
-			sortable={false}
-			rows={rows}
-			dialog
-		/>
 	);
 }

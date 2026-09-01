@@ -10,7 +10,22 @@ export default async function CartsTable({
 	order,
 	sortBy,
 	filterParams,
+	pageSize,
+	dialog,
 }: EntityTableProps) {
-	const rows: Cart[] = await getCartsPage(page, order, sortBy, filterParams);
-	return <DataTable<Cart> header={header} rows={rows} entity={entity} />;
+	const rows: Cart[] = await getCartsPage(
+		page,
+		order,
+		sortBy,
+		filterParams,
+		pageSize,
+	);
+	return (
+		<DataTable<Cart>
+			header={header}
+			rows={rows}
+			entity={entity}
+			dialog={dialog}
+		/>
+	);
 }

@@ -49,7 +49,15 @@ export default function DeleteDialog({
 				: await deleteEntities(entity, ids);
 		} catch {
 			toast.error(
-				`Failed to delete ${single ? getSingleName(entity) : getPluralName(entity)}. Please try again.`,
+				<>
+					<p>
+						Failed to delete{" "}
+						{single ? getSingleName(entity) : getPluralName(entity)}.
+					</p>
+					<p className="text-sm text-muted-foreground">
+						Check if the {single ? "id is" : "ids are"} used by other entities.
+					</p>
+				</>,
 			);
 		} finally {
 			setOpen(false);
@@ -91,34 +99,36 @@ export default function DeleteDialog({
 				<DialogHeader>
 					<DialogTitle>Are you absolutely sure?</DialogTitle>
 				</DialogHeader>
-				This action cannot be undone. This will permanently delete the{" "}
-				{single ? (
-					<span className="font-semibold text-foreground">
-						{getSingleName(entity)} with Id {ids[0]}.
-					</span>
-				) : (
-					<div>
+				<div>
+					This action cannot be undone. This will permanently delete the{" "}
+					{single ? (
 						<span className="font-semibold text-foreground">
-							{ids.length} selected {getPluralName(entity)}
-						</span>{" "}
-						and remove their data from our servers. This is the list of their
-						Ids:
-						<span
-							className={clsx(
-								"py-3 grid gap-1",
-								entity === EntityType.users ? "grid-cols-2" : "grid-cols-5",
-							)}
-						>
-							{ids.map((id) => (
-								<EntityTooltip
-									key={id}
-									idValue={String(id)}
-									headerName={getForeignKeyName(entity)}
-								/>
-							))}
+							{getSingleName(entity)} with Id {ids[0]}.
 						</span>
-					</div>
-				)}
+					) : (
+						<div>
+							<span className="font-semibold text-foreground">
+								{ids.length} selected {getPluralName(entity)}
+							</span>{" "}
+							and remove their data from our servers. This is the list of their
+							Ids:
+							<span
+								className={clsx(
+									"py-3 grid gap-1",
+									entity === EntityType.users ? "grid-cols-2" : "grid-cols-5",
+								)}
+							>
+								{ids.map((id) => (
+									<EntityTooltip
+										key={id}
+										idValue={String(id)}
+										headerName={getForeignKeyName(entity)}
+									/>
+								))}
+							</span>
+						</div>
+					)}
+				</div>
 				<DialogFooter>
 					<Button
 						variant="outline"

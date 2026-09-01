@@ -57,7 +57,10 @@ export default function CreateForm({ entity, open, setOpen }: CreateFormProps) {
 			if (entity !== "users") await createEntity(entity, formData);
 		} catch {
 			toast.error(
-				`Failed to create ${getSingleName(entity)}. Please try again.`,
+				<>
+					<p>Failed to create {getSingleName(entity)}.</p>
+					<p className="text-muted-foreground">Please try again.</p>
+				</>,
 			);
 		} finally {
 			setOpen(false);

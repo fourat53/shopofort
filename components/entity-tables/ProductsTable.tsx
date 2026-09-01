@@ -10,12 +10,22 @@ export default async function ProductsTable({
 	order,
 	sortBy,
 	filterParams,
+	pageSize,
+	dialog,
 }: EntityTableProps) {
 	const rows: Product[] = await getProductsPage(
 		page,
 		order,
 		sortBy,
 		filterParams,
+		pageSize,
 	);
-	return <DataTable<Product> header={header} rows={rows} entity={entity} />;
+	return (
+		<DataTable<Product>
+			header={header}
+			rows={rows}
+			entity={entity}
+			dialog={dialog}
+		/>
+	);
 }

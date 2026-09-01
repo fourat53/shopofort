@@ -10,12 +10,22 @@ export default async function CategoriesTable({
 	order,
 	sortBy,
 	filterParams,
+	pageSize,
+	dialog,
 }: EntityTableProps) {
 	const rows: Category[] = await getCategoriesPage(
 		page,
 		order,
 		sortBy,
 		filterParams,
+		pageSize,
 	);
-	return <DataTable<Category> header={header} rows={rows} entity={entity} />;
+	return (
+		<DataTable<Category>
+			header={header}
+			rows={rows}
+			entity={entity}
+			dialog={dialog}
+		/>
+	);
 }

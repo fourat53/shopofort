@@ -47,7 +47,10 @@ export default function ForeignKeySelect({
 					}));
 				} catch {
 					toast.error(
-						`Failed to filter ${getPluralName(entity)}. Please try again.`,
+						<>
+							<p>Failed to filter ${getPluralName(entity)}.</p>
+							<p className="text-muted-foreground">Please try again.</p>
+						</>,
 					);
 					fetchedFields.current.delete(optionField);
 				}

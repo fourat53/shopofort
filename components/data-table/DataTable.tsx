@@ -20,7 +20,6 @@ interface DataTableProps<T> {
 	entity: EntityType;
 	header: HeaderItem[];
 	rows: T[];
-	sortable?: boolean;
 	dialog?: boolean;
 }
 
@@ -28,13 +27,12 @@ export default function DataTable<T extends { id: StringNumber }>({
 	entity,
 	header,
 	rows,
-	sortable = true,
 	dialog = false,
 }: DataTableProps<T>) {
 	return (
 		<>
 			{rows.length === 0 ? (
-				<div className="w-full h-[calc(100vh-152px)] bg-sidebar flex items-center justify-center border rounded-lg text-muted-foreground">
+				<div className="w-full h-40 bg-chart-1/40 dark:bg-sidebar-accent/40 flex items-center justify-center border rounded-lg text-muted-foreground">
 					No data available
 				</div>
 			) : (
@@ -49,16 +47,16 @@ export default function DataTable<T extends { id: StringNumber }>({
 								/>
 							</TableHead>
 							{header.map((item) =>
-								sortable ? (
+								dialog ? (
+									<TableHead key={item.name} border>
+										{getFieldName(item.name)}
+									</TableHead>
+								) : (
 									<SortableTableHead
 										key={item.name}
 										name={item.name}
 										entity={entity}
 									/>
-								) : (
-									<TableHead key={item.name} border>
-										{getFieldName(item.name)}
-									</TableHead>
 								),
 							)}
 							<TableHead border className="py-0 text-center">

@@ -10,7 +10,22 @@ export default async function UsersTable({
 	order,
 	sortBy,
 	filterParams,
+	pageSize,
+	dialog,
 }: EntityTableProps) {
-	const rows: User[] = await getUsersPage(page, order, sortBy, filterParams);
-	return <DataTable<User> header={header} rows={rows} entity={entity} />;
+	const rows: User[] = await getUsersPage(
+		page,
+		order,
+		sortBy,
+		filterParams,
+		pageSize,
+	);
+	return (
+		<DataTable<User>
+			header={header}
+			rows={rows}
+			entity={entity}
+			dialog={dialog}
+		/>
+	);
 }

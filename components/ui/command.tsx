@@ -1,6 +1,6 @@
 "use client";
 
-import { IconCheck, IconSearch } from "@tabler/icons-react";
+import { IconSearch } from "@tabler/icons-react";
 import { Command as CommandPrimitive } from "cmdk";
 import type * as React from "react";
 import {
@@ -21,7 +21,7 @@ function Command({
 		<CommandPrimitive
 			data-slot="command"
 			className={cn(
-				"flex size-full flex-col overflow-hidden rounded-xl bg-popover p-0 text-popover-foreground ",
+				"flex size-full flex-col overflow-hidden rounded-xl bg-popover text-popover-foreground ",
 				className,
 			)}
 			{...props}
@@ -66,8 +66,8 @@ function CommandInput({
 	...props
 }: React.ComponentProps<typeof CommandPrimitive.Input>) {
 	return (
-		<div data-slot="command-input-wrapper" className="p-1 pb-0">
-			<InputGroup className="h-6.5! bg-input/20 dark:bg-input/30">
+		<div data-slot="command-input-wrapper" className="px-1 pt-1.25 pb-0.5">
+			<InputGroup className="h-6.5! bg-input/20 dark:bg-input/30 rounded-md">
 				<CommandPrimitive.Input
 					data-slot="command-input"
 					className={cn(
@@ -148,17 +148,18 @@ function CommandItem({
 	...props
 }: React.ComponentProps<typeof CommandPrimitive.Item>) {
 	return (
-		<CommandPrimitive.Item
-			data-slot="command-item"
-			className={cn(
-				"mt-1 group/command-item relative flex h-6.5 cursor-pointer items-center gap-2 rounded-md px-2.5 py-1.5 text-xs/relaxed outline-hidden select-none in-data-[slot=dialog-content]:rounded-md data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 data-selected:bg-muted data-selected:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3.5 data-selected:*:[svg]:text-foreground",
-				className,
-			)}
-			{...props}
-		>
-			{children}
-			<IconCheck className="ms-auto opacity-0 group-has-data-[slot=command-shortcut]/command-item:hidden group-data-[checked=true]/command-item:opacity-100" />
-		</CommandPrimitive.Item>
+		<div className="pb-0.75">
+			<CommandPrimitive.Item
+				data-slot="command-item"
+				className={cn(
+					"group/command-item relative flex h-9 sm:h-6.5 cursor-pointer items-center gap-2 px-2 py-1.5 text-xs/relaxed outline-hidden select-none data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3.5 hover:bg-muted rounded-md",
+					className,
+				)}
+				{...props}
+			>
+				{children}
+			</CommandPrimitive.Item>
+		</div>
 	);
 }
 

@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import {
 	Command,
 	CommandEmpty,
-	CommandGroup,
 	CommandInput,
 	CommandItem,
 	CommandList,
@@ -19,9 +18,6 @@ import {
 } from "@/components/ui/popover";
 import type { StringNumber } from "@/lib/entity/types";
 import { cn } from "@/lib/utils";
-
-const getLabelText = (item: SelectOption) =>
-	Array.isArray(item.label) ? item.label.join(" - ") : String(item.label);
 
 type SelectOption = {
 	value: string;
@@ -45,7 +41,6 @@ interface SelectProps {
 	parentClassName?: string;
 	items?: SelectOption[];
 	searchable?: boolean;
-	menuClassName?: string;
 	isDefaultOpen?: boolean;
 }
 
@@ -65,13 +60,14 @@ function Select({
 	parentClassName,
 	items = [],
 	searchable = true,
-	menuClassName,
 	isDefaultOpen,
 }: SelectProps) {
 	const [open, setOpen] = useState(isDefaultOpen || false);
 	const [internalValue, setInternalValue] = useState<string | string[]>(
 		defaultValue ?? (multiple ? [] : ""),
 	);
+
+	const selectedValue = multiple ? "" : (value ?? (internalValue as string));
 
 	const selectedValues = multiple
 		? value !== undefined
@@ -85,7 +81,13 @@ function Select({
 					: []
 		: [];
 
-	const selectedValue = multiple ? "" : (value ?? (internalValue as string));
+	const selectedItem = multiple
+		? undefined
+		: items.find((item) => item.value === selectedValue);
+
+	const selectedItems = multiple
+		? items.filter((item) => selectedValues.includes(item.value))
+		: [];
 
 	useEffect(() => {
 		if (value === undefined && defaultValue !== undefined) {
@@ -101,114 +103,26 @@ function Select({
 		}
 	}, [autoDefaultValue, multiple, selectedValue, items, onValueChange]);
 
-	const selectedItem = multiple
-		? undefined
-		: items.find((item) => item.value === selectedValue);
-
-	const selectedItems = multiple
-		? items.filter((item) => selectedValues.includes(item.value))
-		: [];
-
 	const isSelected = (itemValue: string) =>
 		multiple ? selectedValues.includes(itemValue) : selectedValue === itemValue;
 
 	function filterItems(value: string, search: string) {
 		const item = items.find((item) => item.value === value);
-
 		if (!item) return 0;
-
 		const labelText = Array.isArray(item.label)
 			? item.label.join(" ")
 			: String(item.label);
-
 		const searchableText = `${item.value} ${labelText}`.toLowerCase();
-
 		return searchableText.includes(search.toLowerCase()) ? 1 : 0;
 	}
-
-	const renderItemContent = (item: SelectOption) => {
-		if (Array.isArray(item.label) && item.label.length === 2) {
-			return (
-				<div className="absolute top-1/2 -translate-y-1/2 w-[calc(100%-36px)] flex max-sm:flex-col gap-1.5 max-sm:items-start justify-between">
-					<p
-						className="truncate max-w-full sm:max-w-[40%]"
-						title={String(item.label[0])}
-					>
-						{item.label[0]}
-					</p>
-					<p
-						className="sm:text-right text-muted-foreground truncate max-w-full sm:max-w-[60%]"
-						title={String(item.label[1])}
-					>
-						{item.label[1]}
-					</p>
-				</div>
-			);
-		}
-
-		return (
-			<div
-				className="absolute top-1/2 -translate-y-1/2 w-full flex items-center sm:gap-1.5 truncate"
-				title={typeof item.label === "string" ? item.label : ""}
-			>
-				{item.icon}
-				<span className="truncate max-w-full">{item.label}</span>
-			</div>
-		);
-	};
-
-	const renderButtonContent = () => {
-		if (multiple) {
-			if (selectedItems.length === 0) return placeholder || "Select options";
-			const labels = selectedItems.map(getLabelText);
-			return (
-				<span className="block w-full truncate" title={labels.join(", ")}>
-					{labels.join(", ")}
-				</span>
-			);
-		}
-
-		if (!selectedItem) return placeholder || "Select an option";
-
-		if (Array.isArray(selectedItem.label) && selectedItem.label.length === 2) {
-			return (
-				<div className="absolute top-1/2 -translate-y-1/2 w-[calc(100%-36px)] flex max-sm:flex-col sm:gap-1.5 items-start sm:items-center sm:justify-between">
-					<p
-						className="truncate max-w-full sm:max-w-[40%]"
-						title={String(selectedItem.label[0])}
-					>
-						{selectedItem.label[0]}
-					</p>
-					<p
-						className="sm:text-right text-muted-foreground truncate max-w-full sm:max-w-[60%]"
-						title={String(selectedItem.label[1])}
-					>
-						{selectedItem.label[1]}
-					</p>
-				</div>
-			);
-		}
-
-		return (
-			<div
-				className="absolute top-1/2 -translate-y-1/2 w-[calc(100%-50px)] flex items-center sm:gap-1.5 truncate"
-				title={typeof selectedItem.label === "string" ? selectedItem.label : ""}
-			>
-				{selectedItem.icon}
-				<span className="truncate max-w-full">{selectedItem.label}</span>
-			</div>
-		);
-	};
 
 	const handleSelect = (currentValue: string) => {
 		if (multiple) {
 			setInternalValue((current) => {
 				const values = Array.isArray(current) ? current : [];
-
 				const next = values.includes(currentValue)
 					? values.filter((value) => value !== currentValue)
 					: [...values, currentValue];
-
 				onValuesChange?.(next);
 				return next;
 			});
@@ -228,7 +142,6 @@ function Select({
 			)}
 		>
 			{label && <Label required={required}>{label}</Label>}
-
 			<div className="relative">
 				{name &&
 					(multiple ? (
@@ -251,7 +164,6 @@ function Select({
 							onChange={(e) => handleSelect(e.target.value)}
 						/>
 					))}
-
 				<Popover open={open} onOpenChange={setOpen}>
 					<PopoverTrigger asChild>
 						<Button
@@ -261,8 +173,6 @@ function Select({
 							disabled={disabled}
 							className={cn(
 								"relative border border-border/80 bg-input/20 dark:bg-input/30 rounded-md px-3 h-7 w-full justify-between disabled:cursor-not-allowed",
-								(multiple ? selectedValues.length === 0 : !selectedValue) &&
-									"text-muted-foreground",
 								selectedItem &&
 									Array.isArray(selectedItem.label) &&
 									selectedItem.label.length === 2 &&
@@ -271,42 +181,130 @@ function Select({
 							)}
 						>
 							<div className="min-w-0 w-0 flex-1 overflow-hidden pr-6 text-left text-xs">
-								{renderButtonContent()}
+								<ButtonContent
+									multiple={multiple}
+									selectedItems={selectedItems}
+									selectedItem={selectedItem}
+									placeholder={placeholder}
+								/>
 							</div>
 							<IconChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 shrink-0 opacity-50" />
 						</Button>
 					</PopoverTrigger>
-
-					<PopoverContent className={cn("w-86", menuClassName)}>
+					<PopoverContent className="w-80 sm:w-90">
 						<Command className="bg-transparent" filter={filterItems}>
-							{searchable && <CommandInput placeholder="Search .." />}
-
-							<CommandList className="z-50 max-h-60 overflow-y-auto">
+							{searchable && <CommandInput placeholder="Search options" />}
+							<CommandList className="z-50 p-1 pb-0.5 max-h-60 overflow-y-auto overflow-x-hidden">
 								<CommandEmpty>No option found</CommandEmpty>
-								<CommandGroup>
-									{items.map((item, index) => (
-										<div key={index} className={index !== 0 ? "pt-1" : ""}>
-											<CommandItem
-												value={item.value}
-												onSelect={handleSelect}
-												className={cn(
-													isSelected(item.value) &&
-														"bg-primary hover:bg-accent",
-												)}
-											>
-												{renderItemContent(item)}
-												{isSelected(item.value) && (
-													<IconCheck className="size-4 absolute right-2 top-1/2 -translate-y-1/2" />
-												)}
-											</CommandItem>
-										</div>
-									))}
-								</CommandGroup>
+								{items.map((item, index) => (
+									<CommandItem
+										key={index}
+										value={item.value}
+										onSelect={handleSelect}
+										className={cn(
+											isSelected(item.value) &&
+												"bg-primary hover:bg-primary/90 text-white hover:text-white",
+										)}
+									>
+										<ItemContent item={item} />
+										{isSelected(item.value) && (
+											<IconCheck className="size-4 absolute right-2 top-1/2 -translate-y-1/2" />
+										)}
+									</CommandItem>
+								))}
 							</CommandList>
 						</Command>
 					</PopoverContent>
 				</Popover>
 			</div>
+		</div>
+	);
+}
+
+interface ButtonContentProps {
+	multiple: boolean;
+	selectedItems: SelectOption[];
+	selectedItem?: SelectOption;
+	placeholder?: string;
+}
+
+function ButtonContent({
+	multiple,
+	selectedItems,
+	selectedItem,
+	placeholder,
+}: ButtonContentProps) {
+	if (multiple) {
+		if (selectedItems.length === 0) return placeholder || "Select options";
+		const labels = selectedItems.map((item) => {
+			return Array.isArray(item.label)
+				? item.label.join(" - ")
+				: String(item.label);
+		});
+		return (
+			<span className="block w-full truncate" title={labels.join(", ")}>
+				{labels.join(", ")}
+			</span>
+		);
+	}
+	if (!selectedItem) return placeholder || "Select an option";
+	if (Array.isArray(selectedItem.label) && selectedItem.label.length === 2) {
+		return (
+			<div className="absolute top-1/2 -translate-y-1/2 w-[calc(100%-34px)] flex max-sm:flex-col sm:gap-1.5 items-start sm:items-center sm:justify-between">
+				<p
+					className="truncate max-w-full sm:max-w-[50%]"
+					title={String(selectedItem.label[0])}
+				>
+					{selectedItem.label[0]}
+				</p>
+
+				<p
+					className="truncate max-w-full sm:max-w-[50%] sm:text-right"
+					title={String(selectedItem.label[1])}
+				>
+					{selectedItem.label[1]}
+				</p>
+			</div>
+		);
+	}
+	return (
+		<div
+			className="absolute top-1/2 -translate-y-1/2 w-[calc(100%-50px)] flex items-center sm:gap-1.5 truncate"
+			title={typeof selectedItem.label === "string" ? selectedItem.label : ""}
+		>
+			{selectedItem.icon}
+			<span className="truncate max-w-full">{selectedItem.label}</span>
+		</div>
+	);
+}
+
+function ItemContent({ item }: { item: SelectOption }) {
+	if (Array.isArray(item.label) && item.label.length === 2) {
+		return (
+			<div className="text-xs absolute top-1/2 -translate-y-1/2 w-[calc(100%-34px)] flex max-sm:flex-col sm:gap-1.5 sm:items-center sm:justify-between">
+				<p
+					className="truncate max-w-full sm:max-w-[50%]"
+					title={String(item.label[0])}
+				>
+					{item.label[0]}
+				</p>
+
+				<p
+					className="truncate max-w-full sm:max-w-[50%] sm:text-right"
+					title={String(item.label[1])}
+				>
+					{item.label[1]}
+				</p>
+			</div>
+		);
+	}
+	return (
+		<div
+			className="absolute top-1/2 -translate-y-1/2 w-full flex items-center sm:gap-1.5 truncate"
+			title={typeof item.label === "string" ? item.label : ""}
+		>
+			{item.icon}
+			<span className="truncate max-w-full">{item.label}</span>
 		</div>
 	);
 }

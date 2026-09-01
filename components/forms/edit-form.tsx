@@ -71,7 +71,13 @@ export default function CreateEditForm<
 				: await updateEntities(entity, ids, formData);
 		} catch {
 			toast.error(
-				`Failed to update ${single ? getSingleName(entity) : getPluralName(entity)}. Please try again.`,
+				<>
+					<p>
+						Failed to update{" "}
+						{single ? getSingleName(entity) : getPluralName(entity)}.
+					</p>
+					<p className="text-muted-foreground">Please try again.</p>
+				</>,
 			);
 		} finally {
 			setOpen(false);

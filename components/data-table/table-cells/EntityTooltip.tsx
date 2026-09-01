@@ -42,7 +42,10 @@ export default function EntityTooltip({
 			setData(result);
 		} catch {
 			toast.error(
-				`Failed to fetch ${getSingleName(entity)}. Please try again.`,
+				<>
+					<p>Failed to fetch {getSingleName(entity)}.</p>
+					<p className="text-muted-foreground">Please try again.</p>
+				</>,
 			);
 		} finally {
 			setLoading(false);

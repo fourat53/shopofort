@@ -100,21 +100,4 @@ async function getOrderItemCount(filterParams: ParameterType = {}) {
 	)();
 }
 
-async function getOrderItemsByOrderId(id: number) {
-	return unstable_cache(
-		async () => {
-			const orderItems = await prisma.orderItem.findMany({
-				where: { orderId: id },
-			});
-			return orderItems.map(({ id, price, ...rest }) => ({
-				id,
-				price: Number(price),
-				...rest,
-			}));
-		},
-		["order-items-page", JSON.stringify({ id })],
-		{ revalidate: CACHE_SECONDS, tags: ["order-items"] },
-	)();
-}
-
-export { getOrderItemCount, getOrderItemsByOrderId, getOrderItemsPage };
+export { getOrderItemCount, getOrderItemsPage };
