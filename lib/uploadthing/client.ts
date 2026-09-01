@@ -9,7 +9,7 @@ async function uploadImages(files: File[]): Promise<string[]> {
 		const res = await uploadFiles("productImage", { files });
 		return res.map((file) => file.ufsUrl);
 	} catch {
-		throw new Error(`Error uploading files.`);
+		throw new Error(`Failed to upload files. Please try again.`);
 	}
 }
 

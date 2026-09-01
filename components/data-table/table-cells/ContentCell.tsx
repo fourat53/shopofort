@@ -1,15 +1,15 @@
 import { clsx } from "clsx";
-import { isDate } from "date-fns";
 import Image from "next/image";
 import EntityTooltip from "@/components/data-table/table-cells/EntityTooltip";
-import { formatDate } from "@/lib/date-format";
 import {
 	OptionField,
 	OrderStatus,
 	type StringNumber,
 } from "@/lib/entity/types";
+import { format } from "date-fns";
+import { isValidDate } from "@/lib/date";
 
-type ValueType = StringNumber | string[] | Date | undefined;
+type ValueType = StringNumber | string[] | Date | boolean | undefined | null;
 
 interface CellContentProps {
 	value: ValueType;
@@ -21,10 +21,14 @@ interface CellContentProps {
 function cellTitle(value: ValueType, name: string) {
 	if (
 		Array.isArray(value) ||
-		Object.values(OptionField).includes(name as OptionField)
+		Object.values(OptionField).includes(name as OptionField) ||
+		value === null ||
+		value === undefined
 	)
 		return undefined;
-	if (isDate(value)) return formatDate(value);
+	if (typeof value === "boolean") return String(value);
+	if (value instanceof Date || isValidDate(value))
+		return format(new Date(value), "MMM d, yyyy, HH:mm:ss");
 	return String(value);
 }
 
@@ -38,7 +42,7 @@ export default function ContentCell({
 	return (
 		<div title={cellTitle(value, headerName)} className="truncate">
 			{Array.isArray(value) ? (
-				headerName === "images" && value.length > 0 ? (
+				value.length > 0 ? (
 					<div
 						className={clsx(
 							"flex overflow-x-auto items-center",
@@ -65,10 +69,12 @@ export default function ContentCell({
 						No images
 					</div>
 				)
-			) : !value || value === "null" ? (
+			) : value === null || value === undefined ? (
 				"-"
-			) : isDate(value) ? (
-				formatDate(value)
+			) : typeof value === "boolean" ? (
+				String(value)
+			) : value instanceof Date || isValidDate(value) ? (
+				format(new Date(value), "MMM d, yyyy, HH:mm:ss")
 			) : Object.values(OptionField).includes(headerName as OptionField) ? (
 				<EntityTooltip headerName={headerName as OptionField} idValue={value} />
 			) : headerName === "orderStatus" ? (

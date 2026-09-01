@@ -56,7 +56,7 @@ const USERS_HEADER: HeaderItem[] = [
 	{ name: "email", width: "264px" },
 	{ name: "first_name", width: "120px" },
 	{ name: "last_name", width: "120px" },
-	{ name: "suspended", width: " 100px" },
+	{ name: "is_suspended", width: " 110px" },
 	{ name: "total_sign_ins", width: "120px" },
 	{ name: "failed_sign_ins", width: "120px" },
 	{ name: "last_signed_in", width: "160px" },

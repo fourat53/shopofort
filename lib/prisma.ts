@@ -1,5 +1,5 @@
 import { PrismaPg } from "@prisma/adapter-pg";
-import { checkedEnvVar } from "@/lib/checked-env-var";
+import { checkedEnvVar } from "@/lib/env";
 import { PrismaClient } from "@/prisma/generated/prisma/client";
 
 const globalForPrisma = global as unknown as {

@@ -28,7 +28,7 @@ import { getFieldName, getSingleName } from "@/lib/entity/entity-functions";
 import type { EntityType } from "@/lib/entity/types";
 
 import { addImagesToForm } from "@/lib/uploadthing/client";
-import ForeignKeySelect from "./foreign-key-select";
+import ForeignKeySelect from "./ForeignKeySelect";
 
 interface CreateFormProps {
 	entity: EntityType;
@@ -56,7 +56,9 @@ export default function CreateForm({ entity, open, setOpen }: CreateFormProps) {
 			await addImagesToForm(formData, images);
 			if (entity !== "users") await createEntity(entity, formData);
 		} catch {
-			toast.error(`Error creating ${getSingleName(entity)}.`);
+			toast.error(
+				`Failed to create ${getSingleName(entity)}. Please try again.`,
+			);
 		} finally {
 			setOpen(false);
 			setLoading(false);
@@ -76,7 +78,7 @@ export default function CreateForm({ entity, open, setOpen }: CreateFormProps) {
 					<DialogTitle>Create {getSingleName(entity)}</DialogTitle>
 				</DialogHeader>
 				{fields.map((field) => {
-					const { type, name, required, defaultValue: value } = field;
+					const { type, name, required, defaultValue } = field;
 					const label = getFieldName(name);
 					return type === "string" ? (
 						<Input
@@ -84,7 +86,8 @@ export default function CreateForm({ entity, open, setOpen }: CreateFormProps) {
 							name={name}
 							label={label}
 							placeholder={`Enter ${label.toLowerCase()}`}
-							defaultValue={value?.toString() || undefined}
+							type={name === "email" ? "email" : "text"}
+							defaultValue={defaultValue?.toString() || undefined}
 							required={required}
 						/>
 					) : type === "number" ? (
@@ -93,9 +96,9 @@ export default function CreateForm({ entity, open, setOpen }: CreateFormProps) {
 							name={name}
 							label={label}
 							type="number"
-							step={field.step ?? "1"}
+							step={field.step ?? 1}
 							placeholder={`Enter ${label.toLowerCase()}`}
-							defaultValue={value?.toString() || undefined}
+							defaultValue={defaultValue?.toString() || "1"}
 							required={required}
 						/>
 					) : type === "date" ? (
@@ -103,7 +106,7 @@ export default function CreateForm({ entity, open, setOpen }: CreateFormProps) {
 							key={name}
 							name={name}
 							label={label}
-							defaultValue={value as string | Date | undefined}
+							defaultValue={defaultValue as string | Date | undefined}
 							required={required}
 							time
 						/>
@@ -121,7 +124,7 @@ export default function CreateForm({ entity, open, setOpen }: CreateFormProps) {
 							key={name}
 							name={name}
 							label={label}
-							defaultValue={value?.toString() || "NONE"}
+							defaultValue={defaultValue?.toString() || "NONE"}
 							required={required}
 							items={[
 								{ label: "None", value: "NONE" },
@@ -134,7 +137,7 @@ export default function CreateForm({ entity, open, setOpen }: CreateFormProps) {
 							field={field}
 							entity={entity}
 							fields={fields}
-							defaultValue={value?.toString() || "NONE"}
+							defaultValue={defaultValue?.toString() || "NONE"}
 							firstItem={{ label: "None", value: "NONE" }}
 						/>
 					) : null;

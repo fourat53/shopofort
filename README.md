@@ -38,7 +38,6 @@ pnpm biome format --write .
 
 <!-- Biome auto sort imports -->
 - verify required fields
-- display all cart items for a cart, order items for an order
 - make a dashboard design with shadcn UI and display statistics
 
 Important: Since I don't have AWS S3 account, the images in uploadthing file service free tier.

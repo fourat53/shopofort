@@ -1,7 +1,7 @@
 import { PrismaPg } from "@prisma/adapter-pg";
 import { config } from "dotenv";
 import { getUsers } from "@/actions/UserActions";
-import { checkedEnvVar } from "@/lib/checked-env-var";
+import { checkedEnvVar } from "@/lib/env";
 import { Gender, OrderStatus } from "@/lib/entity/types";
 import { PrismaClient } from "@/prisma/generated/prisma/client";
 

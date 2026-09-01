@@ -41,7 +41,9 @@ export default function EntityTooltip({
 			const result = await getEntityById(entity, idValue);
 			setData(result);
 		} catch {
-			toast.error(`Error fetching ${getSingleName(entity)}.`);
+			toast.error(
+				`Failed to fetch ${getSingleName(entity)}. Please try again.`,
+			);
 		} finally {
 			setLoading(false);
 		}

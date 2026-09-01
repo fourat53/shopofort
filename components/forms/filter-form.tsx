@@ -3,7 +3,6 @@
 import type { Dispatch, SetStateAction } from "react";
 import { Input } from "@/components/form-items/input";
 import RangePicker from "@/components/form-items/range-picker";
-import { RangeSlider } from "@/components/form-items/range-slider";
 import { Select } from "@/components/form-items/select";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,7 +14,8 @@ import {
 import type { ENTITY_FIELDS } from "@/lib/entity/entity-fields";
 import { getFieldName, getPluralName } from "@/lib/entity/entity-functions";
 import type { EntityType } from "@/lib/entity/types";
-import ForeignKeySelect from "./foreign-key-select";
+import FilterRangeNumber from "./FilterRangeNumber";
+import ForeignKeySelect from "./ForeignKeySelect";
 
 interface DialogFormProps {
 	fields: (typeof ENTITY_FIELDS)[EntityType][number][];
@@ -45,30 +45,26 @@ export default function FilterForm({
 					<DialogTitle>Filter {getPluralName(entity)}</DialogTitle>
 				</DialogHeader>
 				{fields.map((field) => {
-					const { type, name } = field;
+					const { type, name, min, max, step, options } = field;
 					const label = getFieldName(name);
 					return type === "string" ? (
 						<Input
 							key={name}
 							name={name}
 							placeholder={`Search ${label.toLowerCase()}`}
-							type={name === "email" ? "email" : "text"}
 							label={label}
 							defaultValue={searchParams.get(name) ?? undefined}
 						/>
 					) : type === "number" ? (
-						<RangeSlider
+						<FilterRangeNumber
 							key={name}
-							fromName={`${name}From`}
-							toName={`${name}To`}
+							name={name}
 							label={label}
-							min={field.min ?? 0}
-							max={field.max ?? 10000}
-							step={field.step ?? 1}
-							defaultValue={[
-								Number(searchParams.get(`${name}From`)) || field.min || 0,
-								Number(searchParams.get(`${name}To`) || field.max || 10000),
-							]}
+							min={min}
+							max={max}
+							step={step}
+							defaultFrom={Number(searchParams.get(`${name}From`)) || min || 0}
+							defaultTo={Number(searchParams.get(`${name}To`)) || max || 1000}
 						/>
 					) : type === "date" ? (
 						<RangePicker
@@ -76,10 +72,8 @@ export default function FilterForm({
 							fromName={`${name}From`}
 							toName={`${name}To`}
 							label={label}
-							defaultValues={{
-								from: searchParams.get(`${name}From`) ?? undefined,
-								to: searchParams.get(`${name}To`) ?? undefined,
-							}}
+							defaultFrom={searchParams.get(`${name}From`) ?? undefined}
+							defaultTo={searchParams.get(`${name}To`) ?? undefined}
 						/>
 					) : type === "enum" ? (
 						<Select
@@ -90,7 +84,7 @@ export default function FilterForm({
 							defaultValue={searchParams.getAll(name) ?? ["ALL"]}
 							items={[
 								{ label: "Any", value: "ALL" },
-								...(field.options?.map((o) => ({ label: o, value: o })) ?? []),
+								...(options?.map((o) => ({ label: o, value: o })) ?? []),
 							]}
 						/>
 					) : type === "foreignKey" ? (

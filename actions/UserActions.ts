@@ -4,7 +4,7 @@ import {
 	FILTER_CACHE_SECONDS,
 	IMAGE_PAGE_SIZE,
 } from "@/components/pagination/PaginationParams";
-import { checkedEnvVar } from "@/lib/checked-env-var";
+import { checkedEnvVar } from "@/lib/env";
 import { getFormUser } from "@/lib/entity/entity-form";
 import { USERS_HEADER } from "@/lib/entity/entity-header";
 import type { ParameterType, User } from "@/lib/entity/types";
@@ -54,14 +54,75 @@ function filterUsers(
 	const email = getParam(searchParams, "email")?.toLowerCase();
 	const firstName = getParam(searchParams, "first_name")?.toLowerCase();
 	const lastName = getParam(searchParams, "last_name")?.toLowerCase();
+	const is_suspended = getParam(searchParams, "is_suspended");
+
+	const totalSignInsFrom = getParam(searchParams, "total_sign_insFrom");
+	const totalSignInsTo = getParam(searchParams, "total_sign_insTo");
+
+	const failedSignInsFrom = getParam(searchParams, "failed_sign_insFrom");
+	const failedSignInsTo = getParam(searchParams, "failed_sign_insTo");
+
+	const lastSignedInFrom = getParam(searchParams, "last_signed_inFrom");
+	const lastSignedInTo = getParam(searchParams, "last_signed_inTo");
+
+	const createdOnFrom = getParam(searchParams, "created_on");
+	const createdOnTo = getParam(searchParams, "created_on");
+
+	const updatedOnFrom = getParam(searchParams, "updated_on");
+	const updatedOnTo = getParam(searchParams, "updated_on");
 
 	const filteredUsers = users.filter((user) => {
 		if (ids?.length && !ids.includes(user.id)) return false;
+
 		if (email && !user.email?.toLowerCase().includes(email)) return false;
+
 		if (firstName && !user.first_name?.toLowerCase().includes(firstName))
 			return false;
+
 		if (lastName && !user.last_name?.toLowerCase().includes(lastName))
 			return false;
+
+		if (is_suspended && String(user.is_suspended) !== is_suspended)
+			return false;
+
+		if (totalSignInsFrom && user.total_sign_ins < Number(totalSignInsFrom))
+			return false;
+
+		if (totalSignInsTo && user.total_sign_ins > Number(totalSignInsTo))
+			return false;
+
+		if (failedSignInsFrom && user.failed_sign_ins < Number(failedSignInsFrom))
+			return false;
+
+		if (failedSignInsTo && user.failed_sign_ins > Number(failedSignInsTo))
+			return false;
+
+		if (
+			lastSignedInFrom &&
+			(!user.last_signed_in ||
+				new Date(user.last_signed_in) < new Date(lastSignedInFrom))
+		)
+			return false;
+
+		if (
+			lastSignedInTo &&
+			(!user.last_signed_in ||
+				new Date(user.last_signed_in) > new Date(lastSignedInTo))
+		)
+			return false;
+
+		if (createdOnFrom && new Date(user.created_on) < new Date(createdOnFrom))
+			return false;
+
+		if (createdOnTo && new Date(user.created_on) > new Date(createdOnTo))
+			return false;
+
+		if (updatedOnFrom && new Date(user.updated_on) < new Date(updatedOnFrom))
+			return false;
+
+		if (updatedOnTo && new Date(user.updated_on) > new Date(updatedOnTo))
+			return false;
+
 		return true;
 	});
 
@@ -168,7 +229,6 @@ async function getUsers(): Promise<User[]> {
 
 		nextToken = data.next_token;
 	}
-
 	return allUsers;
 }
 
@@ -208,28 +268,32 @@ async function getUserById(id: string) {
 async function deleteUser(id: string) {
 	const token = await getKindeToken();
 
-	await fetch(`${kindeIssuerUrl}/api/v1/user?id=${id}`, {
+	const response = await fetch(`${kindeIssuerUrl}/api/v1/user?id=${id}`, {
 		method: "DELETE",
 		headers: {
 			Authorization: `Bearer ${token}`,
 			Accept: "application/json",
 		},
 	});
-	updateTag("users");
+
+	if (!response.ok) {
+		throw new Error(`Failed to delete user: ${response.status}`);
+	}
 
 	await prisma.cart.delete({ where: { userId: id } });
 	updateTag("carts");
 
 	await prisma.order.deleteMany({ where: { userId: id } });
 	updateTag("orders");
+
+	return response.json();
 }
 
 async function updateUser(id: string, formData: FormData) {
 	const token = await getKindeToken();
-
 	const data = getFormUser(formData);
 
-	await fetch(`${kindeIssuerUrl}/api/v1/user?id=${id}`, {
+	const response = await fetch(`${kindeIssuerUrl}/api/v1/user?id=${id}`, {
 		method: "PATCH",
 		headers: {
 			Authorization: `Bearer ${token}`,
@@ -238,7 +302,12 @@ async function updateUser(id: string, formData: FormData) {
 		},
 		body: JSON.stringify(data),
 	});
-	updateTag("users");
+
+	if (!response.ok) {
+		throw new Error(`Failed to update user: ${response.status}`);
+	}
+
+	return response.json();
 }
 
 export {

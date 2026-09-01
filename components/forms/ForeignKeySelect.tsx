@@ -46,7 +46,9 @@ export default function ForeignKeySelect({
 						[field.name]: options,
 					}));
 				} catch {
-					toast.error(`Error filtering ${getPluralName(entity)}.`);
+					toast.error(
+						`Failed to filter ${getPluralName(entity)}. Please try again.`,
+					);
 					fetchedFields.current.delete(optionField);
 				}
 			}

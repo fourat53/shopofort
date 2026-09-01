@@ -251,6 +251,7 @@ async function updateEntity(
 				data: data as Prisma.OrderItemUpdateInput,
 				where,
 			});
+		console.log("Updated Entity:", JSON.stringify(result, null, 2));
 		return JSON.parse(JSON.stringify(result));
 	} catch (error) {
 		console.error(error);

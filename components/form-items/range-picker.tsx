@@ -14,16 +14,13 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from "@/components/ui/popover";
-import { formatDate } from "@/lib/date-format";
 
 interface DateRangePickerProps {
 	fromName: string;
 	toName: string;
 	label: string;
-	defaultValues?: {
-		from?: string | Date;
-		to?: string | Date;
-	};
+	defaultFrom?: string | Date;
+	defaultTo?: string | Date;
 	required?: boolean;
 	time?: boolean;
 }
@@ -32,15 +29,16 @@ export default function RangePicker({
 	fromName,
 	toName,
 	label,
-	defaultValues,
+	defaultFrom,
+	defaultTo,
 	required,
 	time = true,
 }: DateRangePickerProps) {
 	const [open, setOpen] = React.useState(false);
 
 	const [range, setRange] = React.useState<DateRange | undefined>(() => {
-		const from = defaultValues?.from ? new Date(defaultValues.from) : undefined;
-		const to = defaultValues?.to ? new Date(defaultValues.to) : undefined;
+		const from = defaultFrom ? new Date(defaultFrom) : undefined;
+		const to = defaultTo ? new Date(defaultTo) : undefined;
 
 		return from ? { from, to } : undefined;
 	});
@@ -92,8 +90,8 @@ export default function RangePicker({
 
 	const displayValue = range?.from
 		? range.to
-			? `${formatDate(range.from)} - ${formatDate(range.to)}`
-			: `${formatDate(range.from)} - Select an end date`
+			? `${format(range.from, "MMM d, yyyy, HH:mm:ss")} - ${format(range.to, "MMM d, yyyy, HH:mm:ss")}`
+			: `${format(range.from, "MMM d, yyyy, HH:mm:ss")} - Select an end date`
 		: "Select a date range";
 
 	return (

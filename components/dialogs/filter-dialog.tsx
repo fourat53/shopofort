@@ -2,7 +2,6 @@
 
 import { IconArrowBackUp, IconFilter } from "@tabler/icons-react";
 import clsx from "clsx";
-import { isDate } from "date-fns";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState, useTransition } from "react";
 import FilterForm from "@/components/forms/filter-form";
@@ -10,6 +9,7 @@ import CurrentEntity from "@/components/title/CurrentEntity";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { getEntityFields } from "@/lib/entity/entity-fields";
+import { isValidDate } from "@/lib/date";
 
 export default function FilterDialog() {
 	const entity = CurrentEntity();
@@ -64,17 +64,11 @@ export default function FilterDialog() {
 				const from = formData.get(fromName)?.toString() ?? "";
 				const to = formData.get(toName)?.toString() ?? "";
 
-				if (from && Number(from) !== min) {
-					newParams.set(fromName, from);
-				} else {
-					newParams.delete(fromName);
-				}
+				if (from && Number(from) !== min) newParams.set(fromName, from);
+				else newParams.delete(fromName);
 
-				if (to && Number(to) !== max) {
-					newParams.set(toName, to);
-				} else {
-					newParams.delete(toName);
-				}
+				if (to && Number(to) !== max) newParams.set(toName, to);
+				else newParams.delete(toName);
 
 				continue;
 			}
@@ -86,17 +80,11 @@ export default function FilterDialog() {
 				const from = formData.get(fromName)?.toString() ?? "";
 				const to = formData.get(toName)?.toString() ?? "";
 
-				if (from && isDate(from)) {
-					newParams.set(fromName, from);
-				} else {
-					newParams.delete(fromName);
-				}
+				if (from && isValidDate(from)) newParams.set(fromName, from);
+				else newParams.delete(fromName);
 
-				if (to && isDate(to)) {
-					newParams.set(toName, to);
-				} else {
-					newParams.delete(toName);
-				}
+				if (to && isValidDate(to)) newParams.set(toName, to);
+				else newParams.delete(toName);
 
 				continue;
 			}

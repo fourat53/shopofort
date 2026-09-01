@@ -31,7 +31,7 @@ import {
 } from "@/lib/entity/entity-functions";
 import type { EntityType, StringNumber } from "@/lib/entity/types";
 import { addImagesToForm } from "@/lib/uploadthing/client";
-import ForeignKeySelect from "./foreign-key-select";
+import ForeignKeySelect from "./ForeignKeySelect";
 
 interface DialogFormProps<T> {
 	entity: EntityType;
@@ -71,7 +71,7 @@ export default function CreateEditForm<
 				: await updateEntities(entity, ids, formData);
 		} catch {
 			toast.error(
-				`Error updating ${single ? getSingleName(entity) : getPluralName(entity)}.`,
+				`Failed to update ${single ? getSingleName(entity) : getPluralName(entity)}. Please try again.`,
 			);
 		} finally {
 			setOpen(false);
@@ -101,6 +101,7 @@ export default function CreateEditForm<
 							name={name}
 							label={label}
 							placeholder={`Enter ${label.toLowerCase()}`}
+							type={name === "email" ? "email" : "text"}
 							defaultValue={value?.toString() || undefined}
 							required={required}
 						/>

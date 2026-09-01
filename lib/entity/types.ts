@@ -33,7 +33,7 @@ type CartItem = Omit<CartItemType, "unitPrice" | "totalPrice"> & {
 
 type OrderItem = Omit<OrderItemType, "price"> & { price: number };
 
-// OTHER TYPES ---------------------------------------------------------------------
+// ENTITY TYPES ---------------------------------------------------------------------
 
 enum EntityType {
 	users = "users",
@@ -54,6 +54,8 @@ enum OptionField {
 	cartItemId = "cartItemId",
 	orderItemId = "orderItemId",
 }
+
+// ENTITY TYPES ---------------------------------------------------------------------
 
 type StringNumber = string | number;
 

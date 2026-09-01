@@ -11,8 +11,9 @@ interface RangeSliderProps {
 	label?: React.ReactNode;
 	min: number;
 	max: number;
+	defaultFrom?: number;
+	defaultTo?: number;
 	step?: number;
-	defaultValue?: [number, number];
 	value?: [number, number];
 	onValueChange?: (value: [number, number]) => void;
 	required?: boolean;
@@ -27,16 +28,19 @@ export function RangeSlider({
 	label,
 	min,
 	max,
+	defaultFrom = min,
+	defaultTo = max,
 	step = 1,
-	defaultValue = [min, max],
 	value,
 	onValueChange,
 	required,
 	disabled,
 	className,
 }: RangeSliderProps) {
-	const [internalValue, setInternalValue] =
-		React.useState<[number, number]>(defaultValue);
+	const [internalValue, setInternalValue] = React.useState<[number, number]>([
+		defaultFrom,
+		defaultTo,
+	]);
 
 	const currentValue = value ?? internalValue;
 

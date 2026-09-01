@@ -49,7 +49,7 @@ export default function DeleteDialog({
 				: await deleteEntities(entity, ids);
 		} catch {
 			toast.error(
-				`Error deleting ${single ? getSingleName(entity) : getPluralName(entity)}.`,
+				`Failed to delete ${single ? getSingleName(entity) : getPluralName(entity)}. Please try again.`,
 			);
 		} finally {
 			setOpen(false);

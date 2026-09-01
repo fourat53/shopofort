@@ -4,6 +4,11 @@ type FieldType = "string" | "number" | "date" | "enum" | "foreignKey" | "image";
 
 type FieldCategory = "filter" | "create" | "edit";
 
+enum BooleanEnum {
+	TRUE = "true",
+	FALSE = "false",
+}
+
 type FieldConfig = {
 	name: string;
 	type: FieldType;
@@ -13,7 +18,7 @@ type FieldConfig = {
 	step?: number;
 	min?: number;
 	max?: number;
-	options?: readonly (Gender | OrderStatus)[];
+	options?: readonly (BooleanEnum | Gender | OrderStatus)[];
 };
 
 const ENTITY_FIELDS: Record<EntityType, FieldConfig[]> = {
@@ -40,6 +45,37 @@ const ENTITY_FIELDS: Record<EntityType, FieldConfig[]> = {
 			category: ["filter", "create", "edit"],
 			required: true,
 		},
+		{
+			name: "is_suspended",
+			type: "enum",
+			options: Object.values(BooleanEnum),
+			category: ["filter", "edit"],
+		},
+		{
+			name: "total_sign_ins",
+			type: "number",
+			category: ["filter"],
+		},
+		{
+			name: "failed_sign_ins",
+			type: "number",
+			category: ["filter"],
+		},
+		{
+			name: "last_signed_in",
+			type: "date",
+			category: ["filter"],
+		},
+		{
+			name: "created_on",
+			type: "date",
+			category: ["filter"],
+		},
+		{
+			name: "updated_on",
+			type: "date",
+			category: ["filter"],
+		},
 	],
 	products: [
 		{
@@ -65,15 +101,13 @@ const ENTITY_FIELDS: Record<EntityType, FieldConfig[]> = {
 			defaultValue: "5",
 			required: true,
 			step: 0.01,
+			max: 10000,
 		},
 		{
 			name: "inventory",
 			type: "number",
 			category: ["filter", "create", "edit"],
-			defaultValue: "1",
 			required: true,
-			min: 0,
-			max: 1000,
 		},
 		{
 			name: "description",
@@ -101,10 +135,7 @@ const ENTITY_FIELDS: Record<EntityType, FieldConfig[]> = {
 			name: "totalAmount",
 			type: "number",
 			category: ["filter", "create", "edit"],
-			defaultValue: "1",
 			required: true,
-			min: 0,
-			max: 1000,
 		},
 		{
 			name: "userId",
@@ -130,9 +161,6 @@ const ENTITY_FIELDS: Record<EntityType, FieldConfig[]> = {
 			type: "number",
 			category: ["filter", "create", "edit"],
 			required: true,
-			defaultValue: "1",
-			min: 0,
-			max: 1000,
 		},
 		{
 			name: "orderStatus",
@@ -179,8 +207,6 @@ const ENTITY_FIELDS: Record<EntityType, FieldConfig[]> = {
 			type: "number",
 			category: ["filter", "create", "edit"],
 			required: true,
-			min: 0,
-			max: 1000,
 		},
 		{
 			name: "unitPrice",
@@ -188,6 +214,7 @@ const ENTITY_FIELDS: Record<EntityType, FieldConfig[]> = {
 			category: ["filter", "create", "edit"],
 			required: true,
 			step: 0.01,
+			max: 10000,
 		},
 		{
 			name: "totalPrice",
@@ -195,6 +222,7 @@ const ENTITY_FIELDS: Record<EntityType, FieldConfig[]> = {
 			category: ["filter"],
 			required: true,
 			step: 0.01,
+			max: 10000,
 		},
 		{
 			name: "cartId",
@@ -220,8 +248,6 @@ const ENTITY_FIELDS: Record<EntityType, FieldConfig[]> = {
 			type: "number",
 			category: ["filter", "create", "edit"],
 			required: true,
-			min: 0,
-			max: 1000,
 		},
 		{
 			name: "price",
@@ -229,6 +255,7 @@ const ENTITY_FIELDS: Record<EntityType, FieldConfig[]> = {
 			category: ["filter", "create", "edit"],
 			required: true,
 			step: 0.01,
+			max: 10000,
 		},
 		{
 			name: "orderId",
