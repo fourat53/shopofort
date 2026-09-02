@@ -11,7 +11,7 @@ model Cart {
   id          Int        @id @default(autoincrement())
   totalAmount Int
   userId      String     @unique
-  items       CartItem[]
+  cartItems   CartItem[]
 
   @@map("carts")
 }
@@ -30,9 +30,9 @@ model CartItem {
 }
 
 model Category {
-  id       Int          @id @default(autoincrement())
-  name     String
+  id       Int       @id @default(autoincrement())
   gender   Gender
+  name     String
   products Product[]
 
   @@unique([name, gender])
@@ -78,16 +78,16 @@ model OrderItem {
   @@map("order_items")
 }
 
-enum Gender {
-  MALE
-  FEMALE
-  BOTH
-}
-
 enum OrderStatus {
   PENDING
   PROCESSING
   SHIPPED
   DELIVERED
   CANCELLED
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  BOTH
 }

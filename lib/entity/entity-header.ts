@@ -20,7 +20,7 @@ const CART_ITEMS_HEADER: HeaderItem[] = [
 const CATEGORIES_HEADER: HeaderItem[] = [
 	{ name: "id", width: "150px" },
 	{ name: "name", width: "auto" },
-	{ name: "gender", width: "300px" },
+	{ name: "audience", width: "300px" },
 ];
 
 const ORDERS_HEADER: HeaderItem[] = [

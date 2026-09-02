@@ -1,4 +1,8 @@
-import { EntityType, type Gender, type OrderStatus } from "@/lib/entity/types";
+import {
+	type Audience,
+	EntityType,
+	type OrderStatus,
+} from "@/lib/entity/types";
 
 function getFormUser(formData: FormData) {
 	const picture = formData.get("picture") as string;
@@ -35,8 +39,8 @@ function getFormCart(formData: FormData) {
 
 function getFormCategory(formData: FormData) {
 	const name = formData.get("name") as string;
-	const gender = formData.get("gender") as Gender;
-	return { name, gender };
+	const audience = formData.get("audience") as Audience;
+	return { name, audience };
 }
 
 function getFormCartItem(formData: FormData) {

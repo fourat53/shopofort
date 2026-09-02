@@ -64,6 +64,7 @@ async function getOrderItemsPage(
 				skip: (page - 1) * pageSize,
 				take: pageSize,
 				orderBy,
+				// include: {	order: true,	product: true}
 			});
 			return orderItems.map(({ id, price, ...rest }) => ({
 				id,

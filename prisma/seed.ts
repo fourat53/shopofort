@@ -1,11 +1,10 @@
 import { PrismaPg } from "@prisma/adapter-pg";
 import { config } from "dotenv";
 import { getUsers } from "@/actions/UserActions";
+import { Audience, OrderStatus } from "@/lib/entity/types";
 import { checkedEnvVar } from "@/lib/env";
-import { Gender, OrderStatus } from "@/lib/entity/types";
 import { PrismaClient } from "@/prisma/generated/prisma/client";
 
-config({ path: ".env" });
 config();
 
 const adapter = new PrismaPg({
@@ -28,11 +27,22 @@ const randomImages = (productImages: string[], max = 6) => {
 };
 
 const categoryNames: string[] = [
-	"T_SHIRTS",
-	"JEANS",
-	"HOODIES",
-	"DRESSES",
-	"JACKETS",
+	"T-Shirts",
+	"Hoodies",
+	"Trousers",
+	"Shorts",
+	"Skirts",
+	"Dresses",
+	"Jackets",
+	"Coats",
+	// "Shoes",
+	// "Underwear",
+	// "Socks",
+	// "Bags",
+	// "Hats",
+	// "Scarves",
+	// "Gloves",
+	// "Belts",
 ];
 const productNames: string[] = [
 	"Classic Cotton T-Shirt",
@@ -62,14 +72,10 @@ async function main(minId: number, maxId: number) {
 
 	console.log("📂 Seeding Categories...");
 	const categories = [];
-	for (const name of categoryNames) {
-		for (const gender of Object.values(Gender)) {
-			categories.push({
-				name: name,
-				gender: gender,
-			});
-		}
-	}
+	for (const name of categoryNames)
+		for (const audience of Object.values(Audience))
+			categories.push({ name, audience });
+
 	await prisma.category.createMany({
 		data: categories,
 	});
@@ -187,7 +193,7 @@ async function clearDatabase() {
 (async () => {
 	try {
 		await clearDatabase();
-		await main(1, 99);
+		// await main(1, 99);
 	} catch (e) {
 		console.error(e);
 		process.exit(1);

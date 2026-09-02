@@ -63,6 +63,7 @@ async function getCartsPage(
 				skip: (page - 1) * pageSize,
 				take: pageSize,
 				orderBy,
+				// include: { cartItems: true },
 			}),
 		[
 			"carts-page",

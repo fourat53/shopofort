@@ -6,7 +6,7 @@ import {
 } from "@/components/pagination/PaginationParams";
 import { getParamValues } from "@/lib/entity/entity-functions";
 import { CATEGORIES_HEADER } from "@/lib/entity/entity-header";
-import type { Gender, ParameterType } from "@/lib/entity/types";
+import type { Audience, ParameterType } from "@/lib/entity/types";
 import { prisma } from "@/lib/prisma";
 import type { Prisma } from "@/prisma/generated/prisma/client";
 
@@ -21,8 +21,8 @@ function buildWhereClause(filterParams: ParameterType): FilterBy {
 	if (filterParams.name)
 		where.name = { contains: String(filterParams.name), mode: "insensitive" };
 
-	const genders = getParamValues(filterParams.gender);
-	if (genders.length) where.gender = { in: genders as Gender[] };
+	const audiences = getParamValues(filterParams.audience);
+	if (audiences.length) where.audience = { in: audiences as Audience[] };
 
 	return where;
 }
@@ -57,6 +57,7 @@ async function getCategoriesPage(
 				skip: (page - 1) * pageSize,
 				take: pageSize,
 				orderBy,
+				// include: { products: true },
 			}),
 		[
 			"categories-page",

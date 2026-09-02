@@ -91,79 +91,82 @@ export default function CreateEditForm<
 		<DialogContent
 			onPointerDownOutside={(e) => loading && e.preventDefault()}
 			onEscapeKeyDown={(e) => loading && e.preventDefault()}
-			className="w-180 max-w-180"
+			className="px-0 w-180 max-w-180 overflow-hidden"
 		>
-			<form onSubmit={handleSubmit} className="flex flex-col gap-4">
-				<DialogHeader>
+			<form onSubmit={handleSubmit}>
+				<DialogHeader className="pb-2">
 					<DialogTitle>{label}</DialogTitle>
 				</DialogHeader>
-				{fields.map((field) => {
-					const value = rows[0][field.name];
-					const { type, name, required } = field;
-					const label = getFieldName(name);
-					return type === "string" ? (
-						<Input
-							key={name}
-							name={name}
-							label={label}
-							placeholder={`Enter ${label.toLowerCase()}`}
-							type={name === "email" ? "email" : "text"}
-							defaultValue={value?.toString() || undefined}
-							required={required}
-						/>
-					) : type === "number" ? (
-						<Input
-							key={name}
-							name={name}
-							label={label}
-							type="number"
-							step={field.step ?? "1"}
-							placeholder={`Enter ${label.toLowerCase()}`}
-							defaultValue={value?.toString() || undefined}
-							required={required}
-						/>
-					) : type === "date" ? (
-						<DatePicker
-							key={name}
-							name={name}
-							label={label}
-							defaultValue={value as string | Date | undefined}
-							required={required}
-							time
-						/>
-					) : type === "image" ? (
-						<ImageUpload
-							key={name}
-							name={name}
-							label={label}
-							images={images}
-							onChange={setImages}
-							required={required}
-						/>
-					) : type === "enum" ? (
-						<Select
-							key={name}
-							name={name}
-							label={label}
-							defaultValue={value?.toString() || "NONE"}
-							required={required}
-							items={[
-								{ label: "None", value: "NONE" },
-								...(field.options?.map((o) => ({ label: o, value: o })) ?? []),
-							]}
-						/>
-					) : type === "foreignKey" ? (
-						<ForeignKeySelect
-							key={name}
-							field={field}
-							entity={entity}
-							fields={fields}
-							defaultValue={value?.toString() || "NONE"}
-							firstItem={{ label: "None", value: "NONE" }}
-						/>
-					) : null;
-				})}
-				<DialogFooter className="pt-2">
+				<div className="max-h-[calc(100vh-8rem)] overflow-y-auto px-4 flex flex-col gap-4">
+					{fields.map((field) => {
+						const value = rows[0][field.name];
+						const { type, name, required } = field;
+						const label = getFieldName(name);
+						return type === "string" ? (
+							<Input
+								key={name}
+								name={name}
+								label={label}
+								placeholder={`Enter ${label.toLowerCase()}`}
+								type={name === "email" ? "email" : "text"}
+								defaultValue={value?.toString() || undefined}
+								required={required}
+							/>
+						) : type === "number" ? (
+							<Input
+								key={name}
+								name={name}
+								label={label}
+								type="number"
+								step={field.step ?? "1"}
+								placeholder={`Enter ${label.toLowerCase()}`}
+								defaultValue={value?.toString() || undefined}
+								required={required}
+							/>
+						) : type === "date" ? (
+							<DatePicker
+								key={name}
+								name={name}
+								label={label}
+								defaultValue={value as string | Date | undefined}
+								required={required}
+								time
+							/>
+						) : type === "image" ? (
+							<ImageUpload
+								key={name}
+								name={name}
+								label={label}
+								images={images}
+								onChange={setImages}
+								required={required}
+							/>
+						) : type === "enum" ? (
+							<Select
+								key={name}
+								name={name}
+								label={label}
+								defaultValue={value?.toString() || "NONE"}
+								required={required}
+								items={[
+									{ label: "None", value: "NONE" },
+									...(field.options?.map((o) => ({ label: o, value: o })) ??
+										[]),
+								]}
+							/>
+						) : type === "foreignKey" ? (
+							<ForeignKeySelect
+								key={name}
+								field={field}
+								entity={entity}
+								fields={fields}
+								defaultValue={value?.toString() || "NONE"}
+								firstItem={{ label: "None", value: "NONE" }}
+							/>
+						) : null;
+					})}
+				</div>
+				<DialogFooter className="pt-3">
 					<Button
 						variant="outline"
 						onClick={() => setOpen(false)}

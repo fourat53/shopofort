@@ -9,7 +9,7 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
-import { getSingleName } from "@/lib/entity/entity-functions";
+import { getPluralName, getSingleName } from "@/lib/entity/entity-functions";
 import {
 	CART_ITEMS_HEADER,
 	type HeaderItem,
@@ -17,6 +17,7 @@ import {
 } from "@/lib/entity/entity-header";
 import { EntityType, OptionField } from "@/lib/entity/types";
 import EntityTable from "@/components/entity-tables/EntityTable";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 
 interface ListDialogProps {
 	entity: EntityType;
@@ -83,20 +84,41 @@ export default async function ListDialog({
 				className="min-h-57 max-h-[85vh] min-w-[85vw] flex flex-col gap-4"
 			>
 				<DialogHeader>
-					<DialogTitle className="py-0 capitalize">
-						{getSingleName(tableEntity)}
+					<DialogTitle className="py-0">
+						List of {getPluralName(tableEntity)} with {getSingleName(entity)} Id{" "}
+						{id}
 					</DialogTitle>
 				</DialogHeader>
 				<Suspense
 					fallback={<DataTableSkeleton entity={tableEntity} header={header} />}
 				>
-					<EntityTable
-						dialog
-						entity={tableEntity}
-						header={header}
-						pageSize={10000}
-						filterParams={{ [idField]: String(id) }}
-					/>
+					<Tabs
+						defaultValue="cart-items"
+						className="w-full flex flex-col items-center gap-3"
+					>
+						<TabsList>
+							<TabsTrigger value="cart-items">Cart Items</TabsTrigger>
+							<TabsTrigger value="order-items">Order Items</TabsTrigger>
+						</TabsList>
+						<TabsContent value="cart-items">
+							<EntityTable
+								dialog
+								entity={tableEntity}
+								header={header}
+								pageSize={10000}
+								filterParams={{ [idField]: String(id) }}
+							/>
+						</TabsContent>
+						<TabsContent value="order-items">
+							<EntityTable
+								dialog
+								entity={tableEntity}
+								header={header}
+								pageSize={10000}
+								filterParams={{ [idField]: String(id) }}
+							/>
+						</TabsContent>
+					</Tabs>
 				</Suspense>
 			</DialogContent>
 		</Dialog>

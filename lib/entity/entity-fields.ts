@@ -1,4 +1,4 @@
-import { type EntityType, Gender, OrderStatus } from "@/lib/entity/types";
+import { type EntityType, Audience, OrderStatus } from "@/lib/entity/types";
 
 type FieldType = "string" | "number" | "date" | "enum" | "foreignKey" | "image";
 
@@ -18,7 +18,7 @@ type FieldConfig = {
 	step?: number;
 	min?: number;
 	max?: number;
-	options?: readonly (BooleanEnum | Gender | OrderStatus)[];
+	options?: readonly (BooleanEnum | Audience | OrderStatus)[];
 };
 
 const ENTITY_FIELDS: Record<EntityType, FieldConfig[]> = {
@@ -189,10 +189,10 @@ const ENTITY_FIELDS: Record<EntityType, FieldConfig[]> = {
 			required: true,
 		},
 		{
-			name: "gender",
+			name: "audience",
 			type: "enum",
 			category: ["filter", "create", "edit"],
-			options: Object.values(Gender),
+			options: Object.values(Audience),
 			required: true,
 		},
 	],

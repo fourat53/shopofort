@@ -70,6 +70,7 @@ async function getProductsPage(
 				skip: (page - 1) * pageSize,
 				take: pageSize,
 				orderBy,
+				// include: { cartItems: true, orderItems: true, category: true },
 			});
 			return products.map(({ id, name, price, ...rest }) => ({
 				id,

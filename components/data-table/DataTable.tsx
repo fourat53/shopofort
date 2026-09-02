@@ -29,6 +29,7 @@ export default function DataTable<T extends { id: StringNumber }>({
 	rows,
 	dialog = false,
 }: DataTableProps<T>) {
+	console.log(entity + ":\n" + JSON.stringify(rows.slice(5), null, 2));
 	return (
 		<>
 			{rows.length === 0 ? (

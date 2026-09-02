@@ -78,6 +78,7 @@ async function getOrdersPage(
 				skip: (page - 1) * pageSize,
 				take: pageSize,
 				orderBy,
+				// include: { orderItems: true },
 			});
 		},
 		[

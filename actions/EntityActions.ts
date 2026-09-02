@@ -33,7 +33,7 @@ async function getFilterOptions(field: OptionField): Promise<SelectOption[]> {
 				const categories = await prisma.category.findMany({
 					orderBy: { name: "asc" },
 				});
-				return categories.map((c) => formatOption(c.id, [c.name, c.gender]));
+				return categories.map((c) => formatOption(c.id, [c.name, c.audience]));
 			}
 			case OptionField.productId: {
 				const products = await prisma.product.findMany({

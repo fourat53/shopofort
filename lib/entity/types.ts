@@ -6,7 +6,7 @@ import type {
 	OrderItem as OrderItemType,
 	Product as ProductType,
 } from "@/prisma/generated/prisma/client";
-import { Gender, OrderStatus } from "@/prisma/generated/prisma/enums";
+import { Audience, OrderStatus } from "@/prisma/generated/prisma/enums";
 
 // MODEL TYPES ----------------------------------------------------------------------
 
@@ -72,4 +72,4 @@ export type {
 	StringNumber,
 	User,
 };
-export { EntityType, Gender, OptionField, OrderStatus };
+export { Audience, EntityType, OptionField, OrderStatus };
