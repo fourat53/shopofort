@@ -31,11 +31,11 @@ model CartItem {
 
 model Category {
   id       Int       @id @default(autoincrement())
-  gender   Gender
   name     String
+  audience   Audience
   products Product[]
 
-  @@unique([name, gender])
+  @@unique([name, audience])
   @@map("categories")
 }
 
@@ -86,8 +86,8 @@ enum OrderStatus {
   CANCELLED
 }
 
-enum Gender {
-  MALE
-  FEMALE
-  BOTH
+enum Audience {
+  Men
+  Women
+  Kids
 }

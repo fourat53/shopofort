@@ -193,7 +193,7 @@ async function clearDatabase() {
 (async () => {
 	try {
 		await clearDatabase();
-		// await main(1, 99);
+		await main(1, 99);
 	} catch (e) {
 		console.error(e);
 		process.exit(1);
