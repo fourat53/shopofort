@@ -64,17 +64,9 @@ async function getCartItemsPage(
 				skip: (page - 1) * pageSize,
 				take: pageSize,
 				orderBy,
-				// include: { cart: true, product: true },
+				include: { cart: true, product: true },
 			});
-			return cartItems.map(
-				({ id, quantity, unitPrice, totalPrice, ...rest }) => ({
-					id,
-					unitPrice: Number(unitPrice),
-					quantity,
-					totalPrice: Number(totalPrice),
-					...rest,
-				}),
-			);
+			return JSON.parse(JSON.stringify(cartItems));
 		},
 		[
 			"cart-items-page",

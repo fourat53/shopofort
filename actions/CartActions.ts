@@ -57,14 +57,16 @@ async function getCartsPage(
 	const where = buildWhereClause(filterParams);
 	const orderBy = buildOrderClause(sortBy, order);
 	return unstable_cache(
-		async () =>
-			prisma.cart.findMany({
+		async () => {
+			const carts = await prisma.cart.findMany({
 				where,
 				skip: (page - 1) * pageSize,
 				take: pageSize,
 				orderBy,
-				// include: { cartItems: true },
-			}),
+				include: { cartItems: true },
+			});
+			return JSON.parse(JSON.stringify(carts));
+		},
 		[
 			"carts-page",
 			String(page),

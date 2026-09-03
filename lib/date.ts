@@ -1,14 +1,26 @@
+import { format } from "date-fns";
+
 function isValidDate(value: unknown): boolean {
 	if (value instanceof Date) {
 		return !Number.isNaN(value.getTime());
 	}
 
-	if (typeof value === "string") {
-		const date = new Date(value);
-		return !Number.isNaN(date.getTime());
+	if (typeof value !== "string") {
+		return false;
 	}
 
-	return false;
+	const isoDateRegex =
+		/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/;
+
+	if (!isoDateRegex.test(value)) {
+		return false;
+	}
+
+	return !Number.isNaN(new Date(value).getTime());
 }
 
-export { isValidDate };
+function formatDate(value: string | Date): string {
+	return format(new Date(value), "MMM d, yyyy, HH:mm:ss");
+}
+
+export { formatDate, isValidDate };

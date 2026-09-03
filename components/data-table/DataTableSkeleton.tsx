@@ -1,4 +1,3 @@
-import { clsx } from "clsx";
 import SortableTableHead from "@/components/data-table/table-cells/SortableTableHead";
 import DeleteDialog from "@/components/dialogs/delete-dialog";
 import EditDialog from "@/components/dialogs/edit-dialog";
@@ -23,15 +22,15 @@ import type { EntityType } from "@/lib/entity/types";
 interface DataTableSkeletonProps {
 	entity: EntityType;
 	header: HeaderItem[];
-	hasImage?: "none" | "one" | "multiple";
+	hasImage?: boolean;
 	pageSize?: number;
 }
 
 export default function DataTableSkeleton({
 	entity,
 	header,
-	hasImage = "none",
-	pageSize = hasImage === "none" ? PAGE_SIZE : IMAGE_PAGE_SIZE,
+	hasImage = false,
+	pageSize = hasImage ? IMAGE_PAGE_SIZE : PAGE_SIZE,
 }: DataTableSkeletonProps) {
 	return (
 		<Table>
@@ -62,25 +61,17 @@ export default function DataTableSkeleton({
 							<TableCell
 								key={item.name}
 								border
-								className={clsx(hasImage === "none" ? "h-[33.6px]" : "h-18.5")}
+								className={hasImage ? "h-18.5" : "h-[33.6px]"}
 								style={{
 									width: item.width,
 									minWidth: item.width,
 								}}
 							>
-								{item.name === "images" ? (
-									<div className="flex gap-2">
-										{Array.from({ length: 4 }).map((_, cIndex) => (
-											<Skeleton key={cIndex} className="size-14.5" />
-										))}
-									</div>
-								) : (
-									<Skeleton
-										className={
-											item.name === "picture" ? "h-14.5 rounded-xl" : "h-4"
-										}
-									/>
-								)}
+								<Skeleton
+									className={
+										item.name === "picture" ? "h-14.5 rounded-xl" : "h-4"
+									}
+								/>
 							</TableCell>
 						))}
 						<TableCell border className="py-0.5 w-26 max-w-26 min-w-26">

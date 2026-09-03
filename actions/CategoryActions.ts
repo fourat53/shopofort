@@ -51,14 +51,16 @@ async function getCategoriesPage(
 	const where = buildWhereClause(filterParams);
 	const orderBy = buildOrderClause(sortBy, order);
 	return unstable_cache(
-		async () =>
-			prisma.category.findMany({
+		async () => {
+			const categories = await prisma.category.findMany({
 				where,
 				skip: (page - 1) * pageSize,
 				take: pageSize,
 				orderBy,
-				// include: { products: true },
-			}),
+				include: { products: true },
+			});
+			return JSON.parse(JSON.stringify(categories));
+		},
 		[
 			"categories-page",
 			String(page),

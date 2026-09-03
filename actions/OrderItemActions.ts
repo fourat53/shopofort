@@ -64,13 +64,9 @@ async function getOrderItemsPage(
 				skip: (page - 1) * pageSize,
 				take: pageSize,
 				orderBy,
-				// include: {	order: true,	product: true}
+				include: { order: true, product: true },
 			});
-			return orderItems.map(({ id, price, ...rest }) => ({
-				id,
-				price: Number(price),
-				...rest,
-			}));
+			return JSON.parse(JSON.stringify(orderItems));
 		},
 		[
 			"order-items-page",

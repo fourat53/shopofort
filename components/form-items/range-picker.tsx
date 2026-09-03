@@ -14,6 +14,7 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from "@/components/ui/popover";
+import { formatDate } from "@/lib/date";
 
 interface DateRangePickerProps {
 	fromName: string;
@@ -90,8 +91,8 @@ export default function RangePicker({
 
 	const displayValue = range?.from
 		? range.to
-			? `${format(range.from, "MMM d, yyyy, HH:mm:ss")} - ${format(range.to, "MMM d, yyyy, HH:mm:ss")}`
-			: `${format(range.from, "MMM d, yyyy, HH:mm:ss")} - Select an end date`
+			? `${formatDate(range.from)} - ${formatDate(range.to)}`
+			: `${formatDate(range.from)} - Select an end date`
 		: "Select a date range";
 
 	return (

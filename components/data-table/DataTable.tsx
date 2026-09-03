@@ -29,7 +29,7 @@ export default function DataTable<T extends { id: StringNumber }>({
 	rows,
 	dialog = false,
 }: DataTableProps<T>) {
-	console.log(entity + ":\n" + JSON.stringify(rows.slice(5), null, 2));
+	console.log(entity + ":\n" + JSON.stringify(rows.slice(1), null, 2));
 	return (
 		<>
 			{rows.length === 0 ? (
@@ -76,23 +76,26 @@ export default function DataTable<T extends { id: StringNumber }>({
 										type="select-one"
 									/>
 								</TableCell>
-								{Object.values(row).map((value, cIndex) => (
-									<TableCell
-										key={`cell-${row.id}-${cIndex}`}
-										border
-										className="h-[33.6px]"
-										style={{
-											width: header[cIndex].width,
-											minWidth: header[cIndex].width,
-										}}
-									>
-										<ContentCell
-											rowId={row.id}
-											headerName={header[cIndex].name}
-											value={value}
-										/>
-									</TableCell>
-								))}
+								{Object.values(row).map(
+									(value, cIndex) =>
+										!Array.isArray(value) &&
+										typeof value !== "object" && (
+											<TableCell
+												key={`cell-${row.id}-${cIndex}`}
+												border
+												className="h-[33.6px] truncate"
+												style={{
+													width: header[cIndex].width,
+													minWidth: header[cIndex].width,
+												}}
+											>
+												<ContentCell
+													value={value}
+													headerName={header[cIndex].name}
+												/>
+											</TableCell>
+										),
+								)}
 								<TableCell border className="w-26 min-w-26 max-w-26 py-0.5">
 									<div className="flex items-center justify-center gap-1.5">
 										<ListDialog

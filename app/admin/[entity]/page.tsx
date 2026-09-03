@@ -24,7 +24,7 @@ export default async function EntityPage({
 }: EntityPageProps) {
 	const { entity } = await params;
 	const { page: _page, sortBy, order, ...filterParams } = await searchParams;
-	const withImage = ["users", "products"].includes(entity);
+	const withImage = ["users"].includes(entity);
 
 	const totalCount = await getEntityCount(entity, filterParams);
 	const { page, totalPages } = getPaginationParams(

@@ -33,8 +33,8 @@ const ORDERS_HEADER: HeaderItem[] = [
 
 const ORDER_ITEMS_HEADER: HeaderItem[] = [
 	{ name: "id", width: "150px" },
-	{ name: "price", width: "auto" },
 	{ name: "quantity", width: "150px" },
+	{ name: "price", width: "auto" },
 	{ name: "orderId", width: "150px" },
 	{ name: "productId", width: "150px" },
 ];
@@ -42,12 +42,11 @@ const ORDER_ITEMS_HEADER: HeaderItem[] = [
 const PRODUCTS_HEADER: HeaderItem[] = [
 	{ name: "id", width: "108px" },
 	{ name: "name", width: "160px" },
-	{ name: "price", width: "100px" },
 	{ name: "brand", width: "120px" },
+	{ name: "price", width: "100px" },
 	{ name: "inventory", width: "100px" },
 	{ name: "description", width: "264px" },
 	{ name: "categoryId", width: "100px" },
-	{ name: "images", width: "264px" },
 ];
 
 const USERS_HEADER: HeaderItem[] = [

@@ -3,7 +3,9 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { getEntityById } from "@/actions/EntityActions";
-import ContentCell from "@/components/data-table/table-cells/ContentCell";
+import ContentCell, {
+	type ValueType,
+} from "@/components/data-table/table-cells/ContentCell";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
 	Tooltip,
@@ -105,17 +107,13 @@ function SkeletonRow() {
 	);
 }
 
-function DataRow({ name, value }: { name: string; value: unknown }) {
+function DataRow({ name, value }: { name: string; value: ValueType }) {
 	return (
 		<div className="grid grid-cols-[2fr_5fr] gap-x-1">
 			<p className="w-22 font-medium text-muted-foreground">
 				{getFieldName(name)}:
 			</p>
-			<ContentCell
-				headerName={name}
-				value={Array.isArray(value) ? [...value] : String(value)}
-				tooltip
-			/>
+			<ContentCell headerName={name} value={value} tooltip />
 		</div>
 	);
 }

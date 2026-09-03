@@ -1,4 +1,4 @@
-import { type EntityType, Audience, OrderStatus } from "@/lib/entity/types";
+import { Audience, type EntityType, OrderStatus } from "@/lib/entity/types";
 
 type FieldType = "string" | "number" | "date" | "enum" | "foreignKey" | "image";
 

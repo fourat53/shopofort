@@ -8,8 +8,8 @@ import FilterForm from "@/components/forms/filter-form";
 import CurrentEntity from "@/components/title/CurrentEntity";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import { getEntityFields } from "@/lib/entity/entity-fields";
 import { isValidDate } from "@/lib/date";
+import { getEntityFields } from "@/lib/entity/entity-fields";
 
 export default function FilterDialog() {
 	const entity = CurrentEntity();

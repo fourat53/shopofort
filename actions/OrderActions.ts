@@ -73,13 +73,14 @@ async function getOrdersPage(
 	const orderBy = buildOrderClause(sortBy, order);
 	return unstable_cache(
 		async () => {
-			return await prisma.order.findMany({
+			const orders = await prisma.order.findMany({
 				where,
 				skip: (page - 1) * pageSize,
 				take: pageSize,
 				orderBy,
-				// include: { orderItems: true },
+				include: { orderItems: true },
 			});
+			return JSON.parse(JSON.stringify(orders));
 		},
 		[
 			"orders-page",

@@ -1,6 +1,7 @@
 import { IconList } from "@tabler/icons-react";
 import { Suspense } from "react";
 import DataTableSkeleton from "@/components/data-table/DataTableSkeleton";
+import EntityTable from "@/components/entity-tables/EntityTable";
 import { Button } from "@/components/ui/button";
 import {
 	Dialog,
@@ -16,7 +17,6 @@ import {
 	ORDER_ITEMS_HEADER,
 } from "@/lib/entity/entity-header";
 import { EntityType, OptionField } from "@/lib/entity/types";
-import EntityTable from "@/components/entity-tables/EntityTable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 
 interface ListDialogProps {

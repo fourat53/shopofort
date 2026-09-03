@@ -2,7 +2,7 @@ import { unstable_cache } from "next/cache";
 import {
 	CACHE_SECONDS,
 	FILTER_CACHE_SECONDS,
-	IMAGE_PAGE_SIZE,
+	PAGE_SIZE,
 } from "@/components/pagination/PaginationParams";
 import { getParamValues } from "@/lib/entity/entity-functions";
 import { PRODUCTS_HEADER } from "@/lib/entity/entity-header";
@@ -59,7 +59,7 @@ async function getProductsPage(
 	order: "asc" | "desc" = "asc",
 	sortBy: string = "id",
 	filterParams: ParameterType = {},
-	pageSize: number = IMAGE_PAGE_SIZE,
+	pageSize: number = PAGE_SIZE,
 ) {
 	const where = buildWhereClause(filterParams);
 	const orderBy = buildOrderClause(sortBy, order);
@@ -70,14 +70,9 @@ async function getProductsPage(
 				skip: (page - 1) * pageSize,
 				take: pageSize,
 				orderBy,
-				// include: { cartItems: true, orderItems: true, category: true },
+				include: { cartItems: true, orderItems: true, category: true },
 			});
-			return products.map(({ id, name, price, ...rest }) => ({
-				id,
-				name,
-				price: Number(price),
-				...rest,
-			}));
+			return JSON.parse(JSON.stringify(products));
 		},
 		[
 			"products-page",

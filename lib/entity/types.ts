@@ -1,16 +1,15 @@
 import type {
-	Cart,
-	CartItem as CartItemType,
-	Category,
-	Order,
-	OrderItem as OrderItemType,
-	Product as ProductType,
+	CartItem as CartItemDb,
+	Cart as CartType,
+	Category as CategoryType,
+	OrderItem as OrderItemDb,
+	Order as OrderType,
+	Product as ProductDb,
 } from "@/prisma/generated/prisma/client";
 import { Audience, OrderStatus } from "@/prisma/generated/prisma/enums";
 
-// MODEL TYPES ----------------------------------------------------------------------
-
-type User = {
+// PLAIN MODEL TYPES ----------------------------------------------------------------------
+type UserType = {
 	id: string;
 	picture: string;
 	email: string;
@@ -24,17 +23,35 @@ type User = {
 	updated_on: Date;
 };
 
-type Product = Omit<ProductType, "price"> & { price: number };
+type ProductType = Omit<ProductDb, "price"> & { price: number };
 
-type CartItem = Omit<CartItemType, "unitPrice" | "totalPrice"> & {
+type CartItemType = Omit<CartItemDb, "unitPrice" | "totalPrice"> & {
 	unitPrice: number;
 	totalPrice: number;
 };
 
-type OrderItem = Omit<OrderItemType, "price"> & { price: number };
+type OrderItemType = Omit<OrderItemDb, "price"> & { price: number };
+
+// MAPPED MODEL TYPES ---------------------------------------------------------------------
+type User = UserType;
+
+type Category = CategoryType & { products: ProductType[] };
+
+type Product = ProductType & {
+	cartItems: CartItemType[];
+	orderItems: OrderItemType[];
+	category: CategoryType | null;
+};
+
+type Cart = CartType & { cartItems: CartItemType[] };
+
+type CartItem = CartItemType & { cart: CartType; product: ProductType };
+
+type Order = OrderType & { orderItems: OrderItemType[] };
+
+type OrderItem = OrderItemType & { order: OrderType; product: ProductType };
 
 // ENTITY TYPES ---------------------------------------------------------------------
-
 enum EntityType {
 	users = "users",
 	carts = "carts",
@@ -55,8 +72,7 @@ enum OptionField {
 	orderItemId = "orderItemId",
 }
 
-// ENTITY TYPES ---------------------------------------------------------------------
-
+// OTHER TYPES ---------------------------------------------------------------------
 type StringNumber = string | number;
 
 type ParameterType = Record<string, string | string[] | undefined>;
