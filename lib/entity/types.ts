@@ -23,7 +23,7 @@ type UserType = {
 	updated_on: Date;
 };
 
-type ProductType = Omit<ProductDb, "price"> & { price: number };
+type ProductType = Omit<ProductDb, "price" | "images"> & { price: number };
 
 type CartItemType = Omit<CartItemDb, "unitPrice" | "totalPrice"> & {
 	unitPrice: number;
@@ -38,16 +38,17 @@ type User = UserType;
 type Category = CategoryType & { products: ProductType[] };
 
 type Product = ProductType & {
-	"cart-items": CartItemType[];
-	"order-items": OrderItemType[];
+	images: string[];
+	cartItems: CartItemType[];
+	orderItems: OrderItemType[];
 	category: CategoryType;
 };
 
-type Cart = CartType & { "cart-items": CartItemType[] };
+type Cart = CartType & { cartItems: CartItemType[] };
 
 type CartItem = CartItemType & { cart: CartType; product: ProductType };
 
-type Order = OrderType & { "order-items": OrderItemType[] };
+type Order = OrderType & { orderItems: OrderItemType[] };
 
 type OrderItem = OrderItemType & { order: OrderType; product: ProductType };
 
@@ -77,21 +78,43 @@ type StringNumber = string | number;
 
 type ParameterType = Record<string, string | string[] | undefined>;
 
-type ValueType = StringNumber | boolean;
+type CellValue = StringNumber | boolean | Date | null;
+
+type ValueType =
+	| CellValue
+	| string[]
+	| CategoryType
+	| CartType
+	| OrderType
+	| ProductType
+	| ProductType[]
+	| CartItemType[]
+	| OrderItemType[];
 
 type RowType = Record<string, ValueType> & { id: StringNumber };
+
+type ListRowType = ProductType | CartItemType | OrderItemType;
 
 export type {
 	Cart,
 	CartItem,
+	CartItemType,
+	CartType,
 	Category,
+	CategoryType,
+	CellValue,
+	ListRowType,
 	Order,
 	OrderItem,
+	OrderItemType,
+	OrderType,
 	ParameterType,
 	Product,
+	ProductType,
 	RowType,
 	StringNumber,
 	User,
+	UserType,
 	ValueType,
 };
 export { Audience, EntityType, OptionField, OrderStatus };

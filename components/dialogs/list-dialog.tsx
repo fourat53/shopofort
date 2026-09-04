@@ -1,64 +1,44 @@
 import { IconList } from "@tabler/icons-react";
+import Image from "next/image";
 import { Suspense } from "react";
 import DataTableSkeleton from "@/components/data-table/DataTableSkeleton";
-import EntityTable from "@/components/entity-tables/EntityTable";
 import { Button } from "@/components/ui/button";
 import {
-	Dialog,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from "@/components/ui/dialog";
+	Carousel,
+	CarouselContent,
+	CarouselItem,
+	CarouselNext,
+	CarouselPrevious,
+} from "@/components/ui/carousel";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getPluralName, getSingleName } from "@/lib/entity/functions";
-import {
-	CART_ITEMS_HEADER,
-	type HeaderItem,
-	ORDER_ITEMS_HEADER,
-} from "@/lib/entity/headers";
-import { EntityType, OptionField } from "@/lib/entity/types";
+import { getFieldEntity, getFieldName } from "@/lib/entity/functions";
+import { getHeader } from "@/lib/entity/headers";
+import { EntityType, type ListRowType, type RowType } from "@/lib/entity/types";
+import DataTable from "../data-table/DataTable";
 
-interface ListDialogProps {
-	entity: EntityType;
-	id?: number;
-	dialog?: boolean;
+interface ListDialogProps<T> {
+	row?: T;
+	entity?: EntityType;
 	disabled?: boolean;
 }
 
-export default async function ListDialog({
-	id,
+export default async function ListDialog<T extends RowType>({
+	row,
 	entity,
-	dialog,
 	disabled,
-}: ListDialogProps) {
-	if (dialog) return null;
+}: ListDialogProps<T>) {
+	if (
+		!entity ||
+		[
+			EntityType["order-items"],
+			EntityType["cart-items"],
+			EntityType.users,
+		].includes(entity)
+	)
+		return null;
 
-	let header: HeaderItem[];
-	let idField: OptionField;
-	let tableEntity: EntityType;
-
-	switch (entity) {
-		case EntityType.carts:
-			header = CART_ITEMS_HEADER;
-			idField = OptionField.cartId;
-			tableEntity = EntityType["cart-items"];
-			break;
-		case EntityType.products:
-			header = CART_ITEMS_HEADER;
-			idField = OptionField.productId;
-			tableEntity = EntityType["cart-items"];
-			break;
-		case EntityType.orders:
-			header = ORDER_ITEMS_HEADER;
-			idField = OptionField.orderId;
-			tableEntity = EntityType["order-items"];
-			break;
-		default:
-			return null;
-	}
-
-	if (!id || disabled) {
+	if (!row || disabled)
 		return (
 			<Button
 				variant="ghost"
@@ -67,7 +47,6 @@ export default async function ListDialog({
 				icon={<IconList className="size-4 text-mist-400" />}
 			/>
 		);
-	}
 
 	return (
 		<Dialog>
@@ -81,46 +60,87 @@ export default async function ListDialog({
 			</DialogTrigger>
 			<DialogContent
 				showCloseButton
-				className="min-h-57 max-h-[85vh] min-w-[85vw] flex flex-col gap-4"
+				className="[calc(100vh-100px)] min-w-fit overflow-y-hidden flex flex-col gap-4"
 			>
-				<DialogHeader>
-					<DialogTitle className="py-0">
-						List of {getPluralName(tableEntity)} with {getSingleName(entity)} Id{" "}
-						{id}
-					</DialogTitle>
-				</DialogHeader>
-				<Suspense
-					fallback={<DataTableSkeleton entity={tableEntity} header={header} />}
-				>
-					<Tabs
-						defaultValue="cart-items"
-						className="w-full flex flex-col items-center gap-3"
-					>
-						<TabsList>
-							<TabsTrigger value="cart-items">Cart Items</TabsTrigger>
-							<TabsTrigger value="order-items">Order Items</TabsTrigger>
-						</TabsList>
-						<TabsContent value="cart-items">
-							<EntityTable
-								dialog
-								entity={tableEntity}
-								header={header}
-								pageSize={10000}
-								filterParams={{ [idField]: String(id) }}
-							/>
-						</TabsContent>
-						<TabsContent value="order-items">
-							<EntityTable
-								dialog
-								entity={tableEntity}
-								header={header}
-								pageSize={10000}
-								filterParams={{ [idField]: String(id) }}
-							/>
-						</TabsContent>
-					</Tabs>
-				</Suspense>
+				<Tabs className="w-full flex flex-col items-center gap-4">
+					<TabsList>
+						{Object.entries(row).map(([name, value]) => {
+							if (!Array.isArray(value)) return null;
+							return (
+								<TabsTrigger key={name} value={name}>
+									{getFieldName(name)}
+								</TabsTrigger>
+							);
+						})}
+					</TabsList>
+					{Object.entries(row).map(([name, value]) => {
+						if (!Array.isArray(value)) return null;
+						const entity: EntityType = getFieldEntity(name) as EntityType;
+						const header = getHeader(entity);
+						return (
+							<TabsContent
+								key={name}
+								value={name}
+								className="h-[calc(100vh-152px)] min-w-[70vw]"
+							>
+								{name === "images" &&
+								value.every((i) => typeof i === "string") ? (
+									<ImageCarousel images={value} />
+								) : (
+									<Suspense
+										fallback={
+											<DataTableSkeleton entity={entity} header={header} />
+										}
+									>
+										<DataTable<ListRowType>
+											dialog
+											entity={entity}
+											header={header}
+											rows={name in row ? (row[name] as ListRowType[]) : []}
+											className="h-[calc(100vh-152px)]"
+										/>
+									</Suspense>
+								)}
+							</TabsContent>
+						);
+					})}
+				</Tabs>
 			</DialogContent>
 		</Dialog>
+	);
+}
+
+function ImageCarousel({ images }: { images: string[] }) {
+	if (images.length === 0)
+		return (
+			<div className="w-full h-[calc(100vh-152px)] bg-chart-1/40 dark:bg-sidebar-accent/40 flex items-center justify-center border rounded-lg text-muted-foreground">
+				No images available
+			</div>
+		);
+	return (
+		<Carousel>
+			<CarouselContent className="w-[70vw]">
+				{images.map((image, index) => (
+					<CarouselItem
+						key={index}
+						className="p-0 h-[calc(100vh-152px)] bg-mist-300 dark:bg-mist-950 flex justify-center items-center rounded-xl"
+					>
+						<Image
+							src={image}
+							alt={image}
+							width={1000}
+							height={1000}
+							className="h-[calc(100vh-152px)] w-auto"
+						/>
+					</CarouselItem>
+				))}
+			</CarouselContent>
+			{images.length > 1 && (
+				<>
+					<CarouselPrevious />
+					<CarouselNext />
+				</>
+			)}
+		</Carousel>
 	);
 }

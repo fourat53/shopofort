@@ -38,20 +38,20 @@ function ImagePreview({
 	const src = isFile ? objectUrl : item;
 
 	return (
-		<div className="relative w-28 h-28 border rounded-lg overflow-hidden group">
+		<div className="relative group">
 			{src ? (
 				<Image
 					src={src}
 					alt={isFile ? item.name : `Image ${src}`}
-					fill
-					sizes="100%"
-					className="object-cover"
+					width={1000}
+					height={1000}
+					className="size-28 object-cover border rounded-lg"
 				/>
 			) : null}
 			<button
 				type="button"
 				onClick={onRemove}
-				className="hover:cursor-pointer absolute top-1 right-1 bg-black/60 hover:bg-black text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+				className="hover:cursor-pointer absolute top-1 right-1 bg-mist-800/80 hover:bg-mist-800 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
 			>
 				<IconX className="w-3 h-3" />
 			</button>

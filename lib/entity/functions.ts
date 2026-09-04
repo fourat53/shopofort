@@ -33,6 +33,13 @@ function getFieldName(name: string) {
 		.replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
+function getFieldEntity(name: string) {
+	return name
+		.replace(/([a-z0-9])([A-Z])/g, "$1-$2")
+		.replace(/[_\s]+/g, "-")
+		.toLowerCase();
+}
+
 function getPluralName(name: EntityType) {
 	return name.replace(/-/g, " ");
 }
@@ -57,6 +64,7 @@ function formatOption(
 export {
 	formatOption,
 	getEntityTooltip,
+	getFieldEntity,
 	getFieldName,
 	getForeignKeyName,
 	getParamValues,

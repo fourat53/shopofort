@@ -4,18 +4,18 @@ import DeleteDialog from "@/components/dialogs/delete-dialog";
 import EditDialog from "@/components/dialogs/edit-dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useSelection } from "@/hooks/use-selection";
-import type { EntityType, StringNumber } from "@/lib/entity/types";
+import type { EntityType, RowType, StringNumber } from "@/lib/entity/types";
 
 type CheckboxType = "select-all" | "select-one" | "actions";
 
-interface CheckBoxCellProps<T extends { id: StringNumber }> {
+interface CheckBoxCellProps<T> {
 	entity: EntityType;
 	rows: T[];
 	type: CheckboxType;
 	id?: StringNumber;
 }
 
-export default function CheckBoxCell<T extends { id: StringNumber }>({
+export default function CheckBoxCell<T extends RowType>({
 	entity,
 	rows,
 	type,

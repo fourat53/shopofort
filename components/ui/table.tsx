@@ -3,15 +3,22 @@
 import type * as React from "react";
 import { cn } from "@/lib/utils";
 
-function Table({ className, ...props }: React.ComponentProps<"table">) {
+function Table({
+	className,
+	parentClassName,
+	...props
+}: React.ComponentProps<"table"> & { parentClassName?: string }) {
 	return (
 		<div
 			data-slot="table-container"
-			className="w-full max-h-[calc(100vh-152px)] overflow-auto overscroll-none rounded-lg border"
+			className={cn(
+				"w-full max-h-[calc(100vh-152px)] overflow-auto overscroll-none rounded-lg border",
+				parentClassName,
+			)}
 		>
 			<table
 				data-slot="table"
-				className={cn("w-full caption-bottom text-xs", className)}
+				className={cn("w-full border-b caption-bottom text-xs", className)}
 				{...props}
 			/>
 		</div>

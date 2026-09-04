@@ -2,6 +2,7 @@
 
 import { IconCheck, IconChevronDown } from "@tabler/icons-react";
 import { type ReactNode, useEffect, useState } from "react";
+import SmallLoader from "@/components/loaders/small-loader";
 import { Button } from "@/components/ui/button";
 import {
 	Command,
@@ -19,7 +20,6 @@ import {
 } from "@/components/ui/popover";
 import type { StringNumber } from "@/lib/entity/types";
 import { cn } from "@/lib/utils";
-import SmallLoader from "@/components/loaders/small-loader";
 
 type SelectOption = {
 	value: string;

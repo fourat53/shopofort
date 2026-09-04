@@ -25,7 +25,7 @@ const CATEGORIES_HEADER: HeaderItem[] = [
 
 const ORDERS_HEADER: HeaderItem[] = [
 	{ name: "id", width: "150px" },
-	{ name: "orderDate", width: "160px" },
+	{ name: "orderDate", width: "170px" },
 	{ name: "totalAmount", width: "150px" },
 	{ name: "orderStatus", width: "auto" },
 	{ name: "userId", width: "255px" },
@@ -58,9 +58,9 @@ const USERS_HEADER: HeaderItem[] = [
 	{ name: "is_suspended", width: " 110px" },
 	{ name: "total_sign_ins", width: "120px" },
 	{ name: "failed_sign_ins", width: "120px" },
-	{ name: "last_signed_in", width: "160px" },
-	{ name: "created_on", width: "160px" },
-	{ name: "updated_on", width: "160px" },
+	{ name: "last_signed_in", width: "170px" },
+	{ name: "created_on", width: "170px" },
+	{ name: "updated_on", width: "170px" },
 ];
 
 function getHeader(entity: EntityType): HeaderItem[] {

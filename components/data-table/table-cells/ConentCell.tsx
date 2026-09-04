@@ -3,6 +3,7 @@ import Image from "next/image";
 import EntityTooltip from "@/components/data-table/tooltips/EntityTooltip";
 import { formatDate, isValidDate } from "@/lib/date";
 import {
+	type CellValue,
 	OptionField,
 	OrderStatus,
 	type RowType,
@@ -11,12 +12,12 @@ import {
 
 interface ContentCellProps<T> {
 	row?: T;
-	value: ValueType;
+	value: CellValue;
 	headerName: string;
 	tooltip?: boolean;
 }
 
-function cellTitle(value: ValueType, name: string) {
+function cellTitle(value: CellValue, name: string) {
 	if (
 		Object.values(OptionField).includes(name as OptionField) ||
 		value === null ||
@@ -24,7 +25,8 @@ function cellTitle(value: ValueType, name: string) {
 	)
 		return undefined;
 	if (typeof value === "boolean") return String(value);
-	if (isValidDate(value)) return formatDate(String(value));
+	if (value instanceof Date || isValidDate(value))
+		return formatDate(String(value));
 	return String(value);
 }
 
@@ -38,11 +40,11 @@ export default function ContentCell<T extends RowType>({
 
 	return (
 		<div title={cellTitle(value, headerName)} className="truncate">
-			{value === "null" || value === "" ? (
+			{value === "null" || !value ? (
 				"-"
 			) : typeof value === "boolean" ? (
 				String(value)
-			) : isValidDate(value) ? (
+			) : value instanceof Date || isValidDate(value) ? (
 				formatDate(String(value))
 			) : !tooltip &&
 				Object.values(OptionField).includes(headerName as OptionField) ? (

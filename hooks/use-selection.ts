@@ -1,9 +1,7 @@
 "use client";
 
 import { useEffect, useSyncExternalStore } from "react";
-import type { StringNumber } from "@/lib/entity/types";
-
-type Row = { id: StringNumber };
+import type { RowType, StringNumber } from "@/lib/entity/types";
 
 let selectedIds = new Set<StringNumber>();
 
@@ -35,7 +33,7 @@ function updateSelection(
 	}
 }
 
-function useSelection<T extends Row>(rows: T[]) {
+function useSelection<T extends RowType>(rows: T[]) {
 	const currentSelectedIds = useSyncExternalStore(
 		subscribe,
 		getSnapshot,

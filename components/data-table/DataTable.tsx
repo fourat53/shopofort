@@ -12,30 +12,39 @@ import {
 } from "@/components/ui/table";
 import { getFieldName } from "@/lib/entity/functions";
 import type { HeaderItem } from "@/lib/entity/headers";
-import type { EntityType, StringNumber } from "@/lib/entity/types";
+import type { EntityType, RowType } from "@/lib/entity/types";
+import ListDialog from "../dialogs/list-dialog";
 import ContentCell from "./table-cells/ConentCell";
+import { cn } from "cn";
 
 interface DataTableProps<T> {
 	entity: EntityType;
 	header: HeaderItem[];
 	rows: T[];
+	className?: string;
 	dialog?: boolean;
 }
 
-export default function DataTable<T extends { id: StringNumber }>({
+export default function DataTable<T extends RowType>({
 	entity,
 	header,
 	rows,
+	className,
 	dialog = false,
 }: DataTableProps<T>) {
 	return (
 		<>
 			{rows.length === 0 ? (
-				<div className="w-full h-40 bg-chart-1/40 dark:bg-sidebar-accent/40 flex items-center justify-center border rounded-lg text-muted-foreground">
+				<div
+					className={cn(
+						"w-full h-[calc(100vh-152px)] bg-chart-1/40 dark:bg-sidebar-accent/40 flex items-center justify-center border rounded-lg text-muted-foreground",
+						className,
+					)}
+				>
 					No data available
 				</div>
 			) : (
-				<Table>
+				<Table parentClassName={className}>
 					<TableHeader>
 						<TableRow>
 							<TableHead>
@@ -82,20 +91,22 @@ export default function DataTable<T extends { id: StringNumber }>({
 												border
 												className="h-[33.6px] truncate"
 												style={{
-													width: header[cIndex].width,
-													minWidth: header[cIndex].width,
+													width: header[cIndex]?.width,
+													minWidth: header[cIndex]?.width,
 												}}
 											>
 												<ContentCell<T>
 													row={row}
 													value={value}
-													headerName={header[cIndex].name}
+													headerName={header[cIndex]?.name}
+													tooltip={dialog}
 												/>
 											</TableCell>
 										),
 								)}
 								<TableCell border className="w-26 min-w-26 max-w-26 py-0.5">
 									<div className="flex items-center justify-center gap-1.5">
+										<ListDialog<T> entity={entity} row={row} />
 										<EditDialog<T> entity={entity} rows={[row]} />
 										<DeleteDialog entity={entity} ids={[row.id]} />
 									</div>

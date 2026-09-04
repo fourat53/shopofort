@@ -59,7 +59,7 @@ export default function CreateEditForm<T extends RowType>({
 
 	useEffect(() => {
 		if (!open || entity !== "products") return;
-		setImages(Array.isArray(rows[0].images) ? rows[0].images : []);
+		setImages("images" in rows[0] ? (rows[0].images as string[]) : []);
 		return;
 	}, [open, entity, rows]);
 

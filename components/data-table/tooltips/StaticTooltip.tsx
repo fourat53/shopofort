@@ -9,7 +9,7 @@ import {
 	getFieldName,
 	getSingleName,
 } from "@/lib/entity/functions";
-import type { OptionField, RowType, ValueType } from "@/lib/entity/types";
+import type { CellValue, OptionField, RowType } from "@/lib/entity/types";
 
 interface StaticTooltipProps<T> {
 	row?: T;
@@ -48,12 +48,12 @@ export default function StaticTooltip<T extends RowType>({
 						return null;
 					if (!value) return "-";
 					return Object.entries(value).map(([objectName, objectValue]) => {
-						if (objectName === "images") return null;
+						if (Array.isArray(objectValue)) return null;
 						return (
 							<DataRow
 								key={`${name}-${objectName}`}
 								name={objectName}
-								value={objectValue as ValueType}
+								value={objectValue as CellValue}
 							/>
 						);
 					});
@@ -63,7 +63,7 @@ export default function StaticTooltip<T extends RowType>({
 	);
 }
 
-export function DataRow({ name, value }: { name: string; value: ValueType }) {
+export function DataRow({ name, value }: { name: string; value: CellValue }) {
 	return (
 		<div className="grid grid-cols-[2fr_5fr] gap-x-1">
 			<p className="w-22 font-medium text-muted-foreground">
