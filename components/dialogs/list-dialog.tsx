@@ -19,7 +19,7 @@ import DataTable from "../data-table/DataTable";
 
 interface ListDialogProps<T> {
 	row?: T;
-	entity?: EntityType;
+	entity: EntityType;
 	disabled?: boolean;
 }
 
@@ -29,7 +29,6 @@ export default async function ListDialog<T extends RowType>({
 	disabled,
 }: ListDialogProps<T>) {
 	if (
-		!entity ||
 		[
 			EntityType["order-items"],
 			EntityType["cart-items"],

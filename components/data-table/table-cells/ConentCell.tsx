@@ -40,7 +40,7 @@ export default function ContentCell<T extends RowType>({
 
 	return (
 		<div title={cellTitle(value, headerName)} className="truncate">
-			{value === "null" || !value ? (
+			{value === "null" || value === undefined || value === null ? (
 				"-"
 			) : typeof value === "boolean" ? (
 				String(value)
