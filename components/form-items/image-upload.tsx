@@ -44,7 +44,8 @@ function ImagePreview({
 					src={src}
 					alt={isFile ? item.name : `Image ${src}`}
 					fill
-					className="h-full w-fit object-cover"
+					sizes="100%"
+					className="object-cover"
 				/>
 			) : null}
 			<button

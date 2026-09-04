@@ -1,4 +1,4 @@
-import { USERS_HEADER } from "@/lib/entity/entity-header";
+import { USERS_HEADER } from "@/lib/entity/headers";
 import type { ParameterType, User } from "@/lib/entity/types";
 
 function mapUser(user: User): User {

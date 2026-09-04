@@ -1,11 +1,11 @@
+import {
+	IMAGE_PAGE_SIZE,
+	PAGE_SIZE,
+} from "@/components/data-table/pagination/PaginationParams";
 import SortableTableHead from "@/components/data-table/table-cells/SortableTableHead";
 import DeleteDialog from "@/components/dialogs/delete-dialog";
 import EditDialog from "@/components/dialogs/edit-dialog";
 import ListDialog from "@/components/dialogs/list-dialog";
-import {
-	IMAGE_PAGE_SIZE,
-	PAGE_SIZE,
-} from "@/components/pagination/PaginationParams";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -16,7 +16,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import type { HeaderItem } from "@/lib/entity/entity-header";
+import type { HeaderItem } from "@/lib/entity/headers";
 import type { EntityType } from "@/lib/entity/types";
 
 interface DataTableSkeletonProps {

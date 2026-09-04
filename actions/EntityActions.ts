@@ -9,8 +9,8 @@ import {
 	updateUser,
 } from "@/actions/UserActions";
 import type { SelectOption } from "@/components/form-items/select";
-import { getFormEntity } from "@/lib/entity/entity-form";
-import { formatOption } from "@/lib/entity/entity-functions";
+import { getFormEntity } from "@/lib/entity/forms";
+import { formatOption } from "@/lib/entity/functions";
 import {
 	EntityType,
 	OptionField,
@@ -129,13 +129,13 @@ async function createEntity(
 			result = await prisma.order.create({
 				data: data as Prisma.OrderCreateInput,
 			});
-		else if (entity === EntityType.products)
-			result = await prisma.product.create({
-				data: data as Prisma.ProductCreateInput,
-			});
 		else if (entity === EntityType.categories)
 			result = await prisma.category.create({
 				data: data as Prisma.CategoryCreateInput,
+			});
+		else if (entity === EntityType.products)
+			result = await prisma.product.create({
+				data: data as unknown as Prisma.ProductCreateInput,
 			});
 		else if (entity === EntityType["cart-items"])
 			result = await prisma.cartItem.create({
@@ -251,7 +251,6 @@ async function updateEntity(
 				data: data as Prisma.OrderItemUpdateInput,
 				where,
 			});
-		console.log("Updated Entity:", JSON.stringify(result, null, 2));
 		return JSON.parse(JSON.stringify(result));
 	} catch (error) {
 		console.error(error);

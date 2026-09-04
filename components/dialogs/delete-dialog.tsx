@@ -1,11 +1,9 @@
 "use client";
 
 import { IconTrash } from "@tabler/icons-react";
-import { clsx } from "clsx";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { deleteEntities, deleteEntity } from "@/actions/EntityActions";
-import EntityTooltip from "@/components/data-table/table-cells/EntityTooltip";
 import { Button } from "@/components/ui/button";
 import {
 	Dialog,
@@ -15,12 +13,8 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-	getForeignKeyName,
-	getPluralName,
-	getSingleName,
-} from "@/lib/entity/entity-functions";
-import { EntityType, type StringNumber } from "@/lib/entity/types";
+import { getPluralName, getSingleName } from "@/lib/entity/functions";
+import type { EntityType, StringNumber } from "@/lib/entity/types";
 
 interface DeleteDialogProps {
 	entity?: EntityType;
@@ -110,22 +104,7 @@ export default function DeleteDialog({
 							<span className="font-semibold text-foreground">
 								{ids.length} selected {getPluralName(entity)}
 							</span>{" "}
-							and remove their data from our servers. This is the list of their
-							Ids:
-							<span
-								className={clsx(
-									"py-3 grid gap-1",
-									entity === EntityType.users ? "grid-cols-2" : "grid-cols-5",
-								)}
-							>
-								{ids.map((id) => (
-									<EntityTooltip
-										key={id}
-										idValue={String(id)}
-										headerName={getForeignKeyName(entity)}
-									/>
-								))}
-							</span>
+							and remove their data from our servers.
 						</div>
 					)}
 				</div>

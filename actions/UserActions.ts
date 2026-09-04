@@ -1,11 +1,13 @@
+"use server";
+
 import { unstable_cache, updateTag } from "next/cache";
 import { filterUsers, mapUser } from "@/actions/UserFunctions";
 import {
 	CACHE_SECONDS,
 	FILTER_CACHE_SECONDS,
 	IMAGE_PAGE_SIZE,
-} from "@/components/pagination/PaginationParams";
-import { getFormUser } from "@/lib/entity/entity-form";
+} from "@/components/data-table/pagination/PaginationParams";
+import { getFormUser } from "@/lib/entity/forms";
 import type { ParameterType, User } from "@/lib/entity/types";
 import { checkedEnvVar } from "@/lib/env";
 import { prisma } from "@/lib/prisma";
@@ -36,20 +38,26 @@ async function getKindeToken() {
 	return data.access_token;
 }
 
-async function getUserById(id: string) {
-	const token = await getKindeToken();
+async function getUserById(id: string): Promise<User> {
+	try {
+		const token = await getKindeToken();
 
-	const res = await fetch(`${kindeIssuerUrl}/api/v1/user?id=${id}`, {
-		method: "GET",
-		headers: {
-			Authorization: `Bearer ${token}`,
-			Accept: "application/json",
-		},
-		cache: "no-store",
-	});
+		const res = await fetch(`${kindeIssuerUrl}/api/v1/user?id=${id}`, {
+			method: "GET",
+			headers: {
+				Authorization: `Bearer ${token}`,
+				Accept: "application/json",
+			},
+			cache: "no-store",
+		});
 
-	const user = await res.json();
-	return mapUser(user);
+		const user = await res.json();
+
+		return JSON.parse(JSON.stringify(mapUser(user)));
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
 }
 
 async function deleteUser(id: string) {
@@ -64,7 +72,7 @@ async function deleteUser(id: string) {
 	});
 
 	if (!response.ok) {
-		throw new Error(`Failed to delete user: ${response.status}`);
+		throw new Error(response.status.toString());
 	}
 
 	await prisma.cart.delete({ where: { userId: id } });
@@ -91,7 +99,7 @@ async function updateUser(id: string, formData: FormData) {
 	});
 
 	if (!response.ok) {
-		throw new Error(`Failed to update user: ${response.status}`);
+		throw new Error(response.status.toString());
 	}
 
 	return response.json();

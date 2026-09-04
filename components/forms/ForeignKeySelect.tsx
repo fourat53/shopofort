@@ -1,20 +1,21 @@
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+
 import { getFilterOptions } from "@/actions/EntityActions";
 import { Select, type SelectOption } from "@/components/form-items/select";
-import type { FieldConfig } from "@/lib/entity/entity-fields";
+import type { FieldConfig } from "@/lib/entity/fields";
 import {
 	getFieldName,
 	getForeignKeyName,
-	getPluralName,
-} from "@/lib/entity/entity-functions";
+	getSingleName,
+} from "@/lib/entity/functions";
 import type { EntityType, OptionField } from "@/lib/entity/types";
 
 interface ForeignKeySelectProps {
 	field: FieldConfig;
 	fields: { name: string; type: string }[];
 	entity: EntityType;
-	firstItem: { label: "All"; value: "ALL" } | { label: "None"; value: "NONE" };
+	multiple?: boolean;
 	defaultValue: string | string[] | undefined;
 }
 
@@ -22,10 +23,12 @@ export default function ForeignKeySelect({
 	field: { name, required = false },
 	fields,
 	entity,
-	firstItem,
+	multiple = false,
 	defaultValue,
 }: ForeignKeySelectProps) {
 	const fetchedFields = useRef<Set<string>>(new Set());
+
+	const [loadingCache, setLoadingCache] = useState<Record<string, boolean>>({});
 	const [optionsCache, setOptionsCache] = useState<
 		Record<string, SelectOption[]>
 	>({});
@@ -39,6 +42,10 @@ export default function ForeignKeySelect({
 
 				if (fetchedFields.current.has(optionField)) continue;
 				fetchedFields.current.add(optionField);
+				setLoadingCache((current) => ({
+					...current,
+					[field.name]: true,
+				}));
 				try {
 					const options = await getFilterOptions(optionField as OptionField);
 					setOptionsCache((current) => ({
@@ -46,28 +53,35 @@ export default function ForeignKeySelect({
 						[field.name]: options,
 					}));
 				} catch {
+					fetchedFields.current.delete(optionField);
 					toast.error(
 						<>
-							<p>Failed to filter ${getPluralName(entity)}.</p>
+							<p>Failed to fetch {getSingleName(entity)} options.</p>
 							<p className="text-muted-foreground">Please try again.</p>
 						</>,
 					);
-					fetchedFields.current.delete(optionField);
+				} finally {
+					setLoadingCache((current) => ({
+						...current,
+						[field.name]: false,
+					}));
 				}
 			}
 		}
+
 		loadOptions();
 	}, [fields, entity]);
 
 	return (
 		<Select
-			multiple
 			key={name}
 			name={name}
+			multiple={multiple}
+			loading={loadingCache[name] ?? false}
 			required={required}
 			label={getFieldName(name)}
 			defaultValue={defaultValue}
-			items={[firstItem, ...(optionsCache[name] ?? [])]}
+			items={optionsCache[name] ?? []}
 		/>
 	);
 }

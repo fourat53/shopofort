@@ -9,7 +9,7 @@ import CurrentEntity from "@/components/title/CurrentEntity";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { isValidDate } from "@/lib/date";
-import { getEntityFields } from "@/lib/entity/entity-fields";
+import { getEntityFields } from "@/lib/entity/fields";
 
 export default function FilterDialog() {
 	const entity = CurrentEntity();

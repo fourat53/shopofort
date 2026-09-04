@@ -23,13 +23,13 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
-import { getEntityFields } from "@/lib/entity/entity-fields";
+import { getEntityFields } from "@/lib/entity/fields";
 import {
 	getFieldName,
 	getPluralName,
 	getSingleName,
-} from "@/lib/entity/entity-functions";
-import type { EntityType, StringNumber } from "@/lib/entity/types";
+} from "@/lib/entity/functions";
+import type { EntityType, RowType } from "@/lib/entity/types";
 import { addImagesToForm } from "@/lib/uploadthing/client";
 import ForeignKeySelect from "./ForeignKeySelect";
 
@@ -40,9 +40,12 @@ interface DialogFormProps<T> {
 	rows: T[];
 }
 
-export default function CreateEditForm<
-	T extends Record<string, unknown> & { id: StringNumber },
->({ entity, open, setOpen, rows }: DialogFormProps<T>) {
+export default function CreateEditForm<T extends RowType>({
+	entity,
+	open,
+	setOpen,
+	rows,
+}: DialogFormProps<T>) {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [images, setImages] = useState<ImageItem[]>([]);
 
@@ -146,13 +149,9 @@ export default function CreateEditForm<
 								key={name}
 								name={name}
 								label={label}
-								defaultValue={value?.toString() || "NONE"}
+								defaultValue={value?.toString()}
 								required={required}
-								items={[
-									{ label: "None", value: "NONE" },
-									...(field.options?.map((o) => ({ label: o, value: o })) ??
-										[]),
-								]}
+								items={field.options?.map((o) => ({ label: o, value: o }))}
 							/>
 						) : type === "foreignKey" ? (
 							<ForeignKeySelect
@@ -160,8 +159,7 @@ export default function CreateEditForm<
 								field={field}
 								entity={entity}
 								fields={fields}
-								defaultValue={value?.toString() || "NONE"}
-								firstItem={{ label: "None", value: "NONE" }}
+								defaultValue={value?.toString()}
 							/>
 						) : null;
 					})}

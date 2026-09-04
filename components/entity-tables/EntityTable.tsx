@@ -5,7 +5,7 @@ import OrderItemsTable from "@/components/entity-tables/OrderItemsTable";
 import OrdersTable from "@/components/entity-tables/OrdersTable";
 import ProductsTable from "@/components/entity-tables/ProductsTable";
 import UsersTable from "@/components/entity-tables/UsersTable";
-import type { HeaderItem } from "@/lib/entity/entity-header";
+import type { HeaderItem } from "@/lib/entity/headers";
 import { EntityType } from "@/lib/entity/types";
 
 interface EntityTableProps {

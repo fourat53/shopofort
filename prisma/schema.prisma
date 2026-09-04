@@ -46,11 +46,11 @@ model Product {
   price       Decimal     @db.Decimal(10, 2)
   inventory   Int
   description String?
-  categoryId  Int?
+  categoryId  Int
   images      String[]
   cartItems   CartItem[]
   orderItems  OrderItem[]
-  category    Category?   @relation(fields: [categoryId], references: [id])
+  category    Category   @relation(fields: [categoryId], references: [id])
 
   @@map("products")
 }

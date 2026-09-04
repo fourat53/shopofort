@@ -8,9 +8,9 @@ import {
 import { clsx } from "clsx";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTransition } from "react";
-import { sortHref } from "@/components/pagination/PaginationParams";
+import { sortHref } from "@/components/data-table/pagination/PaginationParams";
 import { TableHead } from "@/components/ui/table";
-import { getFieldName } from "@/lib/entity/entity-functions";
+import { getFieldName } from "@/lib/entity/functions";
 import type { EntityType } from "@/lib/entity/types";
 
 interface SortableTableHeadProps {

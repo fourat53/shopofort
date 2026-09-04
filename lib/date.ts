@@ -20,7 +20,7 @@ function isValidDate(value: unknown): boolean {
 }
 
 function formatDate(value: string | Date): string {
-	return format(new Date(value), "MMM d, yyyy, HH:mm:ss");
+	return format(new Date(value), "MMM d, yyyy, hh:mm:ss a");
 }
 
 export { formatDate, isValidDate };

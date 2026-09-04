@@ -1,16 +1,16 @@
 import { clsx } from "clsx";
 import Image from "next/image";
-import EntityTooltip from "@/components/data-table/table-cells/EntityTooltip";
+import EntityTooltip from "@/components/data-table/tooltips/EntityTooltip";
 import { formatDate, isValidDate } from "@/lib/date";
 import {
 	OptionField,
 	OrderStatus,
-	type StringNumber,
+	type RowType,
+	type ValueType,
 } from "@/lib/entity/types";
 
-type ValueType = StringNumber | boolean | undefined | null;
-
-interface CellContentProps {
+interface ContentCellProps<T> {
+	row?: T;
 	value: ValueType;
 	headerName: string;
 	tooltip?: boolean;
@@ -28,24 +28,29 @@ function cellTitle(value: ValueType, name: string) {
 	return String(value);
 }
 
-export default function ContentCell({
+export default function ContentCell<T extends RowType>({
+	row,
 	value,
 	headerName,
 	tooltip = false,
-}: CellContentProps) {
+}: ContentCellProps<T>) {
 	const imageSize = tooltip ? "32px" : "58px";
 
 	return (
 		<div title={cellTitle(value, headerName)} className="truncate">
-			{value === null || value === undefined ? (
+			{value === "null" || value === "" ? (
 				"-"
 			) : typeof value === "boolean" ? (
 				String(value)
 			) : isValidDate(value) ? (
 				formatDate(String(value))
-			) : Object.values(OptionField).includes(headerName as OptionField) &&
-				headerName !== "userId" ? (
-				<EntityTooltip headerName={headerName as OptionField} idValue={value} />
+			) : !tooltip &&
+				Object.values(OptionField).includes(headerName as OptionField) ? (
+				<EntityTooltip<T>
+					row={row}
+					id={value}
+					headerName={headerName as OptionField}
+				/>
 			) : headerName === "orderStatus" ? (
 				<p
 					className={clsx(

@@ -1,11 +1,13 @@
+"use server";
+
 import { unstable_cache } from "next/cache";
 import {
 	CACHE_SECONDS,
 	FILTER_CACHE_SECONDS,
 	PAGE_SIZE,
-} from "@/components/pagination/PaginationParams";
-import { getParamValues } from "@/lib/entity/entity-functions";
-import { PRODUCTS_HEADER } from "@/lib/entity/entity-header";
+} from "@/components/data-table/pagination/PaginationParams";
+import { getParamValues } from "@/lib/entity/functions";
+import { PRODUCTS_HEADER } from "@/lib/entity/headers";
 import type { ParameterType } from "@/lib/entity/types";
 import { prisma } from "@/lib/prisma";
 import type { Prisma } from "@/prisma/generated/prisma/client";

@@ -6,7 +6,7 @@ import {
 	getVisiblePages,
 	pageHref,
 	parsePage,
-} from "@/components/pagination/PaginationParams";
+} from "@/components/data-table/pagination/PaginationParams";
 import { buttonVariants } from "@/components/ui/button-variants";
 import {
 	Pagination,

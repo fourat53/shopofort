@@ -5,7 +5,7 @@ import {
 	type StringNumber,
 } from "./types";
 
-function getTooltipEntity(name: OptionField): EntityType {
+function getEntityTooltip(name: OptionField): EntityType {
 	if (name === "userId") return EntityType.users;
 	else if (name === "productId") return EntityType.products;
 	else if (name === "orderId") return EntityType.orders;
@@ -56,10 +56,10 @@ function formatOption(
 
 export {
 	formatOption,
+	getEntityTooltip,
 	getFieldName,
 	getForeignKeyName,
 	getParamValues,
 	getPluralName,
 	getSingleName,
-	getTooltipEntity,
 };

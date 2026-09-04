@@ -10,7 +10,6 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
-import { InputGroup, InputGroupAddon } from "@/components/ui/input-group";
 import { cn } from "@/lib/utils";
 
 function Command({
@@ -66,20 +65,21 @@ function CommandInput({
 	...props
 }: React.ComponentProps<typeof CommandPrimitive.Input>) {
 	return (
-		<div data-slot="command-input-wrapper" className="px-1 pt-1.25 pb-0.5">
-			<InputGroup className="h-6.5! bg-input/20 dark:bg-input/30 rounded-md">
-				<CommandPrimitive.Input
-					data-slot="command-input"
-					className={cn(
-						"w-full text-xs/relaxed outline-hidden disabled:cursor-not-allowed disabled:opacity-50",
-						className,
-					)}
-					{...props}
-				/>
-				<InputGroupAddon>
-					<IconSearch className="size-3.5 shrink-0 opacity-50" />
-				</InputGroupAddon>
-			</InputGroup>
+		<div
+			data-slot="command-input-wrapper"
+			className="relative px-1 pt-1.25 pb-0.5"
+		>
+			<CommandPrimitive.Input
+				{...props}
+				data-slot="command-input"
+				className={cn(
+					"h-6.5 w-full rounded-md bg-input/20 px-2 pe-8 text-xs/relaxed outline-hidden",
+					"dark:bg-input/30",
+					"disabled:cursor-not-allowed disabled:opacity-50",
+					className,
+				)}
+			/>
+			<IconSearch className="pointer-events-none absolute inset-e-3 top-1/2 size-3.5 -translate-y-1/2 shrink-0 opacity-50" />
 		</div>
 	);
 }
@@ -90,9 +90,9 @@ function CommandList({
 }: React.ComponentProps<typeof CommandPrimitive.List>) {
 	return (
 		<CommandPrimitive.List
+			{...props}
 			data-slot="command-list"
 			className={className}
-			{...props}
 		/>
 	);
 }
@@ -104,7 +104,10 @@ function CommandEmpty({
 	return (
 		<CommandPrimitive.Empty
 			data-slot="command-empty"
-			className={cn("py-6 text-center text-xs/relaxed", className)}
+			className={cn(
+				"flex items-center justify-center text-xs/relaxed",
+				className,
+			)}
 			{...props}
 		/>
 	);
@@ -118,7 +121,7 @@ function CommandGroup({
 		<CommandPrimitive.Group
 			data-slot="command-group"
 			className={cn(
-				"overflow-hidden p-1 text-foreground **:[[cmdk-group-heading]]:px-2.5 **:[[cmdk-group-heading]]:py-1.5 **:[[cmdk-group-heading]]:text-xs **:[[cmdk-group-heading]]:font-medium **:[[cmdk-group-heading]]:text-muted-foreground",
+				"overflow-hidden p-1.5 text-foreground **:[[cmdk-group-heading]]:text-xs **:[[cmdk-group-heading]]:font-medium **:[[cmdk-group-heading]]:text-muted-foreground",
 				className,
 			)}
 			{...props}
@@ -148,18 +151,16 @@ function CommandItem({
 	...props
 }: React.ComponentProps<typeof CommandPrimitive.Item>) {
 	return (
-		<div className="pb-0.75">
-			<CommandPrimitive.Item
-				data-slot="command-item"
-				className={cn(
-					"group/command-item relative flex h-9 sm:h-6.5 cursor-pointer items-center gap-2 px-2 py-1.5 text-xs/relaxed outline-hidden select-none data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3.5 hover:bg-muted rounded-md",
-					className,
-				)}
-				{...props}
-			>
-				{children}
-			</CommandPrimitive.Item>
-		</div>
+		<CommandPrimitive.Item
+			data-slot="command-item"
+			className={cn(
+				"group/command-item relative flex h-9 sm:h-6.5 cursor-pointer items-center gap-2 px-2 py-1.5 text-xs/relaxed outline-hidden select-none data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3.5 hover:bg-muted rounded-md",
+				className,
+			)}
+			{...props}
+		>
+			{children}
+		</CommandPrimitive.Item>
 	);
 }
 

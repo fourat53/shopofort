@@ -1,10 +1,10 @@
 import { Suspense } from "react";
 import { getEntityCount } from "@/actions/EntityActions";
 import DataTableSkeleton from "@/components/data-table/DataTableSkeleton";
+import DataTablePagination from "@/components/data-table/pagination/DataTablePagination";
+import { getPaginationParams } from "@/components/data-table/pagination/PaginationParams";
 import EntityTable from "@/components/entity-tables/EntityTable";
-import DataTablePagination from "@/components/pagination/DataTablePagination";
-import { getPaginationParams } from "@/components/pagination/PaginationParams";
-import { getHeader } from "@/lib/entity/entity-header";
+import { getHeader } from "@/lib/entity/headers";
 import type { EntityType } from "@/lib/entity/types";
 
 interface EntityPageProps {

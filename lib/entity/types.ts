@@ -38,16 +38,16 @@ type User = UserType;
 type Category = CategoryType & { products: ProductType[] };
 
 type Product = ProductType & {
-	cartItems: CartItemType[];
-	orderItems: OrderItemType[];
-	category: CategoryType | null;
+	"cart-items": CartItemType[];
+	"order-items": OrderItemType[];
+	category: CategoryType;
 };
 
-type Cart = CartType & { cartItems: CartItemType[] };
+type Cart = CartType & { "cart-items": CartItemType[] };
 
 type CartItem = CartItemType & { cart: CartType; product: ProductType };
 
-type Order = OrderType & { orderItems: OrderItemType[] };
+type Order = OrderType & { "order-items": OrderItemType[] };
 
 type OrderItem = OrderItemType & { order: OrderType; product: ProductType };
 
@@ -77,6 +77,10 @@ type StringNumber = string | number;
 
 type ParameterType = Record<string, string | string[] | undefined>;
 
+type ValueType = StringNumber | boolean;
+
+type RowType = Record<string, ValueType> & { id: StringNumber };
+
 export type {
 	Cart,
 	CartItem,
@@ -85,7 +89,9 @@ export type {
 	OrderItem,
 	ParameterType,
 	Product,
+	RowType,
 	StringNumber,
 	User,
+	ValueType,
 };
 export { Audience, EntityType, OptionField, OrderStatus };

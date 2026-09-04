@@ -1,9 +1,7 @@
 import CheckBoxCell from "@/components/data-table/table-cells/CheckBoxCell";
-import ContentCell from "@/components/data-table/table-cells/ContentCell";
 import SortableTableHead from "@/components/data-table/table-cells/SortableTableHead";
 import DeleteDialog from "@/components/dialogs/delete-dialog";
 import EditDialog from "@/components/dialogs/edit-dialog";
-import ListDialog from "@/components/dialogs/list-dialog";
 import {
 	Table,
 	TableBody,
@@ -12,9 +10,10 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { getFieldName } from "@/lib/entity/entity-functions";
-import type { HeaderItem } from "@/lib/entity/entity-header";
+import { getFieldName } from "@/lib/entity/functions";
+import type { HeaderItem } from "@/lib/entity/headers";
 import type { EntityType, StringNumber } from "@/lib/entity/types";
+import ContentCell from "./table-cells/ConentCell";
 
 interface DataTableProps<T> {
 	entity: EntityType;
@@ -29,7 +28,6 @@ export default function DataTable<T extends { id: StringNumber }>({
 	rows,
 	dialog = false,
 }: DataTableProps<T>) {
-	console.log(entity + ":\n" + JSON.stringify(rows.slice(1), null, 2));
 	return (
 		<>
 			{rows.length === 0 ? (
@@ -78,7 +76,6 @@ export default function DataTable<T extends { id: StringNumber }>({
 								</TableCell>
 								{Object.values(row).map(
 									(value, cIndex) =>
-										!Array.isArray(value) &&
 										typeof value !== "object" && (
 											<TableCell
 												key={`cell-${row.id}-${cIndex}`}
@@ -89,7 +86,8 @@ export default function DataTable<T extends { id: StringNumber }>({
 													minWidth: header[cIndex].width,
 												}}
 											>
-												<ContentCell
+												<ContentCell<T>
+													row={row}
 													value={value}
 													headerName={header[cIndex].name}
 												/>
@@ -98,11 +96,6 @@ export default function DataTable<T extends { id: StringNumber }>({
 								)}
 								<TableCell border className="w-26 min-w-26 max-w-26 py-0.5">
 									<div className="flex items-center justify-center gap-1.5">
-										<ListDialog
-											id={row.id as number}
-											entity={entity}
-											dialog={dialog}
-										/>
 										<EditDialog<T> entity={entity} rows={[row]} />
 										<DeleteDialog entity={entity} ids={[row.id]} />
 									</div>

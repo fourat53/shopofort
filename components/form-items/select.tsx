@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import {
 	Command,
 	CommandEmpty,
+	CommandGroup,
 	CommandInput,
 	CommandItem,
 	CommandList,
@@ -18,6 +19,7 @@ import {
 } from "@/components/ui/popover";
 import type { StringNumber } from "@/lib/entity/types";
 import { cn } from "@/lib/utils";
+import SmallLoader from "@/components/loaders/small-loader";
 
 type SelectOption = {
 	value: string;
@@ -34,7 +36,7 @@ interface SelectProps {
 	defaultValue?: string | string[] | undefined;
 	autoDefaultValue?: boolean;
 	multiple?: boolean;
-	onValueChange?: (value: string) => void;
+	onValueChange?: (value: string | undefined) => void;
 	onValuesChange?: (values: string[]) => void;
 	disabled?: boolean;
 	className?: string;
@@ -42,6 +44,7 @@ interface SelectProps {
 	items?: SelectOption[];
 	searchable?: boolean;
 	isDefaultOpen?: boolean;
+	loading?: boolean;
 }
 
 function Select({
@@ -59,8 +62,9 @@ function Select({
 	className,
 	parentClassName,
 	items = [],
-	searchable = true,
 	isDefaultOpen,
+	searchable = true,
+	loading = false,
 }: SelectProps) {
 	const [open, setOpen] = useState(isDefaultOpen || false);
 	const [internalValue, setInternalValue] = useState<string | string[]>(
@@ -129,6 +133,13 @@ function Select({
 			return;
 		}
 
+		if (selectedValue === currentValue) {
+			setInternalValue("");
+			onValueChange?.(undefined);
+			setOpen(false);
+			return;
+		}
+
 		setInternalValue(currentValue);
 		onValueChange?.(currentValue);
 		setOpen(false);
@@ -164,7 +175,7 @@ function Select({
 							onChange={(e) => handleSelect(e.target.value)}
 						/>
 					))}
-				<Popover open={open} onOpenChange={setOpen}>
+				<Popover open={open} onOpenChange={setOpen} modal={true}>
 					<PopoverTrigger asChild>
 						<Button
 							variant="ghost"
@@ -191,27 +202,37 @@ function Select({
 							<IconChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 shrink-0 opacity-50" />
 						</Button>
 					</PopoverTrigger>
-					<PopoverContent className="w-80 sm:w-90">
+					<PopoverContent className="p-0 w-80 sm:w-88">
 						<Command className="bg-transparent" filter={filterItems}>
 							{searchable && <CommandInput placeholder="Search options" />}
-							<CommandList className="z-50 p-1 pb-0.5 max-h-60 overflow-y-auto overflow-x-hidden">
-								<CommandEmpty>No option found</CommandEmpty>
-								{items.map((item, index) => (
-									<CommandItem
-										key={index}
-										value={item.value}
-										onSelect={handleSelect}
-										className={cn(
-											isSelected(item.value) &&
-												"bg-primary hover:bg-primary/90 text-white hover:text-white",
-										)}
-									>
-										<ItemContent item={item} />
-										{isSelected(item.value) && (
-											<IconCheck className="size-4 absolute right-2 top-1/2 -translate-y-1/2" />
-										)}
-									</CommandItem>
-								))}
+							<CommandList className="max-h-60 overflow-y-auto overflow-x-hidden">
+								{loading ? (
+									<SmallLoader className="h-60" />
+								) : (
+									<>
+										<CommandEmpty className="h-60">
+											No options found.
+										</CommandEmpty>
+										<CommandGroup className="p-1">
+											{items.map((item) => (
+												<CommandItem
+													key={item.value}
+													value={item.value}
+													onSelect={handleSelect}
+													className={cn(
+														isSelected(item.value) &&
+															"bg-primary hover:bg-primary/90 text-white hover:text-white",
+													)}
+												>
+													<ItemContent item={item} />
+													{isSelected(item.value) && (
+														<IconCheck className="size-4 absolute right-2 top-1/2 -translate-y-1/2" />
+													)}
+												</CommandItem>
+											))}
+										</CommandGroup>
+									</>
+								)}
 							</CommandList>
 						</Command>
 					</PopoverContent>
@@ -242,7 +263,7 @@ function ButtonContent({
 				: String(item.label);
 		});
 		return (
-			<span className="block w-full truncate" title={labels.join(", ")}>
+			<span title={labels.join(", ")} className="block w-full truncate">
 				{labels.join(", ")}
 			</span>
 		);
@@ -250,17 +271,17 @@ function ButtonContent({
 	if (!selectedItem) return placeholder || "Select an option";
 	if (Array.isArray(selectedItem.label) && selectedItem.label.length === 2) {
 		return (
-			<div className="absolute top-1/2 -translate-y-1/2 w-[calc(100%-34px)] flex max-sm:flex-col sm:gap-1.5 items-start sm:items-center sm:justify-between">
+			<div className="absolute top-1/2 -translate-y-1/2 w-[calc(100%-38px)] flex max-sm:flex-col sm:gap-1.5 items-start sm:items-center sm:justify-between">
 				<p
-					className="truncate max-w-full sm:max-w-[50%]"
 					title={String(selectedItem.label[0])}
+					className="truncate max-w-full sm:max-w-[50%]"
 				>
 					{selectedItem.label[0]}
 				</p>
 
 				<p
-					className="truncate max-w-full sm:max-w-[50%] sm:text-right"
 					title={String(selectedItem.label[1])}
+					className="truncate max-w-full sm:max-w-[50%] sm:text-right"
 				>
 					{selectedItem.label[1]}
 				</p>
@@ -269,8 +290,8 @@ function ButtonContent({
 	}
 	return (
 		<div
-			className="absolute top-1/2 -translate-y-1/2 w-[calc(100%-50px)] flex items-center sm:gap-1.5 truncate"
-			title={typeof selectedItem.label === "string" ? selectedItem.label : ""}
+			title={String(selectedItem.label) || undefined}
+			className="absolute top-1/2 -translate-y-1/2 w-[calc(100%-38px)] flex items-center sm:gap-1.5 truncate"
 		>
 			{selectedItem.icon}
 			<span className="truncate max-w-full">{selectedItem.label}</span>
@@ -281,17 +302,17 @@ function ButtonContent({
 function ItemContent({ item }: { item: SelectOption }) {
 	if (Array.isArray(item.label) && item.label.length === 2) {
 		return (
-			<div className="text-xs absolute top-1/2 -translate-y-1/2 w-[calc(100%-34px)] flex max-sm:flex-col sm:gap-1.5 sm:items-center sm:justify-between">
+			<div className="text-xs absolute top-1/2 -translate-y-1/2 w-[calc(100%-36px)] flex max-sm:flex-col sm:gap-1.5 sm:items-center sm:justify-between">
 				<p
-					className="truncate max-w-full sm:max-w-[50%]"
 					title={String(item.label[0])}
+					className="truncate max-w-full sm:max-w-[50%]"
 				>
 					{item.label[0]}
 				</p>
 
 				<p
-					className="truncate max-w-full sm:max-w-[50%] sm:text-right"
 					title={String(item.label[1])}
+					className="truncate max-w-full sm:max-w-[50%] sm:text-right"
 				>
 					{item.label[1]}
 				</p>
@@ -300,8 +321,8 @@ function ItemContent({ item }: { item: SelectOption }) {
 	}
 	return (
 		<div
+			title={String(item.label) || undefined}
 			className="absolute top-1/2 -translate-y-1/2 w-full flex items-center sm:gap-1.5 truncate"
-			title={typeof item.label === "string" ? item.label : ""}
 		>
 			{item.icon}
 			<span className="truncate max-w-full">{item.label}</span>

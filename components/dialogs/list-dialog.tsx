@@ -10,14 +10,14 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
-import { getPluralName, getSingleName } from "@/lib/entity/entity-functions";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { getPluralName, getSingleName } from "@/lib/entity/functions";
 import {
 	CART_ITEMS_HEADER,
 	type HeaderItem,
 	ORDER_ITEMS_HEADER,
-} from "@/lib/entity/entity-header";
+} from "@/lib/entity/headers";
 import { EntityType, OptionField } from "@/lib/entity/types";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 
 interface ListDialogProps {
 	entity: EntityType;

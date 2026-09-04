@@ -23,8 +23,8 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
-import { getEntityFields } from "@/lib/entity/entity-fields";
-import { getFieldName, getSingleName } from "@/lib/entity/entity-functions";
+import { getEntityFields } from "@/lib/entity/fields";
+import { getFieldName, getSingleName } from "@/lib/entity/functions";
 import type { EntityType } from "@/lib/entity/types";
 
 import { addImagesToForm } from "@/lib/uploadthing/client";
@@ -128,13 +128,9 @@ export default function CreateForm({ entity, open, setOpen }: CreateFormProps) {
 								key={name}
 								name={name}
 								label={label}
-								defaultValue={defaultValue?.toString() || "NONE"}
+								defaultValue={defaultValue?.toString()}
 								required={required}
-								items={[
-									{ label: "None", value: "NONE" },
-									...(field.options?.map((o) => ({ label: o, value: o })) ??
-										[]),
-								]}
+								items={field.options?.map((o) => ({ label: o, value: o }))}
 							/>
 						) : type === "foreignKey" ? (
 							<ForeignKeySelect
@@ -142,8 +138,7 @@ export default function CreateForm({ entity, open, setOpen }: CreateFormProps) {
 								field={field}
 								entity={entity}
 								fields={fields}
-								defaultValue={defaultValue?.toString() || "NONE"}
-								firstItem={{ label: "None", value: "NONE" }}
+								defaultValue={defaultValue?.toString()}
 							/>
 						) : null;
 					})}

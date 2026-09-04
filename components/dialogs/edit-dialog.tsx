@@ -5,7 +5,7 @@ import { useState } from "react";
 import CreateEditForm from "@/components/forms/edit-form";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import type { EntityType, StringNumber } from "@/lib/entity/types";
+import type { EntityType, RowType } from "@/lib/entity/types";
 
 interface EditDialogProps<T> {
 	entity?: EntityType;
@@ -13,9 +13,11 @@ interface EditDialogProps<T> {
 	disabled?: boolean;
 }
 
-export default function EditDialog<
-	T extends Record<string, unknown> & { id: StringNumber },
->({ entity, rows, disabled }: EditDialogProps<T>) {
+export default function EditDialog<T extends RowType>({
+	entity,
+	rows,
+	disabled,
+}: EditDialogProps<T>) {
 	const [open, setOpen] = useState<boolean>(false);
 
 	const display = rows && rows.length > 0 && entity;

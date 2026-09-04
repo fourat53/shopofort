@@ -11,8 +11,8 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
-import type { ENTITY_FIELDS } from "@/lib/entity/entity-fields";
-import { getFieldName, getPluralName } from "@/lib/entity/entity-functions";
+import type { ENTITY_FIELDS } from "@/lib/entity/fields";
+import { getFieldName, getPluralName } from "@/lib/entity/functions";
 import type { EntityType } from "@/lib/entity/types";
 import FilterRangeNumber from "./FilterRangeNumber";
 import ForeignKeySelect from "./ForeignKeySelect";
@@ -84,20 +84,17 @@ export default function FilterForm({
 								key={name}
 								name={name}
 								label={label}
-								defaultValue={searchParams.getAll(name) ?? ["ALL"]}
-								items={[
-									{ label: "Any", value: "ALL" },
-									...(options?.map((o) => ({ label: o, value: o })) ?? []),
-								]}
+								defaultValue={searchParams.getAll(name)}
+								items={options?.map((o) => ({ label: o, value: o }))}
 							/>
 						) : type === "foreignKey" ? (
 							<ForeignKeySelect
 								key={name}
+								multiple
 								field={field}
 								entity={entity}
 								fields={fields}
-								defaultValue={searchParams.getAll(name) ?? ["ALL"]}
-								firstItem={{ label: "All", value: "ALL" }}
+								defaultValue={searchParams.getAll(name)}
 							/>
 						) : null;
 					})}
