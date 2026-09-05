@@ -1,3 +1,4 @@
+import { cn } from "cn";
 import CheckBoxCell from "@/components/data-table/table-cells/CheckBoxCell";
 import SortableTableHead from "@/components/data-table/table-cells/SortableTableHead";
 import DeleteDialog from "@/components/dialogs/delete-dialog";
@@ -15,7 +16,6 @@ import type { HeaderItem } from "@/lib/entity/headers";
 import type { EntityType, RowType } from "@/lib/entity/types";
 import ListDialog from "../dialogs/list-dialog";
 import ContentCell from "./table-cells/ConentCell";
-import { cn } from "cn";
 
 interface DataTableProps<T> {
 	entity: EntityType;

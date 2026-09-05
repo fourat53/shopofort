@@ -8,6 +8,8 @@ import { cn } from "@/lib/utils";
 import { KindeProvider } from "@/providers/kinde-provider";
 import ThemeProvider from "@/providers/theme-provider";
 import "@/app/globals.css";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Toaster } from "@/components/ui/sonner";
 
 const oxanium = Oxanium({ subsets: ["latin"], variable: "--font-sans" });
@@ -39,6 +41,8 @@ export default function RootLayout({
 			)}
 		>
 			<body className="min-h-screen text-foreground bg-sidebar">
+				<Analytics />
+				<SpeedInsights />
 				<DocumentTitle />
 				<ThemeProvider>
 					<KindeProvider>
