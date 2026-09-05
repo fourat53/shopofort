@@ -1,7 +1,7 @@
 import { clsx } from "clsx";
 import Image from "next/image";
 import EntityTooltip from "@/components/data-table/tooltips/EntityTooltip";
-import { formatDate, isValidDate } from "@/lib/date";
+import { formatDateTime, isValidDate } from "@/lib/date";
 import {
 	type CellValue,
 	OptionField,
@@ -26,7 +26,7 @@ function cellTitle(value: CellValue, name: string) {
 		return undefined;
 	if (typeof value === "boolean") return String(value);
 	if (value instanceof Date || isValidDate(value))
-		return formatDate(String(value));
+		return formatDateTime(String(value));
 	return String(value);
 }
 
@@ -40,12 +40,15 @@ export default function ContentCell<T extends RowType>({
 
 	return (
 		<div title={cellTitle(value, headerName)} className="truncate">
-			{value === "null" || value === undefined || value === null ? (
+			{value === "null" ||
+			value === undefined ||
+			value === null ||
+			value === "" ? (
 				"-"
 			) : typeof value === "boolean" ? (
 				String(value)
 			) : value instanceof Date || isValidDate(value) ? (
-				formatDate(String(value))
+				formatDateTime(String(value))
 			) : !tooltip &&
 				Object.values(OptionField).includes(headerName as OptionField) ? (
 				<EntityTooltip<T>

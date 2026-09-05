@@ -38,7 +38,13 @@ export default function UserTooltip({ id }: { id: string }) {
 
 	return (
 		<Tooltip open={open} onOpenChange={handleOpenChange}>
-			<TooltipTrigger className="w-fit underline cursor-pointer hover:text-primary transition-colors text-left">
+			<TooltipTrigger
+				className="w-fit underline cursor-pointer hover:text-primary transition-colors text-left"
+				onClick={(e) => {
+					e.preventDefault();
+					handleOpenChange(true);
+				}}
+			>
 				{id}
 			</TooltipTrigger>
 			<TooltipContent

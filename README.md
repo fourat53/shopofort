@@ -37,7 +37,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 pnpm biome format --write .
 
 <!-- Biome auto sort imports -->
-- verify required fields
+-ON IT: verify required fields
 - make a dashboard design with shadcn UI and display statistics
 
 Important: Since I don't have AWS S3 account, the images in uploadthing file service free tier.

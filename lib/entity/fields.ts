@@ -168,6 +168,7 @@ const ENTITY_FIELDS: Record<EntityType, FieldConfig[]> = {
 			category: ["filter", "create", "edit"],
 			options: Object.values(OrderStatus),
 			defaultValue: OrderStatus.PENDING,
+			required: true,
 		},
 		{
 			name: "userId",

@@ -2,7 +2,6 @@
 
 import { IconCalendar, IconX } from "@tabler/icons-react";
 import { clsx } from "clsx";
-import { format } from "date-fns";
 import * as React from "react";
 import type { DateRange } from "react-day-picker";
 import { Button } from "@/components/ui/button";
@@ -14,7 +13,7 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from "@/components/ui/popover";
-import { formatDate } from "@/lib/date";
+import { dateTimeFormat, formatTime } from "@/lib/date";
 
 interface DateRangePickerProps {
 	fromName: string;
@@ -36,7 +35,6 @@ export default function RangePicker({
 	time = true,
 }: DateRangePickerProps) {
 	const [open, setOpen] = React.useState(false);
-
 	const [range, setRange] = React.useState<DateRange | undefined>(() => {
 		const from = defaultFrom ? new Date(defaultFrom) : undefined;
 		const to = defaultTo ? new Date(defaultTo) : undefined;
@@ -90,9 +88,9 @@ export default function RangePicker({
 	};
 
 	const displayValue = range?.from
-		? range.to
-			? `${formatDate(range.from)} - ${formatDate(range.to)}`
-			: `${formatDate(range.from)} - Select an end date`
+		? range?.to
+			? `${dateTimeFormat(range.from, time)} - ${dateTimeFormat(range.to, time)}`
+			: `${dateTimeFormat(range.from, time)} - Select an end date`
 		: "Select a date range";
 
 	return (
@@ -100,19 +98,19 @@ export default function RangePicker({
 			<Label required={required}>{label}</Label>
 
 			<input
-				type="hidden"
+				type="text"
 				name={fromName}
 				value={range?.from?.toISOString() ?? ""}
 				required={required}
-				className="sr-only"
+				className="translate-y-12 sr-only"
 			/>
 
 			<input
-				type="hidden"
+				type="text"
 				name={toName}
 				value={range?.to?.toISOString() ?? ""}
 				required={required}
-				className="sr-only"
+				className="translate-y-12 sr-only"
 			/>
 
 			<Popover open={open} onOpenChange={setOpen}>
@@ -157,8 +155,7 @@ export default function RangePicker({
 								<Input
 									type="time"
 									step="1"
-									value={range?.from ? format(range.from, "HH:mm:ss") : ""}
-									disabled={!range?.from}
+									value={range?.from ? formatTime(range.from) : ""}
 									onChange={(event) => handleTimeChange("from", event)}
 									className="text-center appearance-none dark:bg-background [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
 								/>
@@ -169,8 +166,7 @@ export default function RangePicker({
 								<Input
 									type="time"
 									step="1"
-									value={range?.to ? format(range.to, "HH:mm:ss") : ""}
-									disabled={!range?.to}
+									value={range?.to ? formatTime(range.to) : ""}
 									onChange={(event) => handleTimeChange("to", event)}
 									className="text-center appearance-none dark:bg-background [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
 								/>

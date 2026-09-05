@@ -1,3 +1,5 @@
+"use client";
+
 import ContentCell from "@/components/data-table/table-cells/ConentCell";
 import {
 	Tooltip,
@@ -10,6 +12,7 @@ import {
 	getSingleName,
 } from "@/lib/entity/functions";
 import type { CellValue, OptionField, RowType } from "@/lib/entity/types";
+import { useState } from "react";
 
 interface StaticTooltipProps<T> {
 	row?: T;
@@ -23,12 +26,19 @@ export default function StaticTooltip<T extends RowType>({
 	headerName,
 }: StaticTooltipProps<T>) {
 	const entity = getEntityTooltip(headerName);
+	const [open, setOpen] = useState<boolean>(false);
 
 	if (!entity || !row) return;
 
 	return (
-		<Tooltip>
-			<TooltipTrigger className="w-fit underline cursor-pointer hover:text-primary transition-colors text-left">
+		<Tooltip open={open} onOpenChange={setOpen}>
+			<TooltipTrigger
+				onClick={(e) => {
+					e.preventDefault();
+					setOpen(true);
+				}}
+				className="w-fit underline cursor-pointer hover:text-primary transition-colors text-left"
+			>
 				{id ? id : "-"}
 			</TooltipTrigger>
 			<TooltipContent

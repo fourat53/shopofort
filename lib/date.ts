@@ -20,7 +20,19 @@ function isValidDate(value: unknown): boolean {
 }
 
 function formatDate(value: string | Date): string {
+	return format(new Date(value), "MMM d, yyyy");
+}
+
+function formatDateTime(value: string | Date): string {
 	return format(new Date(value), "MMM d, yyyy, hh:mm:ss a");
 }
 
-export { formatDate, isValidDate };
+function dateTimeFormat(value: string | Date, time: boolean): string {
+	return time ? formatDateTime(value) : formatDate(value);
+}
+
+function formatTime(value: string | Date): string {
+	return format(new Date(value), "hh:mm:ss a");
+}
+
+export { dateTimeFormat, formatDate, formatDateTime, formatTime, isValidDate };

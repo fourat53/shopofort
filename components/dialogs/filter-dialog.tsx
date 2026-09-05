@@ -8,7 +8,6 @@ import FilterForm from "@/components/forms/filter-form";
 import CurrentEntity from "@/components/title/CurrentEntity";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import { isValidDate } from "@/lib/date";
 import { getEntityFields } from "@/lib/entity/fields";
 
 export default function FilterDialog() {
@@ -43,85 +42,6 @@ export default function FilterDialog() {
 		});
 	}
 
-	function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
-		e.preventDefault();
-
-		const formData = new FormData(e.currentTarget);
-		const newParams = new URLSearchParams(searchParams.toString());
-
-		newParams.delete("page");
-
-		for (const field of fields) {
-			const { name, type } = field;
-
-			if (type === "number") {
-				const min = field.min ?? 0;
-				const max = field.max ?? 10000;
-
-				const fromName = `${name}From`;
-				const toName = `${name}To`;
-
-				const from = formData.get(fromName)?.toString() ?? "";
-				const to = formData.get(toName)?.toString() ?? "";
-
-				if (from && Number(from) !== min) newParams.set(fromName, from);
-				else newParams.delete(fromName);
-
-				if (to && Number(to) !== max) newParams.set(toName, to);
-				else newParams.delete(toName);
-
-				continue;
-			}
-
-			if (type === "date") {
-				const fromName = `${name}From`;
-				const toName = `${name}To`;
-
-				const from = formData.get(fromName)?.toString() ?? "";
-				const to = formData.get(toName)?.toString() ?? "";
-
-				if (from && isValidDate(from)) newParams.set(fromName, from);
-				else newParams.delete(fromName);
-
-				if (to && isValidDate(to)) newParams.set(toName, to);
-				else newParams.delete(toName);
-
-				continue;
-			}
-
-			if (type === "enum" || type === "foreignKey") {
-				const values = formData
-					.getAll(name)
-					.map((value) => value.toString())
-					.filter((value) => value !== "ALL");
-
-				newParams.delete(name);
-
-				for (const value of values) {
-					newParams.append(name, value);
-				}
-
-				continue;
-			}
-
-			const value = formData.get(name)?.toString().trim();
-
-			if (value && value !== "ALL") {
-				newParams.set(name, value);
-			} else {
-				newParams.delete(name);
-			}
-		}
-
-		const qs = newParams.toString();
-		const newUrl = qs ? `${pathname}?${qs}` : pathname;
-
-		startTransition(() => {
-			router.push(newUrl);
-			setOpen(false);
-		});
-	}
-
 	if (!entity) return;
 
 	return (
@@ -147,9 +67,9 @@ export default function FilterDialog() {
 					fields={fields}
 					entity={entity}
 					setOpen={setOpen}
-					isPending={isPending}
-					handleSubmit={handleSubmit}
 					searchParams={searchParams}
+					isPending={isPending}
+					startTransition={startTransition}
 				/>
 			</Dialog>
 		</div>

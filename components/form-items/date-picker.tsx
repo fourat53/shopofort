@@ -2,7 +2,6 @@
 
 import { IconCalendar, IconX } from "@tabler/icons-react";
 import { clsx } from "clsx";
-import { format } from "date-fns";
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -13,6 +12,7 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from "@/components/ui/popover";
+import { dateTimeFormat, formatTime } from "@/lib/date";
 
 interface DateTimePickerProps {
 	name: string;
@@ -30,7 +30,6 @@ export function DatePicker({
 	time = false,
 }: DateTimePickerProps) {
 	const [open, setOpen] = React.useState(false);
-
 	const [date, setDate] = React.useState<Date | undefined>(
 		defaultValue ? new Date(defaultValue) : undefined,
 	);
@@ -75,9 +74,7 @@ export function DatePicker({
 	};
 
 	const displayValue = date
-		? time
-			? `${format(date, "MMM d, yyyy")}, ${format(date, "HH:mm:ss")}`
-			: format(date, "MMM d, yyyy")
+		? dateTimeFormat(date, time)
 		: time
 			? "Select date and time"
 			: "Select date";
@@ -87,10 +84,11 @@ export function DatePicker({
 			<Label required={required}>{label}</Label>
 
 			<input
-				type="hidden"
+				type="text"
 				name={name}
 				value={date?.toISOString() ?? ""}
 				required={required}
+				onChange={() => {}}
 				className="translate-y-12 sr-only"
 			/>
 
@@ -135,8 +133,7 @@ export function DatePicker({
 							<Input
 								type="time"
 								step="1"
-								value={date ? format(date, "HH:mm:ss") : ""}
-								disabled={!date}
+								value={date ? formatTime(date) : ""}
 								onChange={handleTimeChange}
 								className="text-center appearance-none bg-background [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
 							/>

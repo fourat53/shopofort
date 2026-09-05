@@ -19,8 +19,6 @@
 		"@prisma/client": "^7.10.0",
 		"@tabler/icons-react": "^3.46.0",
 		"@uploadthing/react": "^7.3.3",
-		"@vercel/analytics": "^2.0.1",
-		"@vercel/speed-insights": "^2.0.0",
 		"@wrksz/themes": "^1.2.0",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",

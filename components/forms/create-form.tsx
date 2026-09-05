@@ -128,8 +128,8 @@ export default function CreateForm({ entity, open, setOpen }: CreateFormProps) {
 								key={name}
 								name={name}
 								label={label}
-								defaultValue={defaultValue?.toString()}
 								required={required}
+								defaultValue={defaultValue?.toString()}
 								items={field.options?.map((o) => ({ label: o, value: o }))}
 							/>
 						) : type === "foreignKey" ? (
