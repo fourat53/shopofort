@@ -11,7 +11,7 @@
 		"lint:fixer": "biome check --write --unsafe .",
 		"format": "biome format --write .",
 		"ci": "biome check .",
-		"gen": "prisma generate"
+		"postinstall": "prisma generate"
 	},
 	"dependencies": {
 		"@kinde-oss/kinde-auth-nextjs": "^2.13.1",
