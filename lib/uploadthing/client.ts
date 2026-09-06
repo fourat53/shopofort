@@ -1,17 +1,30 @@
 import { generateReactHelpers } from "@uploadthing/react";
 import type { ImageItem } from "@/components/form-items/image-upload";
+import { EntityType } from "@/lib/entity/types";
 import type { OurFileRouter } from "@/lib/uploadthing/core";
-import { EntityType } from "../entity/types";
 
 const { uploadFiles } = generateReactHelpers<OurFileRouter>();
 
 type FileRoute = "userPicture" | "productImage";
-
 type ImageField = "picture" | "images";
 
-const fieldRouteMap: Record<ImageField, FileRoute> = {
-	picture: "userPicture",
-	images: "productImage",
+interface UploadConfig {
+	field: ImageField;
+	fileRoute: FileRoute;
+	multiple: boolean;
+}
+
+const uploadConfig: Partial<Record<EntityType, UploadConfig>> = {
+	[EntityType.users]: {
+		field: "picture",
+		fileRoute: "userPicture",
+		multiple: false,
+	},
+	[EntityType.products]: {
+		field: "images",
+		fileRoute: "productImage",
+		multiple: true,
+	},
 };
 
 async function uploadImages(
@@ -22,8 +35,9 @@ async function uploadImages(
 	try {
 		const res = await uploadFiles(fileRoute, { files });
 		return res.map((file) => file.ufsUrl);
-	} catch {
-		throw new Error(`Failed to upload files. Please try again.`);
+	} catch (e) {
+		console.error(e);
+		throw e;
 	}
 }
 
@@ -31,42 +45,50 @@ async function addImagesToForm(
 	formData: FormData,
 	images: ImageItem[],
 	field: ImageField,
+	fileRoute: FileRoute,
 ) {
-	const existingUrls = images.filter(
-		(img): img is string => typeof img === "string",
-	);
-	const newFiles = images.filter((img): img is File => img instanceof File);
-	const newUrls = await uploadImages(newFiles, fieldRouteMap[field]);
+	const newFiles = images.filter((img) => img instanceof File);
+	const newUrls = await uploadImages(newFiles, fileRoute);
+	const oldUrls = images.filter((img) => typeof img === "string");
 
 	formData.delete(field);
-	for (const url of [...existingUrls, ...newUrls]) {
+
+	for (const url of [...oldUrls, ...newUrls]) {
 		formData.append(field, url);
 	}
 }
 
 async function addImageToForm(
 	formData: FormData,
-	image: ImageItem,
+	image: ImageItem | undefined,
 	field: ImageField,
+	fileRoute: FileRoute,
 ) {
-	if (typeof image === "string") return;
+	formData.delete(field);
 
-	if (image instanceof File) {
-		formData.delete(field);
-		const urls = await uploadImages([image], fieldRouteMap[field]);
-		formData.append(field, urls[0]);
+	if (typeof image === "string") {
+		formData.append(field, image);
+	} else if (image === undefined) {
+		formData.append(field, "");
+	} else {
+		const urls = await uploadImages([image], fileRoute);
+		if (urls[0]) formData.append(field, urls[0]);
 	}
 }
 
-async function addFilesToForm(
+async function addImages(
 	entity: EntityType,
 	formData: FormData,
 	images: ImageItem[],
 ) {
-	if (entity === EntityType.users)
-		await addImageToForm(formData, images[0], "picture");
-	else if (entity === EntityType.products)
-		await addImagesToForm(formData, images, "images");
+	const { field, fileRoute, multiple } = uploadConfig[entity] ?? {};
+	if (!field || !fileRoute) return;
+
+	if (multiple) {
+		await addImagesToForm(formData, images, field, fileRoute);
+	} else {
+		await addImageToForm(formData, images[0], field, fileRoute);
+	}
 }
 
-export { addFilesToForm, uploadFiles, uploadImages };
+export { addImages, uploadConfig };

@@ -14,6 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getFieldEntity, getFieldName } from "@/lib/entity/functions";
 import { getHeader } from "@/lib/entity/headers";
 import { EntityType, type ListRowType, type RowType } from "@/lib/entity/types";
+import { uploadConfig } from "@/lib/uploadthing/client";
 
 interface ListDialogProps<T> {
 	row?: T;
@@ -74,15 +75,15 @@ export default async function ListDialog<T extends RowType>({
 						if (!Array.isArray(value)) return null;
 						const entity: EntityType = getFieldEntity(name) as EntityType;
 						const header = getHeader(entity);
+						const { field, multiple } = uploadConfig[entity] ?? {};
 						return (
 							<TabsContent
 								key={name}
 								value={name}
 								className="h-[calc(100vh-152px)] min-w-[70vw]"
 							>
-								{name === "images" &&
-								value.every((i) => typeof i === "string") ? (
-									<ImageCarousel images={value} />
+								{name === field && multiple ? (
+									<ImageCarousel images={[...String(value)]} />
 								) : (
 									<DataTable<ListRowType>
 										entity={entity}

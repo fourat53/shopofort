@@ -118,9 +118,9 @@ async function createEntity(
 	entity: Exclude<EntityType, "user">,
 	formData: FormData,
 ) {
-	const data = getFormEntity(entity, formData);
 	let result: unknown;
 	try {
+		const data = getFormEntity(entity, formData);
 		if (entity === EntityType.carts)
 			result = await prisma.cart.create({
 				data: data as Prisma.CartCreateInput,
@@ -215,10 +215,10 @@ async function updateEntity(
 	id: StringNumber,
 	formData: FormData,
 ) {
-	const data = getFormEntity(entity, formData);
 	const where = { id: id as number };
 	let result: unknown;
 	try {
+		const data = getFormEntity(entity, formData);
 		if (entity === EntityType.users)
 			result = await updateUser(id as string, formData);
 		else if (entity === EntityType.carts)
@@ -266,10 +266,10 @@ async function updateEntities(
 	formData: FormData,
 ) {
 	if (ids.length === 0) return;
-	const data = getFormEntity(entity, formData);
 	const where = { id: { in: ids as number[] } };
 	let result: unknown;
 	try {
+		const data = getFormEntity(entity, formData);
 		if (entity === EntityType.users)
 			result = await Promise.allSettled(
 				ids.map((id) => updateUser(id as string, formData)),

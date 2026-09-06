@@ -4,15 +4,18 @@ import EntityTooltip from "@/components/data-table/tooltips/EntityTooltip";
 import { formatDateTime, isValidDate } from "@/lib/date";
 import {
 	type CellValue,
+	type EntityType,
 	OptionField,
 	OrderStatus,
 	type RowType,
 	type ValueType,
 } from "@/lib/entity/types";
+import { uploadConfig } from "@/lib/uploadthing/client";
 
 interface ContentCellProps<T> {
 	row?: T;
 	value: CellValue;
+	entity: EntityType;
 	headerName: string;
 	tooltip?: boolean;
 }
@@ -33,10 +36,12 @@ function cellTitle(value: CellValue, name: string) {
 export default function ContentCell<T extends RowType>({
 	row,
 	value,
+	entity,
 	headerName,
 	tooltip = false,
 }: ContentCellProps<T>) {
 	const imageSize = tooltip ? "32px" : "58px";
+	const { field, multiple } = uploadConfig[entity] ?? {};
 
 	return (
 		<div title={cellTitle(value, headerName)} className="truncate">
@@ -74,7 +79,7 @@ export default function ContentCell<T extends RowType>({
 				>
 					{value}
 				</p>
-			) : headerName === "picture" ? (
+			) : headerName === field && !multiple ? (
 				value ? (
 					<Image
 						src={String(value)}

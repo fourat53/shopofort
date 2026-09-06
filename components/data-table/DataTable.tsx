@@ -1,7 +1,7 @@
 import { cn } from "cn";
 import CheckBoxCell from "@/components/data-table/table-cells/CheckBoxCell";
 import ContentCell from "@/components/data-table/table-cells/ConentCell";
-import SortableTableHead from "@/components/data-table/table-cells/SortableTableHead";
+import SortedHead from "@/components/data-table/table-cells/SortedHead";
 import DeleteDialog from "@/components/dialogs/delete-dialog";
 import EditDialog from "@/components/dialogs/edit-dialog";
 import ListDialog from "@/components/dialogs/list-dialog";
@@ -62,7 +62,7 @@ export default function DataTable<T extends RowType>({
 										{getFieldName(item.name)}
 									</TableHead>
 								) : (
-									<SortableTableHead
+									<SortedHead
 										key={item.name}
 										name={item.name}
 										entity={entity}
@@ -104,8 +104,9 @@ export default function DataTable<T extends RowType>({
 												<ContentCell<T>
 													row={row}
 													value={value}
-													headerName={header[cIndex]?.name}
+													entity={entity}
 													tooltip={dialog}
+													headerName={header[cIndex]?.name}
 												/>
 											</TableCell>
 										),

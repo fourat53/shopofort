@@ -12,7 +12,12 @@ import {
 	getFieldName,
 	getSingleName,
 } from "@/lib/entity/functions";
-import type { CellValue, OptionField, RowType } from "@/lib/entity/types";
+import type {
+	CellValue,
+	EntityType,
+	OptionField,
+	RowType,
+} from "@/lib/entity/types";
 
 interface StaticTooltipProps<T> {
 	row?: T;
@@ -62,6 +67,7 @@ export default function StaticTooltip<T extends RowType>({
 						return (
 							<DataRow
 								key={`${name}-${objectName}`}
+								entity={entity}
 								name={objectName}
 								value={objectValue as CellValue}
 							/>
@@ -73,13 +79,21 @@ export default function StaticTooltip<T extends RowType>({
 	);
 }
 
-export function DataRow({ name, value }: { name: string; value: CellValue }) {
+export function DataRow({
+	entity,
+	name,
+	value,
+}: {
+	entity: EntityType;
+	name: string;
+	value: CellValue;
+}) {
 	return (
 		<div className="grid grid-cols-[2fr_5fr] gap-x-1">
 			<p className="w-22 font-medium text-muted-foreground">
 				{getFieldName(name)}:
 			</p>
-			<ContentCell headerName={name} value={value} tooltip />
+			<ContentCell entity={entity} headerName={name} value={value} tooltip />
 		</div>
 	);
 }

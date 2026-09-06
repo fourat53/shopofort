@@ -10,7 +10,7 @@ import {
 	TooltipContent,
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
-import type { User } from "@/lib/entity/types";
+import { EntityType, type User } from "@/lib/entity/types";
 
 export default function UserTooltip({ id }: { id: string }) {
 	const [user, setUser] = useState<User>();
@@ -20,8 +20,8 @@ export default function UserTooltip({ id }: { id: string }) {
 	async function handleOpenChange(open: boolean) {
 		setOpen(open);
 		if (!open || user || loading) return;
+		setLoading(true);
 		try {
-			setLoading(true);
 			const result = await getUserById(id);
 			setUser(result);
 		} catch {
@@ -59,7 +59,12 @@ export default function UserTooltip({ id }: { id: string }) {
 					Array.from({ length: 11 }, (_, i) => <SkeletonRow key={i} />)
 				) : user ? (
 					Object.entries(user).map(([name, value]) => (
-						<DataRow key={name} name={name} value={String(value)} />
+						<DataRow
+							entity={EntityType.users}
+							key={name}
+							name={name}
+							value={String(value)}
+						/>
 					))
 				) : (
 					<div className="text-muted-foreground text-center">

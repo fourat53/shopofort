@@ -2,7 +2,7 @@ import {
 	IMAGE_PAGE_SIZE,
 	PAGE_SIZE,
 } from "@/components/data-table/pagination/PaginationParams";
-import SortableTableHead from "@/components/data-table/table-cells/SortableTableHead";
+import SortedHead from "@/components/data-table/table-cells/SortedHead";
 import DeleteDialog from "@/components/dialogs/delete-dialog";
 import EditDialog from "@/components/dialogs/edit-dialog";
 import ListDialog from "@/components/dialogs/list-dialog";
@@ -40,11 +40,7 @@ export default function DataTableSkeleton({
 						<Checkbox />
 					</TableHead>
 					{header.map((item) => (
-						<SortableTableHead
-							key={item.name}
-							name={item.name}
-							entity={entity}
-						/>
+						<SortedHead key={item.name} name={item.name} entity={entity} />
 					))}
 					<TableHead border className="py-0 text-center">
 						Actions
@@ -61,7 +57,7 @@ export default function DataTableSkeleton({
 							<TableCell
 								key={item.name}
 								border
-								className={hasImage ? "h-18.5" : "h-[33.6px]"}
+								className={hasImage ? "size-18.5" : "h-[33.6px]"}
 								style={{
 									width: item.width,
 									minWidth: item.width,
@@ -69,7 +65,7 @@ export default function DataTableSkeleton({
 							>
 								<Skeleton
 									className={
-										item.name === "picture" ? "h-14.5 rounded-xl" : "h-4"
+										item.name === "picture" ? "size-14.5 rounded-xl" : "h-4"
 									}
 								/>
 							</TableCell>
@@ -77,8 +73,8 @@ export default function DataTableSkeleton({
 						<TableCell border className="py-0.5 w-26 max-w-26 min-w-26">
 							<div className="flex items-center justify-center gap-1.5">
 								<ListDialog entity={entity} disabled />
-								<EditDialog disabled />
-								<DeleteDialog disabled />
+								<EditDialog entity={entity} disabled />
+								<DeleteDialog entity={entity} disabled />
 							</div>
 						</TableCell>
 					</TableRow>

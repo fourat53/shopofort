@@ -17,7 +17,7 @@ import { getPluralName, getSingleName } from "@/lib/entity/functions";
 import type { EntityType, StringNumber } from "@/lib/entity/types";
 
 interface DeleteDialogProps {
-	entity?: EntityType;
+	entity: EntityType;
 	ids?: StringNumber[];
 	disabled?: boolean;
 }
@@ -32,36 +32,35 @@ export default function DeleteDialog({
 	const DeleteDialogRef = useRef<HTMLButtonElement>(null);
 
 	const single = ids?.length === 1;
+	const entityName = single
+		? getSingleName(entity)
+		: "all the " + ids?.length + " selected " + getPluralName(entity);
 
 	const handleDelete = async (e: React.MouseEvent) => {
 		e.preventDefault();
 		if (!entity || !ids) return;
+		setLoading(true);
 		try {
-			setLoading(true);
 			single
 				? await deleteEntity(entity, ids[0])
 				: await deleteEntities(entity, ids);
+			toast.success(`Successfully deleted ${entityName}.`);
+			setOpen(false);
 		} catch {
 			toast.error(
 				<>
-					<p>
-						Failed to delete{" "}
-						{single ? getSingleName(entity) : getPluralName(entity)}.
-					</p>
+					<p>Failed to delete {entityName}.</p>
 					<p className="text-sm text-muted-foreground">
 						Check if the {single ? "id is" : "ids are"} used by other entities.
 					</p>
 				</>,
 			);
 		} finally {
-			setOpen(false);
 			setLoading(false);
 		}
 	};
 
-	const display = ids && ids.length > 0 && entity;
-
-	if (!display)
+	if (!ids || ids.length === 0)
 		return (
 			<Button
 				variant="ghost"

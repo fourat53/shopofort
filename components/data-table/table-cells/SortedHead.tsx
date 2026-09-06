@@ -12,16 +12,14 @@ import { sortHref } from "@/components/data-table/pagination/PaginationParams";
 import { TableHead } from "@/components/ui/table";
 import { getFieldName } from "@/lib/entity/functions";
 import type { EntityType } from "@/lib/entity/types";
+import { uploadConfig } from "@/lib/uploadthing/client";
 
-interface SortableTableHeadProps {
+interface SortedHeadProps {
 	name: string;
 	entity: EntityType;
 }
 
-export default function SortableTableHead({
-	name,
-	entity,
-}: SortableTableHeadProps) {
+export default function SortedHead({ name, entity }: SortedHeadProps) {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const [isPending, startTransition] = useTransition();
@@ -45,7 +43,7 @@ export default function SortableTableHead({
 				<div
 					className={clsx(
 						"absolute right-0 top-1/2 -translate-y-1/2",
-						name === "picture" && "hidden",
+						name === uploadConfig[entity]?.field && "hidden",
 					)}
 				>
 					{sortBy === name && order === "asc" ? (

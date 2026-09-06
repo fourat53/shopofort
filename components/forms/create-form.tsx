@@ -26,8 +26,8 @@ import {
 } from "@/components/ui/dialog";
 import { getEntityFields } from "@/lib/entity/fields";
 import { getFieldName, getSingleName } from "@/lib/entity/functions";
-import { EntityType } from "@/lib/entity/types";
-import { addFilesToForm } from "@/lib/uploadthing/client";
+import type { EntityType } from "@/lib/entity/types";
+import { addImages } from "@/lib/uploadthing/client";
 
 interface CreateFormProps {
 	entity: EntityType;
@@ -40,29 +40,29 @@ export default function CreateForm({ entity, open, setOpen }: CreateFormProps) {
 	const [images, setImages] = useState<ImageItem[]>([]);
 
 	const fields = useMemo(() => getEntityFields(entity, "create"), [entity]);
+	const entityName = getSingleName(entity);
 
 	useEffect(() => {
-		if (!open || ![EntityType.users, EntityType.products].includes(entity))
-			return;
 		setImages([]);
-	}, [open, entity]);
+	}, []);
 
 	async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
 		e.preventDefault();
 		const formData = new FormData(e.currentTarget);
+		setLoading(true);
 		try {
-			setLoading(true);
-			await addFilesToForm(entity, formData, images);
+			await addImages(entity, formData, images);
 			await createEntity(entity, formData);
+			toast.success(`Successfully created ${entityName}.`);
+			setOpen(false);
 		} catch {
 			toast.error(
 				<>
-					<p>Failed to create {getSingleName(entity)}.</p>
+					<p>Failed to create {entityName}.</p>
 					<p className="text-muted-foreground">Please try again.</p>
 				</>,
 			);
 		} finally {
-			setOpen(false);
 			setLoading(false);
 		}
 	}
@@ -77,7 +77,7 @@ export default function CreateForm({ entity, open, setOpen }: CreateFormProps) {
 		>
 			<form onSubmit={handleSubmit}>
 				<DialogHeader className="pb-2">
-					<DialogTitle>Create {getSingleName(entity)}</DialogTitle>
+					<DialogTitle>Create {entityName}</DialogTitle>
 				</DialogHeader>
 				<div className="max-h-[calc(100vh-8rem)] overflow-y-auto px-4 flex flex-col gap-4">
 					{fields.map((field) => {

@@ -30,8 +30,8 @@ import {
 	getPluralName,
 	getSingleName,
 } from "@/lib/entity/functions";
-import { EntityType, type RowType } from "@/lib/entity/types";
-import { addFilesToForm } from "@/lib/uploadthing/client";
+import type { EntityType, RowType } from "@/lib/entity/types";
+import { addImages, uploadConfig } from "@/lib/uploadthing/client";
 
 interface DialogFormProps<T> {
 	entity: EntityType;
@@ -53,40 +53,46 @@ export default function CreateEditForm<T extends RowType>({
 	const fields = useMemo(() => getEntityFields(entity, "edit"), [entity]);
 
 	const single = rows.length === 1;
-	const label = single
-		? "Update " + getSingleName(entity)
-		: "Update the " + rows.length + " selected " + getPluralName(entity);
+	const entityName = single
+		? getSingleName(entity)
+		: "all the " + rows.length + " selected " + getPluralName(entity);
 
 	useEffect(() => {
-		if (!open || ![EntityType.users, EntityType.products].includes(entity))
+		if (!open) return;
+
+		const { field, multiple } = uploadConfig[entity] ?? {};
+		if (!field || !rows[0]) {
+			setImages([]);
 			return;
-		else if (entity === EntityType.products)
-			setImages("images" in rows[0] ? (rows[0].images as string[]) : []);
-		else if (entity === EntityType.users)
-			setImages("picture" in rows[0] ? ([rows[0].picture] as string[]) : []);
+		}
+
+		const value = rows[0][field];
+		if (multiple) {
+			setImages(Array.isArray(value) ? (value as string[]) : []);
+		} else {
+			setImages(value ? [value as string] : []);
+		}
 	}, [open, entity, rows]);
 
 	async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
 		e.preventDefault();
 		const formData = new FormData(e.currentTarget);
+		setLoading(true);
 		try {
-			setLoading(true);
-			await addFilesToForm(entity, formData, images);
+			await addImages(entity, formData, images);
 			single
 				? await updateEntity(entity, ids[0], formData)
 				: await updateEntities(entity, ids, formData);
+			toast.success(`Successfully updated ${entityName}.`);
+			setOpen(false);
 		} catch {
 			toast.error(
 				<>
-					<p>
-						Failed to update{" "}
-						{single ? getSingleName(entity) : getPluralName(entity)}.
-					</p>
+					<p>Failed to update {entityName}.</p>
 					<p className="text-muted-foreground">Please try again.</p>
 				</>,
 			);
 		} finally {
-			setOpen(false);
 			setLoading(false);
 		}
 	}
@@ -101,7 +107,7 @@ export default function CreateEditForm<T extends RowType>({
 		>
 			<form onSubmit={handleSubmit}>
 				<DialogHeader className="pb-2">
-					<DialogTitle>{label}</DialogTitle>
+					<DialogTitle>Update {entityName}</DialogTitle>
 				</DialogHeader>
 				<div className="max-h-[calc(100vh-8rem)] overflow-y-auto px-4 flex flex-col gap-4">
 					{fields.map((field) => {
