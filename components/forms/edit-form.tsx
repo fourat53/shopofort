@@ -144,9 +144,9 @@ export default function CreateEditForm<T extends RowType>({
 								name={name}
 								label={label}
 								images={images}
-								multiple={type.endsWith("s")}
-								onChange={setImages}
 								required={required}
+								onChange={setImages}
+								multiple={type === "images"}
 							/>
 						) : type === "enum" ? (
 							<Select
