@@ -5,6 +5,8 @@ import type { Dispatch, SetStateAction } from "react";
 import { Input } from "@/components/form-items/input";
 import RangePicker from "@/components/form-items/range-picker";
 import { Select } from "@/components/form-items/select";
+import FilterRangeNumber from "@/components/forms/FilterRangeNumber";
+import ForeignKeySelect from "@/components/forms/ForeignKeySelect";
 import { Button } from "@/components/ui/button";
 import {
 	DialogContent,
@@ -16,8 +18,6 @@ import { isValidDate } from "@/lib/date";
 import type { ENTITY_FIELDS } from "@/lib/entity/fields";
 import { getFieldName, getPluralName } from "@/lib/entity/functions";
 import type { EntityType } from "@/lib/entity/types";
-import FilterRangeNumber from "./FilterRangeNumber";
-import ForeignKeySelect from "./ForeignKeySelect";
 
 interface DialogFormProps {
 	fields: (typeof ENTITY_FIELDS)[EntityType][number][];

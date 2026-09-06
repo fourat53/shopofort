@@ -1,4 +1,4 @@
-import { EntityType } from "./types";
+import { EntityType } from "@/lib/entity/types";
 
 type HeaderItem = { name: string; width: `${number}px` | "auto" };
 

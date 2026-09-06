@@ -1,7 +1,6 @@
 import { IconList } from "@tabler/icons-react";
 import Image from "next/image";
-import { Suspense } from "react";
-import DataTableSkeleton from "@/components/data-table/DataTableSkeleton";
+import DataTable from "@/components/data-table/DataTable";
 import { Button } from "@/components/ui/button";
 import {
 	Carousel,
@@ -15,7 +14,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getFieldEntity, getFieldName } from "@/lib/entity/functions";
 import { getHeader } from "@/lib/entity/headers";
 import { EntityType, type ListRowType, type RowType } from "@/lib/entity/types";
-import DataTable from "../data-table/DataTable";
 
 interface ListDialogProps<T> {
 	row?: T;
@@ -86,19 +84,13 @@ export default async function ListDialog<T extends RowType>({
 								value.every((i) => typeof i === "string") ? (
 									<ImageCarousel images={value} />
 								) : (
-									<Suspense
-										fallback={
-											<DataTableSkeleton entity={entity} header={header} />
-										}
-									>
-										<DataTable<ListRowType>
-											dialog
-											entity={entity}
-											header={header}
-											rows={name in row ? (row[name] as ListRowType[]) : []}
-											className="h-[calc(100vh-152px)]"
-										/>
-									</Suspense>
+									<DataTable<ListRowType>
+										entity={entity}
+										header={header}
+										rows={name in row ? (row[name] as ListRowType[]) : []}
+										className="h-[calc(100vh-152px)]"
+										dialog
+									/>
 								)}
 							</TabsContent>
 						);

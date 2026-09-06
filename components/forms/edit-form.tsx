@@ -16,6 +16,7 @@ import {
 } from "@/components/form-items/image-upload";
 import { Input } from "@/components/form-items/input";
 import { Select } from "@/components/form-items/select";
+import ForeignKeySelect from "@/components/forms/ForeignKeySelect";
 import { Button } from "@/components/ui/button";
 import {
 	DialogContent,
@@ -29,9 +30,8 @@ import {
 	getPluralName,
 	getSingleName,
 } from "@/lib/entity/functions";
-import type { EntityType, RowType } from "@/lib/entity/types";
-import { addImagesToForm } from "@/lib/uploadthing/client";
-import ForeignKeySelect from "./ForeignKeySelect";
+import { EntityType, type RowType } from "@/lib/entity/types";
+import { addFilesToForm } from "@/lib/uploadthing/client";
 
 interface DialogFormProps<T> {
 	entity: EntityType;
@@ -58,17 +58,20 @@ export default function CreateEditForm<T extends RowType>({
 		: "Update the " + rows.length + " selected " + getPluralName(entity);
 
 	useEffect(() => {
-		if (!open || entity !== "products") return;
-		setImages("images" in rows[0] ? (rows[0].images as string[]) : []);
-		return;
+		if (!open || ![EntityType.users, EntityType.products].includes(entity))
+			return;
+		else if (entity === EntityType.products)
+			setImages("images" in rows[0] ? (rows[0].images as string[]) : []);
+		else if (entity === EntityType.users)
+			setImages("picture" in rows[0] ? ([rows[0].picture] as string[]) : []);
 	}, [open, entity, rows]);
 
 	async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
 		e.preventDefault();
 		const formData = new FormData(e.currentTarget);
-		setLoading(true);
 		try {
-			await addImagesToForm(formData, images);
+			setLoading(true);
+			await addFilesToForm(entity, formData, images);
 			single
 				? await updateEntity(entity, ids[0], formData)
 				: await updateEntities(entity, ids, formData);
@@ -135,12 +138,13 @@ export default function CreateEditForm<T extends RowType>({
 								required={required}
 								time
 							/>
-						) : type === "image" ? (
+						) : type.includes("image") ? (
 							<ImageUpload
 								key={name}
 								name={name}
 								label={label}
 								images={images}
+								multiple={type.endsWith("s")}
 								onChange={setImages}
 								required={required}
 							/>

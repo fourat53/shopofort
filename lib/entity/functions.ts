@@ -3,7 +3,7 @@ import {
 	OptionField,
 	type ParameterType,
 	type StringNumber,
-} from "./types";
+} from "@/lib/entity/types";
 
 function getEntityTooltip(name: OptionField): EntityType {
 	if (name === "userId") return EntityType.users;

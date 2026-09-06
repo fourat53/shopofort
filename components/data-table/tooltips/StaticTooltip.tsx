@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import ContentCell from "@/components/data-table/table-cells/ConentCell";
 import {
 	Tooltip,
@@ -12,7 +13,6 @@ import {
 	getSingleName,
 } from "@/lib/entity/functions";
 import type { CellValue, OptionField, RowType } from "@/lib/entity/types";
-import { useState } from "react";
 
 interface StaticTooltipProps<T> {
 	row?: T;

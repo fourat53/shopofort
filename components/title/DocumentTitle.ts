@@ -1,7 +1,7 @@
 "use client";
 
 import { useLayoutEffect } from "react";
-import PageTitle from "./PageTitle";
+import PageTitle from "@/components/title/PageTitle";
 
 export default function DocumentTitle() {
 	const title = PageTitle();

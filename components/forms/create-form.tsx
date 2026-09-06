@@ -16,6 +16,7 @@ import {
 } from "@/components/form-items/image-upload";
 import { Input } from "@/components/form-items/input";
 import { Select } from "@/components/form-items/select";
+import ForeignKeySelect from "@/components/forms/ForeignKeySelect";
 import { Button } from "@/components/ui/button";
 import {
 	DialogContent,
@@ -25,10 +26,8 @@ import {
 } from "@/components/ui/dialog";
 import { getEntityFields } from "@/lib/entity/fields";
 import { getFieldName, getSingleName } from "@/lib/entity/functions";
-import type { EntityType } from "@/lib/entity/types";
-
-import { addImagesToForm } from "@/lib/uploadthing/client";
-import ForeignKeySelect from "./ForeignKeySelect";
+import { EntityType } from "@/lib/entity/types";
+import { addFilesToForm } from "@/lib/uploadthing/client";
 
 interface CreateFormProps {
 	entity: EntityType;
@@ -43,18 +42,18 @@ export default function CreateForm({ entity, open, setOpen }: CreateFormProps) {
 	const fields = useMemo(() => getEntityFields(entity, "create"), [entity]);
 
 	useEffect(() => {
-		if (!open || entity !== "products") return;
+		if (!open || ![EntityType.users, EntityType.products].includes(entity))
+			return;
 		setImages([]);
-		return;
 	}, [open, entity]);
 
 	async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
 		e.preventDefault();
 		const formData = new FormData(e.currentTarget);
-		setLoading(true);
 		try {
-			await addImagesToForm(formData, images);
-			if (entity !== "users") await createEntity(entity, formData);
+			setLoading(true);
+			await addFilesToForm(entity, formData, images);
+			await createEntity(entity, formData);
 		} catch {
 			toast.error(
 				<>
@@ -114,12 +113,13 @@ export default function CreateForm({ entity, open, setOpen }: CreateFormProps) {
 								required={required}
 								time
 							/>
-						) : type === "image" ? (
+						) : type.includes("image") ? (
 							<ImageUpload
 								key={name}
 								name={name}
 								label={label}
 								images={images}
+								multiple={type.endsWith("s")}
 								onChange={setImages}
 								required={required}
 							/>
@@ -128,8 +128,8 @@ export default function CreateForm({ entity, open, setOpen }: CreateFormProps) {
 								key={name}
 								name={name}
 								label={label}
-								required={required}
 								defaultValue={defaultValue?.toString()}
+								required={required}
 								items={field.options?.map((o) => ({ label: o, value: o }))}
 							/>
 						) : type === "foreignKey" ? (

@@ -1,8 +1,10 @@
 import { cn } from "cn";
 import CheckBoxCell from "@/components/data-table/table-cells/CheckBoxCell";
+import ContentCell from "@/components/data-table/table-cells/ConentCell";
 import SortableTableHead from "@/components/data-table/table-cells/SortableTableHead";
 import DeleteDialog from "@/components/dialogs/delete-dialog";
 import EditDialog from "@/components/dialogs/edit-dialog";
+import ListDialog from "@/components/dialogs/list-dialog";
 import {
 	Table,
 	TableBody,
@@ -14,8 +16,6 @@ import {
 import { getFieldName } from "@/lib/entity/functions";
 import type { HeaderItem } from "@/lib/entity/headers";
 import type { EntityType, RowType } from "@/lib/entity/types";
-import ListDialog from "../dialogs/list-dialog";
-import ContentCell from "./table-cells/ConentCell";
 
 interface DataTableProps<T> {
 	entity: EntityType;
@@ -47,13 +47,15 @@ export default function DataTable<T extends RowType>({
 				<Table parentClassName={className}>
 					<TableHeader>
 						<TableRow>
-							<TableHead>
-								<CheckBoxCell<T>
-									entity={entity}
-									rows={rows}
-									type="select-all"
-								/>
-							</TableHead>
+							{!dialog && (
+								<TableHead>
+									<CheckBoxCell<T>
+										entity={entity}
+										rows={rows}
+										type="select-all"
+									/>
+								</TableHead>
+							)}
 							{header.map((item) =>
 								dialog ? (
 									<TableHead key={item.name} border>
@@ -67,22 +69,26 @@ export default function DataTable<T extends RowType>({
 									/>
 								),
 							)}
-							<TableHead border className="py-0 text-center">
-								<CheckBoxCell<T> entity={entity} rows={rows} type="actions" />
-							</TableHead>
+							{!dialog && (
+								<TableHead border className="py-0 text-center">
+									<CheckBoxCell<T> entity={entity} rows={rows} type="actions" />
+								</TableHead>
+							)}
 						</TableRow>
 					</TableHeader>
 					<TableBody>
 						{rows.map((row) => (
 							<TableRow key={row.id}>
-								<TableCell className="w-8 min-w-8 max-w-8">
-									<CheckBoxCell<T>
-										entity={entity}
-										rows={rows}
-										id={row.id}
-										type="select-one"
-									/>
-								</TableCell>
+								{!dialog && (
+									<TableCell className="w-8 min-w-8 max-w-8">
+										<CheckBoxCell<T>
+											entity={entity}
+											rows={rows}
+											id={row.id}
+											type="select-one"
+										/>
+									</TableCell>
+								)}
 								{Object.values(row).map(
 									(value, cIndex) =>
 										typeof value !== "object" && (
@@ -104,13 +110,15 @@ export default function DataTable<T extends RowType>({
 											</TableCell>
 										),
 								)}
-								<TableCell border className="w-26 min-w-26 max-w-26 py-0.5">
-									<div className="flex items-center justify-center gap-1.5">
-										<ListDialog<T> entity={entity} row={row} />
-										<EditDialog<T> entity={entity} rows={[row]} />
-										<DeleteDialog entity={entity} ids={[row.id]} />
-									</div>
-								</TableCell>
+								{!dialog && (
+									<TableCell border className="w-26 min-w-26 max-w-26 py-0.5">
+										<div className="flex items-center justify-center gap-1.5">
+											<ListDialog<T> entity={entity} row={row} />
+											<EditDialog<T> entity={entity} rows={[row]} />
+											<DeleteDialog entity={entity} ids={[row.id]} />
+										</div>
+									</TableCell>
+								)}
 							</TableRow>
 						))}
 					</TableBody>

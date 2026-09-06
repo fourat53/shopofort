@@ -36,8 +36,8 @@ export default function DeleteDialog({
 	const handleDelete = async (e: React.MouseEvent) => {
 		e.preventDefault();
 		if (!entity || !ids) return;
-		setLoading(true);
 		try {
+			setLoading(true);
 			single
 				? await deleteEntity(entity, ids[0])
 				: await deleteEntities(entity, ids);

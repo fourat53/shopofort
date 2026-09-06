@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { getUserById } from "@/actions/UserActions";
+import { DataRow } from "@/components/data-table/tooltips/StaticTooltip";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
 	Tooltip,
@@ -10,7 +11,6 @@ import {
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
 import type { User } from "@/lib/entity/types";
-import { DataRow } from "./StaticTooltip";
 
 export default function UserTooltip({ id }: { id: string }) {
 	const [user, setUser] = useState<User>();

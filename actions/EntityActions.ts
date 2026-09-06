@@ -1,6 +1,12 @@
 "use server";
 
 import { updateTag } from "next/cache";
+import { getCartCount } from "@/actions/CartActions";
+import { getCartItemCount } from "@/actions/CartItemActions";
+import { getCategoryCount } from "@/actions/CategoryActions";
+import { getOrderCount } from "@/actions/OrderActions";
+import { getOrderItemCount } from "@/actions/OrderItemActions";
+import { getProductCount } from "@/actions/ProductActions";
 import {
 	deleteUser,
 	getUserById,
@@ -19,12 +25,6 @@ import {
 } from "@/lib/entity/types";
 import { prisma } from "@/lib/prisma";
 import type { Prisma } from "@/prisma/generated/prisma/client";
-import { getCartCount } from "./CartActions";
-import { getCartItemCount } from "./CartItemActions";
-import { getCategoryCount } from "./CategoryActions";
-import { getOrderCount } from "./OrderActions";
-import { getOrderItemCount } from "./OrderItemActions";
-import { getProductCount } from "./ProductActions";
 
 async function getFilterOptions(field: OptionField): Promise<SelectOption[]> {
 	try {

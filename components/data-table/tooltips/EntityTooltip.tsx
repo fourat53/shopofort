@@ -1,6 +1,6 @@
+import ServerTooltip from "@/components/data-table/tooltips/StaticTooltip";
+import UserTooltip from "@/components/data-table/tooltips/UserTooltip";
 import { OptionField, type RowType } from "@/lib/entity/types";
-import ServerTooltip from "./StaticTooltip";
-import UserTooltip from "./UserTooltip";
 
 interface TooltipEntityProps<T> {
 	row?: T;

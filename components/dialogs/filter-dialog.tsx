@@ -9,6 +9,7 @@ import CurrentEntity from "@/components/title/CurrentEntity";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { getEntityFields } from "@/lib/entity/fields";
+import { EntityType } from "@/lib/entity/types";
 
 export default function FilterDialog() {
 	const entity = CurrentEntity();
@@ -46,7 +47,10 @@ export default function FilterDialog() {
 
 	return (
 		<div
-			className={clsx("flex gap-1.5", entity !== "users" && "pr-1.5 border-r")}
+			className={clsx(
+				"flex gap-1.5",
+				entity !== EntityType.users && "pr-1.5 border-r",
+			)}
 		>
 			{hasFilters && (
 				<Button

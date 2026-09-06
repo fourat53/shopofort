@@ -1,6 +1,13 @@
 import { Audience, type EntityType, OrderStatus } from "@/lib/entity/types";
 
-type FieldType = "string" | "number" | "date" | "enum" | "foreignKey" | "image";
+type FieldType =
+	| "string"
+	| "number"
+	| "date"
+	| "enum"
+	| "foreignKey"
+	| "images"
+	| "image";
 
 type FieldCategory = "filter" | "create" | "edit";
 
@@ -32,6 +39,11 @@ const ENTITY_FIELDS: Record<EntityType, FieldConfig[]> = {
 			name: "email",
 			type: "string",
 			category: ["filter"],
+		},
+		{
+			name: "picture",
+			type: "image",
+			category: ["edit"],
 		},
 		{
 			name: "first_name",
@@ -121,7 +133,7 @@ const ENTITY_FIELDS: Record<EntityType, FieldConfig[]> = {
 		},
 		{
 			name: "images",
-			type: "image",
+			type: "images",
 			category: ["create", "edit"],
 		},
 	],
