@@ -5,9 +5,11 @@ allowBuilds:
   prisma: true
   sharp: true
   unrs-resolver: true
+  workerd: true
 
 overrides:
   effect: "^3.20.0"
   deepmerge-ts: "^8.0.0"
   mysql2: "^3.23.1"
   qs: "^6.16.0"
+  lodash: "^4.18.1"

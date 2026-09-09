@@ -29,7 +29,7 @@ export default function AdminSidebar({
 							className="text-primary hover:text-primary data-[slot=sidebar-menu-button]:p-1.5! rounded-full h-11"
 						>
 							<Link
-								href="/admin/dashboard"
+								href="/"
 								className="flex items-center justify-center font-bold text-xl"
 							>
 								<Image

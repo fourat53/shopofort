@@ -7,11 +7,20 @@ type InputProps = React.ComponentProps<"input"> & {
 	parentClassName?: string;
 };
 
-export function Input({ required, parentClassName, ...props }: InputProps) {
+export function Input({
+	required,
+	parentClassName,
+	label,
+	...props
+}: InputProps) {
 	return (
-		<div className={cn("w-full flex flex-col gap-1.5", parentClassName)}>
-			<Label required={required}>{props.label}</Label>
-			<BaseInput required={required} {...props}></BaseInput>
+		<div className={cn("w-full", parentClassName)}>
+			{label && (
+				<Label required={required} className="pb-1.5">
+					{label}
+				</Label>
+			)}
+			<BaseInput required={required} {...props} />
 		</div>
 	);
 }
