@@ -37,6 +37,14 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 pnpm biome format --write .
 
 <!-- Biome auto sort imports -->
-- make a dashboard design with shadcn UI and display statistics
+
+- manage user roles: ADMIN can access any page, USER can't access admin pages.
+
+<!-- admin -->
+- make a dashboard design with shadcn UI and display statistics.
+- use zod
+
+<!-- client -->
+- create each product page
 
 Important: Since I don't have AWS S3 account, the images in uploadthing file service free tier.

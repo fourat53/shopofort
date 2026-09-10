@@ -89,12 +89,13 @@ type NavItem = {
 function SidebarNavButton({ item }: { item: NavItem }) {
 	const pathname = usePathname();
 	const router = useRouter();
+	const path = "/admin/" + item.url;
 	return (
 		<SidebarMenuButton
 			tooltip={item.title}
-			onClick={() => router.push(`/admin/${item.url}`)}
+			onClick={() => router.push(path)}
 			className={clsx(
-				pathname === `/admin/${item.url}` &&
+				pathname === path &&
 					"bg-primary dark:bg-primary/90 hover:bg-primary/90 dark:hover:bg-primary text-mist-50 hover:text-mist-50",
 			)}
 		>

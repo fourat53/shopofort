@@ -1,9 +1,6 @@
-import { NextSSRPlugin as UploadPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { Geist, Geist_Mono, Oxanium } from "next/font/google";
-import { extractRouterConfig as extractConfig } from "uploadthing/server";
 import DocumentTitle from "@/components/title/DocumentTitle";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { ourFileRouter as fileRouter } from "@/lib/uploadthing/core";
 import { cn } from "@/lib/utils";
 import { KindeProvider } from "@/providers/kinde-provider";
 import ThemeProvider from "@/providers/theme-provider";
@@ -41,9 +38,8 @@ export default function RootLayout({
 			<body className="min-h-screen overflow-x-hidden text-foreground bg-sidebar">
 				<DocumentTitle />
 				<ThemeProvider>
+					<Toaster />
 					<KindeProvider>
-						<Toaster />
-						<UploadPlugin routerConfig={extractConfig(fileRouter)} />
 						<TooltipProvider>{children}</TooltipProvider>
 					</KindeProvider>
 				</ThemeProvider>

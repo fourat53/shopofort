@@ -53,8 +53,6 @@ export default function DataTablePagination({
 	totalPages,
 	className,
 }: DataTablePaginationProps) {
-	const path: `/${EntityType}` = `/${entity}`;
-
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const [isPending, startTransition] = useTransition();
@@ -81,10 +79,10 @@ export default function DataTablePagination({
 
 		for (const page of pagesToPrefetch) {
 			if (page >= 1 && page <= totalPages) {
-				router.prefetch(pageHref(path, page, searchParams));
+				router.prefetch(pageHref(entity, page, searchParams));
 			}
 		}
-	}, [path, currentPage, router, totalPages, searchParams]);
+	}, [entity, currentPage, router, totalPages, searchParams]);
 
 	function navigate(page: number) {
 		if (page < 1 || page > totalPages || page === currentPage) {
@@ -93,7 +91,7 @@ export default function DataTablePagination({
 
 		setPendingPage(page);
 		startTransition(() => {
-			router.push(pageHref(path, page, searchParams), { scroll: false });
+			router.push(pageHref(entity, page, searchParams), { scroll: false });
 		});
 	}
 
@@ -105,7 +103,7 @@ export default function DataTablePagination({
 			<PaginationContent className="w-80 sm:w-90 justify-between">
 				<PaginationItem>
 					<PaginationPrevious
-						href={pageHref(path, currentPage - 1, searchParams)}
+						href={pageHref(entity, currentPage - 1, searchParams)}
 						aria-disabled={currentPage <= 1}
 						className={cn(currentPage <= 1 && "pointer-events-none opacity-50")}
 						onClick={(event) => {
@@ -133,7 +131,7 @@ export default function DataTablePagination({
 
 				<PaginationItem>
 					<PaginationNext
-						href={pageHref(path, currentPage + 1, searchParams)}
+						href={pageHref(entity, currentPage + 1, searchParams)}
 						aria-disabled={currentPage >= totalPages}
 						className={cn(
 							currentPage >= totalPages && "pointer-events-none opacity-50",

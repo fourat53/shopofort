@@ -1,4 +1,6 @@
 import { IconRefresh } from "@tabler/icons-react";
+import { NextSSRPlugin as UploadPlugin } from "@uploadthing/react/next-ssr-plugin";
+import { extractRouterConfig as extractConfig } from "uploadthing/server";
 import { updateCache } from "@/actions/EntityActions";
 import CreateDialog from "@/components/dialogs/create-dialog";
 import FilterDialog from "@/components/dialogs/filter-dialog";
@@ -10,6 +12,7 @@ import {
 	SidebarProvider,
 	SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { ourFileRouter as fileRouter } from "@/lib/uploadthing/core";
 
 export default async function AdminLayout({
 	children,
@@ -18,6 +21,7 @@ export default async function AdminLayout({
 }>) {
 	return (
 		<SidebarProvider>
+			<UploadPlugin routerConfig={extractConfig(fileRouter)} />
 			<AdminSidebar />
 			<SidebarInset>
 				<div className="p-3 border rounded-4xl bg-chart-1 dark:bg-sidebar-accent">

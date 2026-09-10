@@ -50,16 +50,17 @@ function getPaginationParams(
 }
 
 function pageHref(
-	entity: `/${EntityType}`,
+	entity: EntityType,
 	page: number,
 	searchParams?: URLSearchParams,
 ) {
-	const path = `/admin/${entity}`;
 	const newParams = new URLSearchParams(searchParams?.toString());
 
 	newParams.set("page", page.toString());
 
 	const qs = newParams.toString();
+	const path = "/admin/" + entity;
+
 	return qs ? `${path}?${qs}` : path;
 }
 
@@ -68,7 +69,6 @@ function sortHref(
 	searchParams: URLSearchParams,
 	field: string,
 ) {
-	const path = `/admin/${entity}`;
 	const newParams = new URLSearchParams(searchParams.toString());
 
 	const sortBy = newParams.get("sortBy");
@@ -89,6 +89,8 @@ function sortHref(
 	}
 
 	const qs = newParams.toString();
+	const path = "/admin/" + entity;
+
 	return qs ? `${path}?${qs}` : path;
 }
 
