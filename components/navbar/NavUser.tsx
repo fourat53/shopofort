@@ -27,9 +27,18 @@ import {
 import type { KindeUser } from "@/lib/entity/types";
 
 export default async function NavUser() {
-	const { isAuthenticated, getUser } = getKindeServerSession();
-	const user: KindeUser | null = await getUser();
+	const { isAuthenticated, getUser, getPermissions } = getKindeServerSession();
+
 	const isLoggedIn = await isAuthenticated();
+	let user: KindeUser | null = null;
+	let isAdmin: boolean | undefined;
+
+	if (isLoggedIn) {
+		user = await getUser();
+		const userPermissions = await getPermissions();
+		isAdmin = userPermissions?.permissions.includes("ADMIN_ACCESS");
+	}
+
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
@@ -42,7 +51,7 @@ export default async function NavUser() {
 				sideOffset={18}
 				align="end"
 			>
-				{isLoggedIn && user && (
+				{user && (
 					<>
 						<DropdownMenuLabel className="p-0 font-normal">
 							<div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
@@ -54,36 +63,38 @@ export default async function NavUser() {
 					</>
 				)}
 				<DropdownMenuGroup>
-					<DropdownMenuItem asChild>
+					{isAdmin && (
 						<Link href="/admin/dashboard">
-							<IconDashboard />
-							Dashboard
+							<DropdownMenuItem asChild>
+								<IconDashboard />
+								Dashboard
+							</DropdownMenuItem>
 						</Link>
-					</DropdownMenuItem>
+					)}
 					<ThemeMenu />
 				</DropdownMenuGroup>
 				<DropdownMenuSeparator className="my-0.5" />
-				{isLoggedIn && user ? (
-					<DropdownMenuItem variant="destructive">
-						<LogoutLink className="flex items-center pl-0.5 gap-1.5">
+				{user ? (
+					<LogoutLink>
+						<DropdownMenuItem variant="destructive">
 							<IconLogout />
 							Sign Out
-						</LogoutLink>
-					</DropdownMenuItem>
+						</DropdownMenuItem>
+					</LogoutLink>
 				) : (
 					<>
-						<DropdownMenuItem>
-							<LoginLink className="flex items-center pl-0.5 gap-1.5">
-								<IconLogin className="rotate-180" />
+						<LoginLink>
+							<DropdownMenuItem>
+								<IconLogin />
 								Sign In
-							</LoginLink>
-						</DropdownMenuItem>
-						<DropdownMenuItem>
-							<RegisterLink className="flex items-center pl-0.5 gap-1.5">
+							</DropdownMenuItem>
+						</LoginLink>
+						<RegisterLink>
+							<DropdownMenuItem>
 								<IconRegistered />
 								Sign Up
-							</RegisterLink>
-						</DropdownMenuItem>
+							</DropdownMenuItem>
+						</RegisterLink>
 					</>
 				)}
 			</DropdownMenuContent>

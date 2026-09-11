@@ -21,10 +21,12 @@ import type { KindeUser } from "@/lib/entity/types";
 
 export default async function SidebarUser() {
 	const { isAuthenticated, getUser } = getKindeServerSession();
-	const user: KindeUser | null = await getUser();
-	const isLoggedIn = await isAuthenticated();
 
-	if (!isLoggedIn || !user) return;
+	const isLoggedIn = await isAuthenticated();
+	let user: KindeUser | null = null;
+	if (isLoggedIn) user = await getUser();
+
+	if (!user) return;
 
 	return (
 		<SidebarMenu>
@@ -54,12 +56,12 @@ export default async function SidebarUser() {
 							<ThemeMenu />
 						</DropdownMenuGroup>
 						<DropdownMenuSeparator className="my-0.5" />
-						<DropdownMenuItem variant="destructive">
-							<LogoutLink className="flex items-center pl-0.5 gap-1.5">
+						<LogoutLink>
+							<DropdownMenuItem variant="destructive">
 								<IconLogout />
 								Sign Out
-							</LogoutLink>
-						</DropdownMenuItem>
+							</DropdownMenuItem>
+						</LogoutLink>
 					</DropdownMenuContent>
 				</DropdownMenu>
 			</SidebarMenuItem>

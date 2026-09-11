@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import type * as React from "react";
 import { Suspense } from "react";
 import SmallLoader from "@/components/loaders/small-loader";
 import SidebarMain from "@/components/sidebar/SidebarMain";
@@ -16,17 +15,15 @@ import {
 	SidebarSeparator,
 } from "@/components/ui/sidebar";
 
-export default function AdminSidebar({
-	...props
-}: React.ComponentProps<typeof Sidebar>) {
+export default function AdminSidebar() {
 	return (
-		<Sidebar collapsible="offcanvas" {...props} className="border-none">
+		<Sidebar collapsible="offcanvas" className="border-none">
 			<SidebarHeader>
 				<SidebarMenu>
 					<SidebarMenuItem>
 						<SidebarMenuButton
 							asChild
-							className="text-primary hover:text-primary data-[slot=sidebar-menu-button]:p-1.5! rounded-full h-11"
+							className="text-primary hover:text-primary data-[slot=sidebar-menu-button]:p-1.5! rounded-full h-10"
 						>
 							<Link
 								href="/"
