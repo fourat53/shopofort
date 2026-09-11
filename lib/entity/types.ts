@@ -1,4 +1,8 @@
 import type {
+	KindeRole,
+	KindeUser as KindeUserType,
+} from "@kinde-oss/kinde-auth-nextjs";
+import type {
 	CartItem as CartItemDb,
 	Cart as CartType,
 	Category as CategoryType,
@@ -33,6 +37,10 @@ type CartItemType = Omit<CartItemDb, "unitPrice" | "totalPrice"> & {
 type OrderItemType = Omit<OrderItemDb, "price"> & { price: number };
 
 // MAPPED MODEL TYPES ---------------------------------------------------------------------
+type Role = KindeRole;
+
+type KindeUser = KindeUserType<Record<string, unknown>>;
+
 type User = UserType;
 
 type Category = CategoryType & { products: ProductType[] };
@@ -103,6 +111,7 @@ export type {
 	Category,
 	CategoryType,
 	CellValue,
+	KindeUser,
 	ListRowType,
 	Order,
 	OrderItem,
@@ -111,6 +120,7 @@ export type {
 	ParameterType,
 	Product,
 	ProductType,
+	Role,
 	RowType,
 	StringNumber,
 	User,

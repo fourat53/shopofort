@@ -39,8 +39,8 @@ export default function ThemeMenu() {
 				Theme
 			</DropdownMenuSubTrigger>
 			<DropdownMenuPortal>
-				<DropdownMenuSubContent>
-					<DropdownMenuGroup>
+				<DropdownMenuSubContent sideOffset={8}>
+					<DropdownMenuGroup className="pt-0">
 						<DropdownMenuLabel>Appearance</DropdownMenuLabel>
 						<DropdownMenuRadioGroup
 							value={theme}

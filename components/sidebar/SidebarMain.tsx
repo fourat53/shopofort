@@ -21,7 +21,7 @@ import {
 	SidebarMenuItem,
 } from "@/components/ui/sidebar";
 
-const navMenu: NavItem[] = [
+const sidebarNavMenu: SidebarNavItem[] = [
 	{
 		title: "Dashboard",
 		url: "dashboard",
@@ -64,12 +64,12 @@ const navMenu: NavItem[] = [
 	},
 ] as const;
 
-export default function NavMain() {
+export default function SidebarMain() {
 	return (
 		<SidebarGroup>
 			<SidebarGroupContent className="flex flex-col gap-2">
 				<SidebarMenu>
-					{navMenu.map((item) => (
+					{sidebarNavMenu.map((item) => (
 						<SidebarMenuItem key={item.title}>
 							<SidebarNavButton item={item} />
 						</SidebarMenuItem>
@@ -80,13 +80,13 @@ export default function NavMain() {
 	);
 }
 
-type NavItem = {
+type SidebarNavItem = {
 	title: string;
 	url: string;
 	icon?: Icon;
 };
 
-function SidebarNavButton({ item }: { item: NavItem }) {
+function SidebarNavButton({ item }: { item: SidebarNavItem }) {
 	const pathname = usePathname();
 	const router = useRouter();
 	const path = "/admin/" + item.url;

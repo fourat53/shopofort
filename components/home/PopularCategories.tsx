@@ -7,7 +7,7 @@ export default async function PopularCategories() {
 	const categories = await getCategoriesPage(1, "asc", "id", {}, 4);
 
 	return (
-		<section className="px-16 py-12">
+		<section className="px-16 py-12 bg-mist-50 dark:bg-card">
 			<div className="flex flex-col md:flex-row md:items-end justify-between mb-6 gap-4">
 				<div>
 					<h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-2">

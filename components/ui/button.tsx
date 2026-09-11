@@ -13,8 +13,6 @@ type ButtonProps = React.ComponentProps<"button"> &
 		icon?: React.ReactNode;
 		iconPosition?: "start" | "end";
 		asChild?: boolean;
-		border?: boolean;
-		shadow?: boolean;
 	};
 
 function Button({
@@ -23,8 +21,6 @@ function Button({
 	size = "default",
 	asChild = false,
 	loading = false,
-	border = true,
-	shadow = true,
 	icon,
 	iconPosition = "start",
 	children,
@@ -40,8 +36,6 @@ function Button({
 			disabled={loading || disabled || false}
 			className={cn(
 				buttonVariants({ variant, size }),
-				!border && "border-none",
-				!shadow && "shadow-none",
 				showIcon &&
 					iconPosition === "end" &&
 					"pl-4 flex-row-reverse items-center justify-between",
