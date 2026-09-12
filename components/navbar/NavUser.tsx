@@ -66,8 +66,10 @@ export default async function NavUser() {
 					{isAdmin && (
 						<Link href="/admin/dashboard">
 							<DropdownMenuItem asChild>
-								<IconDashboard />
-								Dashboard
+								<div>
+									<IconDashboard />
+									Dashboard
+								</div>
 							</DropdownMenuItem>
 						</Link>
 					)}
@@ -76,23 +78,29 @@ export default async function NavUser() {
 				<DropdownMenuSeparator className="my-0.5" />
 				{user ? (
 					<LogoutLink>
-						<DropdownMenuItem variant="destructive">
-							<IconLogout />
-							Sign Out
+						<DropdownMenuItem asChild variant="destructive">
+							<div>
+								<IconLogout />
+								Sign Out
+							</div>
 						</DropdownMenuItem>
 					</LogoutLink>
 				) : (
 					<>
 						<LoginLink>
-							<DropdownMenuItem>
-								<IconLogin />
-								Sign In
+							<DropdownMenuItem asChild>
+								<div>
+									<IconLogin />
+									Sign In
+								</div>
 							</DropdownMenuItem>
 						</LoginLink>
 						<RegisterLink>
-							<DropdownMenuItem>
-								<IconRegistered />
-								Sign Up
+							<DropdownMenuItem asChild>
+								<div>
+									<IconRegistered />
+									Sign Up
+								</div>
 							</DropdownMenuItem>
 						</RegisterLink>
 					</>

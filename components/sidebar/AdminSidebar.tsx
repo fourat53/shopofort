@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 import SmallLoader from "@/components/loaders/small-loader";
@@ -14,6 +13,7 @@ import {
 	SidebarMenuItem,
 	SidebarSeparator,
 } from "@/components/ui/sidebar";
+import { IconShoppingBag } from "@tabler/icons-react";
 
 export default function AdminSidebar() {
 	return (
@@ -21,25 +21,22 @@ export default function AdminSidebar() {
 			<SidebarHeader>
 				<SidebarMenu>
 					<SidebarMenuItem>
-						<SidebarMenuButton
-							asChild
-							className="text-primary hover:text-primary data-[slot=sidebar-menu-button]:p-1.5! rounded-full h-10"
-						>
-							<Link
-								href="/"
-								className="flex items-center justify-center font-bold text-xl"
+						<Link href="/">
+							<SidebarMenuButton
+								asChild
+								className="hover:bg-transparent text-primary"
 							>
-								<Image
-									src="/svgs/shopofort.svg"
-									alt="logo"
-									width={1000}
-									height={1000}
-									loading="eager"
-									className="size-8! relative -right-0.5 -top-0.5"
-								/>
-								<p className="relative -left-0.5 text-[22px]">ShopoFort</p>
-							</Link>
-						</SidebarMenuButton>
+								<div className="flex items-center justify-center gap-2">
+									<IconShoppingBag
+										stroke={2}
+										className="scale-175 text-primary"
+									/>
+									<span className="text-2xl font-bold tracking-tighter text-primary">
+										Shopofort
+									</span>
+								</div>
+							</SidebarMenuButton>
+						</Link>
 					</SidebarMenuItem>
 				</SidebarMenu>
 			</SidebarHeader>

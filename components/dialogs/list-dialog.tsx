@@ -58,7 +58,7 @@ export default async function ListDialog<T extends RowType>({
 			</DialogTrigger>
 			<DialogContent
 				showCloseButton
-				className="[calc(100vh-100px)] min-w-fit overflow-y-hidden flex flex-col gap-4"
+				className="h-[calc(100vh-100px)] min-w-fit overflow-y-hidden flex flex-col gap-4"
 			>
 				<Tabs className="w-full flex flex-col items-center gap-4">
 					<TabsList>
@@ -73,20 +73,22 @@ export default async function ListDialog<T extends RowType>({
 					</TabsList>
 					{Object.entries(row).map(([name, value]) => {
 						if (!Array.isArray(value)) return null;
-						const entity: EntityType = getFieldEntity(name) as EntityType;
-						const header = getHeader(entity);
+						const tabEntity: EntityType = getFieldEntity(name) as EntityType;
+						const header = getHeader(tabEntity);
 						const { field, multiple } = uploadConfig[entity] ?? {};
 						return (
 							<TabsContent
 								key={name}
 								value={name}
-								className="h-[calc(100vh-152px)] min-w-[70vw]"
+								className="h-[calc(100vh-152px)] min-w-[70vw] max-w-[70vw]"
 							>
-								{name === field && multiple ? (
-									<ImageCarousel images={[...String(value)]} />
+								{value.every((item) => typeof item === "string") &&
+								name === field &&
+								multiple ? (
+									<ImageCarousel images={value} />
 								) : (
 									<DataTable<ListRowType>
-										entity={entity}
+										entity={tabEntity}
 										header={header}
 										rows={name in row ? (row[name] as ListRowType[]) : []}
 										className="h-[calc(100vh-152px)]"
@@ -103,13 +105,11 @@ export default async function ListDialog<T extends RowType>({
 }
 
 function ImageCarousel({ images }: { images: string[] }) {
-	if (images.length === 0)
-		return (
-			<div className="w-full h-[calc(100vh-152px)] bg-chart-1/40 dark:bg-sidebar-accent/40 flex items-center justify-center border rounded-lg text-muted-foreground">
-				No images available
-			</div>
-		);
-	return (
+	return images.length === 0 ? (
+		<div className="w-full h-[calc(100vh-152px)] bg-chart-1/40 dark:bg-sidebar-accent/40 flex items-center justify-center border rounded-lg text-muted-foreground">
+			No images available
+		</div>
+	) : (
 		<Carousel>
 			<CarouselContent className="w-[70vw]">
 				{images.map((image, index) => (

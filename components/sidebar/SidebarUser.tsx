@@ -57,9 +57,11 @@ export default async function SidebarUser() {
 						</DropdownMenuGroup>
 						<DropdownMenuSeparator className="my-0.5" />
 						<LogoutLink>
-							<DropdownMenuItem variant="destructive">
-								<IconLogout />
-								Sign Out
+							<DropdownMenuItem asChild variant="destructive">
+								<div>
+									<IconLogout />
+									Sign Out
+								</div>
 							</DropdownMenuItem>
 						</LogoutLink>
 					</DropdownMenuContent>

@@ -56,8 +56,8 @@ function ProductCard({ product }: { product: Product }) {
 						className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-110"
 					/>
 				) : (
-					<div className="flex flex-col h-full w-full items-center justify-center text-muted-foreground/50 bg-muted/60">
-						<IconShoppingBag className="h-12 w-12 mb-2 opacity-50" />
+					<div className="flex flex-col gap-2 h-full w-full items-center justify-center bg-muted/60 text-muted-foreground/50">
+						<IconShoppingBag className="size-12 opacity-50" />
 						<span className="text-sm font-medium">No Image</span>
 					</div>
 				)}

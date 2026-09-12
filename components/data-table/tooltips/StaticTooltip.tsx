@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import ContentCell from "@/components/data-table/table-cells/ConentCell";
+import ContentCell from "@/components/data-table/table-cells/ContentCell";
 import {
 	Tooltip,
 	TooltipContent,

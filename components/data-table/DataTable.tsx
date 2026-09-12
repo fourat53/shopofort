@@ -1,6 +1,6 @@
 import { cn } from "cn";
 import CheckBoxCell from "@/components/data-table/table-cells/CheckBoxCell";
-import ContentCell from "@/components/data-table/table-cells/ConentCell";
+import ContentCell from "@/components/data-table/table-cells/ContentCell";
 import SortedHead from "@/components/data-table/table-cells/SortedHead";
 import DeleteDialog from "@/components/dialogs/delete-dialog";
 import EditDialog from "@/components/dialogs/edit-dialog";
@@ -77,8 +77,8 @@ export default function DataTable<T extends RowType>({
 						</TableRow>
 					</TableHeader>
 					<TableBody>
-						{rows.map((row) => (
-							<TableRow key={row.id}>
+						{rows.map((row, rowIndex) => (
+							<TableRow key={`${row.id}-${rowIndex}`}>
 								{!dialog && (
 									<TableCell className="w-8 min-w-8 max-w-8">
 										<CheckBoxCell<T>
