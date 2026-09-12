@@ -1,3 +1,4 @@
+import { IconShoppingBag } from "@tabler/icons-react";
 import Link from "next/link";
 import { Suspense } from "react";
 import SmallLoader from "@/components/loaders/small-loader";
@@ -13,7 +14,6 @@ import {
 	SidebarMenuItem,
 	SidebarSeparator,
 } from "@/components/ui/sidebar";
-import { IconShoppingBag } from "@tabler/icons-react";
 
 export default function AdminSidebar() {
 	return (

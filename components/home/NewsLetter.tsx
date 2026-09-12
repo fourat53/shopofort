@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 
 export default function NewsLetter() {
 	return (
-		<section className="py-16 border-y bg-background flex flex-col gap-4 text-center">
+		<section className="py-16 border-t flex flex-col gap-4 text-center">
 			<h2 className="text-3xl md:text-4xl font-bold tracking-tight">
 				Join Our Newsletter
 			</h2>

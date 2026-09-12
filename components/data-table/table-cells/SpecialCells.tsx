@@ -1,7 +1,7 @@
 import { IconShoppingBag } from "@tabler/icons-react";
+import clsx from "clsx";
 import Image from "next/image";
 import { OrderStatus } from "@/lib/entity/types";
-import clsx from "clsx";
 
 interface ImageCellProps {
 	value: string;

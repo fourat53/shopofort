@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function ClientFooter() {
 	return (
-		<footer className="px-12">
+		<footer className="border-t px-12 bg-background">
 			<div className="p-12 pr-0 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8">
 				<div className="col-span-2 lg:col-span-2">
 					<div className="flex items-center gap-2 mb-6">

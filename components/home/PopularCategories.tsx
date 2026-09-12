@@ -2,12 +2,12 @@ import { IconArrowRight } from "@tabler/icons-react";
 import { getCategoriesPage } from "@/actions/CategoryActions";
 import { Button } from "@/components/ui/button";
 import type { Category } from "@/lib/entity/types";
+import CategoryCard from "../cards/CategoryCard";
 
 export default async function PopularCategories() {
 	const categories = await getCategoriesPage(1, "asc", "id", {}, 4);
-
 	return (
-		<section className="px-16 py-12 bg-mist-50 dark:bg-card">
+		<section className="px-16 py-12 bg-background">
 			<div className="flex flex-col md:flex-row md:items-end justify-between mb-6 gap-4">
 				<div>
 					<h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-2">
@@ -30,37 +30,5 @@ export default async function PopularCategories() {
 				))}
 			</div>
 		</section>
-	);
-}
-
-function CategoryCard({
-	category,
-	index,
-}: {
-	category: Category;
-	index: number;
-}) {
-	return (
-		<div
-			key={category.id}
-			className="group relative overflow-hidden rounded-3xl border bg-linear-to-br from-background to-muted/30 p-6 transition-all duration-300 hover:shadow-sm dark:hover:shadow-xl hover:-translate-y-1"
-		>
-			<div className="absolute inset-0 bg-linear-to-b from-transparent via-transparent to-primary/5 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-			<div className="relative z-10 flex flex-col h-full">
-				<div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mb-6">
-					<span className="font-bold text-lg">{index + 1}</span>
-				</div>
-				<h3 className="text-2xl font-bold mb-2 capitalize">{category.name}</h3>
-				<p className="text-sm text-muted-foreground capitalize font-medium">
-					{category.audience}
-				</p>
-
-				<div className="flex justify-end">
-					<div className="flex h-10 w-10 items-center justify-center rounded-full bg-background border shadow-sm text-foreground transition-all duration-300 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary">
-						<IconArrowRight className="size-4" />
-					</div>
-				</div>
-			</div>
-		</div>
 	);
 }

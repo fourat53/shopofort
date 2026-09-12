@@ -16,28 +16,22 @@ export default async function ClientNavbar() {
 				</Link>
 				<div className="hidden md:flex gap-8 text-sm font-semibold">
 					<Link
-						href="#"
+						href="/Men"
 						className="transition-colors hover:text-primary text-foreground/80"
 					>
 						Men
 					</Link>
 					<Link
-						href="#"
+						href="/Women"
 						className="transition-colors hover:text-primary text-foreground/80"
 					>
 						Women
 					</Link>
 					<Link
-						href="#"
+						href="/Kids"
 						className="transition-colors hover:text-primary text-foreground/80"
 					>
 						Kids
-					</Link>
-					<Link
-						href="#"
-						className="transition-colors hover:text-primary text-foreground/80"
-					>
-						Accessories
 					</Link>
 				</div>
 				<div className="flex items-center">

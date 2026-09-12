@@ -1,3 +1,7 @@
+import {
+	ImageCell,
+	OrderStatusCell,
+} from "@/components/data-table/table-cells/SpecialCells";
 import EntityTooltip from "@/components/data-table/tooltips/EntityTooltip";
 import { formatDateTime, isValidDate } from "@/lib/date";
 import {
@@ -8,10 +12,6 @@ import {
 	type ValueType,
 } from "@/lib/entity/types";
 import { uploadConfig } from "@/lib/uploadthing/client";
-import {
-	ImageCell,
-	OrderStatusCell,
-} from "@/components/data-table/table-cells/SpecialCells";
 
 interface ContentCellProps<T> {
 	row?: T;

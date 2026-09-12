@@ -1,3 +1,4 @@
+import ClientFooter from "@/components/home/ClientFooter";
 import ClientNavbar from "@/components/navbar/ClientNavbar";
 
 export default function ClientLayout({
@@ -9,6 +10,7 @@ export default function ClientLayout({
 		<div className="bg-mist-50 dark:bg-card">
 			<ClientNavbar />
 			{children}
+			<ClientFooter />
 		</div>
 	);
 }

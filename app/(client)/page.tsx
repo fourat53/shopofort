@@ -1,4 +1,3 @@
-import ClientFooter from "@/components/home/ClientFooter";
 import HeroSection from "@/components/home/HeroSection";
 import NewsLetter from "@/components/home/NewsLetter";
 import PopularCategories from "@/components/home/PopularCategories";
@@ -11,7 +10,6 @@ export default function Home() {
 			<TrendingProducts />
 			<PopularCategories />
 			<NewsLetter />
-			<ClientFooter />
 		</>
 	);
 }
