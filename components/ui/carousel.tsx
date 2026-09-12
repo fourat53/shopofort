@@ -181,17 +181,18 @@ function CarouselPrevious({
 		<button
 			data-slot="carousel-previous"
 			className={cn(
-				"z-50 absolute rounded-full",
+				!canScrollPrev && "opacity-0 invisible delay-300",
+				"z-50 absolute p-1.5 rounded-full bg-mist-200 dark:bg-sidebar-accent",
+				"cursor-pointer hover:bg-mist-200/60 dark:hover:bg-mist-800/80",
 				orientation === "horizontal"
 					? "top-1/2 -translate-y-1/2 left-4"
 					: "-top-12 inset-s-1/2 -translate-x-1/2 rtl:translate-x-1/2 rotate-90",
 				className,
 			)}
-			disabled={!canScrollPrev}
 			onClick={scrollPrev}
 			{...props}
 		>
-			<IconChevronLeft className="rtl:rotate-180" />
+			<IconChevronLeft className="pr-0.5 rtl:pr-0 rtl:pl-0.5 rtl:rotate-180" />
 			<span className="sr-only">Previous slide</span>
 		</button>
 	);
@@ -206,17 +207,18 @@ function CarouselNext({
 		<button
 			data-slot="carousel-next"
 			className={cn(
-				"z-50 absolute rounded-full",
+				!canScrollNext && "opacity-0 invisible delay-300",
+				"z-50 absolute p-1.5 rounded-full bg-mist-200 dark:bg-sidebar-accent",
+				"cursor-pointer hover:bg-mist-200/60 dark:hover:bg-mist-800/80",
 				orientation === "horizontal"
 					? "top-1/2 -translate-y-1/2 right-4"
 					: "-bottom-12 inset-s-1/2 -translate-x-1/2 rtl:translate-x-1/2 rotate-90",
 				className,
 			)}
-			disabled={!canScrollNext}
 			onClick={scrollNext}
 			{...props}
 		>
-			<IconChevronRight className="rtl:rotate-180" />
+			<IconChevronRight className="pl-0.5 rtl:pl-0 rtl:pr-0.5 rtl:rotate-180" />
 			<span className="sr-only">Next slide</span>
 		</button>
 	);

@@ -44,7 +44,7 @@ export default function DataTable<T extends RowType>({
 					No data available
 				</div>
 			) : (
-				<Table parentClassName={className}>
+				<Table className={cn(dialog && "border-b")} parentClassName={className}>
 					<TableHeader>
 						<TableRow>
 							{!dialog && (
@@ -77,8 +77,8 @@ export default function DataTable<T extends RowType>({
 						</TableRow>
 					</TableHeader>
 					<TableBody>
-						{rows.map((row, rowIndex) => (
-							<TableRow key={`${row.id}-${rowIndex}`}>
+						{rows.map((row, rIndex) => (
+							<TableRow key={`row-${row.id}-${rIndex}`} border>
 								{!dialog && (
 									<TableCell className="w-8 min-w-8 max-w-8">
 										<CheckBoxCell<T>
@@ -94,8 +94,8 @@ export default function DataTable<T extends RowType>({
 										typeof value !== "object" && (
 											<TableCell
 												key={`cell-${row.id}-${cIndex}`}
-												border
 												className="h-[33.6px] truncate"
+												border
 												style={{
 													width: header[cIndex]?.width,
 													minWidth: header[cIndex]?.width,

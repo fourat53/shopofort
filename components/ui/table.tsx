@@ -18,7 +18,7 @@ function Table({
 		>
 			<table
 				data-slot="table"
-				className={cn("w-full border-b caption-bottom text-xs", className)}
+				className={cn("w-full caption-bottom text-xs", className)}
 				{...props}
 			/>
 		</div>
@@ -29,11 +29,7 @@ function TableHeader({ className, ...props }: React.ComponentProps<"thead">) {
 	return (
 		<thead
 			data-slot="table-header"
-			className={cn(
-				"bg-mist-300/80 dark:bg-sidebar-accent hover:bg-mist-300/80 dark:hover:bg-sidebar-accent",
-				"[&_tr]:border-b",
-				className,
-			)}
+			className={cn("[&_tr]:border-b", className)}
 			{...props}
 		/>
 	);
@@ -62,12 +58,17 @@ function TableFooter({ className, ...props }: React.ComponentProps<"tfoot">) {
 	);
 }
 
-function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
+function TableRow({
+	border = false,
+	className,
+	...props
+}: React.ComponentProps<"tr"> & { border?: boolean }) {
 	return (
 		<tr
 			data-slot="table-row"
 			className={cn(
-				"border-b transition-colors has-aria-expanded:bg-muted/50 data-[state=selected]:bg-muted",
+				"transition-colors has-aria-expanded:bg-muted/50 data-[state=selected]:bg-muted",
+				border && "border-b",
 				className,
 			)}
 			{...props}
@@ -85,7 +86,8 @@ function TableHead({
 			data-slot="table-head"
 			className={cn(
 				"h-7 py-1.5 px-2 font-semibold text-left whitespace-nowrap text-foreground has-[[role=checkbox]]:pr-0",
-				"hover:cursor-pointer hover:bg-mist-400/30 dark:hover:bg-mist-900/30",
+				"bg-muted/90 dark:bg-sidebar-accent",
+				"hover:cursor-pointer hover:bg-mist-200/80 dark:hover:bg-mist-700/60",
 				border && "border-l",
 				className,
 			)}

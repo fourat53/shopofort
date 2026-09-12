@@ -24,8 +24,8 @@ export default async function AdminLayout({
 			<UploadPlugin routerConfig={extractConfig(fileRouter)} />
 			<AdminSidebar />
 			<SidebarInset>
-				<div className="p-3 border rounded-4xl bg-chart-1 dark:bg-sidebar-accent">
-					<div className="h-[calc(100vh-38px)] bg-sidebar rounded-3xl border">
+				<div className="p-3 border rounded-4xl bg-muted/90 dark:bg-sidebar-accent">
+					<div className="h-[calc(100vh-38px)] bg-background rounded-3xl border">
 						<div className="p-2.5 flex items-center justify-between">
 							<div className="text-xl font-semibold text-chart-2 flex items-center gap-2">
 								<SidebarTrigger />

@@ -35,7 +35,7 @@ export default function RootLayout({
 				"antialiased font-sans",
 			)}
 		>
-			<body className="min-h-screen overflow-x-hidden text-foreground bg-sidebar">
+			<body className="min-h-screen overflow-x-hidden text-foreground bg-background">
 				<DocumentTitle />
 				<ThemeProvider>
 					<Toaster />

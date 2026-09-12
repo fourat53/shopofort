@@ -58,7 +58,7 @@ export default async function ListDialog<T extends RowType>({
 			</DialogTrigger>
 			<DialogContent
 				showCloseButton
-				className="h-[calc(100vh-100px)] min-w-fit overflow-y-hidden flex flex-col gap-4"
+				className="min-w-[calc(100vw-100px)] flex flex-col gap-4"
 			>
 				<Tabs className="w-full flex flex-col items-center gap-4">
 					<TabsList>
@@ -80,7 +80,7 @@ export default async function ListDialog<T extends RowType>({
 							<TabsContent
 								key={name}
 								value={name}
-								className="h-[calc(100vh-152px)] min-w-[70vw] max-w-[70vw]"
+								className="w-full h-[calc(100vh-152px)]"
 							>
 								{value.every((item) => typeof item === "string") &&
 								name === field &&
@@ -106,16 +106,16 @@ export default async function ListDialog<T extends RowType>({
 
 function ImageCarousel({ images }: { images: string[] }) {
 	return images.length === 0 ? (
-		<div className="w-full h-[calc(100vh-152px)] bg-chart-1/40 dark:bg-sidebar-accent/40 flex items-center justify-center border rounded-lg text-muted-foreground">
+		<div className="h-[calc(100vh-152px)] w-full bg-chart-1/40 dark:bg-sidebar-accent/40 flex items-center justify-center border rounded-lg text-muted-foreground">
 			No images available
 		</div>
 	) : (
-		<Carousel>
-			<CarouselContent className="w-[70vw]">
+		<Carousel className="bg-muted dark:bg-mist-950 rounded-xl">
+			<CarouselContent>
 				{images.map((image, index) => (
 					<CarouselItem
 						key={index}
-						className="p-0 h-[calc(100vh-152px)] bg-mist-300 dark:bg-mist-950 flex justify-center items-center rounded-xl"
+						className="h-[calc(100vh-152px)] p-0 pl-4 flex justify-center items-center"
 					>
 						<Image
 							src={image}
@@ -127,12 +127,8 @@ function ImageCarousel({ images }: { images: string[] }) {
 					</CarouselItem>
 				))}
 			</CarouselContent>
-			{images.length > 1 && (
-				<>
-					<CarouselPrevious />
-					<CarouselNext />
-				</>
-			)}
+			<CarouselPrevious />
+			<CarouselNext />
 		</Carousel>
 	);
 }
