@@ -1,8 +1,4 @@
-import {
-	IMAGE_PAGE_SIZE,
-	PAGE_SIZE,
-} from "@/components/data-table/pagination/PaginationParams";
-import SortedHead from "@/components/data-table/table-cells/SortedHead";
+import SortHead from "@/components/data-table/table-cells/SortHead";
 import DeleteDialog from "@/components/dialogs/delete-dialog";
 import EditDialog from "@/components/dialogs/edit-dialog";
 import ListDialog from "@/components/dialogs/list-dialog";
@@ -18,20 +14,20 @@ import {
 } from "@/components/ui/table";
 import type { HeaderItem } from "@/lib/entity/headers";
 import type { EntityType } from "@/lib/entity/types";
+import { uploadConfig } from "@/lib/uploadthing/client";
 
 interface DataTableSkeletonProps {
 	entity: EntityType;
 	header: HeaderItem[];
-	hasImage?: boolean;
-	pageSize?: number;
+	pageSize: number;
 }
 
 export default function DataTableSkeleton({
 	entity,
 	header,
-	hasImage = false,
-	pageSize = hasImage ? IMAGE_PAGE_SIZE : PAGE_SIZE,
+	pageSize,
 }: DataTableSkeletonProps) {
+	const { field, multiple } = uploadConfig[entity] ?? {};
 	return (
 		<Table>
 			<TableHeader>
@@ -40,7 +36,7 @@ export default function DataTableSkeleton({
 						<Checkbox />
 					</TableHead>
 					{header.map((item) => (
-						<SortedHead key={item.name} name={item.name} entity={entity} />
+						<SortHead key={item.name} name={item.name} entity={entity} />
 					))}
 					<TableHead border className="py-0 text-center">
 						Actions
@@ -57,17 +53,27 @@ export default function DataTableSkeleton({
 							<TableCell
 								key={item.name}
 								border
-								className={hasImage ? "size-18.5" : "h-[33.6px]"}
+								className={item.name === field ? "size-18.5" : "h-[33.6px]"}
 								style={{
 									width: item.width,
 									minWidth: item.width,
 								}}
 							>
-								<Skeleton
-									className={
-										item.name === "picture" ? "size-14.5 rounded-xl" : "h-4"
-									}
-								/>
+								{item.name === field && multiple ? (
+									<div className="flex gap-2 overflow-y-auto">
+										{Array.from({ length: 3 }, (_, index) => (
+											<Skeleton key={index} className="size-14.5 rounded-xl" />
+										))}
+									</div>
+								) : (
+									<Skeleton
+										className={
+											item.name === field && !multiple
+												? "size-14.5 rounded-xl"
+												: "h-4"
+										}
+									/>
+								)}
 							</TableCell>
 						))}
 						<TableCell border className="py-0.5 w-26 max-w-26 min-w-26">

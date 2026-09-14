@@ -19,16 +19,16 @@ interface SortedHeadProps {
 	entity: EntityType;
 }
 
-export default function SortedHead({ name, entity }: SortedHeadProps) {
+function SortedHead({ name, entity }: SortedHeadProps) {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const [isPending, startTransition] = useTransition();
-
 	const sortBy = searchParams.get("sortBy");
 	const order = searchParams.get("order");
+	const { field } = uploadConfig[entity] ?? {};
 
 	function handleClick() {
-		if (name === "picture") return;
+		if (name === field) return;
 		startTransition(() => {
 			router.push(sortHref(entity, searchParams, name), {
 				scroll: false,
@@ -43,7 +43,7 @@ export default function SortedHead({ name, entity }: SortedHeadProps) {
 				<div
 					className={clsx(
 						"absolute right-0 top-1/2 -translate-y-1/2",
-						name === uploadConfig[entity]?.field && "hidden",
+						name === field && "hidden",
 					)}
 				>
 					{sortBy === name && order === "asc" ? (
@@ -57,4 +57,13 @@ export default function SortedHead({ name, entity }: SortedHeadProps) {
 			</div>
 		</TableHead>
 	);
+}
+
+interface SortHeadProps extends SortedHeadProps {
+	dialog?: boolean;
+}
+
+export default function SortHead({ name, entity, dialog }: SortHeadProps) {
+	if (dialog) return <TableHead border>{getFieldName(name)}</TableHead>;
+	return <SortedHead name={name} entity={entity} />;
 }

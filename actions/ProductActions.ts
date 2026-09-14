@@ -4,13 +4,16 @@ import { unstable_cache } from "next/cache";
 import {
 	CACHE_SECONDS,
 	FILTER_CACHE_SECONDS,
-	PAGE_SIZE,
 } from "@/components/data-table/pagination/PaginationParams";
 import { getParamValues } from "@/lib/entity/functions";
 import { PRODUCTS_HEADER } from "@/lib/entity/headers";
-import type { ParameterType } from "@/lib/entity/types";
+import type {
+	ParameterType,
+	Prisma,
+	ProductColor,
+	ProductSize,
+} from "@/lib/entity/types";
 import { prisma } from "@/lib/prisma";
-import type { Prisma } from "@/prisma/generated/prisma/client";
 
 type FilterBy = Prisma.ProductWhereInput;
 
@@ -20,7 +23,13 @@ function buildWhereClause(filterParams: ParameterType): FilterBy {
 	const ids = getParamValues(filterParams.id);
 	if (ids.length) where.id = { in: ids.map(Number) };
 
-	for (const field of ["price", "inventory"] as const) {
+	const colors = getParamValues(filterParams.colors);
+	if (colors.length) where.colors = { hasEvery: colors as ProductColor[] };
+
+	const sizes = getParamValues(filterParams.sizes);
+	if (sizes.length) where.sizes = { hasEvery: sizes as ProductSize[] };
+
+	for (const field of ["price", "inventory", "rating", "votes"] as const) {
 		const from = Number(filterParams[`${field}From`]);
 		const to = Number(filterParams[`${field}To`]);
 		if (!Number.isNaN(from) || !Number.isNaN(to)) {
@@ -61,7 +70,7 @@ async function getProductsPage(
 	order: "asc" | "desc" = "asc",
 	sortBy: string = "id",
 	filterParams: ParameterType = {},
-	pageSize: number = PAGE_SIZE,
+	pageSize: number,
 ) {
 	const where = buildWhereClause(filterParams);
 	const orderBy = buildOrderClause(sortBy, order);
@@ -105,4 +114,31 @@ async function getProductCount(filterParams: ParameterType = {}) {
 	)();
 }
 
-export { getProductCount, getProductsPage };
+async function updateProductRating(id: number, rating: number) {
+	try {
+		const product = await prisma.product.findUnique({
+			where: { id },
+			select: { rating: true, votes: true },
+		});
+
+		let newRating: number;
+		let newVotes: number;
+
+		if (product?.rating && product?.votes) {
+			newVotes = product.votes + 1;
+			newRating = (Number(product.rating) * product.votes + rating) / newVotes;
+		} else {
+			newVotes = 1;
+			newRating = rating;
+		}
+
+		await prisma.product.update({
+			where: { id },
+			data: { rating: newRating, votes: newVotes },
+		});
+	} catch (error) {
+		console.error(error);
+	}
+}
+
+export { getProductCount, getProductsPage, updateProductRating };

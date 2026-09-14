@@ -1,8 +1,8 @@
 import { IconArrowRight, IconTrendingUp } from "@tabler/icons-react";
 import { getProductsPage } from "@/actions/ProductActions";
+import ProductCard from "@/components/cards/ProductCard";
 import { Button } from "@/components/ui/button";
 import type { Product } from "@/lib/entity/types";
-import ProductCard from "../cards/ProductCard";
 
 export default async function TrendingProducts() {
 	const products = await getProductsPage(1, "asc", "id", {}, 8);

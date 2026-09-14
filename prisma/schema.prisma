@@ -9,73 +9,92 @@ datasource db {
 
 model Cart {
   id          Int        @id @default(autoincrement())
-  totalAmount Int
+  totalPrice  Decimal    @db.Decimal(10, 2)
   userId      String     @unique
   cartItems   CartItem[]
-
   @@map("carts")
 }
 
 model CartItem {
   id         Int     @id @default(autoincrement())
-  quantity   Int
   unitPrice  Decimal @db.Decimal(10, 2)
-  totalPrice Decimal @db.Decimal(10, 2)
+  quantity   Int
   cartId     Int
   productId  Int
   cart       Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
-  product    Product @relation(fields: [productId], references: [id])
-
+  product    Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   @@map("cart_items")
 }
 
 model Category {
-  id       Int       @id @default(autoincrement())
+  id       Int               @id @default(autoincrement())
   name     String
   audience   Audience
   products Product[]
-
   @@unique([name, audience])
   @@map("categories")
 }
 
 model Product {
-  id          Int         @id @default(autoincrement())
-  name        String
-  brand       String?
-  price       Decimal     @db.Decimal(10, 2)
-  inventory   Int
-  description String?
-  categoryId  Int
-  images      String[]
-  cartItems   CartItem[]
-  orderItems  OrderItem[]
-  category    Category   @relation(fields: [categoryId], references: [id])
-
+  id          Int             @id @default(autoincrement())
+  name        String          
+  brand       String?         
+  price       Decimal         @db.Decimal(10, 2)
+  inventory   Int             
+  description String?         
+  colors       ProductColor[]  
+  sizes        ProductSize[]  
+  rating      Decimal         @db.Decimal(10, 2) @default(0)
+  votes       Int             @default(0)
+  categoryId  Int             
+  images      String[]        
+  cartItems   CartItem[]      
+  orderItems  OrderItem[]     
+  category    Category        @relation(fields: [categoryId], references: [id])
   @@map("products")
 }
 
 model Order {
   id          Int         @id @default(autoincrement()) @map("orderId")
   orderDate   DateTime
-  totalAmount Int
+  totalPrice  Decimal     @db.Decimal(10, 2)
   orderStatus OrderStatus
   userId      String
   orderItems  OrderItem[]
-
   @@map("orders")
 }
 
 model OrderItem {
-  id        Int     @id @default(autoincrement())
-  quantity  Int
-  price     Decimal @db.Decimal(10, 2)
-  orderId   Int
-  productId Int
-  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  product   Product @relation(fields: [productId], references: [id])
-
+  id          Int     @id @default(autoincrement())
+  unitPrice   Decimal @db.Decimal(10, 2)
+  quantity    Int
+  orderId     Int
+  productId   Int
+  order       Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product     Product @relation(fields: [productId], references: [id])
   @@map("order_items")
+}
+
+enum ProductColor {
+  Black
+  Blue
+  Gray
+  Green
+  Orange
+  Pink
+  Purple
+  Red
+  White
+  Yellow
+}
+
+enum ProductSize {
+  XS
+  S
+  M
+  L
+  XL
+  XXL
 }
 
 enum OrderStatus {

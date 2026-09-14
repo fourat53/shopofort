@@ -4,20 +4,18 @@ import { unstable_cache } from "next/cache";
 import {
 	CACHE_SECONDS,
 	FILTER_CACHE_SECONDS,
-	PAGE_SIZE,
 } from "@/components/data-table/pagination/PaginationParams";
 import { getParamValues } from "@/lib/entity/functions";
 import { ORDER_ITEMS_HEADER } from "@/lib/entity/headers";
-import type { ParameterType } from "@/lib/entity/types";
+import type { ParameterType, Prisma } from "@/lib/entity/types";
 import { prisma } from "@/lib/prisma";
-import type { Prisma } from "@/prisma/generated/prisma/client";
 
 type FilterBy = Prisma.OrderItemWhereInput;
 
 function buildWhereClause(filterParams: ParameterType): FilterBy {
 	const where: FilterBy = {};
 
-	for (const field of ["quantity", "price"] as const) {
+	for (const field of ["quantity", "unitPrice"] as const) {
 		const from = Number(filterParams[`${field}From`]);
 		const to = Number(filterParams[`${field}To`]);
 		if (!Number.isNaN(from) || !Number.isNaN(to)) {
@@ -55,7 +53,7 @@ async function getOrderItemsPage(
 	order: "asc" | "desc" = "asc",
 	sortBy: string = "id",
 	filterParams: ParameterType = {},
-	pageSize: number = PAGE_SIZE,
+	pageSize: number,
 ) {
 	const where = buildWhereClause(filterParams);
 	const orderBy = buildOrderClause(sortBy, order);

@@ -11,7 +11,11 @@ import {
 } from "@/components/ui/carousel";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getFieldEntity, getFieldName } from "@/lib/entity/functions";
+import {
+	getFieldEntity,
+	getFieldName,
+	isTabValue,
+} from "@/lib/entity/functions";
 import { getHeader } from "@/lib/entity/headers";
 import { EntityType, type ListRowType, type RowType } from "@/lib/entity/types";
 import { uploadConfig } from "@/lib/uploadthing/client";
@@ -22,7 +26,7 @@ interface ListDialogProps<T> {
 	disabled?: boolean;
 }
 
-export default async function ListDialog<T extends RowType>({
+export default function ListDialog<T extends RowType>({
 	row,
 	entity,
 	disabled,
@@ -63,39 +67,43 @@ export default async function ListDialog<T extends RowType>({
 				<Tabs className="w-full flex flex-col items-center gap-4">
 					<TabsList>
 						{Object.entries(row).map(([name, value]) => {
-							if (!Array.isArray(value)) return null;
+							const { field } = uploadConfig[entity] ?? {};
 							return (
-								<TabsTrigger key={name} value={name}>
-									{getFieldName(name)}
-								</TabsTrigger>
+								isTabValue(value, name, field) && (
+									<TabsTrigger key={name} value={name}>
+										{getFieldName(name)}
+									</TabsTrigger>
+								)
 							);
 						})}
 					</TabsList>
 					{Object.entries(row).map(([name, value]) => {
-						if (!Array.isArray(value)) return null;
+						const { field } = uploadConfig[entity] ?? {};
 						const tabEntity: EntityType = getFieldEntity(name) as EntityType;
 						const header = getHeader(tabEntity);
-						const { field, multiple } = uploadConfig[entity] ?? {};
 						return (
-							<TabsContent
-								key={name}
-								value={name}
-								className="w-full h-[calc(100vh-152px)]"
-							>
-								{value.every((item) => typeof item === "string") &&
-								name === field &&
-								multiple ? (
-									<ImageCarousel images={value} />
-								) : (
-									<DataTable<ListRowType>
-										entity={tabEntity}
-										header={header}
-										rows={name in row ? (row[name] as ListRowType[]) : []}
-										className="h-[calc(100vh-152px)]"
-										dialog
-									/>
-								)}
-							</TabsContent>
+							isTabValue(value, name, field) && (
+								<TabsContent
+									key={name}
+									value={name}
+									className="w-full h-[calc(100vh-152px)]"
+								>
+									{name === field ? (
+										<ImageCarousel images={value as string[]} />
+									) : (
+										Array.isArray(value) &&
+										value.every((item) => typeof item === "object") && (
+											<DataTable<ListRowType>
+												entity={tabEntity}
+												header={header}
+												rows={name in row ? (row[name] as ListRowType[]) : []}
+												className="h-[calc(100vh-152px)]"
+												dialog
+											/>
+										)
+									)}
+								</TabsContent>
+							)
 						);
 					})}
 				</Tabs>

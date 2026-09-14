@@ -81,7 +81,7 @@ export default function CreateForm({ entity, open, setOpen }: CreateFormProps) {
 				</DialogHeader>
 				<div className="max-h-[calc(100vh-8rem)] overflow-y-auto px-4 flex flex-col gap-4">
 					{fields.map((field) => {
-						const { type, name, required, defaultValue } = field;
+						const { type, name, multiple, required, defaultValue } = field;
 						const label = getFieldName(name);
 						return type === "string" ? (
 							<Input
@@ -121,15 +121,16 @@ export default function CreateForm({ entity, open, setOpen }: CreateFormProps) {
 								images={images}
 								required={required}
 								onChange={setImages}
-								multiple={type === "images"}
+								multiple={multiple}
 							/>
 						) : type === "enum" ? (
 							<Select
 								key={name}
 								name={name}
 								label={label}
-								defaultValue={defaultValue?.toString()}
+								multiple={multiple}
 								required={required}
+								defaultValue={defaultValue?.toString()}
 								items={field.options?.map((o) => ({ label: o, value: o }))}
 							/>
 						) : type === "foreignKey" ? (

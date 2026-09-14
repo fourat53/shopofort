@@ -1,16 +1,22 @@
 import type {
 	KindeRole,
 	KindeUser as KindeUserType,
-} from "@kinde-oss/kinde-auth-nextjs";
+} from "@kinde-oss/kinde-auth-nextjs/types";
 import type {
+	Cart as CartDb,
 	CartItem as CartItemDb,
-	Cart as CartType,
 	Category as CategoryType,
+	Order as OrderDb,
 	OrderItem as OrderItemDb,
-	Order as OrderType,
+	Prisma,
 	Product as ProductDb,
 } from "@/prisma/generated/prisma/client";
-import { Audience, OrderStatus } from "@/prisma/generated/prisma/enums";
+import {
+	Audience,
+	OrderStatus,
+	ProductColor,
+	ProductSize,
+} from "@/prisma/generated/prisma/enums";
 
 // PLAIN MODEL TYPES ----------------------------------------------------------------------
 type UserType = {
@@ -27,14 +33,18 @@ type UserType = {
 	updated_on: Date;
 };
 
-type ProductType = Omit<ProductDb, "price" | "images"> & { price: number };
-
-type CartItemType = Omit<CartItemDb, "unitPrice" | "totalPrice"> & {
-	unitPrice: number;
-	totalPrice: number;
+type ProductType = Omit<ProductDb, "price" | "rating"> & {
+	price: number;
+	rating: number;
 };
 
-type OrderItemType = Omit<OrderItemDb, "price"> & { price: number };
+type CartType = Omit<CartDb, "totalPrice"> & { totalPrice: number };
+
+type CartItemType = Omit<CartItemDb, "unitPrice"> & { unitPrice: number };
+
+type OrderType = Omit<OrderDb, "totalPrice"> & { totalPrice: number };
+
+type OrderItemType = Omit<OrderItemDb, "unitPrice"> & { unitPrice: number };
 
 // MAPPED MODEL TYPES ---------------------------------------------------------------------
 type Role = KindeRole;
@@ -46,7 +56,6 @@ type User = UserType;
 type Category = CategoryType & { products: ProductType[] };
 
 type Product = ProductType & {
-	images: string[];
 	cartItems: CartItemType[];
 	orderItems: OrderItemType[];
 	category: CategoryType;
@@ -86,11 +95,17 @@ type StringNumber = string | number;
 
 type ParameterType = Record<string, string | string[] | undefined>;
 
-type CellValue = StringNumber | boolean | Date | null;
+type CellValue =
+	| StringNumber
+	| boolean
+	| Date
+	| string[]
+	| ProductColor[]
+	| ProductSize[]
+	| null;
 
 type ValueType =
 	| CellValue
-	| string[]
 	| CategoryType
 	| CartType
 	| OrderType
@@ -118,6 +133,7 @@ export type {
 	OrderItemType,
 	OrderType,
 	ParameterType,
+	Prisma,
 	Product,
 	ProductType,
 	Role,
@@ -127,4 +143,11 @@ export type {
 	UserType,
 	ValueType,
 };
-export { Audience, EntityType, OptionField, OrderStatus };
+export {
+	Audience,
+	EntityType,
+	OptionField,
+	OrderStatus,
+	ProductColor,
+	ProductSize,
+};

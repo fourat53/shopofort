@@ -1,8 +1,8 @@
 import { IconArrowRight } from "@tabler/icons-react";
 import { getCategoriesPage } from "@/actions/CategoryActions";
+import CategoryCard from "@/components/cards/CategoryCard";
 import { Button } from "@/components/ui/button";
 import type { Category } from "@/lib/entity/types";
-import CategoryCard from "../cards/CategoryCard";
 
 export default async function PopularCategories() {
 	const categories = await getCategoriesPage(1, "asc", "id", {}, 4);

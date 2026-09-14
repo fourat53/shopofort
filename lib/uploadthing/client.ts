@@ -91,4 +91,4 @@ async function addImages(
 	}
 }
 
-export { addImages, uploadConfig };
+export { addImages, type ImageField, uploadConfig };

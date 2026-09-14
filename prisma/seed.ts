@@ -1,7 +1,20 @@
 import { PrismaPg } from "@prisma/adapter-pg";
 import { config } from "dotenv";
 import { getUsers } from "@/actions/UserActions";
-import { Audience, OrderStatus } from "@/lib/entity/types";
+import {
+	audiences,
+	brands,
+	categoryNames,
+	orderStatuses,
+	productColors,
+	productImages,
+	productNames,
+	productSizes,
+	randomFloat,
+	randomInt,
+	randomList,
+} from "@/lib/entity/data";
+import type { ProductColor, ProductSize } from "@/lib/entity/types";
 import { checkedEnvVar } from "@/lib/env";
 import { PrismaClient } from "@/prisma/generated/prisma/client";
 
@@ -13,59 +26,15 @@ const adapter = new PrismaPg({
 
 const prisma = new PrismaClient({ adapter });
 
-const randomPrice = () => {
-	return parseFloat((Math.random() * 100 + 10).toFixed(2));
-};
-
-const randomInt = (min: number, max: number) => {
-	return Math.floor(Math.random() * (max - min + 1) + min);
-};
-
-const randomImages = (productImages: string[], max = 6) => {
-	const count = randomInt(0, Math.min(max, productImages.length));
-	return [...productImages].sort(() => Math.random() - 0.5).slice(0, count);
-};
-
-const categoryNames: string[] = [
-	"T-Shirts",
-	"Hoodies",
-	"Trousers",
-	"Shorts",
-	"Skirts",
-	"Dresses",
-	"Jackets",
-	"Coats",
-	// "Shoes",
-	// "Underwear",
-	// "Socks",
-	// "Bags",
-	// "Hats",
-	// "Scarves",
-	// "Gloves",
-	// "Belts",
-];
-const productNames: string[] = [
-	"Classic Cotton T-Shirt",
-	"Slim Fit Denim Jeans",
-	"Cozy Fleece Hoodie",
-	"Summer Flowy Dress",
-	"Leather Biker Jacket",
-	"Comfortable Sweatpants",
-	"Formal Oxford Shirt",
-	"Casual Chino Shorts",
-];
-const brands: string[] = ["Nike", "Adidas", "Puma", "Zara", "H&M"];
-const productImages: string[] = [
-	"https://w1jla568cs.ufs.sh/f/jOZEJ62sgvo1dSEnXS38UzQDyw3pbxj5NER2dfKCqAiaeTZ4",
-	"https://w1jla568cs.ufs.sh/f/jOZEJ62sgvo1HY2IgAjCr8OP1s6Zek2MxtBjz7J3gWafYvGm",
-	"https://w1jla568cs.ufs.sh/f/jOZEJ62sgvo1OZpUAhisj0Kx9E3cfUeqJPzawNtp1i7Arldn",
-	"https://w1jla568cs.ufs.sh/f/jOZEJ62sgvo1qiBUq5TdePjMhgUx0NG7CZ2QmW6cwVutXrB4",
-	"https://w1jla568cs.ufs.sh/f/jOZEJ62sgvo1r8FbS36VaZTILwc0PQ58hAjNdqBisDmKEobR",
-	"https://w1jla568cs.ufs.sh/f/jOZEJ62sgvo1gF95NvCCknIPeJzQ85qvUb16dfEiKtjhFTDZ",
-	"https://w1jla568cs.ufs.sh/f/jOZEJ62sgvo1K8JmFgqXz6dZfUoSWynaNQ13kGwrcsxRB0ep",
-	"https://w1jla568cs.ufs.sh/f/jOZEJ62sgvo1eMvNvYetLGXQlqnsWAfVUD4icET8mZxkOBJa",
-];
-const orderStatuses = Object.values(OrderStatus);
+async function clearDatabase() {
+	await prisma.orderItem.deleteMany();
+	await prisma.cartItem.deleteMany();
+	await prisma.order.deleteMany();
+	await prisma.cart.deleteMany();
+	await prisma.product.deleteMany();
+	await prisma.category.deleteMany();
+	console.log("🗑️ Database cleared.");
+}
 
 async function main(minId: number, maxId: number) {
 	console.log("🌱 Starting seed...\n");
@@ -73,8 +42,7 @@ async function main(minId: number, maxId: number) {
 	console.log("📂 Seeding Categories...");
 	const categories = [];
 	for (const name of categoryNames)
-		for (const audience of Object.values(Audience))
-			categories.push({ name, audience });
+		for (const audience of audiences) categories.push({ name, audience });
 
 	await prisma.category.createMany({
 		data: categories,
@@ -87,11 +55,15 @@ async function main(minId: number, maxId: number) {
 		products.push({
 			name: productNames[i % productNames.length],
 			brand: brands[i % brands.length],
-			price: randomPrice(),
-			inventory: Math.floor(Math.random() * 100),
+			price: randomFloat(20, 200),
+			inventory: randomInt(0, 100),
 			description: `High quality ${productNames[i % productNames.length].toLowerCase()} for everyday wear.`,
+			colors: randomList<ProductColor>(productColors),
+			sizes: randomList<ProductSize>(productSizes),
+			rating: randomFloat(0, 5),
+			votes: randomInt(500, 1000),
 			categoryId: dbCategories[i % dbCategories.length].id,
-			images: randomImages(productImages),
+			images: randomList<string>(productImages),
 		});
 	}
 	await prisma.product.createMany({
@@ -107,7 +79,7 @@ async function main(minId: number, maxId: number) {
 		for (let i = 0; i < dbUsers.length; i++) {
 			carts.push({
 				userId: dbUsers[i].id,
-				totalAmount: randomInt(1, 15),
+				totalPrice: 0,
 			});
 		}
 		await prisma.cart.createMany({
@@ -120,21 +92,35 @@ async function main(minId: number, maxId: number) {
 		for (let i = minId; i < maxId; i++) {
 			const randomProduct =
 				dbProducts[Math.floor(Math.random() * dbProducts.length)];
-			const randomCart = dbCarts[i % dbCarts.length];
-			const quantity = Math.floor(Math.random() * 3) + 1;
-			const unitPrice = randomProduct.price;
-
 			cartItems.push({
-				cartId: randomCart.id,
+				cartId: dbCarts[i % dbCarts.length].id,
 				productId: randomProduct.id,
-				quantity: quantity,
-				unitPrice: unitPrice,
-				totalPrice: Number(unitPrice) * quantity,
+				quantity: randomInt(1, 15),
+				unitPrice: randomProduct.price,
 			});
 		}
 		await prisma.cartItem.createMany({
 			data: cartItems,
 		});
+
+		console.log("🛒 Updating Cart Total Prices...");
+		for (const cart of dbCarts) {
+			const cartItems = await prisma.cartItem.findMany({
+				where: { cartId: cart.id },
+				select: {
+					unitPrice: true,
+					quantity: true,
+				},
+			});
+			const totalPrice = cartItems.reduce(
+				(sum, item) => sum + Number(item.unitPrice) * item.quantity,
+				0,
+			);
+			await prisma.cart.update({
+				where: { id: cart.id },
+				data: { totalPrice },
+			});
+		}
 
 		console.log("📦 Seeding Orders...");
 		const orders = [];
@@ -145,8 +131,8 @@ async function main(minId: number, maxId: number) {
 				orderDate: new Date(
 					Date.now() - Math.floor(Math.random() * 10000000000),
 				),
-				totalAmount: randomPrice(),
-				orderStatus: orderStatuses[i % orderStatuses.length],
+				totalPrice: 0,
+				orderStatus: orderStatuses[randomInt(0, orderStatuses.length - 1)],
 			});
 		}
 		await prisma.order.createMany({
@@ -160,34 +146,40 @@ async function main(minId: number, maxId: number) {
 			const randomProduct =
 				dbProducts[Math.floor(Math.random() * dbProducts.length)];
 			const randomOrder = dbOrders[i % dbOrders.length];
-
 			orderItems.push({
 				orderId: randomOrder.id,
 				productId: randomProduct.id,
-				quantity: Math.floor(Math.random() * 5) + 1,
-				price: randomProduct.price,
+				quantity: randomInt(1, 15),
+				unitPrice: randomProduct.price,
 			});
 		}
 		await prisma.orderItem.createMany({
 			data: orderItems,
 		});
+
+		console.log("📦 Updating Order Total Prices...");
+		for (const order of dbOrders) {
+			const orderItems = await prisma.orderItem.findMany({
+				where: { orderId: order.id },
+				select: {
+					unitPrice: true,
+					quantity: true,
+				},
+			});
+			const totalPrice = orderItems.reduce(
+				(sum, item) => sum + Number(item.unitPrice) * item.quantity,
+				0,
+			);
+			await prisma.order.update({
+				where: { id: order.id },
+				data: { totalPrice },
+			});
+		}
 	} else {
-		console.log(
-			"ℹ️  No users were available from Kinde, so carts, cart items, orders and orders items were skipped.",
-		);
+		console.log("ℹ️  No users were available from Kinde.");
 	}
 
 	console.log("\n✅ Seed finished successfully!");
-}
-
-async function clearDatabase() {
-	await prisma.orderItem.deleteMany();
-	await prisma.cartItem.deleteMany();
-	await prisma.order.deleteMany();
-	await prisma.cart.deleteMany();
-	await prisma.product.deleteMany();
-	await prisma.category.deleteMany();
-	console.log("🗑️ Database cleared.");
 }
 
 (async () => {

@@ -4,13 +4,11 @@ import { unstable_cache } from "next/cache";
 import {
 	CACHE_SECONDS,
 	FILTER_CACHE_SECONDS,
-	PAGE_SIZE,
 } from "@/components/data-table/pagination/PaginationParams";
 import { getParamValues } from "@/lib/entity/functions";
 import { CARTS_HEADER } from "@/lib/entity/headers";
-import type { ParameterType } from "@/lib/entity/types";
+import type { ParameterType, Prisma } from "@/lib/entity/types";
 import { prisma } from "@/lib/prisma";
-import type { Prisma } from "@/prisma/generated/prisma/client";
 
 type FilterBy = Prisma.CartWhereInput;
 
@@ -26,7 +24,7 @@ function buildWhereClause(filterParams: ParameterType): FilterBy {
 		const range: { gte?: number; lte?: number } = {};
 		if (!Number.isNaN(from)) range.gte = from;
 		if (!Number.isNaN(to)) range.lte = to;
-		where.totalAmount = range;
+		where.totalPrice = range;
 	}
 
 	const userIds = getParamValues(filterParams.userId);
@@ -54,7 +52,7 @@ async function getCartsPage(
 	order: "asc" | "desc" = "asc",
 	sortBy: string = "id",
 	filterParams: ParameterType = {},
-	pageSize: number = PAGE_SIZE,
+	pageSize: number,
 ) {
 	const where = buildWhereClause(filterParams);
 	const orderBy = buildOrderClause(sortBy, order);

@@ -14,10 +14,7 @@ export default function CategoryCard({
 			href={`/products?categoryId=${category.id}&categoryName=${encodeURIComponent(category.name)}`}
 			className="block h-full"
 		>
-			<div
-				key={category.id}
-				className="group relative overflow-hidden rounded-3xl border bg-linear-to-br from-background to-muted/30 p-6 transition-all duration-300 hover:shadow-sm dark:hover:shadow-xl hover:-translate-y-1 h-full"
-			>
+			<div className="group relative overflow-hidden rounded-3xl border bg-linear-to-br from-background to-muted/30 p-6 transition-all duration-300 hover:shadow-sm dark:hover:shadow-xl hover:-translate-y-1 h-full">
 				<div className="absolute inset-0 bg-linear-to-b from-transparent via-transparent to-primary/5 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 				<div className="relative z-10 flex flex-col h-full">
 					<div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mb-6">

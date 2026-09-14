@@ -1,7 +1,7 @@
 import { cn } from "cn";
 import CheckBoxCell from "@/components/data-table/table-cells/CheckBoxCell";
 import ContentCell from "@/components/data-table/table-cells/ContentCell";
-import SortedHead from "@/components/data-table/table-cells/SortedHead";
+import SortHead from "@/components/data-table/table-cells/SortHead";
 import DeleteDialog from "@/components/dialogs/delete-dialog";
 import EditDialog from "@/components/dialogs/edit-dialog";
 import ListDialog from "@/components/dialogs/list-dialog";
@@ -13,9 +13,15 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { getFieldName } from "@/lib/entity/functions";
+import { isCellValue } from "@/lib/entity/functions";
 import type { HeaderItem } from "@/lib/entity/headers";
-import type { EntityType, RowType } from "@/lib/entity/types";
+import {
+	type EntityType,
+	OptionField,
+	type RowType,
+	type StringNumber,
+} from "@/lib/entity/types";
+import EntityTooltip from "./tooltips/EntityTooltip";
 
 interface DataTableProps<T> {
 	entity: EntityType;
@@ -35,14 +41,7 @@ export default function DataTable<T extends RowType>({
 	return (
 		<>
 			{rows.length === 0 ? (
-				<div
-					className={cn(
-						"w-full h-[calc(100vh-152px)] bg-chart-1/40 dark:bg-sidebar-accent/40 flex items-center justify-center border rounded-lg text-muted-foreground",
-						className,
-					)}
-				>
-					No data available
-				</div>
+				<NoData className={className} />
 			) : (
 				<Table className={cn(dialog && "border-b")} parentClassName={className}>
 					<TableHeader>
@@ -56,19 +55,14 @@ export default function DataTable<T extends RowType>({
 									/>
 								</TableHead>
 							)}
-							{header.map((item) =>
-								dialog ? (
-									<TableHead key={item.name} border>
-										{getFieldName(item.name)}
-									</TableHead>
-								) : (
-									<SortedHead
-										key={item.name}
-										name={item.name}
-										entity={entity}
-									/>
-								),
-							)}
+							{header.map((item, index) => (
+								<SortHead
+									key={index}
+									name={item.name}
+									entity={entity}
+									dialog={dialog}
+								/>
+							))}
 							{!dialog && (
 								<TableHead border className="py-0 text-center">
 									<CheckBoxCell<T> entity={entity} rows={rows} type="actions" />
@@ -78,7 +72,7 @@ export default function DataTable<T extends RowType>({
 					</TableHeader>
 					<TableBody>
 						{rows.map((row, rIndex) => (
-							<TableRow key={`row-${row.id}-${rIndex}`} border>
+							<TableRow key={rIndex} border>
 								{!dialog && (
 									<TableCell className="w-8 min-w-8 max-w-8">
 										<CheckBoxCell<T>
@@ -89,28 +83,37 @@ export default function DataTable<T extends RowType>({
 										/>
 									</TableCell>
 								)}
-								{Object.values(row).map(
-									(value, cIndex) =>
-										typeof value !== "object" && (
+								{Object.values(row).map((value, cIndex) => {
+									return (
+										isCellValue(value, header[cIndex]?.name) && (
 											<TableCell
-												key={`cell-${row.id}-${cIndex}`}
-												className="h-[33.6px] truncate"
+												key={cIndex}
 												border
 												style={{
 													width: header[cIndex]?.width,
 													minWidth: header[cIndex]?.width,
 												}}
 											>
-												<ContentCell<T>
-													row={row}
-													value={value}
-													entity={entity}
-													tooltip={dialog}
-													headerName={header[cIndex]?.name}
-												/>
+												{Object.values(OptionField).includes(
+													header[cIndex]?.name as OptionField,
+												) ? (
+													<EntityTooltip<T>
+														row={row}
+														id={value as StringNumber}
+														headerName={header[cIndex]?.name as OptionField}
+													/>
+												) : (
+													<ContentCell
+														value={value}
+														entity={entity}
+														tooltip={dialog}
+														headerName={header[cIndex]?.name}
+													/>
+												)}
 											</TableCell>
-										),
-								)}
+										)
+									);
+								})}
 								{!dialog && (
 									<TableCell border className="w-26 min-w-26 max-w-26 py-0.5">
 										<div className="flex items-center justify-center gap-1.5">
@@ -126,5 +129,18 @@ export default function DataTable<T extends RowType>({
 				</Table>
 			)}
 		</>
+	);
+}
+
+function NoData({ className }: { className?: string }) {
+	return (
+		<div
+			className={cn(
+				"w-full h-[calc(100vh-152px)] bg-chart-1/40 dark:bg-sidebar-accent/40 flex items-center justify-center border rounded-lg text-muted-foreground",
+				className,
+			)}
+		>
+			No data available
+		</div>
 	);
 }

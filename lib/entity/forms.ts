@@ -2,39 +2,57 @@ import {
 	type Audience,
 	EntityType,
 	type OrderStatus,
+	type ProductColor,
+	type ProductSize,
 } from "@/lib/entity/types";
 
 function getFormUser(formData: FormData) {
-	const picture = formData.get("picture") as string;
-	const given_name = formData.get("first_name") as string;
-	const family_name = formData.get("last_name") as string;
-	const is_suspended = formData.get("is_suspended") as string;
+	const picture = formData.get("picture");
+	const given_name = formData.get("first_name");
+	const family_name = formData.get("last_name");
+	const is_suspended = formData.get("is_suspended");
 	return { picture, given_name, family_name, is_suspended };
 }
 
 function getFormProduct(formData: FormData) {
-	const name = formData.get("name") as string;
-	const brand = formData.get("brand") as string;
+	const name = formData.get("name");
+	const brand = formData.get("brand");
 	const price = Number(formData.get("price"));
 	const inventory = Number(formData.get("inventory"));
-	const description = formData.get("description") as string;
+	const description = formData.get("description");
+	const colors = formData.getAll("colors").map(String) as ProductColor[];
+	const sizes = formData.getAll("sizes").map(String) as ProductSize[];
+	const rating = Number(formData.get("rating"));
+	const votes = Number(formData.get("votes"));
 	const categoryId = Number(formData.get("categoryId"));
 	const images = formData.getAll("images").map(String);
-	return { name, brand, price, inventory, description, categoryId, images };
+	return {
+		name,
+		brand,
+		price,
+		inventory,
+		description,
+		colors,
+		sizes,
+		rating,
+		votes,
+		categoryId,
+		images,
+	};
 }
 
 function getFormOrder(formData: FormData) {
 	const orderDate = new Date(formData.get("orderDate") as string);
-	const totalAmount = Number(formData.get("totalAmount"));
+	const totalPrice = Number(formData.get("totalPrice"));
 	const orderStatus = formData.get("orderStatus") as OrderStatus;
 	const userId = String(formData.get("userId"));
-	return { orderDate, totalAmount, orderStatus, userId };
+	return { orderDate, totalPrice, orderStatus, userId };
 }
 
 function getFormCart(formData: FormData) {
 	const userId = String(formData.get("userId"));
-	const totalAmount = Number(formData.get("totalAmount")) || 0;
-	return { userId, totalAmount };
+	const totalPrice = Number(formData.get("totalPrice"));
+	return { userId, totalPrice };
 }
 
 function getFormCategory(formData: FormData) {
@@ -46,18 +64,17 @@ function getFormCategory(formData: FormData) {
 function getFormCartItem(formData: FormData) {
 	const quantity = Number(formData.get("quantity"));
 	const unitPrice = Number(formData.get("unitPrice"));
-	const totalPrice = quantity * unitPrice;
 	const cartId = Number(formData.get("cartId"));
 	const productId = Number(formData.get("productId"));
-	return { quantity, unitPrice, totalPrice, cartId, productId };
+	return { quantity, unitPrice, cartId, productId };
 }
 
 function getFormOrderItem(formData: FormData) {
 	const quantity = Number(formData.get("quantity"));
-	const price = Number(formData.get("price"));
+	const unitPrice = Number(formData.get("unitPrice"));
 	const orderId = Number(formData.get("orderId"));
 	const productId = Number(formData.get("productId"));
-	return { quantity, price, orderId, productId };
+	return { quantity, unitPrice, orderId, productId };
 }
 
 function getFormEntity(entity: EntityType, formData: FormData) {

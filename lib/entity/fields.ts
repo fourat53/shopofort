@@ -1,4 +1,18 @@
-import { Audience, type EntityType, OrderStatus } from "@/lib/entity/types";
+import {
+	audiences,
+	type BooleanEnum,
+	booleanValues,
+	orderStatuses,
+	productColors,
+	productSizes,
+} from "@/lib/entity/data";
+import {
+	type Audience,
+	type EntityType,
+	OrderStatus,
+	type ProductColor,
+	type ProductSize,
+} from "@/lib/entity/types";
 
 type FieldType =
 	| "string"
@@ -11,11 +25,6 @@ type FieldType =
 
 type FieldCategory = "filter" | "create" | "edit";
 
-enum BooleanEnum {
-	TRUE = "true",
-	FALSE = "false",
-}
-
 type FieldConfig = {
 	name: string;
 	type: FieldType;
@@ -25,7 +34,14 @@ type FieldConfig = {
 	step?: number;
 	min?: number;
 	max?: number;
-	options?: readonly (BooleanEnum | Audience | OrderStatus)[];
+	options?: readonly (
+		| BooleanEnum
+		| Audience
+		| OrderStatus
+		| ProductColor
+		| ProductSize
+	)[];
+	multiple?: boolean;
 };
 
 const ENTITY_FIELDS: Record<EntityType, FieldConfig[]> = {
@@ -60,7 +76,7 @@ const ENTITY_FIELDS: Record<EntityType, FieldConfig[]> = {
 		{
 			name: "is_suspended",
 			type: "enum",
-			options: Object.values(BooleanEnum),
+			options: booleanValues,
 			category: ["filter", "edit"],
 		},
 		{
@@ -112,7 +128,7 @@ const ENTITY_FIELDS: Record<EntityType, FieldConfig[]> = {
 			category: ["filter", "create", "edit"],
 			defaultValue: "5",
 			required: true,
-			step: 0.01,
+			step: 0.05,
 			max: 10000,
 		},
 		{
@@ -127,6 +143,27 @@ const ENTITY_FIELDS: Record<EntityType, FieldConfig[]> = {
 			category: ["filter", "create", "edit"],
 		},
 		{
+			name: "colors",
+			type: "enum",
+			category: ["filter", "create", "edit"],
+			options: productColors,
+			multiple: true,
+		},
+		{
+			name: "sizes",
+			type: "enum",
+			category: ["filter", "create", "edit"],
+			options: productSizes,
+			multiple: true,
+		},
+		{
+			name: "rating",
+			type: "number",
+			step: 0.05,
+			max: 5,
+			category: ["filter"],
+		},
+		{
 			name: "categoryId",
 			type: "foreignKey",
 			category: ["filter", "create", "edit"],
@@ -134,6 +171,7 @@ const ENTITY_FIELDS: Record<EntityType, FieldConfig[]> = {
 		{
 			name: "images",
 			type: "images",
+			multiple: true,
 			category: ["create", "edit"],
 		},
 	],
@@ -144,10 +182,11 @@ const ENTITY_FIELDS: Record<EntityType, FieldConfig[]> = {
 			category: ["filter"],
 		},
 		{
-			name: "totalAmount",
+			name: "totalPrice",
 			type: "number",
-			category: ["filter", "create", "edit"],
-			required: true,
+			step: 0.05,
+			max: 10000,
+			category: ["filter"],
 		},
 		{
 			name: "userId",
@@ -169,16 +208,17 @@ const ENTITY_FIELDS: Record<EntityType, FieldConfig[]> = {
 			required: true,
 		},
 		{
-			name: "totalAmount",
+			name: "totalPrice",
 			type: "number",
-			category: ["filter", "create", "edit"],
-			required: true,
+			step: 0.05,
+			max: 10000,
+			category: ["filter"],
 		},
 		{
 			name: "orderStatus",
 			type: "enum",
 			category: ["filter", "create", "edit"],
-			options: Object.values(OrderStatus),
+			options: orderStatuses,
 			defaultValue: OrderStatus.PENDING,
 			required: true,
 		},
@@ -205,7 +245,7 @@ const ENTITY_FIELDS: Record<EntityType, FieldConfig[]> = {
 			name: "audience",
 			type: "enum",
 			category: ["filter", "create", "edit"],
-			options: Object.values(Audience),
+			options: audiences,
 			required: true,
 		},
 	],
@@ -226,7 +266,7 @@ const ENTITY_FIELDS: Record<EntityType, FieldConfig[]> = {
 			type: "number",
 			category: ["filter", "create", "edit"],
 			required: true,
-			step: 0.01,
+			step: 0.05,
 			max: 10000,
 		},
 		{
@@ -234,7 +274,7 @@ const ENTITY_FIELDS: Record<EntityType, FieldConfig[]> = {
 			type: "number",
 			category: ["filter"],
 			required: true,
-			step: 0.01,
+			step: 0.05,
 			max: 10000,
 		},
 		{
@@ -267,7 +307,7 @@ const ENTITY_FIELDS: Record<EntityType, FieldConfig[]> = {
 			type: "number",
 			category: ["filter", "create", "edit"],
 			required: true,
-			step: 0.01,
+			step: 0.05,
 			max: 10000,
 		},
 		{

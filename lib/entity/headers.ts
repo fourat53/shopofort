@@ -4,7 +4,7 @@ type HeaderItem = { name: string; width: `${number}px` | "auto" };
 
 const CARTS_HEADER: HeaderItem[] = [
 	{ name: "id", width: "150px" },
-	{ name: "totalAmount", width: "auto" },
+	{ name: "totalPrice", width: "auto" },
 	{ name: "userId", width: "300px" },
 ];
 
@@ -12,7 +12,6 @@ const CART_ITEMS_HEADER: HeaderItem[] = [
 	{ name: "id", width: "150px" },
 	{ name: "unitPrice", width: "150px" },
 	{ name: "quantity", width: "150px" },
-	{ name: "totalPrice", width: "auto" },
 	{ name: "cartId", width: "150px" },
 	{ name: "productId", width: "150px" },
 ];
@@ -26,15 +25,15 @@ const CATEGORIES_HEADER: HeaderItem[] = [
 const ORDERS_HEADER: HeaderItem[] = [
 	{ name: "id", width: "150px" },
 	{ name: "orderDate", width: "170px" },
-	{ name: "totalAmount", width: "150px" },
+	{ name: "totalPrice", width: "150px" },
 	{ name: "orderStatus", width: "auto" },
 	{ name: "userId", width: "255px" },
 ];
 
 const ORDER_ITEMS_HEADER: HeaderItem[] = [
 	{ name: "id", width: "150px" },
+	{ name: "unitPrice", width: "auto" },
 	{ name: "quantity", width: "150px" },
-	{ name: "price", width: "auto" },
 	{ name: "orderId", width: "150px" },
 	{ name: "productId", width: "150px" },
 ];
@@ -45,8 +44,13 @@ const PRODUCTS_HEADER: HeaderItem[] = [
 	{ name: "brand", width: "120px" },
 	{ name: "price", width: "100px" },
 	{ name: "inventory", width: "100px" },
-	{ name: "description", width: "auto" },
+	{ name: "description", width: "250px" },
+	{ name: "colors", width: "250px" },
+	{ name: "sizes", width: "180px" },
+	{ name: "rating", width: "100px" },
+	{ name: "votes", width: "100px" },
 	{ name: "categoryId", width: "100px" },
+	{ name: "images", width: "264px" },
 ];
 
 const USERS_HEADER: HeaderItem[] = [

@@ -48,3 +48,13 @@ pnpm biome format --write .
 - create each product page
 
 Important: Since I don't have AWS S3 account, the images in uploadthing file service free tier.
+
+extra category:
+	"Shoes",
+	"Underwear",
+	"Socks",
+	"Bags",
+	"Hats",
+	"Scarves",
+	"Gloves",
+	"Belts",

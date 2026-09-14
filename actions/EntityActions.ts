@@ -21,10 +21,10 @@ import {
 	EntityType,
 	OptionField,
 	type ParameterType,
+	type Prisma,
 	type StringNumber,
 } from "@/lib/entity/types";
 import { prisma } from "@/lib/prisma";
-import type { Prisma } from "@/prisma/generated/prisma/client";
 
 async function getFilterOptions(field: OptionField): Promise<SelectOption[]> {
 	try {

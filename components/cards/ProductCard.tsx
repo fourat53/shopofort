@@ -25,14 +25,12 @@ export default function ProductCard({ product }: { product: Product }) {
 					</div>
 				)}
 
-				{/* Quick add button overlay */}
 				<div className="absolute inset-x-0 bottom-0 p-4 translate-y-full opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
 					<Button className="w-full shadow-lg gap-2 rounded-xl h-11">
 						<IconShoppingCart className="size-4" /> Add to Cart
 					</Button>
 				</div>
 
-				{/* Badge */}
 				{product.inventory < 10 && (
 					<div className="absolute top-4 left-4 rounded-full bg-destructive/90 backdrop-blur text-destructive-foreground px-3 py-1 text-xs font-bold shadow-sm">
 						Low Stock
@@ -48,7 +46,7 @@ export default function ProductCard({ product }: { product: Product }) {
 					<div className="flex items-center text-amber-500">
 						<IconStarFilled className="h-3 w-3" />
 						<span className="text-xs font-medium ml-1 text-foreground/70">
-							4.8
+							{product.rating}
 						</span>
 					</div>
 				</div>

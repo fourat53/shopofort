@@ -15,7 +15,7 @@ interface EntityTableProps {
 	order?: "asc" | "desc";
 	sortBy?: string;
 	filterParams?: Record<string, string | string[] | undefined>;
-	pageSize?: number;
+	pageSize: number;
 	dialog?: boolean;
 }
 

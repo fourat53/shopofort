@@ -5,7 +5,10 @@ import DataTablePagination from "@/components/data-table/pagination/DataTablePag
 import { getPaginationParams } from "@/components/data-table/pagination/PaginationParams";
 import EntityTable from "@/components/entity-tables/EntityTable";
 import { getHeader } from "@/lib/entity/headers";
-import type { EntityType } from "@/lib/entity/types";
+import { EntityType } from "@/lib/entity/types";
+
+const PAGE_SIZE = 20;
+const IMAGE_PAGE_SIZE = 9;
 
 interface EntityPageProps {
 	params: Promise<{ entity: EntityType }>;
@@ -24,14 +27,12 @@ export default async function EntityPage({
 }: EntityPageProps) {
 	const { entity } = await params;
 	const { page: _page, sortBy, order, ...filterParams } = await searchParams;
-	const withImage = ["users"].includes(entity);
+
+	const hasImage = [EntityType.users, EntityType.products].includes(entity);
+	const pageSize = hasImage ? IMAGE_PAGE_SIZE : PAGE_SIZE;
 
 	const totalCount = await getEntityCount(entity, filterParams);
-	const { page, totalPages } = getPaginationParams(
-		_page,
-		totalCount,
-		withImage,
-	);
+	const { page, totalPages } = getPaginationParams(_page, totalCount, pageSize);
 
 	const header = getHeader(entity);
 
@@ -42,13 +43,20 @@ export default async function EntityPage({
 		order,
 		sortBy,
 		filterParams,
+		pageSize,
 	};
 
 	return (
 		<>
 			<Suspense
 				key={JSON.stringify(entityParams)}
-				fallback={<DataTableSkeleton entity={entity} header={header} />}
+				fallback={
+					<DataTableSkeleton
+						entity={entity}
+						header={header}
+						pageSize={pageSize}
+					/>
+				}
 			>
 				<EntityTable {...entityParams} />
 			</Suspense>

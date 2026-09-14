@@ -112,7 +112,7 @@ export default function CreateEditForm<T extends RowType>({
 				<div className="max-h-[calc(100vh-8rem)] overflow-y-auto px-4 flex flex-col gap-4">
 					{fields.map((field) => {
 						const value = rows[0][field.name];
-						const { type, name, required } = field;
+						const { type, name, multiple, required } = field;
 						const label = getFieldName(name);
 						return type === "string" ? (
 							<Input
@@ -152,15 +152,16 @@ export default function CreateEditForm<T extends RowType>({
 								images={images}
 								required={required}
 								onChange={setImages}
-								multiple={type === "images"}
+								multiple={multiple}
 							/>
 						) : type === "enum" ? (
 							<Select
 								key={name}
 								name={name}
 								label={label}
-								defaultValue={value?.toString()}
+								multiple={multiple}
 								required={required}
+								defaultValue={value?.toString()}
 								items={field.options?.map((o) => ({ label: o, value: o }))}
 							/>
 						) : type === "foreignKey" ? (

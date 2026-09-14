@@ -1,8 +1,10 @@
 import {
+	type CellValue,
 	EntityType,
 	OptionField,
 	type ParameterType,
 	type StringNumber,
+	type ValueType,
 } from "@/lib/entity/types";
 
 function getEntityTooltip(name: OptionField): EntityType {
@@ -61,6 +63,27 @@ function formatOption(
 	return { value: v.toString(), label: l };
 }
 
+function isCellValue(value: ValueType, headerName: string): value is CellValue {
+	if (
+		value === null ||
+		typeof value === "string" ||
+		typeof value === "number" ||
+		typeof value === "boolean" ||
+		value instanceof Date ||
+		["colors", "sizes", "images"].includes(headerName)
+	)
+		return true;
+
+	return false;
+}
+
+function isTabValue(value: ValueType, name: string, field?: string): boolean {
+	return (
+		Array.isArray(value) &&
+		(value.every((item) => typeof item === "object") || name === field)
+	);
+}
+
 export {
 	formatOption,
 	getEntityTooltip,
@@ -70,4 +93,6 @@ export {
 	getParamValues,
 	getPluralName,
 	getSingleName,
+	isCellValue,
+	isTabValue,
 };

@@ -1,7 +1,5 @@
 import type { EntityType } from "@/lib/entity/types";
 
-const PAGE_SIZE = 20;
-const IMAGE_PAGE_SIZE = 9;
 const CACHE_SECONDS = 600;
 const FILTER_CACHE_SECONDS = 60;
 
@@ -30,8 +28,7 @@ function parsePage(
 function getPaginationParams(
 	page: string | string[] | undefined,
 	totalCount: number,
-	withImage: boolean = false,
-	pageSize: number = withImage ? IMAGE_PAGE_SIZE : PAGE_SIZE,
+	pageSize: number,
 ) {
 	const pageParam = Array.isArray(page) ? page[0] : page;
 	const parsedPage = Number.parseInt(pageParam ?? "1", 10);
@@ -136,8 +133,6 @@ export {
 	FILTER_CACHE_SECONDS,
 	getPaginationParams,
 	getVisiblePages,
-	IMAGE_PAGE_SIZE,
-	PAGE_SIZE,
 	pageHref,
 	parsePage,
 	parseSortOrder,

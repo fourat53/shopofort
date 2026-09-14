@@ -5,7 +5,6 @@ import { filterUsers, mapUser } from "@/actions/UserFunctions";
 import {
 	CACHE_SECONDS,
 	FILTER_CACHE_SECONDS,
-	IMAGE_PAGE_SIZE,
 } from "@/components/data-table/pagination/PaginationParams";
 import { getFormUser } from "@/lib/entity/forms";
 import type { ParameterType, User } from "@/lib/entity/types";
@@ -170,7 +169,7 @@ async function getUsersPage(
 	order: "asc" | "desc" = "asc",
 	sortBy: string = "id",
 	filterParams: ParameterType = {},
-	pageSize: number = IMAGE_PAGE_SIZE,
+	pageSize: number,
 ) {
 	const users = await getFilteredUsers(filterParams, sortBy, order);
 	const start = (page - 1) * pageSize;

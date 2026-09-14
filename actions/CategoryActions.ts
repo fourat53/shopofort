@@ -4,13 +4,11 @@ import { unstable_cache } from "next/cache";
 import {
 	CACHE_SECONDS,
 	FILTER_CACHE_SECONDS,
-	PAGE_SIZE,
 } from "@/components/data-table/pagination/PaginationParams";
 import { getParamValues } from "@/lib/entity/functions";
 import { CATEGORIES_HEADER } from "@/lib/entity/headers";
-import type { Audience, ParameterType } from "@/lib/entity/types";
+import type { Audience, ParameterType, Prisma } from "@/lib/entity/types";
 import { prisma } from "@/lib/prisma";
-import type { Prisma } from "@/prisma/generated/prisma/client";
 
 type FilterBy = Prisma.CategoryWhereInput;
 
@@ -48,7 +46,7 @@ async function getCategoriesPage(
 	order: "asc" | "desc" = "asc",
 	sortBy: string = "id",
 	filterParams: ParameterType = {},
-	pageSize: number = PAGE_SIZE,
+	pageSize: number,
 ) {
 	const where = buildWhereClause(filterParams);
 	const orderBy = buildOrderClause(sortBy, order);
