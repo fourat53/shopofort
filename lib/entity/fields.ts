@@ -128,7 +128,7 @@ const ENTITY_FIELDS: Record<EntityType, FieldConfig[]> = {
 			category: ["filter", "create", "edit"],
 			defaultValue: "5",
 			required: true,
-			step: 0.05,
+			step: 0.01,
 			max: 10000,
 		},
 		{
@@ -159,13 +159,14 @@ const ENTITY_FIELDS: Record<EntityType, FieldConfig[]> = {
 		{
 			name: "rating",
 			type: "number",
-			step: 0.05,
+			step: 0.01,
 			max: 5,
 			category: ["filter"],
 		},
 		{
 			name: "categoryId",
 			type: "foreignKey",
+			required: true,
 			category: ["filter", "create", "edit"],
 		},
 		{
@@ -184,7 +185,7 @@ const ENTITY_FIELDS: Record<EntityType, FieldConfig[]> = {
 		{
 			name: "totalPrice",
 			type: "number",
-			step: 0.05,
+			step: 0.01,
 			max: 10000,
 			category: ["filter"],
 		},
@@ -210,7 +211,7 @@ const ENTITY_FIELDS: Record<EntityType, FieldConfig[]> = {
 		{
 			name: "totalPrice",
 			type: "number",
-			step: 0.05,
+			step: 0.01,
 			max: 10000,
 			category: ["filter"],
 		},
@@ -266,7 +267,7 @@ const ENTITY_FIELDS: Record<EntityType, FieldConfig[]> = {
 			type: "number",
 			category: ["filter", "create", "edit"],
 			required: true,
-			step: 0.05,
+			step: 0.01,
 			max: 10000,
 		},
 		{
@@ -274,7 +275,7 @@ const ENTITY_FIELDS: Record<EntityType, FieldConfig[]> = {
 			type: "number",
 			category: ["filter"],
 			required: true,
-			step: 0.05,
+			step: 0.01,
 			max: 10000,
 		},
 		{
@@ -307,7 +308,7 @@ const ENTITY_FIELDS: Record<EntityType, FieldConfig[]> = {
 			type: "number",
 			category: ["filter", "create", "edit"],
 			required: true,
-			step: 0.05,
+			step: 0.01,
 			max: 10000,
 		},
 		{

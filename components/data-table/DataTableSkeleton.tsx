@@ -33,7 +33,7 @@ export default function DataTableSkeleton({
 			<TableHeader>
 				<TableRow>
 					<TableHead>
-						<Checkbox />
+						<Checkbox disabled />
 					</TableHead>
 					{header.map((item) => (
 						<SortHead key={item.name} name={item.name} entity={entity} />
@@ -46,14 +46,12 @@ export default function DataTableSkeleton({
 			<TableBody>
 				{Array.from({ length: pageSize }, (_, rIndex) => (
 					<TableRow key={rIndex}>
-						<TableCell className="w-8 min-w-8 max-w-8">
-							<Checkbox />
+						<TableCell border={false} className="w-8 min-w-8 max-w-8">
+							<Checkbox disabled />
 						</TableCell>
 						{header.map((item) => (
 							<TableCell
 								key={item.name}
-								border
-								className={item.name === field ? "size-18.5" : "h-[33.6px]"}
 								style={{
 									width: item.width,
 									minWidth: item.width,
@@ -76,7 +74,7 @@ export default function DataTableSkeleton({
 								)}
 							</TableCell>
 						))}
-						<TableCell border className="py-0.5 w-26 max-w-26 min-w-26">
+						<TableCell className="py-0.5 w-26 max-w-26 min-w-26">
 							<div className="flex items-center justify-center gap-1.5">
 								<ListDialog entity={entity} disabled />
 								<EditDialog entity={entity} disabled />

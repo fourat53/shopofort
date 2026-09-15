@@ -22,8 +22,6 @@ function getFormProduct(formData: FormData) {
 	const description = formData.get("description");
 	const colors = formData.getAll("colors").map(String) as ProductColor[];
 	const sizes = formData.getAll("sizes").map(String) as ProductSize[];
-	const rating = Number(formData.get("rating"));
-	const votes = Number(formData.get("votes"));
 	const categoryId = Number(formData.get("categoryId"));
 	const images = formData.getAll("images").map(String);
 	return {
@@ -34,8 +32,6 @@ function getFormProduct(formData: FormData) {
 		description,
 		colors,
 		sizes,
-		rating,
-		votes,
 		categoryId,
 		images,
 	};

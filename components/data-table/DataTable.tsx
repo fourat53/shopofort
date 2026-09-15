@@ -1,5 +1,5 @@
 import { cn } from "cn";
-import CheckBoxCell from "@/components/data-table/table-cells/CheckBoxCell";
+import CheckBoxCell from "@/components/data-table/table-cells/CheckBoxCells";
 import ContentCell from "@/components/data-table/table-cells/ContentCell";
 import SortHead from "@/components/data-table/table-cells/SortHead";
 import DeleteDialog from "@/components/dialogs/delete-dialog";
@@ -72,9 +72,9 @@ export default function DataTable<T extends RowType>({
 					</TableHeader>
 					<TableBody>
 						{rows.map((row, rIndex) => (
-							<TableRow key={rIndex} border>
+							<TableRow key={rIndex}>
 								{!dialog && (
-									<TableCell className="w-8 min-w-8 max-w-8">
+									<TableCell border={false} className="w-8 min-w-8 max-w-8">
 										<CheckBoxCell<T>
 											entity={entity}
 											rows={rows}
@@ -88,7 +88,6 @@ export default function DataTable<T extends RowType>({
 										isCellValue(value, header[cIndex]?.name) && (
 											<TableCell
 												key={cIndex}
-												border
 												style={{
 													width: header[cIndex]?.width,
 													minWidth: header[cIndex]?.width,
@@ -115,7 +114,7 @@ export default function DataTable<T extends RowType>({
 									);
 								})}
 								{!dialog && (
-									<TableCell border className="w-26 min-w-26 max-w-26 py-0.5">
+									<TableCell className="w-26 min-w-26 max-w-26 py-0.5">
 										<div className="flex items-center justify-center gap-1.5">
 											<ListDialog<T> entity={entity} row={row} />
 											<EditDialog<T> entity={entity} rows={[row]} />

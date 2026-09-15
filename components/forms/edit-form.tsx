@@ -159,10 +159,14 @@ export default function CreateEditForm<T extends RowType>({
 								key={name}
 								name={name}
 								label={label}
-								multiple={multiple}
 								required={required}
-								defaultValue={value?.toString()}
+								multiple={multiple}
 								items={field.options?.map((o) => ({ label: o, value: o }))}
+								defaultValue={
+									Array.isArray(value) && multiple
+										? value.map((item) => item.toString())
+										: value?.toString()
+								}
 							/>
 						) : type === "foreignKey" ? (
 							<ForeignKeySelect

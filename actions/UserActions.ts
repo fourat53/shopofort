@@ -169,7 +169,7 @@ async function getUsersPage(
 	order: "asc" | "desc" = "asc",
 	sortBy: string = "id",
 	filterParams: ParameterType = {},
-	pageSize: number,
+	pageSize: number = 10000,
 ) {
 	const users = await getFilteredUsers(filterParams, sortBy, order);
 	const start = (page - 1) * pageSize;

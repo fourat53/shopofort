@@ -59,7 +59,7 @@ function TableFooter({ className, ...props }: React.ComponentProps<"tfoot">) {
 }
 
 function TableRow({
-	border = false,
+	border = true,
 	className,
 	...props
 }: React.ComponentProps<"tr"> & { border?: boolean }) {
@@ -98,7 +98,7 @@ function TableHead({
 
 function TableCell({
 	className,
-	border = false,
+	border = true,
 	...props
 }: React.ComponentProps<"td"> & { border?: boolean }) {
 	return (
