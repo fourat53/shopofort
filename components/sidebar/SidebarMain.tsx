@@ -7,7 +7,7 @@ import {
 	IconDashboard,
 	IconPackage,
 	IconPackages,
-	IconShoppingBag,
+	IconShirt,
 	IconShoppingCart,
 	IconUsers,
 } from "@tabler/icons-react";
@@ -35,7 +35,7 @@ const sidebarNavMenu: SidebarNavItem[] = [
 	{
 		title: "Products",
 		url: "products",
-		icon: IconShoppingBag,
+		icon: IconShirt,
 	},
 	{
 		title: "Categories",

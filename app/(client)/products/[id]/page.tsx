@@ -1,0 +1,35 @@
+import { notFound } from "next/navigation";
+import ProductGallery from "@/components/cards/ProductGallery";
+import ProductInfo from "@/components/cards/ProductInfo";
+import { prisma } from "@/lib/prisma";
+
+interface PageProps {
+	params: Promise<{ id: string }>;
+}
+
+export default async function Page({ params }: PageProps) {
+	const { id } = await params;
+
+	const prod = await prisma.product.findUnique({
+		where: { id: Number(id) },
+		include: { category: true },
+	});
+
+	if (!prod) notFound();
+
+	const product = JSON.parse(JSON.stringify(prod));
+
+	return (
+		<div className="mt-16 py-12 mx-auto w-full max-w-7xl">
+			<div className="">
+				<div className="grid gap-10 lg:grid-cols-[2fr_3fr] lg:gap-16">
+					{/* Images */}
+					<ProductGallery product={product} />
+
+					{/* Details */}
+					<ProductInfo product={product} />
+				</div>
+			</div>
+		</div>
+	);
+}

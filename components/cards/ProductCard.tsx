@@ -1,16 +1,17 @@
 import {
+	IconShirt,
 	IconShoppingBag,
-	IconShoppingCart,
 	IconStarFilled,
 } from "@tabler/icons-react";
 import Image from "next/image";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import type { Product } from "@/lib/entity/types";
 
 export default function ProductCard({ product }: { product: Product }) {
 	return (
-		<div className="group flex flex-col bg-transparent">
-			<div className="relative aspect-5/6 rounded-3xl bg-card overflow-hidden border shadow-sm transition-all duration-300 group-hover:shadow-md mb-4">
+		<div className="group hover:bg-muted p-2.5 rounded-3xl flex flex-col bg-transparent">
+			<div className="relative aspect-square rounded-2xl bg-card overflow-hidden border shadow-sm transition-all duration-300 group-hover:shadow-md mb-4">
 				{product.images?.[0] ? (
 					<Image
 						src={product.images[0]}
@@ -26,9 +27,11 @@ export default function ProductCard({ product }: { product: Product }) {
 				)}
 
 				<div className="absolute inset-x-0 bottom-0 p-4 translate-y-full opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-					<Button className="w-full shadow-lg gap-2 rounded-xl h-11">
-						<IconShoppingCart className="size-4" /> Add to Cart
-					</Button>
+					<Link href={`/products/${product.id}`}>
+						<Button className="w-full shadow-lg gap-1 rounded-xl h-11">
+							<IconShirt className="size-4.5" /> View Product
+						</Button>
+					</Link>
 				</div>
 
 				{product.inventory < 10 && (
@@ -41,7 +44,7 @@ export default function ProductCard({ product }: { product: Product }) {
 			<div className="flex flex-col px-1">
 				<div className="flex justify-between items-start mb-1">
 					<div className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">
-						{product.brand || "Generic"}
+						{product.brand}
 					</div>
 					<div className="flex items-center text-amber-500">
 						<IconStarFilled className="h-3 w-3" />
@@ -53,11 +56,6 @@ export default function ProductCard({ product }: { product: Product }) {
 				<h3 className="font-bold text-lg mb-1 leading-tight line-clamp-1 group-hover:text-primary transition-colors">
 					{product.name}
 				</h3>
-				<div className="mt-1 flex items-center gap-2">
-					<span className="font-black text-xl">
-						${Number(product.price).toFixed(2)}
-					</span>
-				</div>
 			</div>
 		</div>
 	);
