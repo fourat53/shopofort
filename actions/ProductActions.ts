@@ -10,6 +10,7 @@ import { PRODUCTS_HEADER } from "@/lib/entity/headers";
 import type {
 	ParameterType,
 	Prisma,
+	Product,
 	ProductColor,
 	ProductSize,
 } from "@/lib/entity/types";
@@ -66,12 +67,12 @@ function buildOrderClause(
 }
 
 async function getProductsPage(
+	filterParams: ParameterType = {},
 	page: number = 1,
+	pageSize: number = 10000,
 	order: "asc" | "desc" = "asc",
 	sortBy: string = "id",
-	filterParams: ParameterType = {},
-	pageSize: number = 10000,
-) {
+): Promise<Product[]> {
 	const where = buildWhereClause(filterParams);
 	const orderBy = buildOrderClause(sortBy, order);
 	return unstable_cache(
@@ -90,6 +91,7 @@ async function getProductsPage(
 			String(page),
 			JSON.stringify(filterParams),
 			JSON.stringify({ sortBy, order }),
+			String(pageSize),
 		],
 		{
 			revalidate: Object.keys(filterParams).length

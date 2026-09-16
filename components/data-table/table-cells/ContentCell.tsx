@@ -7,22 +7,22 @@ import {
 } from "@/components/data-table/table-cells/SpecialCells";
 import { formatDateTime, isValidDate } from "@/lib/date";
 import type {
-	CellValue,
 	EntityType,
 	ProductColor,
 	ProductSize,
+	ValueCellType,
 	ValueType,
 } from "@/lib/entity/types";
 import { uploadConfig } from "@/lib/uploadthing/client";
 
 interface ContentCellProps {
-	value: CellValue;
+	value: ValueCellType;
 	entity: EntityType;
 	headerName: string;
 	tooltip?: boolean;
 }
 
-function cellTitle(value: CellValue) {
+function cellTitle(value: ValueCellType) {
 	if (value === null || value === "") return undefined;
 	if (typeof value === "boolean") return String(value);
 	if (Array.isArray(value)) return value.join(", ");

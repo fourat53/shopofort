@@ -7,7 +7,12 @@ import {
 } from "@/components/data-table/pagination/PaginationParams";
 import { getParamValues } from "@/lib/entity/functions";
 import { CATEGORIES_HEADER } from "@/lib/entity/headers";
-import type { Audience, ParameterType, Prisma } from "@/lib/entity/types";
+import type {
+	Audience,
+	Category,
+	ParameterType,
+	Prisma,
+} from "@/lib/entity/types";
 import { prisma } from "@/lib/prisma";
 
 type FilterBy = Prisma.CategoryWhereInput;
@@ -42,12 +47,12 @@ function buildOrderClause(
 }
 
 async function getCategoriesPage(
+	filterParams: ParameterType = {},
 	page: number = 1,
+	pageSize: number = 10000,
 	order: "asc" | "desc" = "asc",
 	sortBy: string = "id",
-	filterParams: ParameterType = {},
-	pageSize: number = 10000,
-) {
+): Promise<Category[]> {
 	const where = buildWhereClause(filterParams);
 	const orderBy = buildOrderClause(sortBy, order);
 	return unstable_cache(
@@ -66,6 +71,7 @@ async function getCategoriesPage(
 			String(page),
 			JSON.stringify(filterParams),
 			JSON.stringify({ sortBy, order }),
+			String(pageSize),
 		],
 		{
 			revalidate: Object.keys(filterParams).length

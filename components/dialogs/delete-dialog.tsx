@@ -14,11 +14,11 @@ import {
 	DialogTrigger,
 } from "@/components/ui/dialog";
 import { getPluralName, getSingleName } from "@/lib/entity/functions";
-import type { EntityType, StringNumber } from "@/lib/entity/types";
+import type { EntityType } from "@/lib/entity/types";
 
 interface DeleteDialogProps {
 	entity: EntityType;
-	ids?: StringNumber[];
+	ids?: (string | number)[];
 	disabled?: boolean;
 }
 

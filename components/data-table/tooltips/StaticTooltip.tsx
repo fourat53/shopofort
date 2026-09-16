@@ -13,21 +13,21 @@ import {
 	getSingleName,
 } from "@/lib/entity/functions";
 import type {
-	CellValue,
+	EntityRow,
 	EntityType,
 	OptionField,
-	RowType,
+	ValueCellType,
 } from "@/lib/entity/types";
 
-interface StaticTooltipProps<T> {
-	row?: T;
-	id: string | number;
+interface StaticTooltipProps<T extends EntityType> {
+	id: number;
 	headerName: OptionField;
+	row?: EntityRow<T>;
 }
 
-export default function StaticTooltip<T extends RowType>({
-	row,
+export default function StaticTooltip<T extends EntityType>({
 	id,
+	row,
 	headerName,
 }: StaticTooltipProps<T>) {
 	const entity = getEntityTooltip(headerName);
@@ -69,7 +69,7 @@ export default function StaticTooltip<T extends RowType>({
 								key={`${name}-${objectName}`}
 								entity={entity}
 								name={objectName}
-								value={objectValue as CellValue}
+								value={objectValue as ValueCellType}
 							/>
 						);
 					});
@@ -86,7 +86,7 @@ export function DataRow({
 }: {
 	entity: EntityType;
 	name: string;
-	value: CellValue;
+	value: ValueCellType;
 }) {
 	return (
 		<div className="grid grid-cols-[2fr_5fr] gap-x-1">

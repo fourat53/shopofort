@@ -1,6 +1,7 @@
 import { IconShoppingBag } from "@tabler/icons-react";
 import clsx from "clsx";
 import Image from "next/image";
+import { Badge } from "@/components/ui/badge";
 import {
 	OrderStatus,
 	ProductColor,
@@ -11,38 +12,35 @@ function ColorsCell({ value }: { value: ProductColor[] }) {
 	if (value.length === 0) return "-";
 
 	return (
-		<div className="w-full grid grid-cols-4 justify-between items-center gap-1.5">
+		<div className="w-full grid grid-cols-4 justify-between items-center gap-1">
 			{[...value]
 				.sort((a, b) => a.localeCompare(b))
 				.map((item, index) => (
-					<p
+					<Badge
 						key={index}
 						className={clsx(
-							"w-full text-center rounded-full py-px px-1.5 border",
-							item === ProductColor.Red &&
-								"bg-red-200/60 text-red-700 border-red-700 dark:bg-red-900/30 dark:text-red-400 dark:border-red-400",
+							"w-full bg-muted",
+							item === ProductColor.Red && "text-red-700 dark:text-red-400",
 							item === ProductColor.Green &&
-								"bg-green-200/60 text-green-700 border-green-700 dark:bg-green-900/30 dark:text-green-400 dark:border-green-400",
-							item === ProductColor.Blue &&
-								"bg-blue-200/60 text-blue-700 border-blue-700 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-400",
+								"text-green-700 dark:text-green-400",
+							item === ProductColor.Blue && "text-blue-700 dark:text-blue-400",
 							item === ProductColor.Yellow &&
-								"bg-yellow-200/40 text-yellow-600 border-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400 dark:border-yellow-400",
+								"text-yellow-700 dark:text-yellow-400",
 							item === ProductColor.Purple &&
-								"bg-purple-200/60 text-purple-700 border-purple-700 dark:bg-purple-900/30 dark:text-purple-400 dark:border-purple-400",
+								"text-purple-200/60 text-purple-700 dark:text-purple-400",
 							item === ProductColor.Orange &&
-								"bg-orange-200/60 text-orange-700 border-orange-700 dark:bg-orange-900/30 dark:text-orange-400 dark:border-orange-400",
-							item === ProductColor.Pink &&
-								"bg-pink-200/60 text-pink-700 border-pink-700 dark:bg-pink-900/30 dark:text-pink-400 dark:border-pink-400",
-							item === ProductColor.Gray &&
-								"bg-gray-300/60 text-gray-700 border-gray-700 dark:bg-gray-600/40 dark:text-gray-400 dark:border-gray-400",
+								"text-orange-700 dark:text-orange-400",
+							item === ProductColor.Pink && "text-pink-700 dark:text-pink-400",
 							item === ProductColor.White &&
-								"bg-neutral-100 text-neutral-700 border-neutral-700 dark:bg-neutral-50/70 dark:text-neutral-900 dark:border-neutral-900",
+								"text-neutral-400 dark:text-neutral-100",
+							item === ProductColor.Gray &&
+								"text-neutral-500 dark:text-neutral-300",
 							item === ProductColor.Black &&
-								"bg-neutral-400/60 text-neutral-900 border-neutral-900 dark:bg-neutral-800/30 dark:text-neutral-300 dark:border-neutral-300",
+								"text-neutral-900 dark:text-neutral-400",
 						)}
 					>
 						{item}
-					</p>
+					</Badge>
 				))}
 		</div>
 	);
@@ -109,9 +107,8 @@ function ImagesCell({ value, small }: { value: string[]; small?: boolean }) {
 
 function OrderStatusCell({ value }: { value: string }) {
 	return (
-		<p
+		<Badge
 			className={clsx(
-				"w-22 text-center rounded-full px-1.5",
 				value === OrderStatus.PENDING &&
 					"bg-yellow-200/40 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400",
 				value === OrderStatus.PROCESSING &&
@@ -125,7 +122,7 @@ function OrderStatusCell({ value }: { value: string }) {
 			)}
 		>
 			{value}
-		</p>
+		</Badge>
 	);
 }
 

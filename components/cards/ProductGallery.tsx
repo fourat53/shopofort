@@ -32,8 +32,8 @@ export default function ProductGallery({ product }: { product: Product }) {
 											alt={`${product.name} ${index + 1}`}
 											fill
 											priority={index === 0}
+											sizes="10000px"
 											className="object-cover transition-transform duration-500"
-											sizes="(max-width: 1024px) 100vw, 40vw"
 										/>
 									</div>
 								</CarouselItem>
@@ -81,8 +81,8 @@ export default function ProductGallery({ product }: { product: Product }) {
 								src={image}
 								alt={`${product.name} thumbnail ${index + 1}`}
 								fill
+								sizes="1000px"
 								className="object-cover"
-								sizes="120px"
 							/>
 						</button>
 					))}

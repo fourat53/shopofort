@@ -45,7 +45,7 @@ const PRODUCTS_HEADER: HeaderItem[] = [
 	{ name: "price", width: "100px" },
 	{ name: "inventory", width: "100px" },
 	{ name: "description", width: "264px" },
-	{ name: "colors", width: "250px" },
+	{ name: "colors", width: "264px" },
 	{ name: "sizes", width: "180px" },
 	{ name: "rating", width: "100px" },
 	{ name: "votes", width: "100px" },

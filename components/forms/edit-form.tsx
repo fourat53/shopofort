@@ -27,20 +27,21 @@ import {
 import { getEntityFields } from "@/lib/entity/fields";
 import {
 	getFieldName,
+	getFieldValue,
 	getPluralName,
 	getSingleName,
 } from "@/lib/entity/functions";
-import type { EntityType, RowType } from "@/lib/entity/types";
+import type { EntityRow, EntityType } from "@/lib/entity/types";
 import { addImages, uploadConfig } from "@/lib/uploadthing/client";
 
-interface DialogFormProps<T> {
-	entity: EntityType;
+interface DialogFormProps<T extends EntityType> {
+	entity: T;
 	open: boolean;
 	setOpen: Dispatch<SetStateAction<boolean>>;
-	rows: T[];
+	rows: EntityRow<T>[];
 }
 
-export default function CreateEditForm<T extends RowType>({
+export default function CreateEditForm<T extends EntityType>({
 	entity,
 	open,
 	setOpen,
@@ -61,12 +62,12 @@ export default function CreateEditForm<T extends RowType>({
 		if (!open) return;
 
 		const { field, multiple } = uploadConfig[entity] ?? {};
-		if (!field || !rows[0]) {
+		if (!field || rows.length === 0) {
 			setImages([]);
 			return;
 		}
 
-		const value = rows[0][field];
+		const value = getFieldValue(rows[0], field);
 		if (multiple) {
 			setImages(Array.isArray(value) ? (value as string[]) : []);
 		} else {
@@ -110,9 +111,9 @@ export default function CreateEditForm<T extends RowType>({
 					<DialogTitle>Update {entityName}</DialogTitle>
 				</DialogHeader>
 				<div className="max-h-[calc(100vh-8rem)] overflow-y-auto px-4 flex flex-col gap-4">
-					{fields.map((field) => {
-						const value = rows[0][field.name];
-						const { type, name, multiple, required } = field;
+					{fields.map((f) => {
+						const value = getFieldValue(rows[0], f.name);
+						const { type, name, multiple, required } = f;
 						const label = getFieldName(name);
 						return type === "string" ? (
 							<Input
@@ -130,7 +131,7 @@ export default function CreateEditForm<T extends RowType>({
 								name={name}
 								label={label}
 								type="number"
-								step={field.step ?? "1"}
+								step={f.step ?? "1"}
 								placeholder={`Enter ${label.toLowerCase()}`}
 								defaultValue={value?.toString() || undefined}
 								required={required}
@@ -161,7 +162,7 @@ export default function CreateEditForm<T extends RowType>({
 								label={label}
 								required={required}
 								multiple={multiple}
-								items={field.options?.map((o) => ({ label: o, value: o }))}
+								items={f.options?.map((o) => ({ label: o, value: o }))}
 								defaultValue={
 									Array.isArray(value) && multiple
 										? value.map((item) => item.toString())
@@ -171,7 +172,7 @@ export default function CreateEditForm<T extends RowType>({
 						) : type === "foreignKey" ? (
 							<ForeignKeySelect
 								key={name}
-								field={field}
+								field={f}
 								entity={entity}
 								fields={fields}
 								defaultValue={value?.toString()}

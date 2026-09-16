@@ -17,18 +17,22 @@ import {
 	isTabValue,
 } from "@/lib/entity/functions";
 import { getHeader } from "@/lib/entity/headers";
-import { EntityType, type ListRowType, type RowType } from "@/lib/entity/types";
+import {
+	type EntityListType,
+	type EntityRow,
+	EntityType,
+} from "@/lib/entity/types";
 import { uploadConfig } from "@/lib/uploadthing/client";
 
-interface ListDialogProps<T> {
-	row?: T;
-	entity: EntityType;
+interface ListDialogProps<T extends EntityType> {
+	entity: T;
+	row?: EntityRow<T>;
 	disabled?: boolean;
 }
 
-export default function ListDialog<T extends RowType>({
-	row,
+export default function ListDialog<T extends EntityType>({
 	entity,
+	row,
 	disabled,
 }: ListDialogProps<T>) {
 	if (
@@ -79,7 +83,7 @@ export default function ListDialog<T extends RowType>({
 					</TabsList>
 					{Object.entries(row).map(([name, value]) => {
 						const { field } = uploadConfig[entity] ?? {};
-						const tabEntity: EntityType = getFieldEntity(name) as EntityType;
+						const tabEntity: EntityListType = getFieldEntity(name);
 						const header = getHeader(tabEntity);
 						return (
 							isTabValue(value, name, field) && (
@@ -93,12 +97,16 @@ export default function ListDialog<T extends RowType>({
 									) : (
 										Array.isArray(value) &&
 										value.every((item) => typeof item === "object") && (
-											<DataTable<ListRowType>
+											<DataTable<EntityListType>
 												entity={tabEntity}
 												header={header}
-												rows={name in row ? (row[name] as ListRowType[]) : []}
 												className="h-[calc(100vh-152px)]"
 												dialog
+												rows={
+													(name in row
+														? (row as Record<string, unknown>)[name]
+														: []) as EntityRow<typeof tabEntity>[]
+												}
 											/>
 										)
 									)}

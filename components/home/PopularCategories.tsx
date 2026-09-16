@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import type { Category } from "@/lib/entity/types";
 
 export default async function PopularCategories() {
-	const categories = await getCategoriesPage(1, "asc", "id", {}, 4);
+	const categories = await getCategoriesPage({}, 1, 4, "asc", "id");
 	return (
 		<section className="px-16 py-12 bg-background">
 			<div className="flex flex-col md:flex-row md:items-end justify-between mb-6 gap-4">

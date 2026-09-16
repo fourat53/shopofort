@@ -18,18 +18,17 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from "@/components/ui/popover";
-import type { StringNumber } from "@/lib/entity/types";
 import { cn } from "@/lib/utils";
 
 type SelectOption = {
 	value: string;
-	label: StringNumber | [StringNumber, StringNumber];
+	label: (string | number) | [string | number, string | number];
 	icon?: ReactNode;
 };
 
 interface SelectProps {
 	name?: string;
-	label?: ReactNode | StringNumber | [StringNumber, StringNumber];
+	label?: ReactNode | (string | number) | [string | number, string | number];
 	placeholder?: string;
 	required?: boolean;
 	value?: string | string[];

@@ -1,9 +1,10 @@
 import {
-	type CellValue,
+	type EntityListType,
+	type EntityRow,
 	EntityType,
 	OptionField,
 	type ParameterType,
-	type StringNumber,
+	type ValueCellType,
 	type ValueType,
 } from "@/lib/entity/types";
 
@@ -35,11 +36,18 @@ function getFieldName(name: string) {
 		.replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
-function getFieldEntity(name: string) {
+function getFieldEntity(name: string): EntityListType {
 	return name
 		.replace(/([a-z0-9])([A-Z])/g, "$1-$2")
 		.replace(/[_\s]+/g, "-")
-		.toLowerCase();
+		.toLowerCase() as EntityListType;
+}
+
+function getFieldValue<T extends EntityType>(
+	row: EntityRow<T>,
+	field: string,
+): unknown {
+	return (row as Record<string, unknown>)[field];
 }
 
 function getPluralName(name: EntityType) {
@@ -57,13 +65,16 @@ function getParamValues(param: ParameterType[string]): string[] {
 }
 
 function formatOption(
-	v: StringNumber,
-	l: StringNumber | [StringNumber, StringNumber],
+	v: string | number,
+	l: (string | number) | [string | number, string | number],
 ) {
 	return { value: v.toString(), label: l };
 }
 
-function isCellValue(value: ValueType, headerName: string): value is CellValue {
+function isCellValue(
+	value: ValueType,
+	headerName: string,
+): value is ValueCellType {
 	if (
 		value === null ||
 		typeof value === "string" ||
@@ -89,6 +100,7 @@ export {
 	getEntityTooltip,
 	getFieldEntity,
 	getFieldName,
+	getFieldValue,
 	getForeignKeyName,
 	getParamValues,
 	getPluralName,

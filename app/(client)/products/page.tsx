@@ -16,7 +16,7 @@ export default async function ProductsPage({
 	const filterParams: Record<string, string> = {};
 	if (categoryId) filterParams.categoryId = categoryId;
 
-	const products = await getProductsPage(1, "asc", "id", filterParams, 20);
+	const products = await getProductsPage(filterParams, 1, 20, "asc", "id");
 
 	return (
 		<div className="min-h-screen pt-24 pb-12 px-4 md:px-16">

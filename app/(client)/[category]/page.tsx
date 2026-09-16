@@ -10,7 +10,7 @@ export default async function CategoryPage({
 	const resolvedParams = await Promise.resolve(params);
 	const audience = resolvedParams.category;
 
-	const categories = await getCategoriesPage(1, "asc", "id", { audience });
+	const categories = await getCategoriesPage({ audience }, 1, 999, "asc", "id");
 
 	return (
 		<div className="min-h-screen pt-24 px-4 md:px-16">

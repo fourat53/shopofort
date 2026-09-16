@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useSyncExternalStore } from "react";
-import type { RowType, StringNumber } from "@/lib/entity/types";
+import type { EntityRow, EntityType } from "@/lib/entity/types";
 
-let selectedIds = new Set<StringNumber>();
+let selectedIds = new Set<string | number>();
 
-const emptySelection = new Set<StringNumber>();
+const emptySelection = new Set<string | number>();
 const listeners = new Set<() => void>();
 
 function subscribe(listener: () => void) {
@@ -24,7 +24,7 @@ function getServerSnapshot() {
 }
 
 function updateSelection(
-	updater: (current: Set<StringNumber>) => Set<StringNumber>,
+	updater: (current: Set<string | number>) => Set<string | number>,
 ) {
 	selectedIds = updater(selectedIds);
 
@@ -33,7 +33,7 @@ function updateSelection(
 	}
 }
 
-function useSelection<T extends RowType>(rows: T[]) {
+function useSelection<T extends EntityType>(rows: EntityRow<T>[]) {
 	const currentSelectedIds = useSyncExternalStore(
 		subscribe,
 		getSnapshot,
@@ -77,7 +77,7 @@ function useSelection<T extends RowType>(rows: T[]) {
 		});
 	};
 
-	const toggleRow = (id: StringNumber, checked: boolean) => {
+	const toggleRow = (id: string | number, checked: boolean) => {
 		updateSelection((current) => {
 			const next = new Set(current);
 

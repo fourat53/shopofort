@@ -80,6 +80,24 @@ enum EntityType {
 	"order-items" = "order-items",
 }
 
+type EntityListType =
+	| EntityType.products
+	| EntityType.categories
+	| EntityType.carts
+	| EntityType.orders;
+
+type EntityRowMap = {
+	users: User;
+	carts: Cart;
+	orders: Order;
+	products: Product;
+	categories: Category;
+	"cart-items": CartItem;
+	"order-items": OrderItem;
+};
+
+type EntityRow<T extends EntityType> = EntityRowMap[T];
+
 enum OptionField {
 	userId = "userId",
 	cartId = "cartId",
@@ -91,12 +109,11 @@ enum OptionField {
 }
 
 // OTHER TYPES ---------------------------------------------------------------------
-type StringNumber = string | number;
-
 type ParameterType = Record<string, string | string[] | undefined>;
 
-type CellValue =
-	| StringNumber
+type ValueCellType =
+	| string
+	| number
 	| boolean
 	| Date
 	| string[]
@@ -104,19 +121,11 @@ type CellValue =
 	| ProductSize[]
 	| null;
 
-type ValueType =
-	| CellValue
-	| CategoryType
-	| CartType
-	| OrderType
-	| ProductType
-	| ProductType[]
-	| CartItemType[]
-	| OrderItemType[];
+type RowObjectType = CategoryType | CartType | OrderType | ProductType;
 
-type RowType = Record<string, ValueType> & { id: StringNumber };
+type RowListType = ProductType | CartItemType | OrderItemType;
 
-type ListRowType = ProductType | CartItemType | OrderItemType;
+type ValueType = ValueCellType | RowObjectType | RowListType[];
 
 export type {
 	Cart,
@@ -125,9 +134,9 @@ export type {
 	CartType,
 	Category,
 	CategoryType,
-	CellValue,
+	EntityListType,
+	EntityRow,
 	KindeUser,
-	ListRowType,
 	Order,
 	OrderItem,
 	OrderItemType,
@@ -137,10 +146,9 @@ export type {
 	Product,
 	ProductType,
 	Role,
-	RowType,
-	StringNumber,
 	User,
 	UserType,
+	ValueCellType,
 	ValueType,
 };
 export {

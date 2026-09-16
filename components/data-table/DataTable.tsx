@@ -16,22 +16,21 @@ import {
 import { isCellValue } from "@/lib/entity/functions";
 import type { HeaderItem } from "@/lib/entity/headers";
 import {
+	type EntityRow,
 	type EntityType,
 	OptionField,
-	type RowType,
-	type StringNumber,
 } from "@/lib/entity/types";
 import EntityTooltip from "./tooltips/EntityTooltip";
 
-interface DataTableProps<T> {
-	entity: EntityType;
+interface DataTableProps<T extends EntityType> {
+	entity: T;
 	header: HeaderItem[];
-	rows: T[];
+	rows: EntityRow<T>[];
 	className?: string;
 	dialog?: boolean;
 }
 
-export default function DataTable<T extends RowType>({
+export default function DataTable<T extends EntityType>({
 	entity,
 	header,
 	rows,
@@ -98,7 +97,7 @@ export default function DataTable<T extends RowType>({
 												) ? (
 													<EntityTooltip<T>
 														row={row}
-														id={value as StringNumber}
+														id={value as string | number}
 														headerName={header[cIndex]?.name as OptionField}
 													/>
 												) : (

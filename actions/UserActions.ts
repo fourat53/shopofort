@@ -1,13 +1,13 @@
 "use server";
 
 import { unstable_cache, updateTag } from "next/cache";
-import { filterUsers, mapUser } from "@/actions/UserFunctions";
 import {
 	CACHE_SECONDS,
 	FILTER_CACHE_SECONDS,
 } from "@/components/data-table/pagination/PaginationParams";
 import { getFormUser } from "@/lib/entity/forms";
 import type { ParameterType, User } from "@/lib/entity/types";
+import { filterUsers, mapUser } from "@/lib/entity/user-functions";
 import { checkedEnvVar } from "@/lib/env";
 import { prisma } from "@/lib/prisma";
 
@@ -37,7 +37,7 @@ async function getKindeToken() {
 	return data.access_token;
 }
 
-async function getUserById(id: string): Promise<User> {
+async function getUserById(id: string) {
 	try {
 		const token = await getKindeToken();
 
@@ -104,10 +104,10 @@ async function updateUser(id: string, formData: FormData) {
 	return response.json();
 }
 
-async function getUsers(): Promise<User[]> {
+async function getUsers() {
 	const token = await getKindeToken();
 
-	const allUsers: User[] = [];
+	const allUsers = [];
 	let nextToken: string | null = null;
 
 	while (true) {
@@ -139,22 +139,20 @@ async function getUsers(): Promise<User[]> {
 }
 
 async function getFilteredUsers(
-	filterParams: ParameterType,
-	sortBy?: string,
-	order?: "asc" | "desc",
-) {
-	const cacheKey = [
-		"kinde-filtered-users",
-		JSON.stringify(filterParams),
-		JSON.stringify({ sortBy, order }),
-	];
-
+	filterParams: ParameterType = {},
+	order: "asc" | "desc" = "asc",
+	sortBy: string = "id",
+): Promise<User[]> {
 	return unstable_cache(
 		async () => {
-			const users = await getUsers();
-			return filterUsers(users, filterParams, sortBy, order);
+			const users: User[] = await getUsers();
+			return filterUsers(users, filterParams, order, sortBy);
 		},
-		cacheKey,
+		[
+			"filtered-users",
+			JSON.stringify(filterParams),
+			JSON.stringify({ sortBy, order }),
+		],
 		{
 			revalidate: Object.keys(filterParams).length
 				? FILTER_CACHE_SECONDS
@@ -165,15 +163,15 @@ async function getFilteredUsers(
 }
 
 async function getUsersPage(
+	filterParams: ParameterType = {},
 	page: number = 1,
+	pageSize: number = 10000,
 	order: "asc" | "desc" = "asc",
 	sortBy: string = "id",
-	filterParams: ParameterType = {},
-	pageSize: number = 10000,
-) {
-	const users = await getFilteredUsers(filterParams, sortBy, order);
+): Promise<User[]> {
+	const users = await getFilteredUsers(filterParams, order, sortBy);
 	const start = (page - 1) * pageSize;
-	return users.slice(start, start + pageSize).map(mapUser);
+	return users.slice(start, start + pageSize);
 }
 
 async function getUserCount(filterParams: ParameterType = {}) {

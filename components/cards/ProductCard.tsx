@@ -17,6 +17,7 @@ export default function ProductCard({ product }: { product: Product }) {
 						src={product.images[0]}
 						alt={product.name}
 						fill
+						sizes="5000px"
 						className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-110"
 					/>
 				) : (

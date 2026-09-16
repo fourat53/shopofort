@@ -1,28 +1,32 @@
 "use server";
 
 import { updateTag } from "next/cache";
-import { getCartCount } from "@/actions/CartActions";
-import { getCartItemCount } from "@/actions/CartItemActions";
-import { getCategoryCount } from "@/actions/CategoryActions";
-import { getOrderCount } from "@/actions/OrderActions";
-import { getOrderItemCount } from "@/actions/OrderItemActions";
-import { getProductCount } from "@/actions/ProductActions";
+import { getCartCount, getCartsPage } from "@/actions/CartActions";
+import { getCartItemCount, getCartItemsPage } from "@/actions/CartItemActions";
+import { getCategoriesPage, getCategoryCount } from "@/actions/CategoryActions";
+import { getOrderCount, getOrdersPage } from "@/actions/OrderActions";
+import {
+	getOrderItemCount,
+	getOrderItemsPage,
+} from "@/actions/OrderItemActions";
+import { getProductCount, getProductsPage } from "@/actions/ProductActions";
 import {
 	deleteUser,
 	getUserById,
 	getUserCount,
 	getUsers,
+	getUsersPage,
 	updateUser,
 } from "@/actions/UserActions";
 import type { SelectOption } from "@/components/form-items/select";
 import { getFormEntity } from "@/lib/entity/forms";
 import { formatOption } from "@/lib/entity/functions";
 import {
+	type EntityRow,
 	EntityType,
 	OptionField,
 	type ParameterType,
 	type Prisma,
-	type StringNumber,
 } from "@/lib/entity/types";
 import { prisma } from "@/lib/prisma";
 
@@ -89,7 +93,7 @@ async function getFilterOptions(field: OptionField): Promise<SelectOption[]> {
 	}
 }
 
-async function getEntityById(entity: EntityType, id: StringNumber) {
+async function getEntityById(entity: EntityType, id: string | number) {
 	const where = { where: { id: Number(id) } };
 	let result: unknown;
 	try {
@@ -154,7 +158,7 @@ async function createEntity(
 	}
 }
 
-async function deleteEntity(entity: EntityType, id: StringNumber) {
+async function deleteEntity(entity: EntityType, id: string | number) {
 	const where = { where: { id: id as number } };
 	let result: unknown;
 	try {
@@ -180,7 +184,7 @@ async function deleteEntity(entity: EntityType, id: StringNumber) {
 	}
 }
 
-async function deleteEntities(entity: EntityType, ids: StringNumber[]) {
+async function deleteEntities(entity: EntityType, ids: (string | number)[]) {
 	if (ids.length === 0) return;
 	const where = { where: { id: { in: ids as number[] } } };
 	let result: unknown;
@@ -212,7 +216,7 @@ async function deleteEntities(entity: EntityType, ids: StringNumber[]) {
 
 async function updateEntity(
 	entity: EntityType,
-	id: StringNumber,
+	id: string | number,
 	formData: FormData,
 ) {
 	const where = { id: id as number };
@@ -262,7 +266,7 @@ async function updateEntity(
 
 async function updateEntities(
 	entity: EntityType,
-	ids: StringNumber[],
+	ids: (string | number)[],
 	formData: FormData,
 ) {
 	if (ids.length === 0) return;
@@ -313,6 +317,36 @@ async function updateEntities(
 	}
 }
 
+async function getEntitiesPage<T extends EntityType>(
+	entity: T,
+	filterParams: ParameterType = {},
+	page: number = 1,
+	pageSize: number = 10000,
+	order: "asc" | "desc" = "asc",
+	sortBy: string = "id",
+): Promise<EntityRow<T>[]> {
+	const params = [filterParams, page, pageSize, order, sortBy] as const;
+
+	switch (entity) {
+		case EntityType.users:
+			return (await getUsersPage(...params)) as EntityRow<T>[];
+		case EntityType.carts:
+			return (await getCartsPage(...params)) as EntityRow<T>[];
+		case EntityType.orders:
+			return (await getOrdersPage(...params)) as EntityRow<T>[];
+		case EntityType.products:
+			return (await getProductsPage(...params)) as EntityRow<T>[];
+		case EntityType.categories:
+			return (await getCategoriesPage(...params)) as EntityRow<T>[];
+		case EntityType["cart-items"]:
+			return (await getCartItemsPage(...params)) as EntityRow<T>[];
+		case EntityType["order-items"]:
+			return (await getOrderItemsPage(...params)) as EntityRow<T>[];
+		default:
+			throw new Error(`Unsupported entity: ${entity}`);
+	}
+}
+
 async function getEntityCount(
 	entity: EntityType,
 	filterParams: ParameterType = {},
@@ -332,8 +366,6 @@ async function getEntityCount(
 			return await getCartItemCount(filterParams);
 		case EntityType["order-items"]:
 			return await getOrderItemCount(filterParams);
-		default:
-			return 0;
 	}
 }
 
@@ -350,6 +382,7 @@ export {
 	createEntity,
 	deleteEntities,
 	deleteEntity,
+	getEntitiesPage,
 	getEntityById,
 	getEntityCount,
 	getFilterOptions,

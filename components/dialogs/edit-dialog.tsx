@@ -5,15 +5,15 @@ import { useState } from "react";
 import CreateEditForm from "@/components/forms/edit-form";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import type { EntityType, RowType } from "@/lib/entity/types";
+import type { EntityRow, EntityType } from "@/lib/entity/types";
 
-interface EditDialogProps<T> {
-	entity?: EntityType;
-	rows?: T[];
+interface EditDialogProps<T extends EntityType> {
+	entity?: T;
+	rows?: EntityRow<T>[];
 	disabled?: boolean;
 }
 
-export default function EditDialog<T extends RowType>({
+export default function EditDialog<T extends EntityType>({
 	entity,
 	rows,
 	disabled,

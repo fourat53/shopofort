@@ -1,9 +1,9 @@
 import { Suspense } from "react";
-import { getEntityCount } from "@/actions/EntityActions";
+import { getEntitiesPage, getEntityCount } from "@/actions/EntityActions";
+import DataTable from "@/components/data-table/DataTable";
 import DataTableSkeleton from "@/components/data-table/DataTableSkeleton";
 import DataTablePagination from "@/components/data-table/pagination/DataTablePagination";
 import { getPaginationParams } from "@/components/data-table/pagination/PaginationParams";
-import EntityTable from "@/components/entity-tables/EntityTable";
 import { getHeader } from "@/lib/entity/headers";
 import { EntityType } from "@/lib/entity/types";
 
@@ -34,22 +34,31 @@ export default async function EntityPage({
 	const totalCount = await getEntityCount(entity, filterParams);
 	const { page, totalPages } = getPaginationParams(_page, totalCount, pageSize);
 
-	const header = getHeader(entity);
-
-	const entityParams = {
+	const rows = await getEntitiesPage(
 		entity,
-		header,
+		filterParams,
 		page,
+		pageSize,
 		order,
 		sortBy,
+	);
+
+	const header = getHeader(entity);
+
+	const suspenseKey = JSON.stringify({
+		entity,
+		header,
 		filterParams,
+		page,
 		pageSize,
-	};
+		order,
+		sortBy,
+	});
 
 	return (
 		<>
 			<Suspense
-				key={JSON.stringify(entityParams)}
+				key={suspenseKey}
 				fallback={
 					<DataTableSkeleton
 						entity={entity}
@@ -58,7 +67,7 @@ export default async function EntityPage({
 					/>
 				}
 			>
-				<EntityTable {...entityParams} />
+				<DataTable<typeof entity> entity={entity} header={header} rows={rows} />
 			</Suspense>
 			{totalPages > 1 && (
 				<DataTablePagination
