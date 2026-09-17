@@ -2,7 +2,7 @@
 
 import { IconEdit } from "@tabler/icons-react";
 import { useState } from "react";
-import CreateEditForm from "@/components/forms/edit-form";
+import EditForm from "@/components/forms/edit-form";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import type { EntityRow, EntityType } from "@/lib/entity/types";
@@ -42,12 +42,7 @@ export default function EditDialog<T extends EntityType>({
 					icon={<IconEdit className="size-4 text-mist-400" />}
 				/>
 			</DialogTrigger>
-			<CreateEditForm<T>
-				entity={entity}
-				open={open}
-				setOpen={setOpen}
-				rows={rows}
-			/>
+			<EditForm<T> entity={entity} open={open} setOpen={setOpen} rows={rows} />
 		</Dialog>
 	);
 }

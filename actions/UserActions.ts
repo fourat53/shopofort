@@ -7,8 +7,8 @@ import {
 } from "@/components/data-table/pagination/PaginationParams";
 import { getFormUser } from "@/lib/entity/forms";
 import type { ParameterType, User } from "@/lib/entity/types";
-import { filterUsers, mapUser } from "@/lib/entity/user-functions";
 import { checkedEnvVar } from "@/lib/env";
+import { filterUsers, mapUser } from "@/lib/functions/server-user";
 import { prisma } from "@/lib/prisma";
 
 const kindeIssuerUrl = checkedEnvVar("KINDE_ISSUER_URL");

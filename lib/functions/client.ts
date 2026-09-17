@@ -3,7 +3,6 @@ import {
 	type EntityRow,
 	EntityType,
 	OptionField,
-	type ParameterType,
 	type ValueCellType,
 	type ValueType,
 } from "@/lib/entity/types";
@@ -18,14 +17,11 @@ function getEntityTooltip(name: OptionField): EntityType {
 	else return EntityType["order-items"];
 }
 
-function getForeignKeyName(name: EntityType): OptionField {
-	if (name === EntityType.users) return OptionField.userId;
-	else if (name === EntityType.products) return OptionField.productId;
-	else if (name === EntityType.orders) return OptionField.orderId;
-	else if (name === EntityType.carts) return OptionField.cartId;
-	else if (name === EntityType.categories) return OptionField.categoryId;
-	else if (name === EntityType["cart-items"]) return OptionField.cartItemId;
-	else return OptionField.orderItemId;
+function getFieldEntity(name: string): EntityListType {
+	return name
+		.replace(/([a-z0-9])([A-Z])/g, "$1-$2")
+		.replace(/[_\s]+/g, "-")
+		.toLowerCase() as EntityListType;
 }
 
 function getFieldName(name: string) {
@@ -36,18 +32,21 @@ function getFieldName(name: string) {
 		.replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
-function getFieldEntity(name: string): EntityListType {
-	return name
-		.replace(/([a-z0-9])([A-Z])/g, "$1-$2")
-		.replace(/[_\s]+/g, "-")
-		.toLowerCase() as EntityListType;
-}
-
 function getFieldValue<T extends EntityType>(
 	row: EntityRow<T>,
 	field: string,
 ): unknown {
 	return (row as Record<string, unknown>)[field];
+}
+
+function getForeignKeyName(name: EntityType): OptionField {
+	if (name === EntityType.users) return OptionField.userId;
+	else if (name === EntityType.products) return OptionField.productId;
+	else if (name === EntityType.orders) return OptionField.orderId;
+	else if (name === EntityType.carts) return OptionField.cartId;
+	else if (name === EntityType.categories) return OptionField.categoryId;
+	else if (name === EntityType["cart-items"]) return OptionField.cartItemId;
+	else return OptionField.orderItemId;
 }
 
 function getPluralName(name: EntityType) {
@@ -59,29 +58,14 @@ function getSingleName(name: EntityType) {
 	return formatted === "categories" ? "category" : formatted.slice(0, -1);
 }
 
-function getParamValues(param: ParameterType[string]): string[] {
-	if (!param) return [];
-	return Array.isArray(param) ? param : [param];
-}
-
-function formatOption(
-	v: string | number,
-	l: (string | number) | [string | number, string | number],
-) {
-	return { value: v.toString(), label: l };
-}
-
-function isCellValue(
-	value: ValueType,
-	headerName: string,
-): value is ValueCellType {
+function isCellValue(value: ValueType, name: string): value is ValueCellType {
 	if (
 		value === null ||
 		typeof value === "string" ||
 		typeof value === "number" ||
 		typeof value === "boolean" ||
 		value instanceof Date ||
-		["colors", "sizes", "images"].includes(headerName)
+		["colors", "sizes", "images"].includes(name)
 	)
 		return true;
 
@@ -96,13 +80,11 @@ function isTabValue(value: ValueType, name: string, field?: string): boolean {
 }
 
 export {
-	formatOption,
 	getEntityTooltip,
 	getFieldEntity,
 	getFieldName,
 	getFieldValue,
 	getForeignKeyName,
-	getParamValues,
 	getPluralName,
 	getSingleName,
 	isCellValue,

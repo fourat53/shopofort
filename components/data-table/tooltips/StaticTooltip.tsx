@@ -7,17 +7,17 @@ import {
 	TooltipContent,
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
-import {
-	getEntityTooltip,
-	getFieldName,
-	getSingleName,
-} from "@/lib/entity/functions";
 import type {
 	EntityRow,
 	EntityType,
 	OptionField,
 	ValueCellType,
 } from "@/lib/entity/types";
+import {
+	getEntityTooltip,
+	getFieldName,
+	getSingleName,
+} from "@/lib/functions/client";
 
 interface StaticTooltipProps<T extends EntityType> {
 	id: number;

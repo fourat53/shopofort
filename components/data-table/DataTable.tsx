@@ -13,13 +13,13 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { isCellValue } from "@/lib/entity/functions";
 import type { HeaderItem } from "@/lib/entity/headers";
 import {
 	type EntityRow,
 	type EntityType,
 	OptionField,
 } from "@/lib/entity/types";
+import { isCellValue } from "@/lib/functions/client";
 import EntityTooltip from "./tooltips/EntityTooltip";
 
 interface DataTableProps<T extends EntityType> {

@@ -20,23 +20,26 @@ function ColorsCell({ value }: { value: ProductColor[] }) {
 						key={index}
 						className={clsx(
 							"w-full bg-muted",
-							item === ProductColor.Red && "text-red-700 dark:text-red-400",
+							item === ProductColor.Red &&
+								"bg-red-200/50 dark:bg-red-900/25 text-red-600 dark:text-red-400",
 							item === ProductColor.Green &&
-								"text-green-700 dark:text-green-400",
-							item === ProductColor.Blue && "text-blue-700 dark:text-blue-400",
+								"bg-green-200/50 dark:bg-green-900/25 text-green-600 dark:text-green-400",
+							item === ProductColor.Blue &&
+								"bg-blue-200/50 dark:bg-blue-900/25 text-blue-600 dark:text-blue-400",
 							item === ProductColor.Yellow &&
-								"text-yellow-700 dark:text-yellow-400",
+								"bg-yellow-200/50 dark:bg-yellow-900/25 text-yellow-600 dark:text-yellow-400",
 							item === ProductColor.Purple &&
-								"text-purple-200/60 text-purple-700 dark:text-purple-400",
+								"bg-purple-200/50 dark:bg-purple-900/25 text-purple-600 dark:text-purple-400",
 							item === ProductColor.Orange &&
-								"text-orange-700 dark:text-orange-400",
-							item === ProductColor.Pink && "text-pink-700 dark:text-pink-400",
+								"bg-orange-200/50 dark:bg-orange-900/25 text-orange-600 dark:text-orange-400",
+							item === ProductColor.Pink &&
+								"bg-pink-200/50 dark:bg-pink-900/25 text-pink-600 dark:text-pink-400",
 							item === ProductColor.White &&
-								"text-neutral-400 dark:text-neutral-100",
+								"bg-zinc-300/30 dark:bg-zinc-700/80 text-zinc-500/75 dark:text-zinc-200",
 							item === ProductColor.Gray &&
-								"text-neutral-500 dark:text-neutral-300",
+								"bg-zinc-300/50 dark:bg-zinc-700/40 text-zinc-500 dark:text-zinc-400",
 							item === ProductColor.Black &&
-								"text-neutral-900 dark:text-neutral-400",
+								"bg-zinc-300/90 dark:bg-zinc-800/90 text-zinc-800 dark:text-zinc-400/75",
 						)}
 					>
 						{item}
@@ -51,11 +54,35 @@ function SizesCell({ value }: { value: ProductSize[] }) {
 	return (
 		<div className="flex items-center gap-1.5">
 			{value.map((item, index) => (
-				<div key={index} className="rounded-full bg-muted px-1.5 border">
+				<div
+					key={index}
+					className="rounded-full bg-muted px-1.5 border border-border/80"
+				>
 					{item}
 				</div>
 			))}
 		</div>
+	);
+}
+
+function OrderStatusCell({ value }: { value: string }) {
+	return (
+		<Badge
+			className={clsx(
+				value === OrderStatus.PENDING &&
+					"bg-yellow-200/50 text-yellow-600 dark:bg-yellow-900/25 dark:text-yellow-400",
+				value === OrderStatus.PROCESSING &&
+					"bg-blue-200/50 text-blue-700 dark:bg-blue-900/25 dark:text-blue-400",
+				value === OrderStatus.SHIPPED &&
+					"bg-purple-200/50 text-purple-700 dark:bg-purple-900/25 dark:text-purple-400",
+				value === OrderStatus.DELIVERED &&
+					"bg-green-200/50 text-green-700 dark:bg-green-900/25 dark:text-green-400",
+				value === OrderStatus.CANCELLED &&
+					"bg-red-200/50 text-red-700 dark:bg-red-900/25 dark:text-red-400",
+			)}
+		>
+			{value}
+		</Badge>
 	);
 }
 
@@ -102,27 +129,6 @@ function ImagesCell({ value, small }: { value: string[]; small?: boolean }) {
 				<ImageCell key={index} value={item} small={small} />
 			))}
 		</div>
-	);
-}
-
-function OrderStatusCell({ value }: { value: string }) {
-	return (
-		<Badge
-			className={clsx(
-				value === OrderStatus.PENDING &&
-					"bg-yellow-200/40 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400",
-				value === OrderStatus.PROCESSING &&
-					"bg-blue-200/60 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
-				value === OrderStatus.SHIPPED &&
-					"bg-purple-200/60 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400",
-				value === OrderStatus.DELIVERED &&
-					"bg-green-200/60 text-green-700 dark:bg-green-900/30 dark:text-green-400",
-				value === OrderStatus.CANCELLED &&
-					"bg-red-200/60 text-red-700 dark:bg-red-900/30 dark:text-red-400",
-			)}
-		>
-			{value}
-		</Badge>
 	);
 }
 

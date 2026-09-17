@@ -11,17 +11,17 @@ import {
 } from "@/components/ui/carousel";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-	getFieldEntity,
-	getFieldName,
-	isTabValue,
-} from "@/lib/entity/functions";
 import { getHeader } from "@/lib/entity/headers";
 import {
 	type EntityListType,
 	type EntityRow,
 	EntityType,
 } from "@/lib/entity/types";
+import {
+	getFieldEntity,
+	getFieldName,
+	isTabValue,
+} from "@/lib/functions/client";
 import { uploadConfig } from "@/lib/uploadthing/client";
 
 interface ListDialogProps<T extends EntityType> {

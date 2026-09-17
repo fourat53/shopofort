@@ -25,13 +25,13 @@ import {
 	DialogTitle,
 } from "@/components/ui/dialog";
 import { getEntityFields } from "@/lib/entity/fields";
+import type { EntityRow, EntityType } from "@/lib/entity/types";
 import {
 	getFieldName,
 	getFieldValue,
 	getPluralName,
 	getSingleName,
-} from "@/lib/entity/functions";
-import type { EntityRow, EntityType } from "@/lib/entity/types";
+} from "@/lib/functions/client";
 import { addImages, uploadConfig } from "@/lib/uploadthing/client";
 
 interface DialogFormProps<T extends EntityType> {
@@ -41,7 +41,7 @@ interface DialogFormProps<T extends EntityType> {
 	rows: EntityRow<T>[];
 }
 
-export default function CreateEditForm<T extends EntityType>({
+export default function EditForm<T extends EntityType>({
 	entity,
 	open,
 	setOpen,

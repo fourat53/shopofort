@@ -25,8 +25,8 @@ import {
 	DialogTitle,
 } from "@/components/ui/dialog";
 import { getEntityFields } from "@/lib/entity/fields";
-import { getFieldName, getSingleName } from "@/lib/entity/functions";
 import type { EntityType } from "@/lib/entity/types";
+import { getFieldName, getSingleName } from "@/lib/functions/client";
 import { addImages } from "@/lib/uploadthing/client";
 
 interface CreateFormProps {

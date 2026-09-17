@@ -16,8 +16,8 @@ import {
 } from "@/components/ui/dialog";
 import { isValidDate } from "@/lib/date";
 import type { ENTITY_FIELDS } from "@/lib/entity/fields";
-import { getFieldName, getPluralName } from "@/lib/entity/functions";
 import type { EntityType } from "@/lib/entity/types";
+import { getFieldName, getPluralName } from "@/lib/functions/client";
 
 interface DialogFormProps {
 	fields: (typeof ENTITY_FIELDS)[EntityType][number][];

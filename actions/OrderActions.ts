@@ -5,7 +5,6 @@ import {
 	CACHE_SECONDS,
 	FILTER_CACHE_SECONDS,
 } from "@/components/data-table/pagination/PaginationParams";
-import { getParamValues } from "@/lib/entity/functions";
 import { ORDERS_HEADER } from "@/lib/entity/headers";
 import type {
 	Order,
@@ -13,6 +12,7 @@ import type {
 	ParameterType,
 	Prisma,
 } from "@/lib/entity/types";
+import { getParamValues } from "@/lib/functions/server";
 import { prisma } from "@/lib/prisma";
 
 type FilterBy = Prisma.OrderWhereInput;

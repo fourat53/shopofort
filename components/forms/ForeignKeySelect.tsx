@@ -4,12 +4,12 @@ import { toast } from "sonner";
 import { getFilterOptions } from "@/actions/EntityActions";
 import { Select, type SelectOption } from "@/components/form-items/select";
 import type { FieldConfig } from "@/lib/entity/fields";
+import type { EntityType, OptionField } from "@/lib/entity/types";
 import {
 	getFieldName,
 	getForeignKeyName,
 	getSingleName,
-} from "@/lib/entity/functions";
-import type { EntityType, OptionField } from "@/lib/entity/types";
+} from "@/lib/functions/client";
 
 interface ForeignKeySelectProps {
 	field: FieldConfig;

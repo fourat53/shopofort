@@ -20,7 +20,6 @@ import {
 } from "@/actions/UserActions";
 import type { SelectOption } from "@/components/form-items/select";
 import { getFormEntity } from "@/lib/entity/forms";
-import { formatOption } from "@/lib/entity/functions";
 import {
 	type EntityRow,
 	EntityType,
@@ -28,6 +27,7 @@ import {
 	type ParameterType,
 	type Prisma,
 } from "@/lib/entity/types";
+import { formatOption } from "@/lib/functions/server";
 import { prisma } from "@/lib/prisma";
 
 async function getFilterOptions(field: OptionField): Promise<SelectOption[]> {

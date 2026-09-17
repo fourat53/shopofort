@@ -13,8 +13,8 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
-import { getPluralName, getSingleName } from "@/lib/entity/functions";
 import type { EntityType } from "@/lib/entity/types";
+import { getPluralName, getSingleName } from "@/lib/functions/client";
 
 interface DeleteDialogProps {
 	entity: EntityType;

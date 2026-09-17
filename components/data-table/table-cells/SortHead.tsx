@@ -10,8 +10,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useTransition } from "react";
 import { sortHref } from "@/components/data-table/pagination/PaginationParams";
 import { TableHead } from "@/components/ui/table";
-import { getFieldName } from "@/lib/entity/functions";
 import type { EntityType } from "@/lib/entity/types";
+import { getFieldName } from "@/lib/functions/client";
 import { uploadConfig } from "@/lib/uploadthing/client";
 
 interface SortedHeadProps {
