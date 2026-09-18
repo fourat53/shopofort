@@ -73,7 +73,7 @@ export default function CreateForm({ entity, open, setOpen }: CreateFormProps) {
 		<DialogContent
 			onPointerDownOutside={(e) => loading && e.preventDefault()}
 			onEscapeKeyDown={(e) => loading && e.preventDefault()}
-			className="px-0 w-180 max-w-180 overflow-hidden"
+			className="px-0 sm:w-80 sm:w-180 max-w-180 overflow-hidden"
 		>
 			<form onSubmit={handleSubmit}>
 				<DialogHeader className="pb-2">
