@@ -5,11 +5,12 @@ import {
 	CACHE_SECONDS,
 	FILTER_CACHE_SECONDS,
 } from "@/components/data-table/pagination/PaginationParams";
+import { getFormCart } from "@/lib/entity/forms";
 import { CARTS_HEADER } from "@/lib/entity/headers";
 import type { Cart, ParameterType } from "@/lib/entity/types";
 import { getParamValues } from "@/lib/functions/server";
 import { prisma } from "@/lib/prisma";
-import { Prisma } from "@/prisma/generated/prisma/browser";
+import type { Prisma } from "@/prisma/generated/prisma/browser";
 
 type FilterBy = Prisma.CartWhereInput;
 
@@ -98,33 +99,73 @@ async function getCartCount(filterParams: ParameterType = {}) {
 	)();
 }
 
-async function updateCartTotals(
-	tx: Prisma.TransactionClient,
-	cartIds: number[],
-) {
-	for (const cartId of [...new Set(cartIds)]) {
-		const cart = await tx.cart.findUniqueOrThrow({
-			where: { id: cartId },
-			select: {
-				cartItems: {
-					select: {
-						unitPrice: true,
-						quantity: true,
-					},
-				},
-			},
+async function createCart(formData: FormData) {
+	const data = getFormCart(formData);
+	try {
+		const result = await prisma.cart.create({
+			data: data as Prisma.CartCreateInput,
 		});
-
-		const totalPrice = cart.cartItems.reduce(
-			(total, item) => total.plus(item.unitPrice.mul(item.quantity)),
-			new Prisma.Decimal(0),
-		);
-
-		await tx.cart.update({
-			where: { id: cartId },
-			data: { totalPrice },
-		});
+		return JSON.parse(JSON.stringify(result));
+	} catch (error) {
+		console.error(error);
+		throw error;
 	}
 }
 
-export { getCartCount, getCartsPage, updateCartTotals };
+async function deleteCart(id: number) {
+	try {
+		const result = await prisma.cart.delete({ where: { id: id } });
+		return JSON.parse(JSON.stringify(result));
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+}
+
+async function deleteCarts(ids: number[]) {
+	try {
+		const result = await prisma.cart.deleteMany({ where: { id: { in: ids } } });
+		return JSON.parse(JSON.stringify(result));
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+}
+
+async function updateCart(id: number, formData: FormData) {
+	const data = getFormCart(formData);
+	try {
+		const result = await prisma.cart.update({
+			data: data as Prisma.CartUpdateInput,
+			where: { id },
+		});
+		return JSON.parse(JSON.stringify(result));
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+}
+
+async function updateCarts(ids: number[], formData: FormData) {
+	const data = getFormCart(formData);
+	try {
+		const result = await prisma.cart.updateMany({
+			data: data as Prisma.CartUpdateInput,
+			where: { id: { in: ids } },
+		});
+		return JSON.parse(JSON.stringify(result));
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+}
+
+export {
+	createCart,
+	deleteCart,
+	deleteCarts,
+	getCartCount,
+	getCartsPage,
+	updateCart,
+	updateCarts,
+};

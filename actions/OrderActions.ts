@@ -5,11 +5,12 @@ import {
 	CACHE_SECONDS,
 	FILTER_CACHE_SECONDS,
 } from "@/components/data-table/pagination/PaginationParams";
+import { getFormOrder } from "@/lib/entity/forms";
 import { ORDERS_HEADER } from "@/lib/entity/headers";
 import type { Order, OrderStatus, ParameterType } from "@/lib/entity/types";
 import { getParamValues } from "@/lib/functions/server";
 import { prisma } from "@/lib/prisma";
-import { Prisma } from "@/prisma/generated/prisma/client";
+import type { Prisma } from "@/prisma/generated/prisma/client";
 
 type FilterBy = Prisma.OrderWhereInput;
 
@@ -113,33 +114,75 @@ async function getOrderCount(filterParams: ParameterType = {}) {
 	)();
 }
 
-async function updateOrderTotals(
-	tx: Prisma.TransactionClient,
-	orderIds: number[],
-) {
-	for (const orderId of [...new Set(orderIds)]) {
-		const order = await tx.order.findUniqueOrThrow({
-			where: { id: orderId },
-			select: {
-				orderItems: {
-					select: {
-						unitPrice: true,
-						quantity: true,
-					},
-				},
-			},
+async function createOrder(formData: FormData) {
+	const data = getFormOrder(formData);
+	try {
+		const result = await prisma.order.create({
+			data: data as Prisma.OrderCreateInput,
 		});
-
-		const totalPrice = order.orderItems.reduce(
-			(total, item) => total.plus(item.unitPrice.mul(item.quantity)),
-			new Prisma.Decimal(0),
-		);
-
-		await tx.order.update({
-			where: { id: orderId },
-			data: { totalPrice },
-		});
+		return JSON.parse(JSON.stringify(result));
+	} catch (error) {
+		console.error(error);
+		throw error;
 	}
 }
 
-export { getOrderCount, getOrdersPage, updateOrderTotals };
+async function deleteOrder(id: number) {
+	try {
+		const result = await prisma.order.delete({ where: { id: id } });
+		return JSON.parse(JSON.stringify(result));
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+}
+
+async function deleteOrders(ids: number[]) {
+	try {
+		const result = await prisma.order.deleteMany({
+			where: { id: { in: ids } },
+		});
+		return JSON.parse(JSON.stringify(result));
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+}
+
+async function updateOrder(id: number, formData: FormData) {
+	const data = getFormOrder(formData);
+	try {
+		const result = await prisma.order.update({
+			data: data as Prisma.OrderUpdateInput,
+			where: { id },
+		});
+		return JSON.parse(JSON.stringify(result));
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+}
+
+async function updateOrders(ids: number[], formData: FormData) {
+	const data = getFormOrder(formData);
+	try {
+		const result = await prisma.order.updateMany({
+			data: data as Prisma.OrderUpdateInput,
+			where: { id: { in: ids } },
+		});
+		return JSON.parse(JSON.stringify(result));
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+}
+
+export {
+	createOrder,
+	deleteOrder,
+	deleteOrders,
+	getOrderCount,
+	getOrdersPage,
+	updateOrder,
+	updateOrders,
+};

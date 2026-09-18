@@ -16,6 +16,7 @@ interface ImageUploadProps {
 	className?: string;
 	required?: boolean;
 	multiple?: boolean;
+	disabled?: boolean;
 }
 
 function ImageUpload({
@@ -26,11 +27,12 @@ function ImageUpload({
 	className,
 	required,
 	multiple = false,
+	disabled = false,
 }: ImageUploadProps) {
 	const fileInputRef = useRef<HTMLInputElement>(null);
 
 	const handleDivClick = () => {
-		fileInputRef.current?.click();
+		if (!disabled) fileInputRef.current?.click();
 	};
 
 	const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -57,11 +59,12 @@ function ImageUpload({
 				name={name}
 				type="file"
 				ref={fileInputRef}
-				onChange={handleImageChange}
+				onChange={disabled ? undefined : handleImageChange}
 				multiple={multiple}
 				accept="image/*"
 				className="sr-only"
 				required={required}
+				disabled={disabled}
 			/>
 
 			<div
@@ -75,11 +78,12 @@ function ImageUpload({
 					<ImagePreview
 						key={idx}
 						item={item}
-						onRemove={() => removeImage(idx)}
+						onRemove={disabled ? undefined : () => removeImage(idx)}
+						disabled={disabled}
 					/>
 				))}
 
-				{(multiple || (!multiple && images.length === 0)) && (
+				{(multiple || (!multiple && images.length === 0)) && !disabled && (
 					<button
 						type="button"
 						onClick={handleDivClick}
@@ -101,9 +105,11 @@ function ImageUpload({
 function ImagePreview({
 	item,
 	onRemove,
+	disabled = false,
 }: {
 	item: ImageItem;
-	onRemove: () => void;
+	onRemove?: () => void;
+	disabled?: boolean;
 }) {
 	const isFile = item instanceof File;
 	const [objectUrl] = useState<string | null>(() =>
@@ -129,13 +135,15 @@ function ImagePreview({
 					className="size-28 object-cover border rounded-xl"
 				/>
 			) : null}
-			<button
-				type="button"
-				onClick={onRemove}
-				className="hover:cursor-pointer absolute top-1 right-1 bg-mist-800/80 hover:bg-mist-800 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-			>
-				<IconX className="size-3" />
-			</button>
+			{!disabled && onRemove && (
+				<button
+					type="button"
+					onClick={onRemove}
+					className="hover:cursor-pointer absolute top-1 right-1 bg-mist-800/80 hover:bg-mist-800 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+				>
+					<IconX className="size-3" />
+				</button>
+			)}
 		</div>
 	);
 }

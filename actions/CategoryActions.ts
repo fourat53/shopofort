@@ -5,6 +5,7 @@ import {
 	CACHE_SECONDS,
 	FILTER_CACHE_SECONDS,
 } from "@/components/data-table/pagination/PaginationParams";
+import { getFormCategory } from "@/lib/entity/forms";
 import { CATEGORIES_HEADER } from "@/lib/entity/headers";
 import type { Audience, Category, ParameterType } from "@/lib/entity/types";
 import { getParamValues } from "@/lib/functions/server";
@@ -92,4 +93,75 @@ async function getCategoryCount(filterParams: ParameterType = {}) {
 	)();
 }
 
-export { getCategoriesPage, getCategoryCount };
+async function createCategory(formData: FormData) {
+	const data = getFormCategory(formData);
+	try {
+		const result = await prisma.category.create({
+			data: data as Prisma.CategoryCreateInput,
+		});
+		return JSON.parse(JSON.stringify(result));
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+}
+
+async function deleteCategory(id: number) {
+	try {
+		const result = await prisma.category.delete({ where: { id: id } });
+		return JSON.parse(JSON.stringify(result));
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+}
+
+async function deleteCategories(ids: number[]) {
+	try {
+		const result = await prisma.category.deleteMany({
+			where: { id: { in: ids } },
+		});
+		return JSON.parse(JSON.stringify(result));
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+}
+
+async function updateCategory(id: number, formData: FormData) {
+	const data = getFormCategory(formData);
+	try {
+		const result = await prisma.category.update({
+			data: data as Prisma.CategoryUpdateInput,
+			where: { id },
+		});
+		return JSON.parse(JSON.stringify(result));
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+}
+
+async function updateCategories(ids: number[], formData: FormData) {
+	const data = getFormCategory(formData);
+	try {
+		const result = await prisma.category.updateMany({
+			data: data as Prisma.CategoryUpdateInput,
+			where: { id: { in: ids } },
+		});
+		return JSON.parse(JSON.stringify(result));
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+}
+
+export {
+	createCategory,
+	deleteCategories,
+	deleteCategory,
+	getCategoriesPage,
+	getCategoryCount,
+	updateCategories,
+	updateCategory,
+};

@@ -265,7 +265,7 @@ const ENTITY_FIELDS: Record<EntityType, FieldConfig[]> = {
 		{
 			name: "unitPrice",
 			type: "number",
-			category: ["filter", "create"],
+			category: ["filter"],
 			required: true,
 			step: 0.01,
 			max: 10000,
@@ -304,9 +304,9 @@ const ENTITY_FIELDS: Record<EntityType, FieldConfig[]> = {
 			required: true,
 		},
 		{
-			name: "price",
+			name: "unitPrice",
 			type: "number",
-			category: ["filter", "create"],
+			category: ["filter"],
 			required: true,
 			step: 0.01,
 			max: 10000,

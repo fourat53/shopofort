@@ -122,7 +122,7 @@ export default function FilterForm({
 		<DialogContent
 			onPointerDownOutside={(e) => isPending && e.preventDefault()}
 			onEscapeKeyDown={(e) => isPending && e.preventDefault()}
-			className="px-0 w-180 max-w-180 overflow-hidden"
+			className="px-0 sm:w-80 sm:w-180 max-w-180 overflow-hidden"
 		>
 			<form onSubmit={handleSubmit}>
 				<DialogHeader className="pb-2">

@@ -1,25 +1,71 @@
 "use server";
 
 import { updateTag } from "next/cache";
-import { getCartCount, getCartsPage } from "@/actions/CartActions";
-import { getCartItemCount, getCartItemsPage } from "@/actions/CartItemActions";
-import { getCategoriesPage, getCategoryCount } from "@/actions/CategoryActions";
-import { getOrderCount, getOrdersPage } from "@/actions/OrderActions";
 import {
+	createCart,
+	deleteCart,
+	deleteCarts,
+	getCartCount,
+	getCartsPage,
+	updateCart,
+	updateCarts,
+} from "@/actions/CartActions";
+import {
+	createCartItem,
+	deleteCartItem,
+	deleteCartItems,
+	getCartItemCount,
+	getCartItemsPage,
+	updateCartItem,
+	updateCartItems,
+} from "@/actions/CartItemActions";
+import {
+	createCategory,
+	deleteCategories,
+	deleteCategory,
+	getCategoriesPage,
+	getCategoryCount,
+	updateCategories,
+	updateCategory,
+} from "@/actions/CategoryActions";
+import {
+	createOrder,
+	deleteOrder,
+	deleteOrders,
+	getOrderCount,
+	getOrdersPage,
+	updateOrder,
+	updateOrders,
+} from "@/actions/OrderActions";
+import {
+	createOrderItem,
+	deleteOrderItem,
+	deleteOrderItems,
 	getOrderItemCount,
 	getOrderItemsPage,
+	updateOrderItem,
+	updateOrderItems,
 } from "@/actions/OrderItemActions";
-import { getProductCount, getProductsPage } from "@/actions/ProductActions";
+import {
+	createProduct,
+	deleteProduct,
+	deleteProducts,
+	getProductCount,
+	getProductsPage,
+	updateProduct,
+	updateProducts,
+} from "@/actions/ProductActions";
 import {
 	deleteUser,
+	deleteUsers,
 	getUserById,
 	getUserCount,
 	getUsers,
 	getUsersPage,
 	updateUser,
+	updateUsers,
 } from "@/actions/UserActions";
 import type { SelectOption } from "@/components/form-items/select";
-import { getFormEntity } from "@/lib/entity/forms";
 import {
 	type EntityRow,
 	EntityType,
@@ -28,7 +74,6 @@ import {
 } from "@/lib/entity/types";
 import { formatOption } from "@/lib/functions/server";
 import { prisma } from "@/lib/prisma";
-import type { Prisma } from "@/prisma/generated/prisma/client";
 
 // GET
 async function getEntitiesPage<T extends EntityType>(
@@ -176,33 +221,21 @@ async function createEntity(
 	entity: Exclude<EntityType, "user">,
 	formData: FormData,
 ) {
-	const data = getFormEntity(entity, formData);
 	let result: unknown;
 	try {
-		if (entity === EntityType.carts)
-			result = await prisma.cart.create({
-				data: data as Prisma.CartCreateInput,
-			});
-		else if (entity === EntityType.orders)
-			result = await prisma.order.create({
-				data: data as Prisma.OrderCreateInput,
-			});
-		else if (entity === EntityType.categories)
-			result = await prisma.category.create({
-				data: data as Prisma.CategoryCreateInput,
-			});
-		else if (entity === EntityType.products)
-			result = await prisma.product.create({
-				data: data as unknown as Prisma.ProductCreateInput,
-			});
-		else if (entity === EntityType["cart-items"])
-			result = await prisma.cartItem.create({
-				data: data as unknown as Prisma.CartItemCreateInput,
-			});
-		else if (entity === EntityType["order-items"])
-			result = await prisma.orderItem.create({
-				data: data as unknown as Prisma.OrderItemCreateInput,
-			});
+		if (entity === EntityType.carts) {
+			result = await createCart(formData);
+		} else if (entity === EntityType.orders) {
+			result = await createOrder(formData);
+		} else if (entity === EntityType.categories) {
+			result = await createCategory(formData);
+		} else if (entity === EntityType.products) {
+			result = await createProduct(formData);
+		} else if (entity === EntityType["cart-items"]) {
+			result = await createCartItem(formData);
+		} else if (entity === EntityType["order-items"]) {
+			result = await createOrderItem(formData);
+		}
 		return JSON.parse(JSON.stringify(result));
 	} catch (error) {
 		console.error(error);
@@ -214,22 +247,23 @@ async function createEntity(
 
 // DELETE
 async function deleteEntity(entity: EntityType, id: string | number) {
-	const where = { where: { id: id as number } };
 	let result: unknown;
 	try {
-		if (entity === EntityType.users) result = await deleteUser(id as string);
-		else if (entity === EntityType.carts)
-			result = await prisma.cart.delete(where);
-		else if (entity === EntityType.orders)
-			result = await prisma.order.delete(where);
-		else if (entity === EntityType.products)
-			result = await prisma.product.delete(where);
-		else if (entity === EntityType.categories)
-			result = await prisma.category.delete(where);
-		else if (entity === EntityType["cart-items"])
-			result = await prisma.cartItem.delete(where);
-		else if (entity === EntityType["order-items"])
-			result = await prisma.orderItem.delete(where);
+		if (entity === EntityType.users) {
+			result = await deleteUser(id as string);
+		} else if (entity === EntityType.carts) {
+			result = await deleteCart(id as number);
+		} else if (entity === EntityType.orders) {
+			result = await deleteOrder(id as number);
+		} else if (entity === EntityType.products) {
+			result = await deleteProduct(id as number);
+		} else if (entity === EntityType.categories) {
+			result = await deleteCategory(id as number);
+		} else if (entity === EntityType["cart-items"]) {
+			result = await deleteCartItem(id as number);
+		} else if (entity === EntityType["order-items"]) {
+			result = await deleteOrderItem(id as number);
+		}
 		return JSON.parse(JSON.stringify(result));
 	} catch (error) {
 		console.error(error);
@@ -241,25 +275,23 @@ async function deleteEntity(entity: EntityType, id: string | number) {
 
 async function deleteEntities(entity: EntityType, ids: (string | number)[]) {
 	if (ids.length === 0) return;
-	const where = { where: { id: { in: ids as number[] } } };
 	let result: unknown;
 	try {
-		if (entity === EntityType.users)
-			result = await Promise.allSettled(
-				ids.map((id) => deleteUser(id as string)),
-			);
-		else if (entity === EntityType.carts)
-			result = await prisma.cart.deleteMany(where);
-		else if (entity === EntityType.orders)
-			result = await prisma.order.deleteMany(where);
-		else if (entity === EntityType.products)
-			result = await prisma.product.deleteMany(where);
-		else if (entity === EntityType.categories)
-			result = await prisma.category.deleteMany(where);
-		else if (entity === EntityType["cart-items"])
-			result = await prisma.cartItem.deleteMany(where);
-		else if (entity === EntityType["order-items"])
-			result = await prisma.orderItem.deleteMany(where);
+		if (entity === EntityType.users) {
+			result = await deleteUsers(ids as string[]);
+		} else if (entity === EntityType.carts) {
+			result = await deleteCarts(ids as number[]);
+		} else if (entity === EntityType.orders) {
+			result = await deleteOrders(ids as number[]);
+		} else if (entity === EntityType.products) {
+			result = await deleteProducts(ids as number[]);
+		} else if (entity === EntityType.categories) {
+			result = await deleteCategories(ids as number[]);
+		} else if (entity === EntityType["cart-items"]) {
+			result = await deleteCartItems(ids as number[]);
+		} else if (entity === EntityType["order-items"]) {
+			result = await deleteOrderItems(ids as number[]);
+		}
 		return JSON.parse(JSON.stringify(result));
 	} catch (error) {
 		console.error(error);
@@ -275,42 +307,23 @@ async function updateEntity(
 	id: string | number,
 	formData: FormData,
 ) {
-	const data = getFormEntity(entity, formData);
-	const where = { id: id as number };
 	let result: unknown;
 	try {
-		if (entity === EntityType.users)
+		if (entity === EntityType.users) {
 			result = await updateUser(id as string, formData);
-		else if (entity === EntityType.carts)
-			result = await prisma.cart.update({
-				data: data as Prisma.CartUpdateInput,
-				where,
-			});
-		else if (entity === EntityType.orders)
-			result = await prisma.order.update({
-				data: data as Prisma.OrderUpdateInput,
-				where,
-			});
-		else if (entity === EntityType.products)
-			result = await prisma.product.update({
-				data: data as Prisma.ProductUpdateInput,
-				where,
-			});
-		else if (entity === EntityType.categories)
-			result = await prisma.category.update({
-				data: data as Prisma.CategoryUpdateInput,
-				where,
-			});
-		else if (entity === EntityType["cart-items"])
-			result = await prisma.cartItem.update({
-				data: data as Prisma.CartItemUpdateInput,
-				where,
-			});
-		else if (entity === EntityType["order-items"])
-			result = await prisma.orderItem.update({
-				data: data as Prisma.OrderItemUpdateInput,
-				where,
-			});
+		} else if (entity === EntityType.carts) {
+			result = await updateCart(id as number, formData);
+		} else if (entity === EntityType.orders) {
+			result = await updateOrder(id as number, formData);
+		} else if (entity === EntityType.products) {
+			result = await updateProduct(id as number, formData);
+		} else if (entity === EntityType.categories) {
+			result = await updateCategory(id as number, formData);
+		} else if (entity === EntityType["cart-items"]) {
+			result = await updateCartItem(id as number, formData);
+		} else if (entity === EntityType["order-items"]) {
+			result = await updateOrderItem(id as number, formData);
+		}
 		return JSON.parse(JSON.stringify(result));
 	} catch (error) {
 		console.error(error);
@@ -326,44 +339,23 @@ async function updateEntities(
 	formData: FormData,
 ) {
 	if (ids.length === 0) return;
-	const data = getFormEntity(entity, formData);
-	const where = { id: { in: ids as number[] } };
 	let result: unknown;
 	try {
-		if (entity === EntityType.users)
-			result = await Promise.allSettled(
-				ids.map((id) => updateUser(id as string, formData)),
-			);
-		else if (entity === EntityType.carts)
-			result = await prisma.cart.updateMany({
-				data: data as Prisma.CartUpdateInput,
-				where,
-			});
-		else if (entity === EntityType.orders)
-			result = await prisma.order.updateMany({
-				data: data as Prisma.OrderUpdateInput,
-				where,
-			});
-		else if (entity === EntityType.products)
-			result = await prisma.product.updateMany({
-				data: data as Prisma.ProductUpdateInput,
-				where,
-			});
-		else if (entity === EntityType.categories)
-			result = await prisma.category.updateMany({
-				data: data as Prisma.CategoryUpdateInput,
-				where,
-			});
-		else if (entity === EntityType["cart-items"])
-			result = await prisma.cartItem.updateMany({
-				data: data as Prisma.CartItemUpdateInput,
-				where,
-			});
-		else if (entity === EntityType["order-items"])
-			result = await prisma.orderItem.updateMany({
-				data: data as Prisma.OrderItemUpdateInput,
-				where,
-			});
+		if (entity === EntityType.users) {
+			result = await updateUsers(ids as string[], formData);
+		} else if (entity === EntityType.carts) {
+			result = await updateCarts(ids as number[], formData);
+		} else if (entity === EntityType.orders) {
+			result = await updateOrders(ids as number[], formData);
+		} else if (entity === EntityType.products) {
+			result = await updateProducts(ids as number[], formData);
+		} else if (entity === EntityType.categories) {
+			result = await updateCategories(ids as number[], formData);
+		} else if (entity === EntityType["cart-items"]) {
+			result = await updateCartItems(ids as number[], formData);
+		} else if (entity === EntityType["order-items"]) {
+			result = await updateOrderItems(ids as number[], formData);
+		}
 		return JSON.parse(JSON.stringify(result));
 	} catch (error) {
 		console.error(error);

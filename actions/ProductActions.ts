@@ -5,16 +5,17 @@ import {
 	CACHE_SECONDS,
 	FILTER_CACHE_SECONDS,
 } from "@/components/data-table/pagination/PaginationParams";
+import { getFormProduct } from "@/lib/entity/forms";
 import { PRODUCTS_HEADER } from "@/lib/entity/headers";
 import type {
 	ParameterType,
-	Prisma,
 	Product,
 	ProductColor,
 	ProductSize,
 } from "@/lib/entity/types";
 import { getParamValues } from "@/lib/functions/server";
 import { prisma } from "@/lib/prisma";
+import type { Prisma } from "@/prisma/generated/prisma/client";
 
 type FilterBy = Prisma.ProductWhereInput;
 
@@ -143,4 +144,76 @@ async function updateProductRating(id: number, rating: number) {
 	}
 }
 
-export { getProductCount, getProductsPage, updateProductRating };
+async function createProduct(formData: FormData) {
+	const data = getFormProduct(formData);
+	try {
+		const result = await prisma.product.create({
+			data: data as unknown as Prisma.ProductCreateInput,
+		});
+		return JSON.parse(JSON.stringify(result));
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+}
+
+async function deleteProduct(id: number) {
+	try {
+		const result = await prisma.product.delete({ where: { id: id } });
+		return JSON.parse(JSON.stringify(result));
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+}
+
+async function deleteProducts(ids: number[]) {
+	try {
+		const result = await prisma.product.deleteMany({
+			where: { id: { in: ids } },
+		});
+		return JSON.parse(JSON.stringify(result));
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+}
+
+async function updateProduct(id: number, formData: FormData) {
+	const data = getFormProduct(formData);
+	try {
+		const result = await prisma.product.update({
+			data: data as unknown as Prisma.ProductUpdateInput,
+			where: { id },
+		});
+		return JSON.parse(JSON.stringify(result));
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+}
+
+async function updateProducts(ids: number[], formData: FormData) {
+	const data = getFormProduct(formData);
+	try {
+		const result = await prisma.product.updateMany({
+			data: data as unknown as Prisma.ProductUpdateInput,
+			where: { id: { in: ids } },
+		});
+		return JSON.parse(JSON.stringify(result));
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+}
+
+export {
+	createProduct,
+	deleteProduct,
+	deleteProducts,
+	getProductCount,
+	getProductsPage,
+	updateProduct,
+	updateProductRating,
+	updateProducts,
+};

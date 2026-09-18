@@ -81,9 +81,9 @@ function getHeader(entity: EntityType): HeaderItem[] {
 function getSkeletonCount(entity: EntityType | ""): number {
 	switch (entity) {
 		case EntityType.users:
-			return USERS_HEADER.length;
+			return USERS_HEADER.length + 1;
 		case EntityType.products:
-			return PRODUCTS_HEADER.length;
+			return PRODUCTS_HEADER.length + 1;
 		case EntityType.carts:
 			return CARTS_HEADER.length;
 		case EntityType.orders:

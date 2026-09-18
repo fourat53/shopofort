@@ -17,6 +17,7 @@ interface ForeignKeySelectProps {
 	entity: EntityType;
 	multiple?: boolean;
 	defaultValue: string | string[] | undefined;
+	disabled?: boolean;
 }
 
 export default function ForeignKeySelect({
@@ -25,6 +26,7 @@ export default function ForeignKeySelect({
 	entity,
 	multiple = false,
 	defaultValue,
+	disabled = false,
 }: ForeignKeySelectProps) {
 	const fetchedFields = useRef<Set<string>>(new Set());
 
@@ -82,6 +84,7 @@ export default function ForeignKeySelect({
 			label={getFieldName(name)}
 			defaultValue={defaultValue}
 			items={optionsCache[name] ?? []}
+			disabled={disabled}
 		/>
 	);
 }

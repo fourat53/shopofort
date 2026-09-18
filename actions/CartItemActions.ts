@@ -1,10 +1,11 @@
 "use server";
 
-import { unstable_cache } from "next/cache";
+import { unstable_cache, updateTag } from "next/cache";
 import {
 	CACHE_SECONDS,
 	FILTER_CACHE_SECONDS,
 } from "@/components/data-table/pagination/PaginationParams";
+import { getFormCartItem } from "@/lib/entity/forms";
 import { CART_ITEMS_HEADER } from "@/lib/entity/headers";
 import type { CartItem, ParameterType } from "@/lib/entity/types";
 import { getParamValues } from "@/lib/functions/server";
@@ -99,4 +100,136 @@ async function getCartItemCount(filterParams: ParameterType = {}) {
 	)();
 }
 
-export { getCartItemCount, getCartItemsPage };
+async function createCartItem(formData: FormData) {
+	const data = getFormCartItem(formData);
+	try {
+		const product = await prisma.product.findUnique({
+			where: { id: Number(data.productId) },
+			select: { price: true },
+		});
+		const unitPrice = product?.price ?? 0;
+		const result = await prisma.cartItem.create({
+			data: {
+				...data,
+				unitPrice,
+			} as unknown as Prisma.CartItemCreateInput,
+		});
+		await recalculateCartTotal(Number(data.cartId));
+		return JSON.parse(JSON.stringify(result));
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+}
+
+async function deleteCartItem(id: number) {
+	try {
+		const item = await prisma.cartItem.findUnique({
+			where: { id },
+			select: { cartId: true },
+		});
+		const result = await prisma.cartItem.delete({ where: { id: id } });
+		if (item) await recalculateCartTotal(item.cartId);
+		return JSON.parse(JSON.stringify(result));
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+}
+
+async function deleteCartItems(ids: number[]) {
+	try {
+		const items = await prisma.cartItem.findMany({
+			where: { id: { in: ids } },
+			select: { cartId: true },
+		});
+		const result = await prisma.cartItem.deleteMany({
+			where: { id: { in: ids } },
+		});
+		const cartIds = [...new Set(items.map((item) => item.cartId))];
+		await Promise.all(cartIds.map((cartId) => recalculateCartTotal(cartId)));
+		return JSON.parse(JSON.stringify(result));
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+}
+
+async function updateCartItem(id: number, formData: FormData) {
+	const data = getFormCartItem(formData);
+	try {
+		const product = await prisma.product.findUnique({
+			where: { id: Number(data.productId) },
+			select: { price: true },
+		});
+		const unitPrice = product?.price ?? 0;
+		const result = await prisma.cartItem.update({
+			data: {
+				...data,
+				unitPrice,
+			} as Prisma.CartItemUpdateInput,
+			where: { id },
+		});
+		await recalculateCartTotal(Number(data.cartId));
+		return JSON.parse(JSON.stringify(result));
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+}
+
+async function updateCartItems(ids: number[], formData: FormData) {
+	const data = getFormCartItem(formData);
+	try {
+		const items = await prisma.cartItem.findMany({
+			where: { id: { in: ids } },
+			select: { cartId: true, productId: true },
+		});
+		const productIds = [...new Set(items.map((item) => item.productId))];
+		const products = await prisma.product.findMany({
+			where: { id: { in: productIds } },
+			select: { id: true, price: true },
+		});
+		const priceMap = new Map(products.map((p) => [p.id, p.price]));
+		const unitPrice = priceMap.get(Number(data.productId)) ?? 0;
+		const result = await prisma.cartItem.updateMany({
+			data: {
+				...data,
+				unitPrice,
+			} as Prisma.CartItemUpdateInput,
+			where: { id: { in: ids } },
+		});
+		const cartIds = [...new Set(items.map((item) => item.cartId))];
+		await Promise.all(cartIds.map((cartId) => recalculateCartTotal(cartId)));
+		return JSON.parse(JSON.stringify(result));
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+}
+
+async function recalculateCartTotal(cartId: number) {
+	const items = await prisma.cartItem.findMany({
+		where: { cartId },
+		select: { unitPrice: true, quantity: true },
+	});
+	const total = items.reduce(
+		(sum, item) => sum + Number(item.unitPrice) * item.quantity,
+		0,
+	);
+	await prisma.cart.update({
+		where: { id: cartId },
+		data: { totalPrice: total },
+	});
+	updateTag("carts");
+}
+
+export {
+	createCartItem,
+	deleteCartItem,
+	deleteCartItems,
+	getCartItemCount,
+	getCartItemsPage,
+	updateCartItem,
+	updateCartItems,
+};

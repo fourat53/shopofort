@@ -13,6 +13,7 @@ import { prisma } from "@/lib/prisma";
 
 const kindeIssuerUrl = checkedEnvVar("KINDE_ISSUER_URL");
 
+// GET
 async function getKindeToken() {
 	const tokenUrl = `${kindeIssuerUrl}/oauth2/token`;
 
@@ -35,73 +36,6 @@ async function getKindeToken() {
 	const data = await res.json();
 
 	return data.access_token;
-}
-
-async function getUserById(id: string) {
-	try {
-		const token = await getKindeToken();
-
-		const res = await fetch(`${kindeIssuerUrl}/api/v1/user?id=${id}`, {
-			method: "GET",
-			headers: {
-				Authorization: `Bearer ${token}`,
-				Accept: "application/json",
-			},
-			cache: "no-store",
-		});
-
-		const user = await res.json();
-
-		return JSON.parse(JSON.stringify(mapUser(user)));
-	} catch (error) {
-		console.error(error);
-		throw error;
-	}
-}
-
-async function deleteUser(id: string) {
-	const token = await getKindeToken();
-
-	const response = await fetch(`${kindeIssuerUrl}/api/v1/user?id=${id}`, {
-		method: "DELETE",
-		headers: {
-			Authorization: `Bearer ${token}`,
-			Accept: "application/json",
-		},
-	});
-
-	if (!response.ok) {
-		throw new Error(response.status.toString());
-	}
-
-	await prisma.cart.delete({ where: { userId: id } });
-	updateTag("carts");
-
-	await prisma.order.deleteMany({ where: { userId: id } });
-	updateTag("orders");
-
-	return response.json();
-}
-
-async function updateUser(id: string, formData: FormData) {
-	const token = await getKindeToken();
-	const data = getFormUser(formData);
-
-	const response = await fetch(`${kindeIssuerUrl}/api/v1/user?id=${id}`, {
-		method: "PATCH",
-		headers: {
-			Authorization: `Bearer ${token}`,
-			"Content-Type": "application/json",
-			Accept: "application/json",
-		},
-		body: JSON.stringify(data),
-	});
-
-	if (!response.ok) {
-		throw new Error(response.status.toString());
-	}
-
-	return response.json();
 }
 
 async function getUsers() {
@@ -179,11 +113,135 @@ async function getUserCount(filterParams: ParameterType = {}) {
 	return users.length;
 }
 
+async function getUserById(id: string) {
+	try {
+		const token = await getKindeToken();
+
+		const res = await fetch(`${kindeIssuerUrl}/api/v1/user?id=${id}`, {
+			method: "GET",
+			headers: {
+				Authorization: `Bearer ${token}`,
+				Accept: "application/json",
+			},
+			cache: "no-store",
+		});
+
+		const user = await res.json();
+
+		return JSON.parse(JSON.stringify(mapUser(user)));
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+}
+
+// DELETE
+async function deleteUser(id: string) {
+	const token = await getKindeToken();
+
+	const response = await fetch(`${kindeIssuerUrl}/api/v1/user?id=${id}`, {
+		method: "DELETE",
+		headers: {
+			Authorization: `Bearer ${token}`,
+			Accept: "application/json",
+		},
+	});
+
+	if (!response.ok) {
+		throw new Error(response.status.toString());
+	}
+
+	await prisma.cart.delete({ where: { userId: id } });
+	updateTag("carts");
+
+	await prisma.order.deleteMany({ where: { userId: id } });
+	updateTag("orders");
+
+	return response.json();
+}
+
+async function deleteUsers(ids: string[]) {
+	const token = await getKindeToken();
+	const results = await Promise.allSettled(
+		ids.map((id) =>
+			fetch(`${kindeIssuerUrl}/api/v1/user?id=${id}`, {
+				method: "DELETE",
+				headers: {
+					Authorization: `Bearer ${token}`,
+					Accept: "application/json",
+				},
+			}),
+		),
+	);
+
+	const userIds = ids.filter(
+		(_, i) => results[i].status === "fulfilled" && results[i].value.ok,
+	);
+	if (userIds.length > 0) {
+		await prisma.cart.deleteMany({ where: { userId: { in: userIds } } });
+		updateTag("carts");
+
+		await prisma.order.deleteMany({ where: { userId: { in: userIds } } });
+		updateTag("orders");
+	}
+
+	return results.map((r) =>
+		r.status === "fulfilled" ? r.value : { error: r.reason },
+	);
+}
+
+// PATCH
+async function updateUser(id: string, formData: FormData) {
+	const token = await getKindeToken();
+	const data = getFormUser(formData);
+
+	const response = await fetch(`${kindeIssuerUrl}/api/v1/user?id=${id}`, {
+		method: "PATCH",
+		headers: {
+			Authorization: `Bearer ${token}`,
+			"Content-Type": "application/json",
+			Accept: "application/json",
+		},
+		body: JSON.stringify(data),
+	});
+
+	if (!response.ok) {
+		throw new Error(response.status.toString());
+	}
+
+	return response.json();
+}
+
+async function updateUsers(ids: string[], formData: FormData) {
+	const token = await getKindeToken();
+	const data = getFormUser(formData);
+
+	const results = await Promise.allSettled(
+		ids.map((id) =>
+			fetch(`${kindeIssuerUrl}/api/v1/user?id=${id}`, {
+				method: "PATCH",
+				headers: {
+					Authorization: `Bearer ${token}`,
+					"Content-Type": "application/json",
+					Accept: "application/json",
+				},
+				body: JSON.stringify(data),
+			}),
+		),
+	);
+
+	return results.map((r) =>
+		r.status === "fulfilled" ? r.value : { error: r.reason },
+	);
+}
+
 export {
 	deleteUser,
+	deleteUsers,
 	getUserById,
 	getUserCount,
 	getUsers,
 	getUsersPage,
 	updateUser,
+	updateUsers,
 };

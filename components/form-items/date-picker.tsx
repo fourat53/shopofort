@@ -20,6 +20,7 @@ interface DateTimePickerProps {
 	defaultValue?: string | Date | undefined;
 	required?: boolean;
 	time?: boolean;
+	disabled?: boolean;
 }
 
 export function DatePicker({
@@ -28,6 +29,7 @@ export function DatePicker({
 	defaultValue,
 	required,
 	time = false,
+	disabled = false,
 }: DateTimePickerProps) {
 	const [open, setOpen] = React.useState(false);
 	const [date, setDate] = React.useState<Date | undefined>(
@@ -98,7 +100,8 @@ export function DatePicker({
 						<Button
 							variant="ghost"
 							type="button"
-							className="w-full h-7 bg-input/20 dark:bg-input/30 border border-border text-xs rounded-md justify-start px-3 pr-8"
+							disabled={disabled}
+							className="w-full h-7 bg-input/20 dark:bg-input/30 border border-border text-xs rounded-md justify-start px-3 pr-8 disabled:cursor-not-allowed disabled:opacity-50"
 						>
 							<span className="truncate">{displayValue}</span>
 							{!date && (
@@ -106,14 +109,14 @@ export function DatePicker({
 							)}
 						</Button>
 					</PopoverTrigger>
-					{date && (
+					{date && !disabled && (
 						<button
 							type="button"
 							onClick={handleClear}
 							aria-label="Clear date"
 							className="absolute right-0.5 top-1/2 -translate-y-1/2 hover:bg-muted rounded-sm p-1 transition-colors text-muted-foreground hover:text-foreground z-10"
 						>
-							<IconX className="size-4" stroke={2} />
+							<IconX className="size-4" />
 						</button>
 					)}
 				</div>
@@ -125,7 +128,7 @@ export function DatePicker({
 						captionLayout="dropdown"
 						defaultMonth={date}
 						className={clsx(time && "pb-0")}
-						onSelect={handleDateChange}
+						onSelect={disabled ? undefined : handleDateChange}
 					/>
 					{time && (
 						<div className="-translate-y-1 px-1 pb-2 flex flex-col gap-2">
@@ -134,7 +137,8 @@ export function DatePicker({
 								type="time"
 								step="1"
 								value={date ? formatTime(date) : ""}
-								onChange={handleTimeChange}
+								onChange={disabled ? undefined : handleTimeChange}
+								disabled={disabled}
 								className="text-center appearance-none bg-background [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
 							/>
 						</div>
