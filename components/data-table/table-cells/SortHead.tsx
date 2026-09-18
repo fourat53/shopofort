@@ -14,12 +14,12 @@ import type { EntityType } from "@/lib/entity/types";
 import { getFieldName } from "@/lib/functions/client";
 import { uploadConfig } from "@/lib/uploadthing/client";
 
-interface SortedHeadProps {
+interface SortHeadProps {
 	name: string;
 	entity: EntityType;
 }
 
-function SortedHead({ name, entity }: SortedHeadProps) {
+export default function SortHead({ name, entity }: SortHeadProps) {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const [isPending, startTransition] = useTransition();
@@ -57,13 +57,4 @@ function SortedHead({ name, entity }: SortedHeadProps) {
 			</div>
 		</TableHead>
 	);
-}
-
-interface SortHeadProps extends SortedHeadProps {
-	dialog?: boolean;
-}
-
-export default function SortHead({ name, entity, dialog }: SortHeadProps) {
-	if (dialog) return <TableHead border>{getFieldName(name)}</TableHead>;
-	return <SortedHead name={name} entity={entity} />;
 }

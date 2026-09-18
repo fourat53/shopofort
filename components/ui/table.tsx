@@ -12,7 +12,7 @@ function Table({
 		<div
 			data-slot="table-container"
 			className={cn(
-				"w-full max-h-[calc(100vh-152px)] overflow-auto overscroll-none rounded-lg border",
+				"w-full overflow-auto overscroll-none rounded-lg border",
 				parentClassName,
 			)}
 		>

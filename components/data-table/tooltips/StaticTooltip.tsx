@@ -8,10 +8,10 @@ import {
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
 import type {
+	CellType,
 	EntityRow,
 	EntityType,
 	OptionField,
-	ValueCellType,
 } from "@/lib/entity/types";
 import {
 	getEntityTooltip,
@@ -69,7 +69,7 @@ export default function StaticTooltip<T extends EntityType>({
 								key={`${name}-${objectName}`}
 								entity={entity}
 								name={objectName}
-								value={objectValue as ValueCellType}
+								value={objectValue as CellType}
 							/>
 						);
 					});
@@ -86,7 +86,7 @@ export function DataRow({
 }: {
 	entity: EntityType;
 	name: string;
-	value: ValueCellType;
+	value: CellType;
 }) {
 	return (
 		<div className="grid grid-cols-[2fr_5fr] gap-x-1">

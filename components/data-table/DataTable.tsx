@@ -1,4 +1,3 @@
-import { cn } from "cn";
 import CheckBoxCell from "@/components/data-table/table-cells/CheckBoxCells";
 import ContentCell from "@/components/data-table/table-cells/ContentCell";
 import SortHead from "@/components/data-table/table-cells/SortHead";
@@ -20,6 +19,7 @@ import {
 	OptionField,
 } from "@/lib/entity/types";
 import { isCellValue } from "@/lib/functions/client";
+import { NoData } from "./ListDataTable";
 import EntityTooltip from "./tooltips/EntityTooltip";
 
 interface DataTableProps<T extends EntityType> {
@@ -27,7 +27,6 @@ interface DataTableProps<T extends EntityType> {
 	header: HeaderItem[];
 	rows: EntityRow<T>[];
 	className?: string;
-	dialog?: boolean;
 }
 
 export default function DataTable<T extends EntityType>({
@@ -35,53 +34,41 @@ export default function DataTable<T extends EntityType>({
 	header,
 	rows,
 	className,
-	dialog = false,
 }: DataTableProps<T>) {
 	return (
 		<>
 			{rows.length === 0 ? (
 				<NoData className={className} />
 			) : (
-				<Table className={cn(dialog && "border-b")} parentClassName={className}>
+				<Table parentClassName={className}>
 					<TableHeader>
 						<TableRow>
-							{!dialog && (
-								<TableHead>
-									<CheckBoxCell<T>
-										entity={entity}
-										rows={rows}
-										type="select-all"
-									/>
-								</TableHead>
-							)}
-							{header.map((item, index) => (
-								<SortHead
-									key={index}
-									name={item.name}
+							<TableHead>
+								<CheckBoxCell<T>
 									entity={entity}
-									dialog={dialog}
+									rows={rows}
+									type="select-all"
 								/>
+							</TableHead>
+							{header.map((item, index) => (
+								<SortHead key={index} name={item.name} entity={entity} />
 							))}
-							{!dialog && (
-								<TableHead border className="py-0 text-center">
-									<CheckBoxCell<T> entity={entity} rows={rows} type="actions" />
-								</TableHead>
-							)}
+							<TableHead border className="py-0 text-center">
+								<CheckBoxCell<T> entity={entity} rows={rows} type="actions" />
+							</TableHead>
 						</TableRow>
 					</TableHeader>
 					<TableBody>
 						{rows.map((row, rIndex) => (
 							<TableRow key={rIndex}>
-								{!dialog && (
-									<TableCell border={false} className="w-8 min-w-8 max-w-8">
-										<CheckBoxCell<T>
-											entity={entity}
-											rows={rows}
-											id={row.id}
-											type="select-one"
-										/>
-									</TableCell>
-								)}
+								<TableCell border={false} className="w-8 min-w-8 max-w-8">
+									<CheckBoxCell<T>
+										entity={entity}
+										rows={rows}
+										id={row.id}
+										type="select-one"
+									/>
+								</TableCell>
 								{Object.values(row).map((value, cIndex) => {
 									return (
 										isCellValue(value, header[cIndex]?.name) && (
@@ -104,7 +91,6 @@ export default function DataTable<T extends EntityType>({
 													<ContentCell
 														value={value}
 														entity={entity}
-														tooltip={dialog}
 														headerName={header[cIndex]?.name}
 													/>
 												)}
@@ -112,33 +98,18 @@ export default function DataTable<T extends EntityType>({
 										)
 									);
 								})}
-								{!dialog && (
-									<TableCell className="w-26 min-w-26 max-w-26 py-0.5">
-										<div className="flex items-center justify-center gap-1.5">
-											<ListDialog<T> entity={entity} row={row} />
-											<EditDialog<T> entity={entity} rows={[row]} />
-											<DeleteDialog entity={entity} ids={[row.id]} />
-										</div>
-									</TableCell>
-								)}
+								<TableCell className="w-26 min-w-26 max-w-26 py-0.5">
+									<div className="flex items-center justify-center gap-1.5">
+										<ListDialog<T> entity={entity} row={row} />
+										<EditDialog<T> entity={entity} rows={[row]} />
+										<DeleteDialog entity={entity} ids={[row.id]} />
+									</div>
+								</TableCell>
 							</TableRow>
 						))}
 					</TableBody>
 				</Table>
 			)}
 		</>
-	);
-}
-
-function NoData({ className }: { className?: string }) {
-	return (
-		<div
-			className={cn(
-				"w-full h-[calc(100vh-152px)] bg-chart-1/40 dark:bg-sidebar-accent/40 flex items-center justify-center border rounded-lg text-muted-foreground",
-				className,
-			)}
-		>
-			No data available
-		</div>
 	);
 }

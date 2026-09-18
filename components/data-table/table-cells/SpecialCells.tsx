@@ -10,41 +10,38 @@ import {
 
 function ColorsCell({ value }: { value: ProductColor[] }) {
 	if (value.length === 0) return "-";
-
 	return (
 		<div className="w-full grid grid-cols-4 justify-between items-center gap-1">
-			{[...value]
-				.sort((a, b) => a.localeCompare(b))
-				.map((item, index) => (
-					<Badge
-						key={index}
-						className={clsx(
-							"w-full bg-muted",
-							item === ProductColor.Red &&
-								"bg-red-200/50 dark:bg-red-900/25 text-red-600 dark:text-red-400",
-							item === ProductColor.Green &&
-								"bg-green-200/50 dark:bg-green-900/25 text-green-600 dark:text-green-400",
-							item === ProductColor.Blue &&
-								"bg-blue-200/50 dark:bg-blue-900/25 text-blue-600 dark:text-blue-400",
-							item === ProductColor.Yellow &&
-								"bg-yellow-200/50 dark:bg-yellow-900/25 text-yellow-600 dark:text-yellow-400",
-							item === ProductColor.Purple &&
-								"bg-purple-200/50 dark:bg-purple-900/25 text-purple-600 dark:text-purple-400",
-							item === ProductColor.Orange &&
-								"bg-orange-200/50 dark:bg-orange-900/25 text-orange-600 dark:text-orange-400",
-							item === ProductColor.Pink &&
-								"bg-pink-200/50 dark:bg-pink-900/25 text-pink-600 dark:text-pink-400",
-							item === ProductColor.White &&
-								"bg-zinc-300/30 dark:bg-zinc-700/80 text-zinc-500/75 dark:text-zinc-200",
-							item === ProductColor.Gray &&
-								"bg-zinc-300/50 dark:bg-zinc-700/40 text-zinc-500 dark:text-zinc-400",
-							item === ProductColor.Black &&
-								"bg-zinc-300/90 dark:bg-zinc-800/90 text-zinc-800 dark:text-zinc-400/75",
-						)}
-					>
-						{item}
-					</Badge>
-				))}
+			{value.map((item, index) => (
+				<Badge
+					key={index}
+					className={clsx(
+						"w-full",
+						item === ProductColor.Red &&
+							"bg-red-200/50 dark:bg-red-900/30 text-red-600 dark:text-red-400",
+						item === ProductColor.Green &&
+							"bg-green-200/50 dark:bg-green-900/30 text-green-600 dark:text-green-400",
+						item === ProductColor.Blue &&
+							"bg-blue-200/50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400",
+						item === ProductColor.Yellow &&
+							"bg-yellow-200/50 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400",
+						item === ProductColor.Purple &&
+							"bg-purple-200/50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400",
+						item === ProductColor.Orange &&
+							"bg-orange-200/50 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400",
+						item === ProductColor.Pink &&
+							"bg-pink-200/50 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400",
+						item === ProductColor.White &&
+							"bg-zinc-300/30 dark:bg-zinc-700/80 text-zinc-500/75 dark:text-zinc-200",
+						item === ProductColor.Gray &&
+							"bg-zinc-300/50 dark:bg-zinc-700/40 text-zinc-500 dark:text-zinc-400",
+						item === ProductColor.Black &&
+							"bg-zinc-300/90 dark:bg-zinc-800/90 text-zinc-800 dark:text-zinc-400/75",
+					)}
+				>
+					{item}
+				</Badge>
+			))}
 		</div>
 	);
 }
@@ -54,12 +51,9 @@ function SizesCell({ value }: { value: ProductSize[] }) {
 	return (
 		<div className="flex items-center gap-1.5">
 			{value.map((item, index) => (
-				<div
-					key={index}
-					className="rounded-full bg-muted px-1.5 border border-border/80"
-				>
+				<Badge key={index} variant="secondary">
 					{item}
-				</div>
+				</Badge>
 			))}
 		</div>
 	);
@@ -70,15 +64,15 @@ function OrderStatusCell({ value }: { value: string }) {
 		<Badge
 			className={clsx(
 				value === OrderStatus.PENDING &&
-					"bg-yellow-200/50 text-yellow-600 dark:bg-yellow-900/25 dark:text-yellow-400",
+					"bg-yellow-200/50 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400",
 				value === OrderStatus.PROCESSING &&
-					"bg-blue-200/50 text-blue-700 dark:bg-blue-900/25 dark:text-blue-400",
+					"bg-blue-200/50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
 				value === OrderStatus.SHIPPED &&
-					"bg-purple-200/50 text-purple-700 dark:bg-purple-900/25 dark:text-purple-400",
+					"bg-purple-200/50 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400",
 				value === OrderStatus.DELIVERED &&
-					"bg-green-200/50 text-green-700 dark:bg-green-900/25 dark:text-green-400",
+					"bg-green-200/50 text-green-700 dark:bg-green-900/30 dark:text-green-400",
 				value === OrderStatus.CANCELLED &&
-					"bg-red-200/50 text-red-700 dark:bg-red-900/25 dark:text-red-400",
+					"bg-red-200/50 text-red-700 dark:bg-red-900/30 dark:text-red-400",
 			)}
 		>
 			{value}

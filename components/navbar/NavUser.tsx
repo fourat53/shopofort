@@ -10,6 +10,7 @@ import {
 	IconLogin,
 	IconLogout,
 	IconRegistered,
+	IconShoppingCart,
 } from "@tabler/icons-react";
 import Link from "next/link";
 import ThemeMenu from "@/components/navigation/ThemeMenu";
@@ -63,6 +64,16 @@ export default async function NavUser() {
 					</>
 				)}
 				<DropdownMenuGroup>
+					{user && (
+						<Link href="/cart">
+							<DropdownMenuItem asChild>
+								<div>
+									<IconShoppingCart />
+									Cart
+								</div>
+							</DropdownMenuItem>
+						</Link>
+					)}
 					{isAdmin && (
 						<Link href="/admin/dashboard">
 							<DropdownMenuItem asChild>

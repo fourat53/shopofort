@@ -8,7 +8,6 @@ import type {
 	Category as CategoryType,
 	Order as OrderDb,
 	OrderItem as OrderItemDb,
-	Prisma,
 	Product as ProductDb,
 } from "@/prisma/generated/prisma/client";
 import {
@@ -18,7 +17,7 @@ import {
 	ProductSize,
 } from "@/prisma/generated/prisma/enums";
 
-// PLAIN MODEL TYPES ----------------------------------------------------------------------
+// PLAIN MODEL TYPES
 type UserType = {
 	id: string;
 	picture: string;
@@ -46,7 +45,7 @@ type OrderType = Omit<OrderDb, "totalPrice"> & { totalPrice: number };
 
 type OrderItemType = Omit<OrderItemDb, "unitPrice"> & { unitPrice: number };
 
-// MAPPED MODEL TYPES ---------------------------------------------------------------------
+// MAPPED MODEL TYPES
 type Role = KindeRole;
 
 type KindeUser = KindeUserType<Record<string, unknown>>;
@@ -69,7 +68,7 @@ type Order = OrderType & { orderItems: OrderItemType[] };
 
 type OrderItem = OrderItemType & { order: OrderType; product: ProductType };
 
-// ENTITY TYPES ---------------------------------------------------------------------
+// ENTITY TYPES
 enum EntityType {
 	users = "users",
 	carts = "carts",
@@ -79,12 +78,6 @@ enum EntityType {
 	"cart-items" = "cart-items",
 	"order-items" = "order-items",
 }
-
-type EntityListType =
-	| EntityType.products
-	| EntityType.categories
-	| EntityType.carts
-	| EntityType.orders;
 
 type EntityRowMap = {
 	users: User;
@@ -108,24 +101,31 @@ enum OptionField {
 	orderItemId = "orderItemId",
 }
 
-// OTHER TYPES ---------------------------------------------------------------------
+// CHILD LIST ENTITY TYPES
+enum ListEntityType {
+	products = "products",
+	"cart-items" = "cart-items",
+	"order-items" = "order-items",
+}
+
+type ListEntityRowMap = {
+	products: ProductType;
+	"cart-items": CartItemType;
+	"order-items": OrderItemType;
+};
+
+type ListEntityRow<T extends ListEntityType> = ListEntityRowMap[T];
+
+// OTHER TYPES
 type ParameterType = Record<string, string | string[] | undefined>;
 
-type ValueCellType =
-	| string
-	| number
-	| boolean
-	| Date
-	| string[]
-	| ProductColor[]
-	| ProductSize[]
-	| null;
+type CellPrimitive = string | number | boolean | Date | null;
+type CellArray = string[] | ProductColor[] | ProductSize[];
+type CellType = CellPrimitive | CellArray;
 
-type RowObjectType = CategoryType | CartType | OrderType | ProductType;
-
-type RowListType = ProductType | CartItemType | OrderItemType;
-
-type ValueType = ValueCellType | RowObjectType | RowListType[];
+type RowObject = CategoryType | CartType | OrderType | ProductType;
+type RowList = ProductType | CartItemType | OrderItemType;
+type ValueType = CellPrimitive | CellArray | RowObject | RowList[];
 
 export type {
 	Cart,
@@ -134,26 +134,30 @@ export type {
 	CartType,
 	Category,
 	CategoryType,
-	EntityListType,
+	CellArray,
+	CellPrimitive,
+	CellType,
 	EntityRow,
 	KindeUser,
+	ListEntityRow,
 	Order,
 	OrderItem,
 	OrderItemType,
 	OrderType,
 	ParameterType,
-	Prisma,
 	Product,
 	ProductType,
 	Role,
+	RowList,
+	RowObject,
 	User,
 	UserType,
-	ValueCellType,
 	ValueType,
 };
 export {
 	Audience,
 	EntityType,
+	ListEntityType,
 	OptionField,
 	OrderStatus,
 	ProductColor,

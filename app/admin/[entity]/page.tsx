@@ -34,7 +34,7 @@ export default async function EntityPage({
 	const totalCount = await getEntityCount(entity, filterParams);
 	const { page, totalPages } = getPaginationParams(_page, totalCount, pageSize);
 
-	const rows = await getEntitiesPage(
+	const rows = await getEntitiesPage<typeof entity>(
 		entity,
 		filterParams,
 		page,
@@ -67,7 +67,12 @@ export default async function EntityPage({
 					/>
 				}
 			>
-				<DataTable<typeof entity> entity={entity} header={header} rows={rows} />
+				<DataTable<typeof entity>
+					entity={entity}
+					header={header}
+					rows={rows}
+					className="max-h-[calc(100vh-152px)]"
+				/>
 			</Suspense>
 			{totalPages > 1 && (
 				<DataTablePagination

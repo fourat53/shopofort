@@ -1,6 +1,5 @@
 import { updateTag } from "next/cache";
 import { EntityType, type ParameterType } from "@/lib/entity/types";
-import { Prisma } from "@/prisma/generated/prisma/browser";
 
 function getParamValues(param: ParameterType[string]): string[] {
 	if (!param) return [];
@@ -75,75 +74,11 @@ function updateEntityTags(entity: EntityType) {
 	if (entity === EntityType["order-items"]) updateTag(EntityType.orders);
 }
 
-async function updateCartTotals(
-	tx: Prisma.TransactionClient,
-	cartIds: number[],
-) {
-	"use server";
-
-	for (const cartId of [...new Set(cartIds)]) {
-		const cart = await tx.cart.findUniqueOrThrow({
-			where: { id: cartId },
-			select: {
-				cartItems: {
-					select: {
-						unitPrice: true,
-						quantity: true,
-					},
-				},
-			},
-		});
-
-		const totalPrice = cart.cartItems.reduce(
-			(total, item) => total.plus(item.unitPrice.mul(item.quantity)),
-			new Prisma.Decimal(0),
-		);
-
-		await tx.cart.update({
-			where: { id: cartId },
-			data: { totalPrice },
-		});
-	}
-}
-
-async function updateOrderTotals(
-	tx: Prisma.TransactionClient,
-	orderIds: number[],
-) {
-	"use server";
-
-	for (const orderId of [...new Set(orderIds)]) {
-		const order = await tx.order.findUniqueOrThrow({
-			where: { id: orderId },
-			select: {
-				orderItems: {
-					select: {
-						unitPrice: true,
-						quantity: true,
-					},
-				},
-			},
-		});
-
-		const totalPrice = order.orderItems.reduce(
-			(total, item) => total.plus(item.unitPrice.mul(item.quantity)),
-			new Prisma.Decimal(0),
-		);
-
-		await tx.order.update({
-			where: { id: orderId },
-			data: { totalPrice },
-		});
-	}
-}
-
 export {
 	formatOption,
 	getChangedData,
 	getChangedDataForMany,
 	getParamValues,
 	sameValue,
-	updateCartTotals,
 	updateEntityTags,
-	updateOrderTotals,
 };

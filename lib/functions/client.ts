@@ -1,9 +1,9 @@
 import {
-	type EntityListType,
+	type CellType,
 	type EntityRow,
 	EntityType,
+	type ListEntityType,
 	OptionField,
-	type ValueCellType,
 	type ValueType,
 } from "@/lib/entity/types";
 
@@ -17,11 +17,11 @@ function getEntityTooltip(name: OptionField): EntityType {
 	else return EntityType["order-items"];
 }
 
-function getFieldEntity(name: string): EntityListType {
+function getFieldEntity(name: string): ListEntityType {
 	return name
 		.replace(/([a-z0-9])([A-Z])/g, "$1-$2")
 		.replace(/[_\s]+/g, "-")
-		.toLowerCase() as EntityListType;
+		.toLowerCase() as ListEntityType;
 }
 
 function getFieldName(name: string) {
@@ -35,8 +35,8 @@ function getFieldName(name: string) {
 function getFieldValue<T extends EntityType>(
 	row: EntityRow<T>,
 	field: string,
-): unknown {
-	return (row as Record<string, unknown>)[field];
+): CellType {
+	return (row as Record<string, CellType>)[field];
 }
 
 function getForeignKeyName(name: EntityType): OptionField {
@@ -58,7 +58,7 @@ function getSingleName(name: EntityType) {
 	return formatted === "categories" ? "category" : formatted.slice(0, -1);
 }
 
-function isCellValue(value: ValueType, name: string): value is ValueCellType {
+function isCellValue(value: ValueType, name: string): value is CellType {
 	if (
 		value === null ||
 		typeof value === "string" ||

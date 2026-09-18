@@ -1,12 +1,9 @@
-import { IconRefresh } from "@tabler/icons-react";
 import { NextSSRPlugin as UploadPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { extractRouterConfig as extractConfig } from "uploadthing/server";
-import { updateCache } from "@/actions/EntityActions";
 import CreateDialog from "@/components/dialogs/create-dialog";
 import FilterDialog from "@/components/dialogs/filter-dialog";
 import AdminSidebar from "@/components/sidebar/AdminSidebar";
 import PageTitle from "@/components/title/PageTitle";
-import { Button } from "@/components/ui/button";
 import {
 	SidebarInset,
 	SidebarProvider,
@@ -33,11 +30,6 @@ export default async function AdminLayout({
 							</div>
 							<div className="flex gap-1.5">
 								<FilterDialog />
-								<Button
-									onClick={updateCache}
-									icon={<IconRefresh />}
-									variant="outline"
-								/>
 								<CreateDialog />
 							</div>
 						</div>

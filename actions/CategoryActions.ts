@@ -6,14 +6,10 @@ import {
 	FILTER_CACHE_SECONDS,
 } from "@/components/data-table/pagination/PaginationParams";
 import { CATEGORIES_HEADER } from "@/lib/entity/headers";
-import type {
-	Audience,
-	Category,
-	ParameterType,
-	Prisma,
-} from "@/lib/entity/types";
+import type { Audience, Category, ParameterType } from "@/lib/entity/types";
 import { getParamValues } from "@/lib/functions/server";
 import { prisma } from "@/lib/prisma";
+import type { Prisma } from "@/prisma/generated/prisma/client";
 
 type FilterBy = Prisma.CategoryWhereInput;
 

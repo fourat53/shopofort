@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 
 export default function HeroSection() {
 	return (
-		<section className="h-screen bg-linear-to-br from-sidebar dark:from-background via-muted dark:via-muted/50 to-primary/15 dark:to-primary/10 flex items-center justify-center">
+		<section className="h-[calc(100vh-60px)] bg-linear-to-br from-sidebar dark:from-background via-muted dark:via-muted/50 to-primary/15 dark:to-primary/10 flex items-center justify-center">
 			<div className="container px-4 flex flex-col gap-4 text-center max-w-5xl z-10">
 				<div className="ml-auto w-fit animate-fade-in-up inline-flex items-center rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary shadow-sm backdrop-blur-sm">
 					<div className="flex h-2 w-2 rounded-full bg-primary mr-2 animate-pulse" />

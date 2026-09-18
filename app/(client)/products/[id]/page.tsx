@@ -20,15 +20,13 @@ export default async function Page({ params }: PageProps) {
 	const product = JSON.parse(JSON.stringify(prod));
 
 	return (
-		<div className="mt-16 py-12 mx-auto w-full max-w-7xl">
-			<div className="">
-				<div className="grid gap-10 lg:grid-cols-[2fr_3fr] lg:gap-16">
-					{/* Images */}
-					<ProductGallery product={product} />
+		<div className="p-10 w-full min-h-[calc(100vh-60px)] flex items-center justify-center">
+			<div className="p-10 w-full bg-background border rounded-3xl grid gap-10 lg:grid-cols-[2fr_3fr] lg:gap-16">
+				{/* Images */}
+				<ProductGallery product={product} />
 
-					{/* Details */}
-					<ProductInfo product={product} />
-				</div>
+				{/* Details */}
+				<ProductInfo product={product} />
 			</div>
 		</div>
 	);

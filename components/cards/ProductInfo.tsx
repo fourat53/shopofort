@@ -6,30 +6,29 @@ import {
 	IconStarFilled,
 	IconTruck,
 } from "@tabler/icons-react";
+import clsx from "clsx";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import type { Product, ProductColor, ProductSize } from "@/lib/entity/types";
-import { cn } from "@/lib/utils";
 
 export default function ProductInfo({ product }: { product: Product }) {
 	const price = Number(product.price);
 	const rating = Number(product.rating);
 	return (
 		<div className="flex flex-col">
-			<div className="flex justify-between items-center">
-				{/* Name */}
-				<h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
-					{product.name}
-				</h1>
+			{/* Name */}
+			<h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
+				{product.name}
+			</h1>
 
-				{/* Brand */}
-				{product.brand && (
-					<p className="text-lg font-bold uppercase tracking-[0.18em] text-muted-foreground">
-						{product.brand}
-					</p>
-				)}
-			</div>
-			<div className="mt-7 flex justify-between items-center">
+			{/* Brand */}
+			{product.brand && (
+				<p className="text-lg font-bold uppercase tracking-[0.18em] text-muted-foreground">
+					{product.brand}
+				</p>
+			)}
+			<div className="py-4 flex justify-between items-center">
 				{/* Price */}
 				<div className="flex items-end gap-3">
 					<span className="text-4xl font-bold tracking-tight text-primary">
@@ -52,20 +51,20 @@ export default function ProductInfo({ product }: { product: Product }) {
 				</div>
 			</div>
 
-			<Separator className="my-4" />
+			<Separator />
 
 			{/* Colors */}
 			{product.colors?.length > 0 && <ProductColors colors={product.colors} />}
 
-			<Separator className="my-4" />
+			<Separator />
 
 			{/* Sizes */}
 			{product.sizes?.length > 0 && <ProductSizes sizes={product.sizes} />}
 
-			<Separator className="my-4" />
+			<Separator />
 
 			{/* Description */}
-			<div>
+			<div className="py-4">
 				<h2 className="text-sm font-semibold uppercase tracking-wider">
 					Description
 				</h2>
@@ -75,6 +74,8 @@ export default function ProductInfo({ product }: { product: Product }) {
 				</p>
 			</div>
 
+			<Separator />
+
 			{/* Actions */}
 			<ProductActions product={product} />
 		</div>
@@ -83,42 +84,46 @@ export default function ProductInfo({ product }: { product: Product }) {
 
 function ProductColors({ colors }: { colors: ProductColor[] }) {
 	return (
-		<div className="mb-4">
+		<div className="py-4">
 			<div className="mb-3 flex items-center justify-between">
 				<h2 className="text-sm font-semibold uppercase tracking-wider">
-					Color
+					Colors
 				</h2>
 
 				<span className="text-xs text-muted-foreground">
 					{colors.length} available
 				</span>
 			</div>
-
 			<div className="flex flex-wrap gap-2">
-				{colors.map((color) => (
-					<Button
-						key={color}
-						type="button"
-						variant="outline"
-						className="rounded-xl px-4"
+				{colors.map((item, index) => (
+					<Badge
+						key={index}
+						className={clsx(
+							"text-sm h-6 px-2 cursor-pointer hover:opacity-70 dark:hover:opacity-80",
+							item === "Red" &&
+								"bg-red-200/50 dark:bg-red-900/30 text-red-600 dark:text-red-400",
+							item === "Green" &&
+								"bg-green-200/50 dark:bg-green-900/30 text-green-600 dark:text-green-400",
+							item === "Blue" &&
+								"bg-blue-200/50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400",
+							item === "Yellow" &&
+								"bg-yellow-200/50 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400",
+							item === "Purple" &&
+								"bg-purple-200/50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400",
+							item === "Orange" &&
+								"bg-orange-200/50 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400",
+							item === "Pink" &&
+								"bg-pink-200/50 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400",
+							item === "White" &&
+								"bg-zinc-300/30 dark:bg-zinc-700/80 text-zinc-500/75 dark:text-zinc-200",
+							item === "Gray" &&
+								"bg-zinc-300/50 dark:bg-zinc-700/40 text-zinc-500 dark:text-zinc-400",
+							item === "Black" &&
+								"bg-zinc-300/90 dark:bg-zinc-800/90 text-zinc-800 dark:text-zinc-400/75",
+						)}
 					>
-						<span
-							className={cn(
-								"size-3 rounded-full border",
-								color === "Black" && "bg-black",
-								color === "White" && "bg-white",
-								color === "Gray" && "bg-gray-400",
-								color === "Red" && "bg-red-500",
-								color === "Green" && "bg-green-500",
-								color === "Blue" && "bg-blue-500",
-								color === "Yellow" && "bg-yellow-400",
-								color === "Purple" && "bg-purple-500",
-								color === "Orange" && "bg-orange-500",
-								color === "Pink" && "bg-pink-500",
-							)}
-						/>
-						{color}
-					</Button>
+						{item}
+					</Badge>
 				))}
 			</div>
 		</div>
@@ -127,9 +132,11 @@ function ProductColors({ colors }: { colors: ProductColor[] }) {
 
 function ProductSizes({ sizes }: { sizes: ProductSize[] }) {
 	return (
-		<div className="mb-2">
+		<div className="py-4">
 			<div className="mb-3 flex items-center justify-between">
-				<h2 className="text-sm font-semibold uppercase tracking-wider">Size</h2>
+				<h2 className="text-sm font-semibold uppercase tracking-wider">
+					Sizes
+				</h2>
 
 				<button
 					type="button"
@@ -138,17 +145,14 @@ function ProductSizes({ sizes }: { sizes: ProductSize[] }) {
 					Size guide
 				</button>
 			</div>
-
 			<div className="flex flex-wrap gap-2">
 				{sizes.map((size) => (
-					<Button
+					<Badge
 						key={size}
-						type="button"
-						variant="outline"
-						className="size-10 rounded-xl px-0"
+						className="text-sm bg-muted h-6 w-10 px-2 cursor-pointer hover:opacity-70 dark:hover:opacity-80"
 					>
 						{size}
-					</Button>
+					</Badge>
 				))}
 			</div>
 		</div>
@@ -158,9 +162,9 @@ function ProductSizes({ sizes }: { sizes: ProductSize[] }) {
 function ProductActions({ product }: { product: Product }) {
 	const inventory = Number(product.inventory);
 	return (
-		<>
+		<div className="py-4 space-y-4">
 			{/* Stock */}
-			<div className="mt-8 rounded-2xl border bg-muted/30 p-4">
+			<div className="rounded-2xl border bg-muted/30 p-4">
 				<div className="flex items-center gap-3">
 					<div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
 						<IconTruck className="size-4.5" />
@@ -181,7 +185,7 @@ function ProductActions({ product }: { product: Product }) {
 					</div>
 				</div>
 			</div>
-			<div className="mt-8 flex gap-3">
+			<div className="flex gap-3">
 				<div className="flex h-12 items-center rounded-xl border bg-card">
 					<Button
 						type="button"
@@ -192,9 +196,7 @@ function ProductActions({ product }: { product: Product }) {
 					>
 						<IconMinus className="size-4" />
 					</Button>
-
 					<span className="min-w-8 text-center text-sm font-semibold">1</span>
-
 					<Button
 						type="button"
 						variant="ghost"
@@ -224,6 +226,6 @@ function ProductActions({ product }: { product: Product }) {
 					<IconHeart className="size-5" />
 				</Button>
 			</div>
-		</>
+		</div>
 	);
 }

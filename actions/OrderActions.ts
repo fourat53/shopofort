@@ -6,14 +6,10 @@ import {
 	FILTER_CACHE_SECONDS,
 } from "@/components/data-table/pagination/PaginationParams";
 import { ORDERS_HEADER } from "@/lib/entity/headers";
-import type {
-	Order,
-	OrderStatus,
-	ParameterType,
-	Prisma,
-} from "@/lib/entity/types";
+import type { Order, OrderStatus, ParameterType } from "@/lib/entity/types";
 import { getParamValues } from "@/lib/functions/server";
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@/prisma/generated/prisma/client";
 
 type FilterBy = Prisma.OrderWhereInput;
 
@@ -117,4 +113,33 @@ async function getOrderCount(filterParams: ParameterType = {}) {
 	)();
 }
 
-export { getOrderCount, getOrdersPage };
+async function updateOrderTotals(
+	tx: Prisma.TransactionClient,
+	orderIds: number[],
+) {
+	for (const orderId of [...new Set(orderIds)]) {
+		const order = await tx.order.findUniqueOrThrow({
+			where: { id: orderId },
+			select: {
+				orderItems: {
+					select: {
+						unitPrice: true,
+						quantity: true,
+					},
+				},
+			},
+		});
+
+		const totalPrice = order.orderItems.reduce(
+			(total, item) => total.plus(item.unitPrice.mul(item.quantity)),
+			new Prisma.Decimal(0),
+		);
+
+		await tx.order.update({
+			where: { id: orderId },
+			data: { totalPrice },
+		});
+	}
+}
+
+export { getOrderCount, getOrdersPage, updateOrderTotals };

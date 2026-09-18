@@ -6,9 +6,10 @@ import {
 	FILTER_CACHE_SECONDS,
 } from "@/components/data-table/pagination/PaginationParams";
 import { CARTS_HEADER } from "@/lib/entity/headers";
-import type { Cart, ParameterType, Prisma } from "@/lib/entity/types";
+import type { Cart, ParameterType } from "@/lib/entity/types";
 import { getParamValues } from "@/lib/functions/server";
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@/prisma/generated/prisma/browser";
 
 type FilterBy = Prisma.CartWhereInput;
 
@@ -97,4 +98,33 @@ async function getCartCount(filterParams: ParameterType = {}) {
 	)();
 }
 
-export { getCartCount, getCartsPage };
+async function updateCartTotals(
+	tx: Prisma.TransactionClient,
+	cartIds: number[],
+) {
+	for (const cartId of [...new Set(cartIds)]) {
+		const cart = await tx.cart.findUniqueOrThrow({
+			where: { id: cartId },
+			select: {
+				cartItems: {
+					select: {
+						unitPrice: true,
+						quantity: true,
+					},
+				},
+			},
+		});
+
+		const totalPrice = cart.cartItems.reduce(
+			(total, item) => total.plus(item.unitPrice.mul(item.quantity)),
+			new Prisma.Decimal(0),
+		);
+
+		await tx.cart.update({
+			where: { id: cartId },
+			data: { totalPrice },
+		});
+	}
+}
+
+export { getCartCount, getCartsPage, updateCartTotals };

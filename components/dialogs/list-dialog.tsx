@@ -1,6 +1,6 @@
 import { IconList } from "@tabler/icons-react";
 import Image from "next/image";
-import DataTable from "@/components/data-table/DataTable";
+import ListDataTable from "@/components/data-table/ListDataTable";
 import { Button } from "@/components/ui/button";
 import {
 	Carousel,
@@ -13,9 +13,9 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getHeader } from "@/lib/entity/headers";
 import {
-	type EntityListType,
 	type EntityRow,
 	EntityType,
+	type ListEntityRow,
 } from "@/lib/entity/types";
 import {
 	getFieldEntity,
@@ -83,8 +83,8 @@ export default function ListDialog<T extends EntityType>({
 					</TabsList>
 					{Object.entries(row).map(([name, value]) => {
 						const { field } = uploadConfig[entity] ?? {};
-						const tabEntity: EntityListType = getFieldEntity(name);
-						const header = getHeader(tabEntity);
+						const tabEntity = getFieldEntity(name);
+						const header = getHeader(tabEntity as unknown as EntityType);
 						return (
 							isTabValue(value, name, field) && (
 								<TabsContent
@@ -95,20 +95,12 @@ export default function ListDialog<T extends EntityType>({
 									{name === field ? (
 										<ImageCarousel images={value as string[]} />
 									) : (
-										Array.isArray(value) &&
-										value.every((item) => typeof item === "object") && (
-											<DataTable<EntityListType>
-												entity={tabEntity}
-												header={header}
-												className="h-[calc(100vh-152px)]"
-												dialog
-												rows={
-													(name in row
-														? (row as Record<string, unknown>)[name]
-														: []) as EntityRow<typeof tabEntity>[]
-												}
-											/>
-										)
+										<ListDataTable<typeof tabEntity>
+											entity={tabEntity}
+											header={header}
+											rows={value as ListEntityRow<typeof tabEntity>[]}
+											className="h-[calc(100vh-152px)]"
+										/>
 									)}
 								</TabsContent>
 							)

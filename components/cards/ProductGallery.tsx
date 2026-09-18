@@ -20,7 +20,7 @@ export default function ProductGallery({ product }: { product: Product }) {
 	const [api, setApi] = useState<CarouselApi>();
 	return (
 		<div className="space-y-4">
-			<div className="relative overflow-hidden rounded-3xl border shadow-sm">
+			<div className="relative overflow-hidden rounded-2xl border shadow-sm">
 				<Carousel setApi={setApi} className="w-full">
 					<CarouselContent>
 						{images.length > 0 ? (
@@ -73,7 +73,7 @@ export default function ProductGallery({ product }: { product: Product }) {
 							type="button"
 							onClick={() => api?.scrollTo(index)}
 							className={cn(
-								"relative size-20 aspect-square overflow-hidden rounded-xl border bg-card transition-all",
+								"relative size-20 aspect-square overflow-hidden rounded-lg border bg-card transition-all",
 								"hover:border-2 hover:border-primary/80",
 							)}
 						>

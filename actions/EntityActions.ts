@@ -25,10 +25,88 @@ import {
 	EntityType,
 	OptionField,
 	type ParameterType,
-	type Prisma,
 } from "@/lib/entity/types";
 import { formatOption } from "@/lib/functions/server";
 import { prisma } from "@/lib/prisma";
+import type { Prisma } from "@/prisma/generated/prisma/client";
+
+// GET
+async function getEntitiesPage<T extends EntityType>(
+	entity: T,
+	filterParams: ParameterType = {},
+	page: number = 1,
+	pageSize: number = 10000,
+	order: "asc" | "desc" = "asc",
+	sortBy: string = "id",
+): Promise<EntityRow<T>[]> {
+	const params = [filterParams, page, pageSize, order, sortBy] as const;
+
+	switch (entity) {
+		case EntityType.users:
+			return (await getUsersPage(...params)) as EntityRow<T>[];
+		case EntityType.carts:
+			return (await getCartsPage(...params)) as EntityRow<T>[];
+		case EntityType.orders:
+			return (await getOrdersPage(...params)) as EntityRow<T>[];
+		case EntityType.products:
+			return (await getProductsPage(...params)) as EntityRow<T>[];
+		case EntityType.categories:
+			return (await getCategoriesPage(...params)) as EntityRow<T>[];
+		case EntityType["cart-items"]:
+			return (await getCartItemsPage(...params)) as EntityRow<T>[];
+		case EntityType["order-items"]:
+			return (await getOrderItemsPage(...params)) as EntityRow<T>[];
+		default:
+			throw new Error(`Unsupported entity: ${entity}`);
+	}
+}
+
+async function getEntityCount(
+	entity: EntityType,
+	filterParams: ParameterType = {},
+) {
+	switch (entity) {
+		case EntityType.users:
+			return await getUserCount(filterParams);
+		case EntityType.carts:
+			return await getCartCount(filterParams);
+		case EntityType.orders:
+			return await getOrderCount(filterParams);
+		case EntityType.products:
+			return await getProductCount(filterParams);
+		case EntityType.categories:
+			return await getCategoryCount(filterParams);
+		case EntityType["cart-items"]:
+			return await getCartItemCount(filterParams);
+		case EntityType["order-items"]:
+			return await getOrderItemCount(filterParams);
+	}
+}
+
+async function getEntityById(entity: EntityType, id: string | number) {
+	const where = { where: { id: Number(id) } };
+	let result: unknown;
+	try {
+		if (entity === EntityType.users) result = await getUserById(id as string);
+		else if (entity === EntityType.carts)
+			result = await prisma.cart.findUnique(where);
+		else if (entity === EntityType.orders)
+			result = await prisma.order.findUnique(where);
+		else if (entity === EntityType.products)
+			result = await prisma.product.findUnique(where);
+		else if (entity === EntityType.categories)
+			result = await prisma.category.findUnique(where);
+		else if (entity === EntityType["cart-items"])
+			result = await prisma.cartItem.findUnique(where);
+		else if (entity === EntityType["order-items"])
+			result = await prisma.orderItem.findUnique(where);
+
+		return JSON.parse(JSON.stringify(result));
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+}
 
 async function getFilterOptions(field: OptionField): Promise<SelectOption[]> {
 	try {
@@ -93,38 +171,14 @@ async function getFilterOptions(field: OptionField): Promise<SelectOption[]> {
 	}
 }
 
-async function getEntityById(entity: EntityType, id: string | number) {
-	const where = { where: { id: Number(id) } };
-	let result: unknown;
-	try {
-		if (entity === EntityType.users) result = await getUserById(id as string);
-		else if (entity === EntityType.carts)
-			result = await prisma.cart.findUnique(where);
-		else if (entity === EntityType.orders)
-			result = await prisma.order.findUnique(where);
-		else if (entity === EntityType.products)
-			result = await prisma.product.findUnique(where);
-		else if (entity === EntityType.categories)
-			result = await prisma.category.findUnique(where);
-		else if (entity === EntityType["cart-items"])
-			result = await prisma.cartItem.findUnique(where);
-		else if (entity === EntityType["order-items"])
-			result = await prisma.orderItem.findUnique(where);
-
-		return JSON.parse(JSON.stringify(result));
-	} catch (error) {
-		console.error(error);
-		throw error;
-	}
-}
-
+// CREATE
 async function createEntity(
 	entity: Exclude<EntityType, "user">,
 	formData: FormData,
 ) {
+	const data = getFormEntity(entity, formData);
 	let result: unknown;
 	try {
-		const data = getFormEntity(entity, formData);
 		if (entity === EntityType.carts)
 			result = await prisma.cart.create({
 				data: data as Prisma.CartCreateInput,
@@ -158,6 +212,7 @@ async function createEntity(
 	}
 }
 
+// DELETE
 async function deleteEntity(entity: EntityType, id: string | number) {
 	const where = { where: { id: id as number } };
 	let result: unknown;
@@ -214,15 +269,16 @@ async function deleteEntities(entity: EntityType, ids: (string | number)[]) {
 	}
 }
 
+// UPDATE
 async function updateEntity(
 	entity: EntityType,
 	id: string | number,
 	formData: FormData,
 ) {
+	const data = getFormEntity(entity, formData);
 	const where = { id: id as number };
 	let result: unknown;
 	try {
-		const data = getFormEntity(entity, formData);
 		if (entity === EntityType.users)
 			result = await updateUser(id as string, formData);
 		else if (entity === EntityType.carts)
@@ -270,10 +326,10 @@ async function updateEntities(
 	formData: FormData,
 ) {
 	if (ids.length === 0) return;
+	const data = getFormEntity(entity, formData);
 	const where = { id: { in: ids as number[] } };
 	let result: unknown;
 	try {
-		const data = getFormEntity(entity, formData);
 		if (entity === EntityType.users)
 			result = await Promise.allSettled(
 				ids.map((id) => updateUser(id as string, formData)),
@@ -317,67 +373,6 @@ async function updateEntities(
 	}
 }
 
-async function getEntitiesPage<T extends EntityType>(
-	entity: T,
-	filterParams: ParameterType = {},
-	page: number = 1,
-	pageSize: number = 10000,
-	order: "asc" | "desc" = "asc",
-	sortBy: string = "id",
-): Promise<EntityRow<T>[]> {
-	const params = [filterParams, page, pageSize, order, sortBy] as const;
-
-	switch (entity) {
-		case EntityType.users:
-			return (await getUsersPage(...params)) as EntityRow<T>[];
-		case EntityType.carts:
-			return (await getCartsPage(...params)) as EntityRow<T>[];
-		case EntityType.orders:
-			return (await getOrdersPage(...params)) as EntityRow<T>[];
-		case EntityType.products:
-			return (await getProductsPage(...params)) as EntityRow<T>[];
-		case EntityType.categories:
-			return (await getCategoriesPage(...params)) as EntityRow<T>[];
-		case EntityType["cart-items"]:
-			return (await getCartItemsPage(...params)) as EntityRow<T>[];
-		case EntityType["order-items"]:
-			return (await getOrderItemsPage(...params)) as EntityRow<T>[];
-		default:
-			throw new Error(`Unsupported entity: ${entity}`);
-	}
-}
-
-async function getEntityCount(
-	entity: EntityType,
-	filterParams: ParameterType = {},
-) {
-	switch (entity) {
-		case EntityType.users:
-			return await getUserCount(filterParams);
-		case EntityType.carts:
-			return await getCartCount(filterParams);
-		case EntityType.orders:
-			return await getOrderCount(filterParams);
-		case EntityType.products:
-			return await getProductCount(filterParams);
-		case EntityType.categories:
-			return await getCategoryCount(filterParams);
-		case EntityType["cart-items"]:
-			return await getCartItemCount(filterParams);
-		case EntityType["order-items"]:
-			return await getOrderItemCount(filterParams);
-	}
-}
-
-async function updateCache() {
-	try {
-		for (const tag of Object.values(EntityType)) updateTag(tag);
-	} catch (error) {
-		console.error(error);
-		throw error;
-	}
-}
-
 export {
 	createEntity,
 	deleteEntities,
@@ -386,7 +381,6 @@ export {
 	getEntityById,
 	getEntityCount,
 	getFilterOptions,
-	updateCache,
 	updateEntities,
 	updateEntity,
 };
