@@ -16,6 +16,7 @@ import {
 
 type FieldType =
 	| "string"
+	| "text"
 	| "number"
 	| "date"
 	| "enum"
@@ -139,7 +140,7 @@ const ENTITY_FIELDS: Record<EntityType, FieldConfig[]> = {
 		},
 		{
 			name: "description",
-			type: "string",
+			type: "text",
 			category: ["filter", "create", "edit"],
 		},
 		{

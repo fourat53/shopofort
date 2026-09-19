@@ -28,6 +28,7 @@ import { getEntityFields } from "@/lib/entity/fields";
 import type { EntityType } from "@/lib/entity/types";
 import { getFieldName, getSingleName } from "@/lib/functions/client";
 import { addImages } from "@/lib/uploadthing/client";
+import { TextArea } from "../form-items/textarea";
 
 interface CreateFormProps {
 	entity: EntityType;
@@ -73,13 +74,13 @@ export default function CreateForm({ entity, open, setOpen }: CreateFormProps) {
 		<DialogContent
 			onPointerDownOutside={(e) => loading && e.preventDefault()}
 			onEscapeKeyDown={(e) => loading && e.preventDefault()}
-			className="px-0 sm:w-80 sm:w-180 max-w-180 overflow-hidden"
+			className="px-0 w-82 sm:w-180 max-w-180 overflow-hidden"
 		>
 			<form onSubmit={handleSubmit}>
 				<DialogHeader className="pb-2">
 					<DialogTitle>Create {entityName}</DialogTitle>
 				</DialogHeader>
-				<div className="max-h-[calc(100vh-8rem)] overflow-y-auto px-4 flex flex-col gap-4">
+				<div className="max-h-[calc(100vh-12rem)] sm:max-h-[calc(100vh-8rem)] overflow-y-auto px-4 flex flex-col gap-4">
 					{fields.map((field) => {
 						const { type, name, multiple, required, defaultValue } = field;
 						const label = getFieldName(name);
@@ -88,8 +89,17 @@ export default function CreateForm({ entity, open, setOpen }: CreateFormProps) {
 								key={name}
 								name={name}
 								label={label}
-								placeholder={`Enter ${label.toLowerCase()}`}
 								type={name === "email" ? "email" : "text"}
+								placeholder={`Enter ${label.toLowerCase()}`}
+								defaultValue={defaultValue?.toString() || undefined}
+								required={required}
+							/>
+						) : type === "text" ? (
+							<TextArea
+								key={name}
+								name={name}
+								label={label}
+								placeholder={`Enter ${label.toLowerCase()}`}
 								defaultValue={defaultValue?.toString() || undefined}
 								required={required}
 							/>

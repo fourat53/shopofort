@@ -70,7 +70,7 @@ function ImageUpload({
 			<div
 				className={
 					multiple || images.length > 1
-						? "w-full grid grid-cols-3 gap-2"
+						? "w-full grid grid-cols-3 gap-1 sm:gap-2"
 						: "w-full flex justify-center"
 				}
 			>
@@ -88,9 +88,13 @@ function ImageUpload({
 						type="button"
 						onClick={handleDivClick}
 						className={clsx(
-							"size-28 flex flex-col items-center justify-center border-2 border-dashed rounded-xl cursor-pointer hover:bg-mist-100 dark:hover:bg-mist-800 transition-colors",
-							multiple && images.length % 3 === 0 && "w-full col-span-3",
-							multiple && images.length % 3 === 1 && "w-full col-span-2",
+							"size-24 sm:size-28 flex flex-col items-center justify-center border-2 border-dashed rounded-xl cursor-pointer hover:bg-mist-100 dark:hover:bg-mist-800 transition-colors",
+							multiple &&
+								images.length % 3 === 0 &&
+								"w-full sm:w-full col-span-3",
+							multiple &&
+								images.length % 3 === 1 &&
+								"w-full sm:w-full col-span-2",
 						)}
 					>
 						<IconUpload className="size-6 text-mist-400 mb-1" />
@@ -132,7 +136,7 @@ function ImagePreview({
 					alt={isFile ? item.name : `Image ${src}`}
 					width={1000}
 					height={1000}
-					className="size-28 object-cover border rounded-xl"
+					className="size-24 sm:size-28 object-cover border rounded-xl"
 				/>
 			) : null}
 			{!disabled && onRemove && (
