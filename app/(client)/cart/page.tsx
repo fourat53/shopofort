@@ -1,3 +1,9 @@
+import { PagesLayout, PagesTitle } from "@/app/(client)/layout";
+
 export default function CartPage() {
-	return <div>CartPage</div>;
+	return (
+		<PagesLayout>
+			<PagesTitle>Cart</PagesTitle>
+		</PagesLayout>
+	);
 }

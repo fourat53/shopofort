@@ -1,4 +1,5 @@
 import { getCategoriesPage } from "@/actions/CategoryActions";
+import { PagesLayout, PagesTitle } from "@/app/(client)/layout";
 import CategoryCard from "@/components/cards/CategoryCard";
 import type { Category } from "@/lib/entity/types";
 
@@ -13,10 +14,8 @@ export default async function CategoryPage({
 	const categories = await getCategoriesPage({ audience }, 1, 999, "asc", "id");
 
 	return (
-		<div className="p-10">
-			<h1 className="text-4xl font-bold mb-8 capitalize">
-				{audience} Categories
-			</h1>
+		<PagesLayout>
+			<PagesTitle>{audience} Categories</PagesTitle>
 			{categories.length === 0 ? (
 				<p className="text-muted-foreground">
 					No categories found for {audience}.
@@ -28,6 +27,6 @@ export default async function CategoryPage({
 					))}
 				</div>
 			)}
-		</div>
+		</PagesLayout>
 	);
 }

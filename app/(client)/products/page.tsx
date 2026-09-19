@@ -1,4 +1,5 @@
 import { getProductsPage } from "@/actions/ProductActions";
+import { PagesLayout, PagesTitle } from "@/app/(client)/layout";
 import ProductCard from "@/components/cards/ProductCard";
 import type { Product } from "@/lib/entity/types";
 
@@ -19,10 +20,10 @@ export default async function ProductsPage({
 	const products = await getProductsPage(filterParams, 1, 20, "asc", "id");
 
 	return (
-		<div className="p-10">
-			<h1 className="text-4xl font-bold mb-8 capitalize">
+		<PagesLayout>
+			<PagesTitle>
 				{categoryName ? `${categoryName} Products` : "All Products"}
-			</h1>
+			</PagesTitle>
 			{products.length === 0 ? (
 				<p className="text-muted-foreground">No products found.</p>
 			) : (
@@ -32,6 +33,6 @@ export default async function ProductsPage({
 					))}
 				</div>
 			)}
-		</div>
+		</PagesLayout>
 	);
 }

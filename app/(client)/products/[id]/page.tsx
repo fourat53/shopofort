@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { PagesLayout } from "@/app/(client)/layout";
 import ProductGallery from "@/components/cards/ProductGallery";
 import ProductInfo from "@/components/cards/ProductInfo";
 import { prisma } from "@/lib/prisma";
@@ -20,7 +21,7 @@ export default async function Page({ params }: PageProps) {
 	const product = JSON.parse(JSON.stringify(prod));
 
 	return (
-		<div className="p-10 w-full flex items-center justify-center">
+		<PagesLayout className="w-full flex items-center justify-center">
 			<div className="p-10 w-full bg-background border rounded-3xl grid gap-10 lg:grid-cols-[2fr_3fr] lg:gap-16">
 				{/* Images */}
 				<ProductGallery product={product} />
@@ -28,6 +29,6 @@ export default async function Page({ params }: PageProps) {
 				{/* Details */}
 				<ProductInfo product={product} />
 			</div>
-		</div>
+		</PagesLayout>
 	);
 }
