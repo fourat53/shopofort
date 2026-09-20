@@ -84,6 +84,7 @@ function getFormCartItem(formData: FormData) {
 	const size = formData.get("size");
 	const cartId = formData.get("cartId");
 	const productId = formData.get("productId");
+	const userId = formData.get("userId");
 
 	const data: Record<string, unknown> = {};
 	if (quantity !== null) data.quantity = Number(quantity);
@@ -91,6 +92,7 @@ function getFormCartItem(formData: FormData) {
 	if (size !== null) data.size = size as ProductSize;
 	if (cartId !== null) data.cartId = Number(cartId);
 	if (productId !== null) data.productId = Number(productId);
+	if (userId !== null) data.userId = String(userId);
 	return data;
 }
 

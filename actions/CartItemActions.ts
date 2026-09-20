@@ -60,6 +60,20 @@ function buildOrderClause(
 	return { id: "asc" };
 }
 
+async function getOrCreateUserCart(userId: string) {
+	let cart = await prisma.cart.findUnique({
+		where: { userId },
+	});
+
+	if (!cart) {
+		cart = await prisma.cart.create({
+			data: { userId, totalPrice: 0 },
+		});
+	}
+
+	return cart;
+}
+
 async function getCartItemsPage(
 	filterParams: ParameterType = {},
 	page: number = 1,
@@ -113,12 +127,20 @@ async function getCartItemCount(filterParams: ParameterType = {}) {
 async function createCartItem(formData: FormData) {
 	const data = getFormCartItem(formData);
 	try {
+		const userId = String(data.userId);
+		if (!userId) throw new Error("User ID is required");
+
+		const cart = await getOrCreateUserCart(userId);
+
+		const { userId: _userId, cartId: _cartId, ...cartItemData } = data;
+
 		const result = await prisma.cartItem.create({
 			data: {
-				...data,
+				...cartItemData,
+				cartId: cart.id,
 			} as unknown as Prisma.CartItemCreateInput,
 		});
-		await recalculateCartTotal(Number(data.cartId));
+		await recalculateCartTotal(cart.id);
 		return JSON.parse(JSON.stringify(result));
 	} catch (error) {
 		console.error(error);
