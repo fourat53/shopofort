@@ -7,7 +7,12 @@ import {
 } from "@/components/data-table/pagination/PaginationParams";
 import { getFormCartItem } from "@/lib/entity/forms";
 import { CART_ITEMS_HEADER } from "@/lib/entity/headers";
-import type { CartItem, ParameterType } from "@/lib/entity/types";
+import type {
+	CartItem,
+	ParameterType,
+	ProductColor,
+	ProductSize,
+} from "@/lib/entity/types";
 import { getParamValues } from "@/lib/functions/server";
 import { prisma } from "@/lib/prisma";
 import type { Prisma } from "@/prisma/generated/prisma/client";
@@ -17,16 +22,21 @@ type FilterBy = Prisma.CartItemWhereInput;
 function buildWhereClause(filterParams: ParameterType): FilterBy {
 	const where: FilterBy = {};
 
-	for (const field of ["quantity", "unitPrice"] as const) {
-		const from = Number(filterParams[`${field}From`]);
-		const to = Number(filterParams[`${field}To`]);
-		if (!Number.isNaN(from) || !Number.isNaN(to)) {
-			const range: { gte?: number; lte?: number } = {};
-			if (!Number.isNaN(from)) range.gte = from;
-			if (!Number.isNaN(to)) range.lte = to;
-			where[field] = range;
-		}
+	const quantityFrom = Number(filterParams.quantityFrom);
+	const quantityTo = Number(filterParams.quantityTo);
+
+	if (!Number.isNaN(quantityFrom) || !Number.isNaN(quantityTo)) {
+		where.quantity = {
+			...(Number.isNaN(quantityFrom) ? {} : { gte: quantityFrom }),
+			...(Number.isNaN(quantityTo) ? {} : { lte: quantityTo }),
+		};
 	}
+
+	const colors = getParamValues(filterParams.color);
+	if (colors.length) where.color = { in: colors as ProductColor[] };
+
+	const sizes = getParamValues(filterParams.size);
+	if (sizes.length) where.size = { in: sizes as ProductSize[] };
 
 	for (const field of ["id", "cartId", "productId"] as const) {
 		const values = getParamValues(filterParams[field]);
@@ -103,15 +113,9 @@ async function getCartItemCount(filterParams: ParameterType = {}) {
 async function createCartItem(formData: FormData) {
 	const data = getFormCartItem(formData);
 	try {
-		const product = await prisma.product.findUnique({
-			where: { id: Number(data.productId) },
-			select: { price: true },
-		});
-		const unitPrice = product?.price ?? 0;
 		const result = await prisma.cartItem.create({
 			data: {
 				...data,
-				unitPrice,
 			} as unknown as Prisma.CartItemCreateInput,
 		});
 		await recalculateCartTotal(Number(data.cartId));
@@ -128,7 +132,7 @@ async function deleteCartItem(id: number) {
 			where: { id },
 			select: { cartId: true },
 		});
-		const result = await prisma.cartItem.delete({ where: { id: id } });
+		const result = await prisma.cartItem.delete({ where: { id } });
 		if (item) await recalculateCartTotal(item.cartId);
 		return JSON.parse(JSON.stringify(result));
 	} catch (error) {
@@ -158,16 +162,8 @@ async function deleteCartItems(ids: number[]) {
 async function updateCartItem(id: number, formData: FormData) {
 	const data = getFormCartItem(formData);
 	try {
-		const product = await prisma.product.findUnique({
-			where: { id: Number(data.productId) },
-			select: { price: true },
-		});
-		const unitPrice = product?.price ?? 0;
 		const result = await prisma.cartItem.update({
-			data: {
-				...data,
-				unitPrice,
-			} as Prisma.CartItemUpdateInput,
+			data: data as Prisma.CartItemUpdateInput,
 			where: { id },
 		});
 		await recalculateCartTotal(Number(data.cartId));
@@ -183,20 +179,10 @@ async function updateCartItems(ids: number[], formData: FormData) {
 	try {
 		const items = await prisma.cartItem.findMany({
 			where: { id: { in: ids } },
-			select: { cartId: true, productId: true },
+			select: { cartId: true },
 		});
-		const productIds = [...new Set(items.map((item) => item.productId))];
-		const products = await prisma.product.findMany({
-			where: { id: { in: productIds } },
-			select: { id: true, price: true },
-		});
-		const priceMap = new Map(products.map((p) => [p.id, p.price]));
-		const unitPrice = priceMap.get(Number(data.productId)) ?? 0;
 		const result = await prisma.cartItem.updateMany({
-			data: {
-				...data,
-				unitPrice,
-			} as Prisma.CartItemUpdateInput,
+			data: data as Prisma.CartItemUpdateInput,
 			where: { id: { in: ids } },
 		});
 		const cartIds = [...new Set(items.map((item) => item.cartId))];
@@ -211,10 +197,10 @@ async function updateCartItems(ids: number[], formData: FormData) {
 async function recalculateCartTotal(cartId: number) {
 	const items = await prisma.cartItem.findMany({
 		where: { cartId },
-		select: { unitPrice: true, quantity: true },
+		select: { product: true, quantity: true },
 	});
 	const total = items.reduce(
-		(sum, item) => sum + Number(item.unitPrice) * item.quantity,
+		(sum, item) => sum + Number(item.product.price) * item.quantity,
 		0,
 	);
 	await prisma.cart.update({

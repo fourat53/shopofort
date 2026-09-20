@@ -108,7 +108,7 @@ async function createCategory(formData: FormData) {
 
 async function deleteCategory(id: number) {
 	try {
-		const result = await prisma.category.delete({ where: { id: id } });
+		const result = await prisma.category.delete({ where: { id } });
 		return JSON.parse(JSON.stringify(result));
 	} catch (error) {
 		console.error(error);

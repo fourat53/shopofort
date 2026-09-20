@@ -159,7 +159,7 @@ async function createProduct(formData: FormData) {
 
 async function deleteProduct(id: number) {
 	try {
-		const result = await prisma.product.delete({ where: { id: id } });
+		const result = await prisma.product.delete({ where: { id } });
 		return JSON.parse(JSON.stringify(result));
 	} catch (error) {
 		console.error(error);

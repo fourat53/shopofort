@@ -114,7 +114,7 @@ async function createCart(formData: FormData) {
 
 async function deleteCart(id: number) {
 	try {
-		const result = await prisma.cart.delete({ where: { id: id } });
+		const result = await prisma.cart.delete({ where: { id } });
 		return JSON.parse(JSON.stringify(result));
 	} catch (error) {
 		console.error(error);

@@ -39,11 +39,11 @@ type ProductType = Omit<ProductDb, "price" | "rating"> & {
 
 type CartType = Omit<CartDb, "totalPrice"> & { totalPrice: number };
 
-type CartItemType = Omit<CartItemDb, "unitPrice"> & { unitPrice: number };
+type CartItemType = CartItemDb;
 
 type OrderType = Omit<OrderDb, "totalPrice"> & { totalPrice: number };
 
-type OrderItemType = Omit<OrderItemDb, "unitPrice"> & { unitPrice: number };
+type OrderItemType = OrderItemDb;
 
 // MAPPED MODEL TYPES
 type Role = KindeRole;

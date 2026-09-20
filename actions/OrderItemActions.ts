@@ -7,7 +7,12 @@ import {
 } from "@/components/data-table/pagination/PaginationParams";
 import { getFormOrderItem } from "@/lib/entity/forms";
 import { ORDER_ITEMS_HEADER } from "@/lib/entity/headers";
-import type { OrderItem, ParameterType } from "@/lib/entity/types";
+import type {
+	OrderItem,
+	ParameterType,
+	ProductColor,
+	ProductSize,
+} from "@/lib/entity/types";
 import { getParamValues } from "@/lib/functions/server";
 import { prisma } from "@/lib/prisma";
 import type { Prisma } from "@/prisma/generated/prisma/client";
@@ -17,16 +22,21 @@ type FilterBy = Prisma.OrderItemWhereInput;
 function buildWhereClause(filterParams: ParameterType): FilterBy {
 	const where: FilterBy = {};
 
-	for (const field of ["quantity", "unitPrice"] as const) {
-		const from = Number(filterParams[`${field}From`]);
-		const to = Number(filterParams[`${field}To`]);
-		if (!Number.isNaN(from) || !Number.isNaN(to)) {
-			const range: { gte?: number; lte?: number } = {};
-			if (!Number.isNaN(from)) range.gte = from;
-			if (!Number.isNaN(to)) range.lte = to;
-			where[field] = range;
-		}
+	const quantityFrom = Number(filterParams.quantityFrom);
+	const quantityTo = Number(filterParams.quantityTo);
+
+	if (!Number.isNaN(quantityFrom) || !Number.isNaN(quantityTo)) {
+		where.quantity = {
+			...(Number.isNaN(quantityFrom) ? {} : { gte: quantityFrom }),
+			...(Number.isNaN(quantityTo) ? {} : { lte: quantityTo }),
+		};
 	}
+
+	const colors = getParamValues(filterParams.color);
+	if (colors.length) where.color = { in: colors as ProductColor[] };
+
+	const sizes = getParamValues(filterParams.size);
+	if (sizes.length) where.size = { in: sizes as ProductSize[] };
 
 	for (const field of ["id", "orderId", "productId"] as const) {
 		const values = getParamValues(filterParams[field]);
@@ -103,16 +113,8 @@ async function getOrderItemCount(filterParams: ParameterType = {}) {
 async function createOrderItem(formData: FormData) {
 	const data = getFormOrderItem(formData);
 	try {
-		const product = await prisma.product.findUnique({
-			where: { id: Number(data.productId) },
-			select: { price: true },
-		});
-		const unitPrice = product?.price ?? 0;
 		const result = await prisma.orderItem.create({
-			data: {
-				...data,
-				unitPrice,
-			} as unknown as Prisma.OrderItemCreateInput,
+			data: data as Prisma.OrderItemCreateInput,
 		});
 		await recalculateOrderTotal(Number(data.orderId));
 		return JSON.parse(JSON.stringify(result));
@@ -128,7 +130,7 @@ async function deleteOrderItem(id: number) {
 			where: { id },
 			select: { orderId: true },
 		});
-		const result = await prisma.orderItem.delete({ where: { id: id } });
+		const result = await prisma.orderItem.delete({ where: { id } });
 		if (item) await recalculateOrderTotal(item.orderId);
 		return JSON.parse(JSON.stringify(result));
 	} catch (error) {
@@ -160,16 +162,8 @@ async function deleteOrderItems(ids: number[]) {
 async function updateOrderItem(id: number, formData: FormData) {
 	const data = getFormOrderItem(formData);
 	try {
-		const product = await prisma.product.findUnique({
-			where: { id: Number(data.productId) },
-			select: { price: true },
-		});
-		const unitPrice = product?.price ?? 0;
 		const result = await prisma.orderItem.update({
-			data: {
-				...data,
-				unitPrice,
-			} as unknown as Prisma.OrderItemUpdateInput,
+			data: data as Prisma.OrderItemUpdateInput,
 			where: { id },
 		});
 		await recalculateOrderTotal(Number(data.orderId));
@@ -185,20 +179,10 @@ async function updateOrderItems(ids: number[], formData: FormData) {
 	try {
 		const items = await prisma.orderItem.findMany({
 			where: { id: { in: ids } },
-			select: { orderId: true, productId: true },
+			select: { orderId: true },
 		});
-		const productIds = [...new Set(items.map((item) => item.productId))];
-		const products = await prisma.product.findMany({
-			where: { id: { in: productIds } },
-			select: { id: true, price: true },
-		});
-		const priceMap = new Map(products.map((p) => [p.id, p.price]));
-		const unitPrice = priceMap.get(Number(data.productId)) ?? 0;
 		const result = await prisma.orderItem.updateMany({
-			data: {
-				...data,
-				unitPrice,
-			} as unknown as Prisma.OrderItemUpdateInput,
+			data: data as Prisma.OrderItemUpdateInput,
 			where: { id: { in: ids } },
 		});
 		const orderIds = [...new Set(items.map((item) => item.orderId))];
@@ -215,10 +199,10 @@ async function updateOrderItems(ids: number[], formData: FormData) {
 async function recalculateOrderTotal(orderId: number) {
 	const items = await prisma.orderItem.findMany({
 		where: { orderId },
-		select: { unitPrice: true, quantity: true },
+		select: { product: { select: { price: true } }, quantity: true },
 	});
 	const total = items.reduce(
-		(sum, item) => sum + Number(item.unitPrice) * item.quantity,
+		(sum, item) => sum + Number(item.product.price) * item.quantity,
 		0,
 	);
 	await prisma.order.update({

@@ -17,8 +17,9 @@ model Cart {
 
 model CartItem {
   id         Int     @id @default(autoincrement())
-  unitPrice  Decimal @db.Decimal(10, 2)
   quantity   Int
+  color       ProductColor?
+  size        ProductSize?
   cartId     Int
   productId  Int
   cart       Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
@@ -66,8 +67,9 @@ model Order {
 
 model OrderItem {
   id          Int     @id @default(autoincrement())
-  unitPrice   Decimal @db.Decimal(10, 2)
   quantity    Int
+  color       ProductColor?
+  size        ProductSize?
   orderId     Int
   productId   Int
   order       Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)

@@ -41,8 +41,14 @@ async function main(minId: number, maxId: number) {
 
 	console.log("📂 Seeding Categories...");
 	const categories = [];
-	for (const name of categoryNames)
-		for (const audience of audiences) categories.push({ name, audience });
+	for (const name of categoryNames) {
+		for (const audience of audiences) {
+			if (audience === "Men" && ["Skirts", "Dresses"].includes(name)) {
+				continue;
+			}
+			categories.push({ name, audience });
+		}
+	}
 
 	await prisma.category.createMany({
 		data: categories,
@@ -51,7 +57,7 @@ async function main(minId: number, maxId: number) {
 	console.log("📦 Seeding Products...");
 	const dbCategories = await prisma.category.findMany();
 	const products = [];
-	for (let i = minId; i <= maxId; i++) {
+	for (let i = minId; i <= maxId * 2; i++) {
 		products.push({
 			name: productNames[i % productNames.length],
 			brand: brands[i % brands.length],
@@ -89,14 +95,20 @@ async function main(minId: number, maxId: number) {
 		console.log("🛍️ Seeding Cart Items...");
 		const dbCarts = await prisma.cart.findMany();
 		const cartItems = [];
-		for (let i = minId; i < maxId; i++) {
+		for (let i = minId; i < (maxId * 3) / 2; i++) {
 			const randomProduct =
 				dbProducts[Math.floor(Math.random() * dbProducts.length)];
 			cartItems.push({
 				cartId: dbCarts[i % dbCarts.length].id,
 				productId: randomProduct.id,
 				quantity: randomInt(1, 15),
-				unitPrice: randomProduct.price,
+				color:
+					randomProduct.colors[
+						Math.floor(Math.random() * randomProduct.colors.length)
+					],
+				size: randomProduct.sizes[
+					Math.floor(Math.random() * randomProduct.sizes.length)
+				],
 			});
 		}
 		await prisma.cartItem.createMany({
@@ -108,12 +120,12 @@ async function main(minId: number, maxId: number) {
 			const cartItems = await prisma.cartItem.findMany({
 				where: { cartId: cart.id },
 				select: {
-					unitPrice: true,
+					product: true,
 					quantity: true,
 				},
 			});
 			const totalPrice = cartItems.reduce(
-				(sum, item) => sum + Number(item.unitPrice) * item.quantity,
+				(sum, item) => sum + Number(item.product.price) * item.quantity,
 				0,
 			);
 			await prisma.cart.update({
@@ -124,7 +136,7 @@ async function main(minId: number, maxId: number) {
 
 		console.log("📦 Seeding Orders...");
 		const orders = [];
-		for (let i = minId; i < maxId; i++) {
+		for (let i = minId; i < maxId / 2; i++) {
 			const randomUser = dbUsers[i % dbUsers.length];
 			orders.push({
 				userId: randomUser.id,
@@ -142,7 +154,7 @@ async function main(minId: number, maxId: number) {
 		console.log("🧾 Seeding Order Items...");
 		const dbOrders = await prisma.order.findMany();
 		const orderItems = [];
-		for (let i = minId; i < maxId; i++) {
+		for (let i = minId; i < maxId * 2; i++) {
 			const randomProduct =
 				dbProducts[Math.floor(Math.random() * dbProducts.length)];
 			const randomOrder = dbOrders[i % dbOrders.length];
@@ -150,7 +162,13 @@ async function main(minId: number, maxId: number) {
 				orderId: randomOrder.id,
 				productId: randomProduct.id,
 				quantity: randomInt(1, 15),
-				unitPrice: randomProduct.price,
+				color:
+					randomProduct.colors[
+						Math.floor(Math.random() * randomProduct.colors.length)
+					],
+				size: randomProduct.sizes[
+					Math.floor(Math.random() * randomProduct.sizes.length)
+				],
 			});
 		}
 		await prisma.orderItem.createMany({
@@ -162,12 +180,12 @@ async function main(minId: number, maxId: number) {
 			const orderItems = await prisma.orderItem.findMany({
 				where: { orderId: order.id },
 				select: {
-					unitPrice: true,
+					product: true,
 					quantity: true,
 				},
 			});
 			const totalPrice = orderItems.reduce(
-				(sum, item) => sum + Number(item.unitPrice) * item.quantity,
+				(sum, item) => sum + Number(item.product.price) * item.quantity,
 				0,
 			);
 			await prisma.order.update({
@@ -185,7 +203,7 @@ async function main(minId: number, maxId: number) {
 (async () => {
 	try {
 		await clearDatabase();
-		await main(1, 99);
+		await main(0, 16);
 	} catch (e) {
 		console.error(e);
 		process.exit(1);

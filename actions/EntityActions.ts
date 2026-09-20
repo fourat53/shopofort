@@ -365,6 +365,17 @@ async function updateEntities(
 	}
 }
 
+async function updateCache() {
+	try {
+		for (const entity of Object.values(EntityType)) {
+			updateTag(entity);
+		}
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+}
+
 export {
 	createEntity,
 	deleteEntities,
@@ -373,6 +384,7 @@ export {
 	getEntityById,
 	getEntityCount,
 	getFilterOptions,
+	updateCache,
 	updateEntities,
 	updateEntity,
 };

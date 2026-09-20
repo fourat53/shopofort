@@ -80,13 +80,15 @@ function getFormCategory(formData: FormData) {
 
 function getFormCartItem(formData: FormData) {
 	const quantity = formData.get("quantity");
-	const unitPrice = formData.get("unitPrice");
+	const color = formData.get("color");
+	const size = formData.get("size");
 	const cartId = formData.get("cartId");
 	const productId = formData.get("productId");
 
 	const data: Record<string, unknown> = {};
 	if (quantity !== null) data.quantity = Number(quantity);
-	if (unitPrice !== null) data.unitPrice = Number(unitPrice);
+	if (color !== null) data.color = color as ProductColor;
+	if (size !== null) data.size = size as ProductSize;
 	if (cartId !== null) data.cartId = Number(cartId);
 	if (productId !== null) data.productId = Number(productId);
 	return data;
@@ -94,13 +96,15 @@ function getFormCartItem(formData: FormData) {
 
 function getFormOrderItem(formData: FormData) {
 	const quantity = formData.get("quantity");
-	const unitPrice = formData.get("unitPrice");
+	const color = formData.get("color");
+	const size = formData.get("size");
 	const orderId = formData.get("orderId");
 	const productId = formData.get("productId");
 
 	const data: Record<string, unknown> = {};
 	if (quantity !== null) data.quantity = Number(quantity);
-	if (unitPrice !== null) data.unitPrice = Number(unitPrice);
+	if (color !== null) data.color = color as ProductColor;
+	if (size !== null) data.size = size as ProductSize;
 	if (orderId !== null) data.orderId = Number(orderId);
 	if (productId !== null) data.productId = Number(productId);
 	return data;

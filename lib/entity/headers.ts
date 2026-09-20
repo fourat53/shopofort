@@ -10,8 +10,9 @@ const CARTS_HEADER: HeaderItem[] = [
 
 const CART_ITEMS_HEADER: HeaderItem[] = [
 	{ name: "id", width: "150px" },
-	{ name: "unitPrice", width: "150px" },
 	{ name: "quantity", width: "150px" },
+	{ name: "color", width: "150px" },
+	{ name: "size", width: "150px" },
 	{ name: "cartId", width: "150px" },
 	{ name: "productId", width: "150px" },
 ];
@@ -32,8 +33,9 @@ const ORDERS_HEADER: HeaderItem[] = [
 
 const ORDER_ITEMS_HEADER: HeaderItem[] = [
 	{ name: "id", width: "150px" },
-	{ name: "unitPrice", width: "auto" },
 	{ name: "quantity", width: "150px" },
+	{ name: "color", width: "150px" },
+	{ name: "size", width: "150px" },
 	{ name: "orderId", width: "150px" },
 	{ name: "productId", width: "150px" },
 ];
