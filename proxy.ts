@@ -7,15 +7,15 @@ type ExtendedRequest = NextRequest & {
 
 export default withAuth(
 	async function proxy(req: ExtendedRequest) {
-		const permissions = req.kindeAuth.token.permissions;
-		const isAdmin = permissions.includes("ADMIN_ACCESS");
-
-		if (req.nextUrl.pathname.startsWith("/admin") && !isAdmin)
+		const isAdmin = req.kindeAuth.token.permissions.includes("ADMIN_ACCESS");
+		if (req.nextUrl.pathname.startsWith("/admin") && !isAdmin) {
 			return NextResponse.redirect(new URL("/", req.url));
+		}
+		return NextResponse.next();
 	},
 	{ isReturnToCurrentPage: true },
 );
 
 export const config = {
-	matcher: ["/admin/:path*"],
+	matcher: ["/admin/:path*", "/cart"],
 };

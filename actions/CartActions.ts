@@ -160,12 +160,37 @@ async function updateCarts(ids: number[], formData: FormData) {
 	}
 }
 
+async function getOrCreateUserCart(userId: string) {
+	let cart = await prisma.cart.findUnique({
+		where: { userId },
+		include: {
+			cartItems: {
+				include: { product: true },
+			},
+		},
+	});
+
+	if (!cart) {
+		cart = await prisma.cart.create({
+			data: { userId, totalPrice: 0 },
+			include: {
+				cartItems: {
+					include: { product: true },
+				},
+			},
+		});
+	}
+
+	return JSON.parse(JSON.stringify(cart));
+}
+
 export {
 	createCart,
 	deleteCart,
 	deleteCarts,
 	getCartCount,
 	getCartsPage,
+	getOrCreateUserCart,
 	updateCart,
 	updateCarts,
 };

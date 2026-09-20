@@ -210,6 +210,24 @@ async function recalculateCartTotal(cartId: number) {
 	updateTag("carts");
 }
 
+async function updateCartItemQuantity(id: number, quantity: number) {
+	try {
+		const item = await prisma.cartItem.findUnique({
+			where: { id },
+			select: { cartId: true },
+		});
+		const result = await prisma.cartItem.update({
+			where: { id },
+			data: { quantity },
+		});
+		if (item) await recalculateCartTotal(item.cartId);
+		return JSON.parse(JSON.stringify(result));
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+}
+
 export {
 	createCartItem,
 	deleteCartItem,
@@ -217,5 +235,6 @@ export {
 	getCartItemCount,
 	getCartItemsPage,
 	updateCartItem,
+	updateCartItemQuantity,
 	updateCartItems,
 };
