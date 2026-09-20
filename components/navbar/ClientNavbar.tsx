@@ -1,11 +1,10 @@
-import { IconSearch, IconShoppingBag } from "@tabler/icons-react";
+import { IconShoppingBag } from "@tabler/icons-react";
 import clsx from "clsx";
 import Link from "next/link";
-import { Input } from "@/components/form-items/input";
-import NavUser from "@/components/navbar/NavUser";
-import { Button } from "@/components/ui/button";
+import NavUser from "./NavUser";
+import SearchInput from "./SearchInput";
 
-export default async function ClientNavbar() {
+export default function ClientNavbar() {
 	return (
 		<nav className="fixed top-0 z-50 w-full border-b bg-background/60 dark:bg-background/90 backdrop-blur supports-backdrop-filter:bg-background/70">
 			<div className="sm:p-4 flex max-sm:flex-col gap-x-4 items-center justify-center sm:justify-between">
@@ -22,12 +21,7 @@ export default async function ClientNavbar() {
 				<CategoryLinks md />
 
 				<div className="max-sm:border-t max-sm:px-2 max-sm:h-11 w-full md:w-1/2 flex gap-2 items-center justify-between">
-					<div className="w-full sm:max-w-sm flex items-center justify-start">
-						<Input placeholder="Search" className="w-full h-8 rounded-r-none" />
-						<Button className="h-8 shadow-none rounded-lg rounded-l-none border-0">
-							<IconSearch className="size-5" />
-						</Button>
-					</div>
+					<SearchInput />
 					<NavUser />
 				</div>
 			</div>
