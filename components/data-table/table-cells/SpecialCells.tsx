@@ -6,11 +6,23 @@ import {
 	ProductColor,
 	type ProductSize,
 } from "@/lib/entity/types";
+import { cn } from "cn";
 
-function ColorCell({ value, small }: { value: ProductColor; small?: boolean }) {
+function ColorCell({
+	value,
+	small,
+	className,
+	onClick,
+}: {
+	value: ProductColor;
+	small?: boolean;
+	className?: string;
+	onClick?: () => void;
+}) {
 	return (
 		<Badge
-			className={clsx(
+			onClick={onClick}
+			className={cn(
 				small && "h-4 px-1.25",
 				value === ProductColor.Red &&
 					"bg-red-200/50 dark:bg-red-900/30 text-red-600 dark:text-red-400",
@@ -32,6 +44,7 @@ function ColorCell({ value, small }: { value: ProductColor; small?: boolean }) {
 					"bg-zinc-300/50 dark:bg-zinc-700/40 text-zinc-500 dark:text-zinc-400",
 				value === ProductColor.Black &&
 					"bg-zinc-300/90 dark:bg-zinc-800/90 text-zinc-800 dark:text-zinc-400/75",
+				className,
 			)}
 		>
 			{value}
@@ -60,13 +73,25 @@ function ColorsCell({
 	);
 }
 
-function SizeCell({ value, small }: { value: ProductSize; small?: boolean }) {
+function SizeCell({
+	value,
+	small,
+	className,
+	onClick,
+}: {
+	value: ProductSize;
+	small?: boolean;
+	className?: string;
+	onClick?: () => void;
+}) {
 	return (
 		<Badge
 			variant="outline"
-			className={clsx(
-				"rounded-md bg-mist-300/40 dark:bg-mist-700/60",
+			onClick={onClick}
+			className={cn(
+				"px-1.5 py-0.5 bg-muted rounded text-xs text-background-muted",
 				small && "h-4 px-1.25",
+				className,
 			)}
 		>
 			{value}

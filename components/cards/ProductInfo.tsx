@@ -14,11 +14,11 @@ import { toast } from "sonner";
 import { createCartItem } from "@/actions/CartItemActions";
 import { updateProductRating } from "@/actions/ProductActions";
 import { PagesTitle } from "@/app/(client)/layout";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Rating } from "@/components/ui/rating";
 import { Separator } from "@/components/ui/separator";
 import type { Product, ProductColor, ProductSize } from "@/lib/entity/types";
+import { ColorCell, SizeCell } from "../data-table/table-cells/SpecialCells";
 
 export default function ProductInfo({
 	product,
@@ -115,16 +115,16 @@ export default function ProductInfo({
 
 	return (
 		<div className="flex flex-col">
-			<PagesTitle>{product.name}</PagesTitle>
+			<PagesTitle className="sm:mb-4">{product.name}</PagesTitle>
 
 			{product.brand && (
-				<p className="text-lg font-bold uppercase tracking-[0.18em] text-muted-foreground">
-					{product.brand}
+				<p className="text-2xl font-bold text-muted-foreground">
+					<span className="uppercase tracking-[0.18em]"> {product.brand}</span>
 				</p>
 			)}
 			<div className="py-4 flex justify-between items-center">
 				<div className="text-2xl sm:text-4xl font-bold tracking-tight text-primary">
-					${price.toFixed(2)}
+					{price.toFixed(2)} DT
 				</div>
 
 				<div className="flex items-center gap-3">
@@ -221,40 +221,16 @@ function ProductColors({
 			</div>
 			<div className="flex flex-wrap gap-2">
 				{colors.map((color, index) => (
-					<Badge
+					<ColorCell
 						key={index}
+						value={color}
 						className={clsx(
-							"text-sm h-6 px-3 cursor-pointer transition-all",
-							"hover:opacity-70 dark:hover:opacity-80",
-							"border-2",
-							selectedColor === color
-								? "border-primary bg-primary/10"
-								: "border-transparent hover:border-primary/50",
-							color === "Red" &&
-								"bg-red-200/50 dark:bg-red-900/30 text-red-600 dark:text-red-400",
-							color === "Green" &&
-								"bg-green-200/50 dark:bg-green-900/30 text-green-600 dark:text-green-400",
-							color === "Blue" &&
-								"bg-blue-200/50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400",
-							color === "Yellow" &&
-								"bg-yellow-200/50 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400",
-							color === "Purple" &&
-								"bg-purple-200/50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400",
-							color === "Orange" &&
-								"bg-orange-200/50 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400",
-							color === "Pink" &&
-								"bg-pink-200/50 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400",
-							color === "White" &&
-								"bg-zinc-300/30 dark:bg-zinc-700/80 text-zinc-500/75 dark:text-zinc-200",
-							color === "Gray" &&
-								"bg-zinc-300/50 dark:bg-zinc-700/40 text-zinc-500 dark:text-zinc-400",
-							color === "Black" &&
-								"bg-zinc-300/90 dark:bg-zinc-800/90 text-zinc-800 dark:text-zinc-400/75",
+							"text-sm h-6 px-2 cursor-pointer transition-all border-2 border-transparent",
+							"hover:border-primary/50 hover:opacity-70 dark:hover:opacity-80",
+							selectedColor === color && "border-primary text-primary",
 						)}
 						onClick={() => onSelectColor(color)}
-					>
-						{color}
-					</Badge>
+					/>
 				))}
 			</div>
 		</div>
@@ -286,18 +262,16 @@ function ProductSizes({
 			</div>
 			<div className="flex flex-wrap gap-2">
 				{sizes.map((size) => (
-					<Badge
+					<SizeCell
 						key={size}
-						className={clsx(
-							"text-sm h-7.5 px-2 cursor-pointer transition-all rounded-lg border-2",
-							selectedSize === size
-								? "border-primary bg-primary/10 text-primary"
-								: "bg-muted border-transparent hover:border-primary",
-						)}
+						value={size}
 						onClick={() => onSelectSize(size)}
-					>
-						{size}
-					</Badge>
+						className={clsx(
+							"h-7 px-2 text-sm cursor-pointer rounded-md border-2 border-transparent",
+							"hover:border-primary/50 hover:opacity-70 dark:hover:opacity-80",
+							selectedSize === size && "border-primary text-primary",
+						)}
+					/>
 				))}
 			</div>
 		</div>

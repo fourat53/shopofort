@@ -1,7 +1,6 @@
 "use client";
 
 import { IconSearch, IconShoppingBag, IconX } from "@tabler/icons-react";
-import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -9,37 +8,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Input } from "@/components/form-items/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import type { Product, ProductColor } from "@/lib/entity/types";
-
-const formatColorBadge = (color: ProductColor) => {
-	const colorStyles: Record<ProductColor, string> = {
-		Red: "bg-red-200/50 dark:bg-red-900/30 text-red-600 dark:text-red-400",
-		Green:
-			"bg-green-200/50 dark:bg-green-900/30 text-green-600 dark:text-green-400",
-		Blue: "bg-blue-200/50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400",
-		Yellow:
-			"bg-yellow-200/50 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400",
-		Purple:
-			"bg-purple-200/50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400",
-		Orange:
-			"bg-orange-200/50 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400",
-		Pink: "bg-pink-200/50 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400",
-		White:
-			"bg-zinc-300/30 dark:bg-zinc-700/80 text-zinc-500/75 dark:text-zinc-200",
-		Gray: "bg-zinc-300/50 dark:bg-zinc-700/40 text-zinc-500 dark:text-zinc-400",
-		Black:
-			"bg-zinc-300/90 dark:bg-zinc-800/90 text-zinc-800 dark:text-zinc-400/75",
-	};
-
-	return (
-		<Badge
-			key={color}
-			className={clsx("text-xs h-5 px-1.5 cursor-default", colorStyles[color])}
-		>
-			{color}
-		</Badge>
-	);
-};
+import type { Product } from "@/lib/entity/types";
+import { ColorCell, SizeCell } from "../data-table/table-cells/SpecialCells";
 
 export default function SearchInput() {
 	const [query, setQuery] = useState("");
@@ -205,51 +175,46 @@ export default function SearchInput() {
 										</div>
 										<div className="flex-1 min-w-0 flex flex-col justify-between">
 											<div>
+												<h4 className="font-medium text-sm truncate">
+													{product.name}
+												</h4>
 												{product.brand && (
 													<p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
 														{product.brand}
 													</p>
 												)}
-												<h4 className="font-medium text-sm truncate">
-													{product.name}
-												</h4>
-												<div className="flex flex-wrap gap-1 mt-1">
-													{product.colors?.slice(0, 3).map(formatColorBadge)}
+												<div className="flex flex-wrap gap-1.5 mt-1">
+													{product.colors?.slice(0, 3).map((item, index) => (
+														<ColorCell value={item} key={index} />
+													))}
 													{product.colors && product.colors.length > 3 && (
 														<Badge
-															variant="outline"
+															variant="secondary"
 															className="text-xs h-5 px-1.5"
 														>
 															+{product.colors.length - 3}
 														</Badge>
 													)}
 												</div>
-												{product.sizes && product.sizes.length > 0 && (
-													<div className="flex flex-wrap gap-1 mt-1">
-														{product.sizes.slice(0, 4).map((size) => (
-															<Badge
-																key={size}
-																variant="outline"
-																className="text-xs h-5 px-1.5"
-															>
-																{size}
-															</Badge>
-														))}
-														{product.sizes.length > 4 && (
-															<Badge
-																variant="outline"
-																className="text-xs h-5 px-1.5"
-															>
-																+{product.sizes.length - 4}
-															</Badge>
-														)}
-													</div>
-												)}
 											</div>
-											<div className="flex items-center gap-2 mt-2">
-												<span className="font-semibold text-sm">
-													${Number(product.price).toFixed(2)}
-												</span>
+										</div>
+										<div>
+											{product.sizes && product.sizes.length > 0 && (
+												<div className="flex justify-end flex-wrap gap-1.5 mt-1">
+													{product.sizes.slice(0, 3).map((size, index) => (
+														<SizeCell key={index} value={size} />
+													))}
+													{product.sizes.length > 3 && (
+														<Badge
+															variant="secondary"
+															className="text-xs h-5 px-1.5"
+														>
+															+{product.sizes.length - 3}
+														</Badge>
+													)}
+												</div>
+											)}
+											<div className="flex items-center justify-end gap-2 mt-2">
 												{product.rating > 0 && (
 													<span className="flex items-center gap-0.5 text-xs text-amber-500">
 														<svg
@@ -262,14 +227,9 @@ export default function SearchInput() {
 														{Number(product.rating).toFixed(1)}
 													</span>
 												)}
-												{product.inventory < 10 && product.inventory > 0 && (
-													<Badge
-														variant="destructive"
-														className="text-xs h-5 px-1.5"
-													>
-														Low Stock
-													</Badge>
-												)}
+												<span className="w-full font-semibold text-xl text-right text-mist-700 dark:text-mist-400">
+													{Number(product.price).toFixed(2)} DT
+												</span>
 											</div>
 										</div>
 									</div>

@@ -79,15 +79,7 @@ function isTabValue(value: ValueType, name: string, field?: string): boolean {
 	);
 }
 
-function formatCurrency(amount: number): string {
-	return new Intl.NumberFormat("en-US", {
-		style: "currency",
-		currency: "USD",
-	}).format(amount);
-}
-
 export {
-	formatCurrency,
 	getEntityTooltip,
 	getFieldEntity,
 	getFieldName,

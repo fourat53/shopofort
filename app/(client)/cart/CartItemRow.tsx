@@ -7,13 +7,19 @@ import {
 	IconTrash,
 } from "@tabler/icons-react";
 import Image from "next/image";
+import Link from "next/link";
 import {
 	deleteCartItem,
 	updateCartItemQuantity,
 } from "@/actions/CartItemActions";
+import {
+	ColorCell,
+	SizeCell,
+} from "@/components/data-table/table-cells/SpecialCells";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { formatCurrency } from "@/lib/functions/client";
+import { TableCell, TableRow } from "@/components/ui/table";
+import type { ProductColor, ProductSize } from "@/lib/entity/types";
 
 interface CartItemRowProps {
 	item: {
@@ -39,16 +45,16 @@ export function CartItemRow({ item }: CartItemRowProps) {
 	const maxQuantity = product.inventory;
 
 	return (
-		<tr className="border-b border-border/50">
-			<td className="p-4">
+		<TableRow>
+			<TableCell>
 				<div className="flex gap-4 items-center">
-					<div className="relative w-20 h-20 shrink-0 rounded-lg overflow-hidden bg-muted">
+					<div className="relative size-18 shrink-0 rounded-lg overflow-hidden bg-muted">
 						{product.images?.[0] ? (
 							<Image
 								src={product.images[0]}
 								alt={product.name}
 								fill
-								sizes="80px"
+								sizes="72px"
 								className="object-cover"
 							/>
 						) : (
@@ -59,39 +65,25 @@ export function CartItemRow({ item }: CartItemRowProps) {
 						)}
 					</div>
 					<div>
-						<a
+						<Link
 							href={`/products/${product.id}`}
 							className="font-medium text-lg hover:text-primary transition-colors"
 						>
 							{product.name}
-						</a>
-						<p className="text-sm text-muted-foreground mt-0.5">
-							{product.brand}
-						</p>
+						</Link>
+						<p className="text-sm text-muted-foreground">{product.brand}</p>
 						<div className="flex gap-2 mt-1 text-sm text-muted-foreground">
-							{item.color && (
-								<span className="flex items-center gap-1">
-									<span
-										className="w-3 h-3 rounded-full border"
-										style={{ backgroundColor: item.color.toLowerCase() }}
-									/>
-									{item.color}
-								</span>
-							)}
-							{item.size && (
-								<span className="px-2 py-0.5 bg-muted rounded text-xs font-medium">
-									{item.size}
-								</span>
-							)}
+							{item.color && <ColorCell value={item.color as ProductColor} />}
+							{item.size && <SizeCell value={item.size as ProductSize} />}
 						</div>
 					</div>
 				</div>
-			</td>
-			<td className="p-4 text-right">
-				<p className="font-medium">{formatCurrency(price)}</p>
-			</td>
-			<td className="p-4 text-right">
-				<div className="flex items-center justify-end gap-2">
+			</TableCell>
+			<TableCell className="font-medium text-right pr-4">
+				{price.toFixed(2)}
+			</TableCell>
+			<TableCell>
+				<div className="flex items-center justify-center gap-2">
 					<Button
 						variant="outline"
 						size="icon"
@@ -108,7 +100,7 @@ export function CartItemRow({ item }: CartItemRowProps) {
 						value={item.quantity}
 						min={1}
 						max={maxQuantity}
-						className="w-16 text-center"
+						className="h-8 w-16 text-center [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
 						onChange={(e) =>
 							updateCartItemQuantity(
 								item.id,
@@ -135,24 +127,22 @@ export function CartItemRow({ item }: CartItemRowProps) {
 					</Button>
 				</div>
 				{maxQuantity < 10 && (
-					<p className="text-xs text-amber-600 dark:text-amber-400 mt-1">
+					<p className="pt-1 text-center text-xs text-amber-600 dark:text-amber-400 mt-1">
 						Only {maxQuantity} left in stock
 					</p>
 				)}
-			</td>
-			<td className="p-4 text-right font-medium">
-				{formatCurrency(totalPrice)}
-			</td>
-			<td className="p-4 text-right">
+			</TableCell>
+			<TableCell className="font-medium text-right pr-4">
+				{totalPrice.toFixed(2)}
+			</TableCell>
+			<TableCell className="text-center">
 				<Button
 					variant="ghost"
 					size="icon"
-					className="text-destructive hover:bg-destructive/10"
+					icon={<IconTrash className="size-4 text-red-500" />}
 					onClick={() => deleteCartItem(item.id)}
-				>
-					<IconTrash className="size-4" />
-				</Button>
-			</td>
-		</tr>
+				/>
+			</TableCell>
+		</TableRow>
 	);
 }

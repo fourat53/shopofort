@@ -1,4 +1,5 @@
 import { IconArrowRight } from "@tabler/icons-react";
+import Link from "next/link";
 import { getCategoriesPage } from "@/actions/CategoryActions";
 import CategoryCard from "@/components/cards/CategoryCard";
 import { Button } from "@/components/ui/button";
@@ -17,12 +18,14 @@ export default async function PopularCategories() {
 						Find exactly what you're looking for
 					</p>
 				</div>
-				<Button
-					variant="ghost"
-					className="hover:bg-primary/10 hover:text-primary self-start md:self-auto"
-				>
-					View All <IconArrowRight className="ml-2 size-4" />
-				</Button>
+				<Link href={"/categories"}>
+					<Button
+						variant="ghost"
+						className="hover:bg-primary/10 hover:text-primary self-start md:self-auto"
+					>
+						View All <IconArrowRight className="ml-2 size-4" />
+					</Button>
+				</Link>
 			</div>
 			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
 				{categories.map((category: Category, index: number) => (

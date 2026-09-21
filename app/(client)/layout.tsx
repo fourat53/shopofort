@@ -1,5 +1,6 @@
 import ClientFooter from "@/components/home/ClientFooter";
 import ClientNavbar from "@/components/navbar/ClientNavbar";
+import { cn } from "@/lib/utils";
 
 export default function ClientLayout({
 	children,
@@ -26,7 +27,7 @@ function PagesLayout({
 }>) {
 	return (
 		<div
-			className={`mt-29 sm:mt-24 md:mt-15 p-6 sm:py-8 sm:px-10 ${className}`}
+			className={cn("mt-29 sm:mt-24 md:mt-15 p-6 sm:py-8 sm:px-10", className)}
 		>
 			{children}
 		</div>
@@ -42,7 +43,10 @@ function PagesTitle({
 }>) {
 	return (
 		<h1
-			className={`mb-4 sm:mb-8 text-2xl sm:text-4xl font-bold capitalize ${className}`}
+			className={cn(
+				"mb-4 sm:mb-8 text-2xl sm:text-4xl font-bold capitalize",
+				className,
+			)}
 		>
 			{children}
 		</h1>

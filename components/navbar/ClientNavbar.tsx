@@ -42,19 +42,19 @@ function CategoryLinks({ md = false }: { md?: boolean }) {
 			)}
 		>
 			<Link
-				href="/Men"
+				href="/categories/Men"
 				className="transition-colors hover:text-primary text-foreground/80"
 			>
 				Men
 			</Link>
 			<Link
-				href="/Women"
+				href="/categories/Women"
 				className="transition-colors hover:text-primary text-foreground/80"
 			>
 				Women
 			</Link>
 			<Link
-				href="/Kids"
+				href="/categories/Kids"
 				className="transition-colors hover:text-primary text-foreground/80"
 			>
 				Kids
