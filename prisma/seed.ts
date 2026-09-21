@@ -66,8 +66,6 @@ async function main(minId: number, maxId: number) {
 			description: `High quality ${productNames[i % productNames.length].toLowerCase()} for everyday wear.`,
 			colors: randomList<ProductColor>(productColors),
 			sizes: randomList<ProductSize>(productSizes),
-			rating: randomFloat(0, 5),
-			votes: randomInt(500, 1000),
 			categoryId: dbCategories[i % dbCategories.length].id,
 			images: randomList<string>(productImages),
 		});

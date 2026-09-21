@@ -13,11 +13,11 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { createCartItem } from "@/actions/CartItemActions";
 import { updateProductRating } from "@/actions/ProductActions";
+import { PagesTitle } from "@/app/(client)/layout";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import type { Product, ProductColor, ProductSize } from "@/lib/entity/types";
-import { PagesTitle } from "@/app/(client)/layout";
 
 export default function ProductInfo({ product }: { product: Product }) {
 	const price = Number(product.price);
@@ -103,22 +103,18 @@ export default function ProductInfo({ product }: { product: Product }) {
 
 	return (
 		<div className="flex flex-col">
-			{/* Name */}
 			<PagesTitle>{product.name}</PagesTitle>
 
-			{/* Brand */}
 			{product.brand && (
 				<p className="text-lg font-bold uppercase tracking-[0.18em] text-muted-foreground">
 					{product.brand}
 				</p>
 			)}
 			<div className="py-4 flex justify-between items-center">
-				{/* Price */}
 				<div className="text-2xl sm:text-4xl font-bold tracking-tight text-primary">
 					${price.toFixed(2)}
 				</div>
 
-				{/* Rating */}
 				<div className="flex items-center gap-3">
 					<div className="flex items-center gap-1">
 						<IconStarFilled className="size-5 text-amber-500" />
@@ -135,7 +131,6 @@ export default function ProductInfo({ product }: { product: Product }) {
 
 			<Separator />
 
-			{/* Colors */}
 			{product.colors?.length > 0 && (
 				<ProductColors
 					colors={product.colors}
@@ -146,7 +141,6 @@ export default function ProductInfo({ product }: { product: Product }) {
 
 			<Separator />
 
-			{/* Sizes */}
 			{product.sizes?.length > 0 && (
 				<ProductSizes
 					sizes={product.sizes}
@@ -157,7 +151,6 @@ export default function ProductInfo({ product }: { product: Product }) {
 
 			<Separator />
 
-			{/* Rating Input */}
 			<ProductRating
 				currentRating={rating}
 				votes={product.votes}
@@ -168,7 +161,6 @@ export default function ProductInfo({ product }: { product: Product }) {
 
 			<Separator />
 
-			{/* Description */}
 			<div className="py-4">
 				<h2 className="text-sm font-semibold uppercase tracking-wider">
 					Description
@@ -181,7 +173,6 @@ export default function ProductInfo({ product }: { product: Product }) {
 
 			<Separator />
 
-			{/* Actions */}
 			<ProductActions
 				product={product}
 				quantity={quantity}
@@ -385,7 +376,6 @@ function ProductActions({
 
 	return (
 		<div className="py-4 space-y-4">
-			{/* Stock */}
 			<div className="rounded-2xl border bg-muted/30 p-4">
 				<div className="flex items-center gap-3">
 					<div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
@@ -407,6 +397,7 @@ function ProductActions({
 					</div>
 				</div>
 			</div>
+
 			<div className="flex gap-3">
 				<div className="flex h-11 items-center rounded-xl border bg-card">
 					<Button

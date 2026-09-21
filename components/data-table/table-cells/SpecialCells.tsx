@@ -7,17 +7,11 @@ import {
 	type ProductSize,
 } from "@/lib/entity/types";
 
-function ColorCell({
-	value,
-	className,
-}: {
-	value: ProductColor;
-	className?: string;
-}) {
+function ColorCell({ value, small }: { value: ProductColor; small?: boolean }) {
 	return (
 		<Badge
 			className={clsx(
-				className,
+				small && "h-4 px-1.25",
 				value === ProductColor.Red &&
 					"bg-red-200/50 dark:bg-red-900/30 text-red-600 dark:text-red-400",
 				value === ProductColor.Green &&
@@ -45,39 +39,64 @@ function ColorCell({
 	);
 }
 
-function ColorsCell({ value }: { value: ProductColor[] }) {
+function ColorsCell({
+	value,
+	small,
+}: {
+	value: ProductColor[];
+	small?: boolean;
+}) {
 	return (
-		<div className="w-full grid grid-cols-4 justify-between items-center gap-1">
+		<div
+			className={clsx(
+				"flex overflow-y-auto",
+				small ? "pt-0.5 pb-1.25 gap-1" : "gap-2",
+			)}
+		>
 			{value.map((item, index) => (
-				<ColorCell key={index} value={item} className="w-full" />
+				<ColorCell key={index} value={item} small={small} />
 			))}
 		</div>
 	);
 }
 
-function SizeCell({ value }: { value: ProductSize }) {
+function SizeCell({ value, small }: { value: ProductSize; small?: boolean }) {
 	return (
 		<Badge
 			variant="outline"
-			className="rounded-lg bg-mist-300/40 dark:bg-mist-700/60"
+			className={clsx(
+				"rounded-md bg-mist-300/40 dark:bg-mist-700/60",
+				small && "h-4 px-1.25",
+			)}
 		>
 			{value}
 		</Badge>
 	);
 }
 
-function SizesCell({ value }: { value: ProductSize[] }) {
+function SizesCell({
+	value,
+	small,
+}: {
+	value: ProductSize[];
+	small?: boolean;
+}) {
 	return (
-		<div className="flex items-center gap-1.5">
+		<div
+			className={clsx(
+				"flex overflow-y-auto",
+				small ? "pt-0.5 pb-1.25 gap-1" : "gap-2",
+			)}
+		>
 			{value.map((item, index) => (
-				<SizeCell key={index} value={item} />
+				<SizeCell key={index} value={item} small={small} />
 			))}
 		</div>
 	);
 }
 
 function ImageCell({ value, small }: { value: string; small?: boolean }) {
-	const imageSize = small ? 32 : 58;
+	const imageSize = small ? 33 : 58;
 	return (
 		<Image
 			src={String(value)}
@@ -97,7 +116,12 @@ function ImageCell({ value, small }: { value: string; small?: boolean }) {
 
 function ImagesCell({ value, small }: { value: string[]; small?: boolean }) {
 	return (
-		<div className="h-14.5 flex gap-2 overflow-y-auto">
+		<div
+			className={clsx(
+				"flex overflow-y-auto",
+				small ? "h-8.25 gap-1" : "h-14.5 gap-2",
+			)}
+		>
 			{value.map((item, index) => (
 				<ImageCell key={index} value={item} small={small} />
 			))}

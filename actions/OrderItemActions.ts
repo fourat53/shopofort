@@ -76,7 +76,25 @@ async function getOrderItemsPage(
 				skip: (page - 1) * pageSize,
 				take: pageSize,
 				orderBy,
-				include: { order: true, product: true },
+				include: {
+					order: true,
+					product: {
+						select: {
+							id: true,
+							name: true,
+							brand: true,
+							price: true,
+							inventory: true,
+							description: true,
+							colors: true,
+							sizes: true,
+							rating: true,
+							votes: true,
+							categoryId: true,
+							images: true,
+						},
+					},
+				},
 			});
 			return JSON.parse(JSON.stringify(orderItems));
 		},

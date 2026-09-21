@@ -32,7 +32,6 @@ export default function HeroSection() {
 					</Button>
 				</div>
 			</div>
-			{/* Decorative elements */}
 			<div className="absolute inset-0 bg-[url('https://transparenttextures.com/patterns/cubes.png')] opacity-[0.03] dark:opacity-[0.05]" />
 			<div className="absolute -top-24 -left-24 size-96 rounded-full bg-primary/15 blur-3xl opacity-50 mix-blend-multiply dark:mix-blend-screen pointer-events-none" />
 			<div className="absolute top-1/2 -right-24 size-120 -translate-y-1/2 rounded-full bg-chart-2/20 	blur-3xl opacity-50 mix-blend-multiply dark:mix-blend-screen pointer-events-none" />

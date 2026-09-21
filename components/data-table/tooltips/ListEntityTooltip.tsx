@@ -1,18 +1,18 @@
-import StaticTooltip from "@/components/data-table/tooltips/StaticTooltip";
+import ListStaticTooltip from "@/components/data-table/tooltips/ListStaticTooltip";
 import UserTooltip from "@/components/data-table/tooltips/UserTooltip";
 import {
-	type EntityRow,
-	type EntityType,
+	type ListEntityRow,
+	type ListEntityType,
 	OptionField,
 } from "@/lib/entity/types";
 
-interface EntityTooltipProps<T extends EntityType> {
+interface EntityTooltipProps<T extends ListEntityType> {
 	id: string | number;
 	headerName: OptionField;
-	row?: EntityRow<T>;
+	row?: ListEntityRow<T>;
 }
 
-export default function EntityTooltip<T extends EntityType>({
+export default function EntityTooltip<T extends ListEntityType>({
 	row,
 	id,
 	headerName,
@@ -20,7 +20,7 @@ export default function EntityTooltip<T extends EntityType>({
 	if (headerName === OptionField.userId)
 		return <UserTooltip id={id as string} />;
 	return (
-		<StaticTooltip<T>
+		<ListStaticTooltip<T>
 			id={id as number}
 			headerName={headerName as OptionField}
 			row={row}

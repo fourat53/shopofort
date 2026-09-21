@@ -9,12 +9,14 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import type { HeaderItem } from "@/lib/entity/headers";
-import type {
-	EntityType,
-	ListEntityRow,
-	ListEntityType,
+import {
+	type EntityType,
+	type ListEntityRow,
+	type ListEntityType,
+	OptionField,
 } from "@/lib/entity/types";
 import { getFieldName, isCellValue } from "@/lib/functions/client";
+import ListEntityTooltip from "./tooltips/ListEntityTooltip";
 
 interface ListDataTableProps<T extends ListEntityType> {
 	entity: T;
@@ -58,11 +60,21 @@ export default function ListDataTable<T extends ListEntityType>({
 													minWidth: header[cIndex]?.width,
 												}}
 											>
-												<ContentCell
-													value={value}
-													entity={entity as unknown as EntityType}
-													headerName={header[cIndex]?.name}
-												/>
+												{Object.values(OptionField).includes(
+													header[cIndex]?.name as OptionField,
+												) ? (
+													<ListEntityTooltip<T>
+														row={row}
+														id={value as string | number}
+														headerName={header[cIndex]?.name as OptionField}
+													/>
+												) : (
+													<ContentCell
+														value={value}
+														entity={entity as unknown as EntityType}
+														headerName={header[cIndex]?.name}
+													/>
+												)}
 											</TableCell>
 										)
 									);

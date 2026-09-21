@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/carousel";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getHeader } from "@/lib/entity/headers";
+import { getListHeader } from "@/lib/entity/headers";
 import {
 	type EntityRow,
 	EntityType,
@@ -84,7 +84,7 @@ export default function ListDialog<T extends EntityType>({
 					{Object.entries(row).map(([name, value]) => {
 						const { field } = uploadConfig[entity] ?? {};
 						const tabEntity = getFieldEntity(name);
-						const header = getHeader(tabEntity as unknown as EntityType);
+						const header = getListHeader(tabEntity);
 						return (
 							isTabValue(value, name, field) && (
 								<TabsContent

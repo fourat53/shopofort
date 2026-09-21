@@ -47,10 +47,7 @@ export default function UserTooltip({ id }: { id: string }) {
 			>
 				{id}
 			</TooltipTrigger>
-			<TooltipContent
-				side="left"
-				className="w-70 flex flex-col gap-px shadow-lg bg-background border text-foreground rounded-lg"
-			>
+			<TooltipContent side="left" className="w-74 flex flex-col gap-px">
 				<p className="w-full pb-1 text-primary text-center font-semibold">
 					User Details
 				</p>

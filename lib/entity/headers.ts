@@ -1,11 +1,11 @@
-import { EntityType } from "@/lib/entity/types";
+import { EntityType, ListEntityType } from "@/lib/entity/types";
 
 type HeaderItem = { name: string; width: `${number}px` | "auto" };
 
 const CARTS_HEADER: HeaderItem[] = [
 	{ name: "id", width: "150px" },
 	{ name: "totalPrice", width: "auto" },
-	{ name: "userId", width: "300px" },
+	{ name: "userId", width: "260px" },
 ];
 
 const CART_ITEMS_HEADER: HeaderItem[] = [
@@ -28,7 +28,7 @@ const ORDERS_HEADER: HeaderItem[] = [
 	{ name: "orderDate", width: "170px" },
 	{ name: "totalPrice", width: "150px" },
 	{ name: "orderStatus", width: "auto" },
-	{ name: "userId", width: "255px" },
+	{ name: "userId", width: "260px" },
 ];
 
 const ORDER_ITEMS_HEADER: HeaderItem[] = [
@@ -69,6 +69,12 @@ const USERS_HEADER: HeaderItem[] = [
 	{ name: "updated_on", width: "170px" },
 ];
 
+const RATINGS_HEADER: HeaderItem[] = [
+	{ name: "userId", width: "260px" },
+	{ name: "productId", width: "150px" },
+	{ name: "rating", width: "auto" },
+];
+
 function getHeader(entity: EntityType): HeaderItem[] {
 	if (entity === EntityType.users) return USERS_HEADER;
 	else if (entity === EntityType.products) return PRODUCTS_HEADER;
@@ -80,25 +86,12 @@ function getHeader(entity: EntityType): HeaderItem[] {
 	return [];
 }
 
-function getSkeletonCount(entity: EntityType | ""): number {
-	switch (entity) {
-		case EntityType.users:
-			return USERS_HEADER.length + 1;
-		case EntityType.products:
-			return PRODUCTS_HEADER.length + 1;
-		case EntityType.carts:
-			return CARTS_HEADER.length;
-		case EntityType.orders:
-			return ORDERS_HEADER.length;
-		case EntityType.categories:
-			return CATEGORIES_HEADER.length;
-		case EntityType["cart-items"]:
-			return CART_ITEMS_HEADER.length;
-		case EntityType["order-items"]:
-			return ORDER_ITEMS_HEADER.length;
-		default:
-			return 0;
-	}
+function getListHeader(entity: ListEntityType): HeaderItem[] {
+	if (entity === ListEntityType.products) return PRODUCTS_HEADER;
+	else if (entity === ListEntityType["cart-items"]) return CART_ITEMS_HEADER;
+	else if (entity === ListEntityType["order-items"]) return ORDER_ITEMS_HEADER;
+	else if (entity === ListEntityType.ratings) return RATINGS_HEADER;
+	return [];
 }
 
 export {
@@ -106,10 +99,11 @@ export {
 	CARTS_HEADER,
 	CATEGORIES_HEADER,
 	getHeader,
-	getSkeletonCount,
+	getListHeader,
 	type HeaderItem,
 	ORDER_ITEMS_HEADER,
 	ORDERS_HEADER,
 	PRODUCTS_HEADER,
+	RATINGS_HEADER,
 	USERS_HEADER,
 };

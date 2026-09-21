@@ -80,7 +80,20 @@ async function getOrdersPage(
 				skip: (page - 1) * pageSize,
 				take: pageSize,
 				orderBy,
-				include: { orderItems: true },
+				include: {
+					orderItems: {
+						select: {
+							id: true,
+							quantity: true,
+							color: true,
+							size: true,
+							orderId: true,
+							productId: true,
+							order: true,
+							product: true,
+						},
+					},
+				},
 			});
 			return JSON.parse(JSON.stringify(orders));
 		},

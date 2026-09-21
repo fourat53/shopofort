@@ -9,8 +9,9 @@ import {
 } from "@/components/ui/tooltip";
 import type {
 	CellType,
-	EntityRow,
 	EntityType,
+	ListEntityRow,
+	ListEntityType,
 	OptionField,
 } from "@/lib/entity/types";
 import {
@@ -19,17 +20,17 @@ import {
 	getSingleName,
 } from "@/lib/functions/client";
 
-interface StaticTooltipProps<T extends EntityType> {
+interface ListStaticTooltipProps<T extends ListEntityType> {
 	id: number;
 	headerName: OptionField;
-	row?: EntityRow<T>;
+	row?: ListEntityRow<T>;
 }
 
-export default function StaticTooltip<T extends EntityType>({
+export default function ListStaticTooltip<T extends ListEntityType>({
 	id,
 	row,
 	headerName,
-}: StaticTooltipProps<T>) {
+}: ListStaticTooltipProps<T>) {
 	const entity = getEntityTooltip(headerName);
 	const [open, setOpen] = useState<boolean>(false);
 

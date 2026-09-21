@@ -59,7 +59,24 @@ async function getCategoriesPage(
 				skip: (page - 1) * pageSize,
 				take: pageSize,
 				orderBy,
-				include: { products: true },
+				include: {
+					products: {
+						select: {
+							id: true,
+							name: true,
+							brand: true,
+							price: true,
+							inventory: true,
+							description: true,
+							colors: true,
+							sizes: true,
+							rating: true,
+							votes: true,
+							categoryId: true,
+							images: true,
+						},
+					},
+				},
 			});
 			return JSON.parse(JSON.stringify(categories));
 		},

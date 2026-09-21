@@ -54,26 +54,26 @@ export default function ContentCell({
 				"-"
 			) : Array.isArray(value) ? (
 				headerName === "colors" ? (
-					<ColorsCell value={value as ProductColor[]} />
+					<ColorsCell value={value as ProductColor[]} small={tooltip} />
 				) : headerName === "sizes" ? (
-					<SizesCell value={value as ProductSize[]} />
+					<SizesCell value={value as ProductSize[]} small={tooltip} />
 				) : (
 					headerName === field && (
 						<ImagesCell value={value as string[]} small={tooltip} />
 					)
 				)
-			) : typeof value === "boolean" ? (
-				String(value)
-			) : value instanceof Date || isValidDate(value) ? (
-				formatDateTime(String(value))
 			) : headerName === "color" ? (
-				<ColorCell value={value as ProductColor} />
+				<ColorCell value={value as ProductColor} small={tooltip} />
 			) : headerName === "size" ? (
-				<SizeCell value={value as ProductSize} />
+				<SizeCell value={value as ProductSize} small={tooltip} />
 			) : headerName === field ? (
 				<ImageCell value={String(value)} small={tooltip} />
 			) : headerName === "orderStatus" ? (
 				<OrderStatusCell value={String(value)} />
+			) : value instanceof Date || isValidDate(value) ? (
+				formatDateTime(String(value))
+			) : typeof value === "boolean" ? (
+				String(value)
 			) : (
 				String(value)
 			)}

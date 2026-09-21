@@ -63,8 +63,6 @@ export default function ProductGallery({ product }: { product: Product }) {
 					</Badge>
 				)}
 			</div>
-
-			{/* Thumbnails */}
 			{images.length > 1 && (
 				<div className="flex justify-center gap-3">
 					{images.map((image, index) => (

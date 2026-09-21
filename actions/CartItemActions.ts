@@ -90,7 +90,25 @@ async function getCartItemsPage(
 				skip: (page - 1) * pageSize,
 				take: pageSize,
 				orderBy,
-				include: { cart: true, product: true },
+				include: {
+					cart: true,
+					product: {
+						select: {
+							id: true,
+							name: true,
+							brand: true,
+							price: true,
+							inventory: true,
+							description: true,
+							colors: true,
+							sizes: true,
+							rating: true,
+							votes: true,
+							categoryId: true,
+							images: true,
+						},
+					},
+				},
 			});
 			return JSON.parse(JSON.stringify(cartItems));
 		},
