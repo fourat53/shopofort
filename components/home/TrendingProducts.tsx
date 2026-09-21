@@ -1,4 +1,5 @@
 import { IconArrowRight, IconTrendingUp } from "@tabler/icons-react";
+import Link from "next/link";
 import { getProductsPage } from "@/actions/ProductActions";
 import ProductCard from "@/components/cards/ProductCard";
 import { Button } from "@/components/ui/button";
@@ -22,12 +23,14 @@ export default async function TrendingProducts() {
 						</p>
 					</div>
 				</div>
-				<Button
-					variant="ghost"
-					className="hover:bg-primary/10 hover:text-primary self-start md:self-auto"
-				>
-					View All <IconArrowRight className="ml-2 size-4" />
-				</Button>
+				<Link href="/products">
+					<Button
+						variant="ghost"
+						className="hover:bg-primary/10 hover:text-primary self-start md:self-auto"
+					>
+						View All <IconArrowRight className="ml-2 size-4" />
+					</Button>
+				</Link>
 			</div>
 			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
 				{products.map((product: Product) => (

@@ -422,7 +422,7 @@ function ProductActions({
 				</div>
 
 				<Button
-					className="h-11 flex-1 rounded-xl text-sm font-semibold shadow-md shadow-primary/10"
+					className="h-11 px-0 flex-1 rounded-xl text-sm font-semibold shadow-md shadow-primary/10"
 					disabled={Boolean(isOutOfStock || !hasSelections || isAddingToCart)}
 					loading={isAddingToCart}
 					onClick={onAddToCart}

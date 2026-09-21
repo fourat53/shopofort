@@ -4,6 +4,7 @@ import { IconSearch, IconShoppingBag, IconX } from "@tabler/icons-react";
 import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Input } from "@/components/form-items/input";
 import { Badge } from "@/components/ui/badge";
@@ -48,6 +49,14 @@ export default function SearchInput() {
 	const inputRef = useRef<HTMLInputElement>(null);
 	const dropdownRef = useRef<HTMLDivElement>(null);
 	const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+	const router = useRouter();
+
+	const handleSubmit = useCallback(() => {
+		if (query.trim()) {
+			router.push(`/products?name=${encodeURIComponent(query.trim())}`);
+			setIsOpen(false);
+		}
+	}, [query, router]);
 
 	const fetchResults = useCallback(async (searchQuery: string) => {
 		if (searchQuery.length < 2) {
@@ -106,6 +115,10 @@ export default function SearchInput() {
 			setIsOpen(false);
 			inputRef.current?.blur();
 		}
+		if (e.key === "Enter") {
+			e.preventDefault();
+			handleSubmit();
+		}
 	};
 
 	useEffect(() => {
@@ -144,7 +157,10 @@ export default function SearchInput() {
 						<IconX className="size-4" />
 					</Button>
 				)}
-				<Button className="h-8 shadow-none rounded-lg rounded-l-none border-0">
+				<Button
+					className="h-8 shadow-none rounded-lg rounded-l-none border-0"
+					onClick={handleSubmit}
+				>
 					<IconSearch className="size-5" />
 				</Button>
 			</div>

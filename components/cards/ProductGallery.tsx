@@ -64,26 +64,28 @@ export default function ProductGallery({ product }: { product: Product }) {
 				)}
 			</div>
 			{images.length > 1 && (
-				<div className="flex justify-center gap-3">
-					{images.map((image, index) => (
-						<button
-							key={`${image}-${index}`}
-							type="button"
-							onClick={() => api?.scrollTo(index)}
-							className={cn(
-								"relative size-20 aspect-square overflow-hidden rounded-lg border bg-card transition-all",
-								"hover:border-2 hover:border-primary/80",
-							)}
-						>
-							<Image
-								src={image}
-								alt={`${product.name} thumbnail ${index + 1}`}
-								fill
-								sizes="1000px"
-								className="object-cover"
-							/>
-						</button>
-					))}
+				<div className="max-w-[calc(100vw-88px)] overflow-x-auto">
+					<div className="flex w-max min-w-full justify-center gap-2">
+						{images.map((image, index) => (
+							<button
+								key={`${image}-${index}`}
+								type="button"
+								onClick={() => api?.scrollTo(index)}
+								className={cn(
+									"relative size-20 min-w-20 aspect-square overflow-hidden rounded-lg border bg-card transition-all",
+									"hover:border-2 hover:border-primary/80",
+								)}
+							>
+								<Image
+									src={image}
+									alt={`${product.name} thumbnail ${index + 1}`}
+									fill
+									sizes="1000px"
+									className="object-cover"
+								/>
+							</button>
+						))}
+					</div>
 				</div>
 			)}
 		</div>

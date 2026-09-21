@@ -32,7 +32,7 @@ export default async function Page({ params }: PageProps) {
 
 	return (
 		<PagesLayout className="w-full flex items-center justify-center">
-			<div className="p-5 sm:p-10 w-full bg-background border rounded-3xl grid gap-10 lg:grid-cols-2 lg:gap-16">
+			<div className="p-5 sm:p-10 w-full bg-background border rounded-3xl grid gap-10 lg:grid-cols-[6fr_7fr] lg:gap-16">
 				<ProductGallery product={product} />
 				<ProductInfo product={product} userRating={userRating} />
 			</div>
