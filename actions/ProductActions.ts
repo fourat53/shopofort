@@ -109,7 +109,14 @@ async function getProductsPage(
 						},
 					},
 					category: true,
-					ratings: true,
+					ratings: {
+						select: {
+							userId: true,
+							productId: true,
+							rating: true,
+							product: true,
+						},
+					},
 				},
 			});
 			return JSON.parse(JSON.stringify(products));
@@ -144,30 +151,71 @@ async function getProductCount(filterParams: ParameterType = {}) {
 	)();
 }
 
-async function updateProductRating(id: number, rating: number) {
+async function updateProductRating(
+	userId: string,
+	productId: number,
+	rating: number,
+) {
 	try {
+		const existingRating = await prisma.productRating.findUnique({
+			where: { userId_productId: { userId, productId } },
+		});
+
+		const isNewRating = !existingRating;
+		const oldRating = existingRating?.rating
+			? Number(existingRating.rating)
+			: 0;
+
+		await prisma.productRating.upsert({
+			where: { userId_productId: { userId, productId } },
+			update: { rating },
+			create: { userId, productId, rating },
+		});
+
 		const product = await prisma.product.findUnique({
-			where: { id },
+			where: { id: productId },
 			select: { rating: true, votes: true },
 		});
 
 		let newRating: number;
 		let newVotes: number;
 
-		if (product?.rating && product?.votes) {
-			newVotes = product.votes + 1;
-			newRating = (Number(product.rating) * product.votes + rating) / newVotes;
+		if (product) {
+			if (isNewRating) {
+				newVotes = product.votes + 1;
+				newRating =
+					(Number(product.rating) * product.votes + rating) / newVotes;
+			} else {
+				newVotes = product.votes;
+				newRating =
+					(Number(product.rating) * product.votes - oldRating + rating) /
+					product.votes;
+			}
 		} else {
 			newVotes = 1;
 			newRating = rating;
 		}
 
 		await prisma.product.update({
-			where: { id },
+			where: { id: productId },
 			data: { rating: newRating, votes: newVotes },
 		});
 	} catch (error) {
 		console.error(error);
+		throw error;
+	}
+}
+
+async function getUserProductRating(userId: string, productId: number) {
+	try {
+		const userRating = await prisma.productRating.findUnique({
+			where: { userId_productId: { userId, productId } },
+			select: { rating: true },
+		});
+		return userRating ? Number(userRating.rating) : 0;
+	} catch (error) {
+		console.error(error);
+		return 0;
 	}
 }
 
@@ -240,6 +288,7 @@ export {
 	deleteProducts,
 	getProductCount,
 	getProductsPage,
+	getUserProductRating,
 	updateProduct,
 	updateProductRating,
 	updateProducts,

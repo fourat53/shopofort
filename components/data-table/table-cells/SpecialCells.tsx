@@ -50,7 +50,7 @@ function ColorsCell({
 		<div
 			className={clsx(
 				"flex overflow-y-auto",
-				small ? "pt-0.5 pb-1.25 gap-1" : "gap-2",
+				small ? "pt-0.5 pb-1.25 gap-1" : "py-4.5 gap-2",
 			)}
 		>
 			{value.map((item, index) => (

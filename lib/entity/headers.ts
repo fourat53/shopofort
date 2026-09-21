@@ -94,12 +94,34 @@ function getListHeader(entity: ListEntityType): HeaderItem[] {
 	return [];
 }
 
+function getSkeletonCount(entity: EntityType | ""): number {
+	switch (entity) {
+		case EntityType.users:
+			return USERS_HEADER.length + 1;
+		case EntityType.products:
+			return PRODUCTS_HEADER.length + 1;
+		case EntityType.carts:
+			return CARTS_HEADER.length;
+		case EntityType.orders:
+			return ORDERS_HEADER.length;
+		case EntityType.categories:
+			return CATEGORIES_HEADER.length;
+		case EntityType["cart-items"]:
+			return CART_ITEMS_HEADER.length;
+		case EntityType["order-items"]:
+			return ORDER_ITEMS_HEADER.length;
+		default:
+			return 0;
+	}
+}
+
 export {
 	CART_ITEMS_HEADER,
 	CARTS_HEADER,
 	CATEGORIES_HEADER,
 	getHeader,
 	getListHeader,
+	getSkeletonCount,
 	type HeaderItem,
 	ORDER_ITEMS_HEADER,
 	ORDERS_HEADER,

@@ -67,15 +67,31 @@ function Rating({
 	const displayRating =
 		editable && hoveredRating !== null ? hoveredRating : rating;
 
-	const handleStarClick = (starRating: number) => {
-		if (editable && onRatingChange) {
-			onRatingChange(starRating);
+	const getStarRating = (
+		event: React.MouseEvent<HTMLButtonElement>,
+		starRating: number,
+	) => {
+		const { left, width } = event.currentTarget.getBoundingClientRect();
+		const isLeftHalf = event.clientX - left < width / 2;
+
+		return isLeftHalf ? starRating - 0.5 : starRating;
+	};
+
+	const handleStarMove = (
+		event: React.MouseEvent<HTMLButtonElement>,
+		starRating: number,
+	) => {
+		if (editable) {
+			setHoveredRating(getStarRating(event, starRating));
 		}
 	};
 
-	const handleStarMouseEnter = (starRating: number) => {
-		if (editable) {
-			setHoveredRating(starRating);
+	const handleStarClick = (
+		event: React.MouseEvent<HTMLButtonElement>,
+		starRating: number,
+	) => {
+		if (editable && onRatingChange) {
+			onRatingChange(getStarRating(event, starRating));
 		}
 	};
 
@@ -103,9 +119,11 @@ function Rating({
 						"relative border-0 bg-transparent p-0",
 						editable && "cursor-pointer",
 					)}
-					aria-label={`Rate ${i} out of ${maxRating}`}
-					onClick={editable ? () => handleStarClick(i) : undefined}
-					onMouseEnter={editable ? () => handleStarMouseEnter(i) : undefined}
+					aria-label={`Rate ${i - 0.5} to ${i} out of ${maxRating}`}
+					onClick={editable ? (event) => handleStarClick(event, i) : undefined}
+					onMouseMove={
+						editable ? (event) => handleStarMove(event, i) : undefined
+					}
 					onMouseLeave={editable ? handleStarMouseLeave : undefined}
 				>
 					<IconStar

@@ -16,17 +16,24 @@ import { updateProductRating } from "@/actions/ProductActions";
 import { PagesTitle } from "@/app/(client)/layout";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Rating } from "@/components/ui/rating";
 import { Separator } from "@/components/ui/separator";
 import type { Product, ProductColor, ProductSize } from "@/lib/entity/types";
 
-export default function ProductInfo({ product }: { product: Product }) {
+export default function ProductInfo({
+	product,
+	userRating: initialUserRating,
+}: {
+	product: Product;
+	userRating?: number;
+}) {
 	const price = Number(product.price);
 	const rating = Number(product.rating);
 	const [selectedColor, setSelectedColor] = useState<ProductColor | null>(null);
 	const [selectedSize, setSelectedSize] = useState<ProductSize | null>(null);
 	const [isSubmittingRating, setIsSubmittingRating] = useState<boolean>(false);
 	const [isAddingToCart, setIsAddingToCart] = useState<boolean>(false);
-	const [userRating, setUserRating] = useState<number>(0);
+	const [userRating, setUserRating] = useState<number>(initialUserRating || 0);
 	const [quantity, setQuantity] = useState<number>(1);
 
 	const { getUser, isAuthenticated } = useKindeBrowserClient();
@@ -75,7 +82,12 @@ export default function ProductInfo({ product }: { product: Product }) {
 	const handleRatingSubmit = async (stars: number) => {
 		setIsSubmittingRating(true);
 		try {
-			await updateProductRating(product.id, stars);
+			const user = await getUser();
+			if (!user) {
+				toast.error("Please sign in to rate");
+				return;
+			}
+			await updateProductRating(user.id, product.id, stars);
 			setUserRating(stars);
 			toast.success("Thanks for your rating!");
 		} catch (error) {
@@ -305,8 +317,6 @@ function ProductRating({
 	onRate: (stars: number) => void;
 	isSubmitting: boolean;
 }) {
-	const stars = [1, 2, 3, 4, 5];
-
 	return (
 		<div className="py-4">
 			<div className="mb-3 flex items-center justify-between">
@@ -319,32 +329,18 @@ function ProductRating({
 					</span>
 				)}
 			</div>
-			<div className="flex items-center gap-2">
-				{stars.map((star) => (
-					<Button
-						key={star}
-						type="button"
-						variant="ghost"
-						size="icon"
-						className={clsx(
-							"size-10 rounded-lg p-0 transition-colors",
-							userRating >= star
-								? "text-amber-500"
-								: "text-muted-foreground/50 hover:text-amber-300",
-						)}
-						onClick={() => !isSubmitting && onRate(star)}
-						disabled={Boolean(isSubmitting)}
-						aria-label={`Rate ${star} star${star !== 1 ? "s" : ""}`}
-					>
-						<IconStarFilled className="size-5" />
-					</Button>
-				))}
-				{isSubmitting && (
-					<span className="text-sm text-muted-foreground ml-2">
-						Submitting...
-					</span>
-				)}
-			</div>
+			<Rating
+				rating={userRating}
+				maxRating={5}
+				size="lg"
+				editable={!isSubmitting}
+				onRatingChange={onRate}
+				showValue
+				className="gap-2"
+			/>
+			{isSubmitting && (
+				<div className="mt-2 text-sm text-muted-foreground">Submitting...</div>
+			)}
 			<p className="mt-2 text-xs text-muted-foreground">
 				Based on {votes} {votes === 1 ? "review" : "reviews"} ·{" "}
 				{currentRating.toFixed(1)}/5 overall
