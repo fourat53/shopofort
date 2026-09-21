@@ -36,7 +36,7 @@ export default function ProductCard({ product }: { product: Product }) {
 				</div>
 
 				{product.inventory < 10 && (
-					<div className="absolute top-4 left-4 rounded-full bg-destructive/90 backdrop-blur text-destructive-foreground px-3 py-1 text-xs font-bold shadow-sm">
+					<div className="absolute top-4 left-4 rounded-full bg-destructive/80 backdrop-blur text-background px-3 py-1 text-xs font-bold shadow-sm">
 						Low Stock
 					</div>
 				)}

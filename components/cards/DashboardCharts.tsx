@@ -30,12 +30,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
 
 const COLORS_STATUS = [
+	"var(--processing)",
 	"var(--delivered)",
-	"var(--)",
-	"var(--)",
-	"var(--)",
-	"var(--)",
-	"var(--)",
+	"var(--pending)",
+	"var(--shipped)",
+	"var(--cancelled)",
 ];
 
 interface DashboardChartsProps {
@@ -134,14 +133,7 @@ export default function DashboardCharts({
 				color="yellow"
 				className="w-full md:col-span-6 xl:col-span-3"
 			/>
-			<RevenueChart
-				data={revenueByMonth}
-				className="w-full md:col-span-12 lg:col-span-6"
-			/>
-			<TopRatedChart
-				data={topRated}
-				className="w-full md:col-span-12 lg:col-span-6"
-			/>
+
 			<OrdersStatusChart
 				data={ordersByStatus}
 				className="w-full md:col-span-12 lg:col-span-5"
@@ -150,12 +142,17 @@ export default function DashboardCharts({
 				data={mostPurchased}
 				className="w-full md:col-span-12 lg:col-span-7"
 			/>
+			<RevenueChart data={revenueByMonth} className="w-full md:col-span-12" />
 			<LowStockChart
 				data={lowStock}
 				className="w-full md:col-span-12 lg:col-span-6"
 			/>
 			<TopCategoriesChart
 				data={topCategories}
+				className="w-full md:col-span-12 lg:col-span-6"
+			/>
+			<TopRatedChart
+				data={topRated}
 				className="w-full md:col-span-12 lg:col-span-6"
 			/>
 			<NeverPurchasedChart
@@ -205,6 +202,140 @@ function StatCard({
 	);
 }
 
+function OrdersStatusChart({
+	data,
+	className,
+}: {
+	data: DashboardChartsProps["ordersByStatus"];
+	className?: string;
+}) {
+	const chartData = data.map((item, index) => ({
+		...item,
+		fill: COLORS_STATUS[index % COLORS_STATUS.length],
+	}));
+
+	const chartConfig = Object.fromEntries(
+		chartData.map((item) => [
+			item.status,
+			{ label: item.status, color: item.fill },
+		]),
+	);
+
+	return (
+		<Card className={className}>
+			<CardHeader className="pb-2">
+				<CardTitle className="flex items-center gap-2">
+					<IconPackage className="h-4 w-4 text-primary" />
+					Orders by Status
+				</CardTitle>
+			</CardHeader>
+			<CardContent>
+				<ChartContainer config={chartConfig} className="lg:aspect-square">
+					<PieChart>
+						<Pie
+							data={chartData}
+							innerRadius={"45%"}
+							outerRadius={"75%"}
+							paddingAngle={2}
+							isAnimationActive
+							animationDuration={800}
+							dataKey="count"
+							nameKey="status"
+							label={({ percent }: { name?: string; percent?: number }) =>
+								`${((percent ?? 0) * 100).toFixed(0)}%`
+							}
+							labelLine
+						/>
+						<Tooltip
+							content={
+								<ChartTooltipContent
+									formatter={(value: unknown) => {
+										const num = typeof value === "number" ? value : 0;
+										return [num.toLocaleString(), " Orders"];
+									}}
+									nameKey="status"
+								/>
+							}
+						/>
+						<Legend verticalAlign="bottom" height={36} />
+					</PieChart>
+				</ChartContainer>
+			</CardContent>
+		</Card>
+	);
+}
+
+function MostPurchasedChart({
+	data,
+	className,
+}: {
+	data: DashboardChartsProps["mostPurchased"];
+	className?: string;
+}) {
+	const chartData = data.map((item, index) => ({
+		...item,
+		fill: `var(--chart-${(index % 5) + 1})`,
+	}));
+
+	const chartConfig = {
+		quantity: { label: "Quantity Sold" },
+		...Object.fromEntries(
+			chartData.map((item) => [
+				item.name,
+				{ label: item.name, color: item.fill },
+			]),
+		),
+	};
+
+	return (
+		<Card className={className}>
+			<CardHeader className="pb-2">
+				<CardTitle className="flex items-center gap-2">
+					<IconShoppingCart className="h-4 w-4 text-primary" />
+					Most Purchased Products
+				</CardTitle>
+			</CardHeader>
+			<CardContent className="lg:pt-6">
+				<ChartContainer config={chartConfig}>
+					<BarChart data={chartData} layout="vertical">
+						<CartesianGrid strokeDasharray="3 3" className="stroke-border/50" />
+						<XAxis
+							type="number"
+							className="text-xs"
+							tick={{ fill: "var(--muted-foreground)" }}
+						/>
+						<YAxis
+							type="category"
+							dataKey="name"
+							width={100}
+							className="text-xs"
+							tick={{ fill: "var(--muted-foreground)" }}
+						/>
+						<Tooltip
+							content={
+								<ChartTooltipContent
+									formatter={(value: unknown) => {
+										const num = typeof value === "number" ? value : 0;
+										return [num.toLocaleString(), " Units Sold"];
+									}}
+									labelFormatter={(label) => label}
+								/>
+							}
+						/>
+						<Bar
+							dataKey="totalQuantity"
+							radius={[0, 6, 6, 0]}
+							isAnimationActive
+							animationDuration={800}
+							maxBarSize={40}
+						/>
+					</BarChart>
+				</ChartContainer>
+			</CardContent>
+		</Card>
+	);
+}
+
 function RevenueChart({
 	data,
 	className,
@@ -222,9 +353,10 @@ function RevenueChart({
 			</CardHeader>
 			<CardContent>
 				<ChartContainer
+					className="w-full max-h-140"
 					config={{
 						revenue: { label: "Revenue", color: "var(--chart-1)" },
-						orders: { label: "Orders", color: "var(--chart-2)" },
+						orders: { label: "Orders", color: "var(--chart-3)" },
 					}}
 				>
 					<AreaChart data={data}>
@@ -237,14 +369,14 @@ function RevenueChart({
 								/>
 								<stop
 									offset="95%"
-									stopColor="var(--chart-2)"
+									stopColor="var(--chart-3)"
 									stopOpacity={0.05}
 								/>
 							</linearGradient>
 							<linearGradient id="fillOrders" x1="0" y1="0" x2="0" y2="1">
 								<stop
 									offset="5%"
-									stopColor="var(--chart-3)"
+									stopColor="var(--chart-2)"
 									stopOpacity={0.5}
 								/>
 								<stop
@@ -270,14 +402,14 @@ function RevenueChart({
 						<YAxis
 							className="text-xs"
 							tick={{ fill: "var(--muted-foreground)" }}
-							tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+							tickFormatter={(value) => `${(value).toFixed(0)} DT`}
 						/>
 						<Tooltip
 							content={
 								<ChartTooltipContent
 									formatter={(value: unknown) => {
 										const num = typeof value === "number" ? value : 0;
-										return [`$${num.toLocaleString()}`, " Revenue"];
+										return ["Revenue: ", `${num.toLocaleString()} DT`];
 									}}
 									indicator="dot"
 								/>
@@ -289,17 +421,21 @@ function RevenueChart({
 							type="monotone"
 							dataKey="revenue"
 							fill="url(#fillRevenue)"
-							stroke="var(--chart-1)"
+							stroke="var(--chart-2)"
 							strokeWidth={2}
+							isAnimationActive
+							animationDuration={800}
 							dot={false}
 						/>
 						<Area
 							type="monotone"
 							dataKey="orders"
 							fill="url(#fillOrders)"
-							stroke="var(--chart-3)"
+							stroke="var(--chart-5)"
 							strokeWidth={2}
 							dot={false}
+							isAnimationActive
+							animationDuration={800}
 							yAxisId="right"
 						/>
 					</AreaChart>
@@ -366,138 +502,14 @@ function TopRatedChart({
 								/>
 							}
 						/>
-						<Bar dataKey="rating" radius={[0, 6, 6, 0]} maxBarSize={40} />
-					</BarChart>
-				</ChartContainer>
-			</CardContent>
-		</Card>
-	);
-}
-
-function MostPurchasedChart({
-	data,
-	className,
-}: {
-	data: DashboardChartsProps["mostPurchased"];
-	className?: string;
-}) {
-	const chartData = data.map((item, index) => ({
-		...item,
-		fill: `var(--chart-${(index % 5) + 1})`,
-	}));
-
-	const chartConfig = {
-		quantity: { label: "Quantity Sold" },
-		...Object.fromEntries(
-			chartData.map((item) => [
-				item.name,
-				{ label: item.name, color: item.fill },
-			]),
-		),
-	};
-
-	return (
-		<Card className={className}>
-			<CardHeader className="pb-2">
-				<CardTitle className="flex items-center gap-2">
-					<IconShoppingCart className="h-4 w-4 text-primary" />
-					Most Purchased Products
-				</CardTitle>
-			</CardHeader>
-			<CardContent>
-				<ChartContainer config={chartConfig}>
-					<BarChart data={chartData} layout="vertical">
-						<CartesianGrid strokeDasharray="3 3" className="stroke-border/50" />
-						<XAxis
-							type="number"
-							className="text-xs"
-							tick={{ fill: "var(--muted-foreground)" }}
-						/>
-						<YAxis
-							type="category"
-							dataKey="name"
-							width={100}
-							className="text-xs"
-							tick={{ fill: "var(--muted-foreground)" }}
-						/>
-						<Tooltip
-							content={
-								<ChartTooltipContent
-									formatter={(value: unknown) => {
-										const num = typeof value === "number" ? value : 0;
-										return [num.toLocaleString(), " Units Sold"];
-									}}
-									labelFormatter={(label) => label}
-								/>
-							}
-						/>
 						<Bar
-							dataKey="totalQuantity"
+							dataKey="rating"
 							radius={[0, 6, 6, 0]}
+							isAnimationActive
+							animationDuration={800}
 							maxBarSize={40}
 						/>
 					</BarChart>
-				</ChartContainer>
-			</CardContent>
-		</Card>
-	);
-}
-
-function OrdersStatusChart({
-	data,
-	className,
-}: {
-	data: DashboardChartsProps["ordersByStatus"];
-	className?: string;
-}) {
-	const chartData = data.map((item, index) => ({
-		...item,
-		fill: COLORS_STATUS[index % COLORS_STATUS.length],
-	}));
-
-	const chartConfig = Object.fromEntries(
-		chartData.map((item) => [
-			item.status,
-			{ label: item.status, color: item.fill },
-		]),
-	);
-
-	return (
-		<Card className={className}>
-			<CardHeader className="pb-2">
-				<CardTitle className="flex items-center gap-2">
-					<IconPackage className="h-4 w-4 text-primary" />
-					Orders by Status
-				</CardTitle>
-			</CardHeader>
-			<CardContent>
-				<ChartContainer config={chartConfig} className="aspect-square">
-					<PieChart>
-						<Pie
-							data={chartData}
-							innerRadius={"40%"}
-							outerRadius={"70%"}
-							paddingAngle={3}
-							dataKey="count"
-							nameKey="status"
-							label={({ percent }: { name?: string; percent?: number }) =>
-								`${((percent ?? 0) * 100).toFixed(0)}%`
-							}
-							labelLine
-						/>
-						<Tooltip
-							content={
-								<ChartTooltipContent
-									formatter={(value: unknown) => {
-										const num = typeof value === "number" ? value : 0;
-										return [num.toLocaleString(), " Orders"];
-									}}
-									nameKey="status"
-								/>
-							}
-						/>
-						<Legend verticalAlign="bottom" height={36} />
-					</PieChart>
 				</ChartContainer>
 			</CardContent>
 		</Card>
@@ -511,6 +523,21 @@ function LowStockChart({
 	data: DashboardChartsProps["lowStock"];
 	className?: string;
 }) {
+	const chartData = data.map((item, index) => ({
+		...item,
+		fill: `var(--chart-${(index % 5) + 1})`,
+	}));
+
+	const chartConfig = {
+		inventory: { label: "Inventory" },
+		...Object.fromEntries(
+			chartData.map((item) => [
+				item.name,
+				{ label: item.name, color: item.fill },
+			]),
+		),
+	};
+
 	return (
 		<Card className={className}>
 			<CardHeader className="pb-2">
@@ -520,15 +547,8 @@ function LowStockChart({
 				</CardTitle>
 			</CardHeader>
 			<CardContent>
-				<ChartContainer
-					config={{
-						inventory: {
-							label: "Inventory",
-							color: "var(--primary)",
-						},
-					}}
-				>
-					<BarChart data={data} layout="vertical">
+				<ChartContainer config={chartConfig}>
+					<BarChart data={chartData} layout="vertical">
 						<CartesianGrid strokeDasharray="3 3" className="stroke-border/50" />
 						<XAxis
 							type="number"
@@ -556,8 +576,82 @@ function LowStockChart({
 						<Bar
 							dataKey="inventory"
 							radius={[0, 6, 6, 0]}
+							isAnimationActive
+							animationDuration={800}
 							maxBarSize={40}
 							fill="var(--muted-foreground)"
+						/>
+					</BarChart>
+				</ChartContainer>
+			</CardContent>
+		</Card>
+	);
+}
+
+function TopCategoriesChart({
+	data,
+	className,
+}: {
+	data: DashboardChartsProps["topCategories"];
+	className?: string;
+}) {
+	const chartData = data.map((item, index) => ({
+		...item,
+		fill: `var(--chart-${(index % 5) + 1})`,
+	}));
+
+	const chartConfig = {
+		revenue: { label: "Revenue" },
+		...Object.fromEntries(
+			chartData.map((item) => [
+				item.name,
+				{ label: item.name, color: item.fill },
+			]),
+		),
+	};
+
+	return (
+		<Card className={className}>
+			<CardHeader className="pb-2">
+				<CardTitle className="flex items-center gap-2">
+					<IconTrendingUp className="h-4 w-4 text-primary" />
+					Top Categories by Revenue
+				</CardTitle>
+			</CardHeader>
+			<CardContent>
+				<ChartContainer config={chartConfig}>
+					<BarChart data={chartData} layout="vertical">
+						<CartesianGrid strokeDasharray="3 3" className="stroke-border/50" />
+						<XAxis
+							type="number"
+							className="text-xs"
+							tick={{ fill: "var(--muted-foreground)" }}
+							tickFormatter={(value) => `${(value).toFixed(0)} DT`}
+						/>
+						<YAxis
+							type="category"
+							dataKey="name"
+							width={100}
+							className="text-xs"
+							tick={{ fill: "var(--muted-foreground)" }}
+						/>
+						<Tooltip
+							content={
+								<ChartTooltipContent
+									formatter={(value: unknown) => {
+										const num = typeof value === "number" ? value : 0;
+										return ["Revenue: ", `${num.toLocaleString()} DT`];
+									}}
+									labelFormatter={(label) => label}
+								/>
+							}
+						/>
+						<Bar
+							dataKey="totalRevenue"
+							radius={[0, 6, 6, 0]}
+							isAnimationActive
+							animationDuration={800}
+							maxBarSize={40}
 						/>
 					</BarChart>
 				</ChartContainer>
@@ -612,72 +706,6 @@ function NeverPurchasedChart({
 						))}
 					</div>
 				)}
-			</CardContent>
-		</Card>
-	);
-}
-
-function TopCategoriesChart({
-	data,
-	className,
-}: {
-	data: DashboardChartsProps["topCategories"];
-	className?: string;
-}) {
-	const chartData = data.map((item, index) => ({
-		...item,
-		fill: `var(--chart-${(index % 5) + 1})`,
-	}));
-
-	const chartConfig = {
-		revenue: { label: "Revenue" },
-		...Object.fromEntries(
-			chartData.map((item) => [
-				item.name,
-				{ label: item.name, color: item.fill },
-			]),
-		),
-	};
-
-	return (
-		<Card className={className}>
-			<CardHeader className="pb-2">
-				<CardTitle className="flex items-center gap-2">
-					<IconTrendingUp className="h-4 w-4 text-primary" />
-					Top Categories by Revenue
-				</CardTitle>
-			</CardHeader>
-			<CardContent>
-				<ChartContainer config={chartConfig}>
-					<BarChart data={chartData} layout="vertical">
-						<CartesianGrid strokeDasharray="3 3" className="stroke-border/50" />
-						<XAxis
-							type="number"
-							className="text-xs"
-							tick={{ fill: "var(--muted-foreground)" }}
-							tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
-						/>
-						<YAxis
-							type="category"
-							dataKey="name"
-							width={100}
-							className="text-xs"
-							tick={{ fill: "var(--muted-foreground)" }}
-						/>
-						<Tooltip
-							content={
-								<ChartTooltipContent
-									formatter={(value: unknown) => {
-										const num = typeof value === "number" ? value : 0;
-										return [`$${num.toLocaleString()}`, " Revenue"];
-									}}
-									labelFormatter={(label) => label}
-								/>
-							}
-						/>
-						<Bar dataKey="totalRevenue" radius={[0, 6, 6, 0]} maxBarSize={40} />
-					</BarChart>
-				</ChartContainer>
 			</CardContent>
 		</Card>
 	);

@@ -102,6 +102,7 @@ export default function RangePicker({
 				name={fromName}
 				value={range?.from?.toISOString() ?? ""}
 				required={required}
+				readOnly
 				className="translate-y-12 sr-only"
 			/>
 
@@ -110,6 +111,7 @@ export default function RangePicker({
 				name={toName}
 				value={range?.to?.toISOString() ?? ""}
 				required={required}
+				readOnly
 				className="translate-y-12 sr-only"
 			/>
 

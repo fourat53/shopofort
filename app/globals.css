@@ -88,6 +88,11 @@ body {
 	--radius: 0.45rem;
 	--gradient-1: oklch(96.3% 0.002 197.1);
 	--gradient-2: oklch(88% 0.01 210);
+	--pending: oklch(0.83 0.14 90); /* yellow */
+	--processing: oklch(0.72 0.18 250); /* blue */
+	--shipped: oklch(0.7 0.17 300); /* purple */
+	--delivered: oklch(0.72 0.15 145); /* green */
+	--cancelled: oklch(0.72 0.18 25); /* red */
 }
 
 .dark {
@@ -124,6 +129,11 @@ body {
 	--sidebar-ring: oklch(0.56 0.021 213.5);
 	--gradient-1: oklch(0.218 0.008 223.9);
 	--gradient-2: oklch(21.8% 0.008 223.9);
+	--pending: oklch(0.72 0.14 90); /* yellow 700 */
+	--processing: oklch(0.6 0.18 250); /* blue 700 */
+	--shipped: oklch(0.58 0.17 300); /* purple 700 */
+	--delivered: oklch(0.6 0.15 145); /* green 700 */
+	--cancelled: oklch(0.6 0.18 25); /* red 700 */
 }
 
 @layer base {
