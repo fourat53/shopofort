@@ -1,5 +1,7 @@
 import DashboardCharts from "@/components/cards/DashboardCharts";
 
+export const dynamic = "force-dynamic";
+
 async function getDashboardData() {
 	const [
 		{ getDashboardStats },
@@ -55,6 +57,5 @@ async function getDashboardData() {
 
 export default async function DashboardPage() {
 	const data = await getDashboardData();
-
 	return <DashboardCharts props={data} />;
 }

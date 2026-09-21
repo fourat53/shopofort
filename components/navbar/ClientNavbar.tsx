@@ -1,8 +1,8 @@
 import { IconShoppingBag } from "@tabler/icons-react";
 import clsx from "clsx";
 import Link from "next/link";
-import NavUser from "./NavUser";
-import SearchInput from "./SearchInput";
+import NavUser from "@/components/navbar/NavUser";
+import SearchInput from "@/components/navbar/SearchInput";
 
 export default function ClientNavbar() {
 	return (

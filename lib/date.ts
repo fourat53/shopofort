@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import type { CellType } from "./entity/types";
+import type { CellType } from "@/lib/entity/types";
 
 function isValidDate(value: CellType): boolean {
 	if (value instanceof Date) return !Number.isNaN(value.getTime());

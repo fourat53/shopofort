@@ -1,5 +1,6 @@
 import { cn } from "cn";
 import ContentCell from "@/components/data-table/table-cells/ContentCell";
+import ListEntityTooltip from "@/components/data-table/tooltips/ListEntityTooltip";
 import {
 	Table,
 	TableBody,
@@ -16,7 +17,6 @@ import {
 	OptionField,
 } from "@/lib/entity/types";
 import { getFieldName, isCellValue } from "@/lib/functions/client";
-import ListEntityTooltip from "./tooltips/ListEntityTooltip";
 
 interface ListDataTableProps<T extends ListEntityType> {
 	entity: T;

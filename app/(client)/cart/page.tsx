@@ -3,6 +3,8 @@ import { IconArrowLeft, IconShoppingCart } from "@tabler/icons-react";
 import Link from "next/link";
 import { getOrCreateUserCart } from "@/actions/CartActions";
 import { PagesLayout, PagesTitle } from "@/app/(client)/layout";
+import { CartItemRow } from "@/components/cards/CartItemRow";
+import { CartSummary } from "@/components/cards/CartSummary";
 import { Button } from "@/components/ui/button";
 import {
 	Table,
@@ -12,8 +14,6 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import type { CartItemType, ProductType } from "@/lib/entity/types";
-import { CartItemRow } from "./CartItemRow";
-import { CartSummary } from "./CartSummary";
 
 function EmptyCart() {
 	return (

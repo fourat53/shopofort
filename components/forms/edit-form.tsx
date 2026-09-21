@@ -16,6 +16,7 @@ import {
 } from "@/components/form-items/image-upload";
 import { Input } from "@/components/form-items/input";
 import { Select } from "@/components/form-items/select";
+import { TextArea } from "@/components/form-items/textarea";
 import ForeignKeySelect from "@/components/forms/ForeignKeySelect";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -34,7 +35,6 @@ import {
 	getSingleName,
 } from "@/lib/functions/client";
 import { addImages, uploadConfig } from "@/lib/uploadthing/client";
-import { TextArea } from "../form-items/textarea";
 
 interface DialogFormProps<T extends EntityType> {
 	entity: T;

@@ -3,6 +3,8 @@ import { PagesLayout, PagesTitle } from "@/app/(client)/layout";
 import CategoryCard from "@/components/cards/CategoryCard";
 import type { Category } from "@/lib/entity/types";
 
+export const dynamic = "force-dynamic";
+
 export default async function CategoriesPage() {
 	const categories = await getCategoriesPage({}, 1, 999, "asc", "id");
 

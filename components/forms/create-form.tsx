@@ -16,6 +16,7 @@ import {
 } from "@/components/form-items/image-upload";
 import { Input } from "@/components/form-items/input";
 import { Select } from "@/components/form-items/select";
+import { TextArea } from "@/components/form-items/textarea";
 import ForeignKeySelect from "@/components/forms/ForeignKeySelect";
 import { Button } from "@/components/ui/button";
 import {
@@ -28,7 +29,6 @@ import { getEntityFields } from "@/lib/entity/fields";
 import type { EntityType } from "@/lib/entity/types";
 import { getFieldName, getSingleName } from "@/lib/functions/client";
 import { addImages } from "@/lib/uploadthing/client";
-import { TextArea } from "../form-items/textarea";
 
 interface CreateFormProps {
 	entity: EntityType;

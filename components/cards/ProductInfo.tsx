@@ -14,11 +14,14 @@ import { toast } from "sonner";
 import { createCartItem } from "@/actions/CartItemActions";
 import { updateProductRating } from "@/actions/ProductActions";
 import { PagesTitle } from "@/app/(client)/layout";
+import {
+	ColorCell,
+	SizeCell,
+} from "@/components/data-table/table-cells/SpecialCells";
 import { Button } from "@/components/ui/button";
 import { Rating } from "@/components/ui/rating";
 import { Separator } from "@/components/ui/separator";
 import type { Product, ProductColor, ProductSize } from "@/lib/entity/types";
-import { ColorCell, SizeCell } from "../data-table/table-cells/SpecialCells";
 
 export default function ProductInfo({
 	product,

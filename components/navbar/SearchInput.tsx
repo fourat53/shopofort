@@ -5,11 +5,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
+import {
+	ColorCell,
+	SizeCell,
+} from "@/components/data-table/table-cells/SpecialCells";
 import { Input } from "@/components/form-items/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { Product } from "@/lib/entity/types";
-import { ColorCell, SizeCell } from "../data-table/table-cells/SpecialCells";
 
 export default function SearchInput() {
 	const [query, setQuery] = useState("");

@@ -12,6 +12,8 @@ import {
 } from "@/components/ui/pagination";
 import type { Product } from "@/lib/entity/types";
 
+export const dynamic = "force-dynamic";
+
 export default async function ProductsPage({
 	searchParams,
 }: {

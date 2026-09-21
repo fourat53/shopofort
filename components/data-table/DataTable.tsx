@@ -1,6 +1,8 @@
+import { NoData } from "@/components/data-table/ListDataTable";
 import CheckBoxCell from "@/components/data-table/table-cells/CheckBoxCells";
 import ContentCell from "@/components/data-table/table-cells/ContentCell";
 import SortHead from "@/components/data-table/table-cells/SortHead";
+import EntityTooltip from "@/components/data-table/tooltips/EntityTooltip";
 import DeleteDialog from "@/components/dialogs/delete-dialog";
 import EditDialog from "@/components/dialogs/edit-dialog";
 import ListDialog from "@/components/dialogs/list-dialog";
@@ -19,8 +21,6 @@ import {
 	OptionField,
 } from "@/lib/entity/types";
 import { isCellValue } from "@/lib/functions/client";
-import { NoData } from "./ListDataTable";
-import EntityTooltip from "./tooltips/EntityTooltip";
 
 interface DataTableProps<T extends EntityType> {
 	entity: T;
