@@ -9,7 +9,7 @@ datasource db {
 
 model Cart {
   id          Int        @id @default(autoincrement())
-  totalPrice  Decimal    @db.Decimal(10, 2)
+  totalPrice  Decimal    @db.Decimal(10, 2) @default(0)
   userId      String     @unique
   cartItems   CartItem[]
   @@map("carts")
@@ -67,8 +67,8 @@ model ProductRating {
 
 model Order {
   id          Int         @id @default(autoincrement()) @map("orderId")
-  orderDate   DateTime
-  totalPrice  Decimal     @db.Decimal(10, 2)
+  orderDate   DateTime    
+  totalPrice  Decimal     @db.Decimal(10, 2) @default(0)
   orderStatus OrderStatus
   userId      String
   orderItems  OrderItem[]

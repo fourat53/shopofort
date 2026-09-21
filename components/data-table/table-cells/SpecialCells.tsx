@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import { cn } from "cn";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -6,7 +7,6 @@ import {
 	ProductColor,
 	type ProductSize,
 } from "@/lib/entity/types";
-import { cn } from "cn";
 
 function ColorCell({
 	value,
