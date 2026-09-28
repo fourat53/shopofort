@@ -19,7 +19,6 @@
 		"studio": "prisma studio"
 	},
 	"dependencies": {
-		"@hookform/resolvers": "^5.9.1",
 		"@kinde-oss/kinde-auth-nextjs": "^2.13.1",
 		"@prisma/adapter-pg": "^7.10.0",
 		"@prisma/client": "^7.10.0",
@@ -39,7 +38,6 @@
 		"react": "19.3.0",
 		"react-day-picker": "^10.0.1",
 		"react-dom": "19.3.0",
-		"react-hook-form": "^7.89.0",
 		"recharts": "3.10.1",
 		"shadcn": "^4.21.0",
 		"shopofort": "link:",
