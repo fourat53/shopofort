@@ -3,7 +3,6 @@ import { toast } from "sonner";
 
 import { getFilterOptions } from "@/actions/EntityActions";
 import { Select, type SelectOption } from "@/components/form-items/select";
-import type { FieldConfig } from "@/lib/entity/fields";
 import type { EntityType, OptionField } from "@/lib/entity/types";
 import {
 	getFieldName,
@@ -12,20 +11,22 @@ import {
 } from "@/lib/functions/client";
 
 interface ForeignKeySelectProps {
-	field: FieldConfig;
-	fields: { name: string; type: string }[];
+	name: string;
 	entity: EntityType;
-	multiple?: boolean;
+	fields: { name: string; type: string }[];
 	defaultValue: string | string[] | undefined;
+	required?: boolean;
+	multiple?: boolean;
 	disabled?: boolean;
 }
 
 export default function ForeignKeySelect({
-	field: { name, required = false },
-	fields,
+	name,
 	entity,
-	multiple = false,
+	fields,
 	defaultValue,
+	required = false,
+	multiple = false,
 	disabled = false,
 }: ForeignKeySelectProps) {
 	const fetchedFields = useRef<Set<string>>(new Set());

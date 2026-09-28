@@ -129,8 +129,8 @@ export default function FilterForm({
 					<DialogTitle>Filter {getPluralName(entity)}</DialogTitle>
 				</DialogHeader>
 				<div className="max-h-[calc(100vh-12rem)] sm:max-h-[calc(100vh-8rem)] overflow-y-auto px-4 flex flex-col gap-4">
-					{fields.map((field) => {
-						const { type, name, min, max, step, options } = field;
+					{fields.map((f) => {
+						const { type, name, min, max, step, options } = f;
 						const label = getFieldName(name);
 						return type === "string" ? (
 							<Input
@@ -164,9 +164,9 @@ export default function FilterForm({
 						) : type === "date" ? (
 							<RangePicker
 								key={name}
+								label={label}
 								fromName={`${name}From`}
 								toName={`${name}To`}
-								label={label}
 								defaultFrom={searchParams.get(`${name}From`) ?? undefined}
 								defaultTo={searchParams.get(`${name}To`) ?? undefined}
 							/>
@@ -181,9 +181,9 @@ export default function FilterForm({
 							/>
 						) : type === "foreignKey" ? (
 							<ForeignKeySelect
-								key={name}
 								multiple
-								field={field}
+								key={name}
+								name={name}
 								entity={entity}
 								fields={fields}
 								defaultValue={searchParams.getAll(name)}

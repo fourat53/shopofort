@@ -150,7 +150,7 @@ export default function EditForm<T extends EntityType>({
 				<div className="max-h-[calc(100vh-12rem)] sm:max-h-[calc(100vh-8rem)] overflow-y-auto px-4 flex flex-col gap-4">
 					{fields.map((f) => {
 						const value = getFieldValue(rows[0], f.name);
-						const { type, name, multiple, required } = f;
+						const { type, name, multiple, required, step, options } = f;
 						const label = getFieldName(name);
 						const enabled = isFieldEnabled(name);
 
@@ -160,21 +160,21 @@ export default function EditForm<T extends EntityType>({
 									key={name}
 									name={name}
 									label={label}
+									required={required}
+									disabled={!enabled}
 									type={name === "email" ? "email" : "text"}
 									placeholder={`Enter ${label.toLowerCase()}`}
 									defaultValue={value?.toString() || undefined}
-									required={required}
-									disabled={!enabled}
 								/>
 							) : type === "text" ? (
 								<TextArea
 									key={name}
 									name={name}
 									label={label}
-									placeholder={`Enter ${label.toLowerCase()}`}
-									defaultValue={value?.toString() || undefined}
 									required={required}
 									disabled={!enabled}
+									placeholder={`Enter ${label.toLowerCase()}`}
+									defaultValue={value?.toString() || undefined}
 								/>
 							) : type === "number" ? (
 								<Input
@@ -182,21 +182,21 @@ export default function EditForm<T extends EntityType>({
 									name={name}
 									label={label}
 									type="number"
-									step={f.step ?? "1"}
+									step={step ?? "1"}
+									disabled={!enabled}
+									required={required}
 									placeholder={`Enter ${label.toLowerCase()}`}
 									defaultValue={value?.toString() || undefined}
-									required={required}
-									disabled={!enabled}
 								/>
 							) : type === "date" ? (
 								<DatePicker
+									time
 									key={name}
 									name={name}
 									label={label}
-									defaultValue={value as string | Date | undefined}
-									required={required}
-									time
 									disabled={!enabled}
+									required={required}
+									defaultValue={value as string | Date | undefined}
 								/>
 							) : type.includes("image") ? (
 								<ImageUpload
@@ -214,24 +214,25 @@ export default function EditForm<T extends EntityType>({
 									key={name}
 									name={name}
 									label={label}
-									required={required}
 									multiple={multiple}
-									items={f.options?.map((o) => ({ label: o, value: o }))}
+									disabled={!enabled}
+									required={required}
+									items={options?.map((o) => ({ label: o, value: o }))}
 									defaultValue={
 										Array.isArray(value) && multiple
 											? value.map((item) => item.toString())
 											: value?.toString()
 									}
-									disabled={!enabled}
 								/>
 							) : type === "foreignKey" ? (
 								<ForeignKeySelect
 									key={name}
-									field={f}
+									name={name}
 									entity={entity}
 									fields={fields}
-									defaultValue={value?.toString()}
 									disabled={!enabled}
+									required={required}
+									defaultValue={value?.toString()}
 								/>
 							) : null;
 

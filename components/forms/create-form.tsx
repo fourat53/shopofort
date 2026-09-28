@@ -81,8 +81,8 @@ export default function CreateForm({ entity, open, setOpen }: CreateFormProps) {
 					<DialogTitle>Create {entityName}</DialogTitle>
 				</DialogHeader>
 				<div className="max-h-[calc(100vh-12rem)] sm:max-h-[calc(100vh-8rem)] overflow-y-auto px-4 flex flex-col gap-4">
-					{fields.map((field) => {
-						const { type, name, multiple, required, defaultValue } = field;
+					{fields.map((f) => {
+						const { type, name, multiple, required, defaultValue } = f;
 						const label = getFieldName(name);
 						return type === "string" ? (
 							<Input
@@ -109,7 +109,7 @@ export default function CreateForm({ entity, open, setOpen }: CreateFormProps) {
 								name={name}
 								label={label}
 								type="number"
-								step={field.step ?? 1}
+								step={f.step ?? 1}
 								placeholder={`Enter ${label.toLowerCase()}`}
 								defaultValue={defaultValue?.toString() || "1"}
 								required={required}
@@ -141,14 +141,15 @@ export default function CreateForm({ entity, open, setOpen }: CreateFormProps) {
 								multiple={multiple}
 								required={required}
 								defaultValue={defaultValue?.toString()}
-								items={field.options?.map((o) => ({ label: o, value: o }))}
+								items={f.options?.map((o) => ({ label: o, value: o }))}
 							/>
 						) : type === "foreignKey" ? (
 							<ForeignKeySelect
 								key={name}
-								field={field}
+								name={name}
 								entity={entity}
 								fields={fields}
+								required={required}
 								defaultValue={defaultValue?.toString()}
 							/>
 						) : null;

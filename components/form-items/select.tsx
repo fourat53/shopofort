@@ -147,7 +147,7 @@ function Select({
 	return (
 		<div
 			className={cn(
-				"relative grid w-full items-center gap-1.5",
+				"relative text-xs grid w-full items-center gap-1.5",
 				parentClassName,
 			)}
 		>
@@ -301,7 +301,7 @@ function ButtonContent({
 function ItemContent({ item }: { item: SelectOption }) {
 	if (Array.isArray(item.label) && item.label.length === 2) {
 		return (
-			<div className="text-xs absolute top-1/2 -translate-y-1/2 w-[calc(100%-36px)] flex max-sm:flex-col sm:gap-1.5 sm:items-center sm:justify-between">
+			<div className="absolute top-1/2 -translate-y-1/2 w-[calc(100%-36px)] flex max-sm:flex-col sm:gap-1.5 sm:items-center sm:justify-between">
 				<p
 					title={String(item.label[0])}
 					className="truncate max-w-full sm:max-w-[50%]"

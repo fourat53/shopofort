@@ -12,4 +12,5 @@ overrides:
   deepmerge-ts: "^8.0.0"
   mysql2: "^3.23.1"
   qs: "^6.16.0"
-  lodash: "^4.18.1"
+  lodash: "^4.18.1"  
+  valibot@<=1.4.1: ^1.4.2
