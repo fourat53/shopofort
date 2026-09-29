@@ -1,10 +1,7 @@
 "use server";
 
 import { unstable_cache } from "next/cache";
-import {
-	CACHE_SECONDS,
-	FILTER_CACHE_SECONDS,
-} from "@/components/data-table/pagination/PaginationParams";
+import { FILTER_CACHE_SECONDS } from "@/components/data-table/pagination/PaginationParams";
 import { getFormProduct } from "@/lib/entity/forms";
 import { PRODUCTS_HEADER } from "@/lib/entity/headers";
 import type {
@@ -67,6 +64,66 @@ function buildOrderClause(
 	return { id: "asc" };
 }
 
+const getProductsPageCached = unstable_cache(
+	async (
+		filterParams: ParameterType,
+		page: number,
+		pageSize: number,
+		order: "asc" | "desc",
+		sortBy: string,
+	): Promise<Product[]> => {
+		const where = buildWhereClause(filterParams);
+		const orderBy = buildOrderClause(sortBy, order);
+		const products = await prisma.product.findMany({
+			where,
+			skip: (page - 1) * pageSize,
+			take: pageSize,
+			orderBy,
+			include: {
+				cartItems: {
+					select: {
+						id: true,
+						quantity: true,
+						color: true,
+						size: true,
+						cartId: true,
+						productId: true,
+						cart: true,
+						product: true,
+					},
+				},
+				orderItems: {
+					select: {
+						id: true,
+						quantity: true,
+						color: true,
+						size: true,
+						orderId: true,
+						productId: true,
+						order: true,
+						product: true,
+					},
+				},
+				category: true,
+				ratings: {
+					select: {
+						userId: true,
+						productId: true,
+						rating: true,
+						product: true,
+					},
+				},
+			},
+		});
+		return JSON.parse(JSON.stringify(products));
+	},
+	["products-page"],
+	{
+		revalidate: FILTER_CACHE_SECONDS,
+		tags: ["products"],
+	},
+);
+
 async function getProductsPage(
 	filterParams: ParameterType = {},
 	page: number = 1,
@@ -74,81 +131,23 @@ async function getProductsPage(
 	order: "asc" | "desc" = "asc",
 	sortBy: string = "id",
 ): Promise<Product[]> {
-	const where = buildWhereClause(filterParams);
-	const orderBy = buildOrderClause(sortBy, order);
-	return unstable_cache(
-		async () => {
-			const products = await prisma.product.findMany({
-				where,
-				skip: (page - 1) * pageSize,
-				take: pageSize,
-				orderBy,
-				include: {
-					cartItems: {
-						select: {
-							id: true,
-							quantity: true,
-							color: true,
-							size: true,
-							cartId: true,
-							productId: true,
-							cart: true,
-							product: true,
-						},
-					},
-					orderItems: {
-						select: {
-							id: true,
-							quantity: true,
-							color: true,
-							size: true,
-							orderId: true,
-							productId: true,
-							order: true,
-							product: true,
-						},
-					},
-					category: true,
-					ratings: {
-						select: {
-							userId: true,
-							productId: true,
-							rating: true,
-							product: true,
-						},
-					},
-				},
-			});
-			return JSON.parse(JSON.stringify(products));
-		},
-		[
-			"products-page",
-			String(page),
-			JSON.stringify(filterParams),
-			JSON.stringify({ sortBy, order }),
-			String(pageSize),
-		],
-		{
-			revalidate: Object.keys(filterParams).length
-				? FILTER_CACHE_SECONDS
-				: CACHE_SECONDS,
-			tags: ["products"],
-		},
-	)();
+	return getProductsPageCached(filterParams, page, pageSize, order, sortBy);
 }
 
+const getProductCountCached = unstable_cache(
+	async (filterParams: ParameterType) => {
+		const where = buildWhereClause(filterParams);
+		return prisma.product.count({ where });
+	},
+	["products-count"],
+	{
+		revalidate: FILTER_CACHE_SECONDS,
+		tags: ["products"],
+	},
+);
+
 async function getProductCount(filterParams: ParameterType = {}) {
-	const where = buildWhereClause(filterParams);
-	return unstable_cache(
-		() => prisma.product.count({ where }),
-		["products-count", JSON.stringify(filterParams)],
-		{
-			revalidate: Object.keys(filterParams).length
-				? FILTER_CACHE_SECONDS
-				: CACHE_SECONDS,
-			tags: ["products"],
-		},
-	)();
+	return getProductCountCached(filterParams);
 }
 
 async function updateProductRating(

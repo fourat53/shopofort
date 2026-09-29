@@ -41,11 +41,11 @@ pnpm biome format --write .
 - manage user roles: ADMIN can access any page, USER can't access admin pages.
 
 <!-- admin -->
-- make a dashboard design with shadcn UI and display statistics.
-- use zod
+- use zod (verify implementation)
+- update the look of the dialogs
 
 <!-- client -->
-- create each product page
+- add payment setup
 
 Important: Since I don't have AWS S3 account, the images in uploadthing file service free tier.
 
