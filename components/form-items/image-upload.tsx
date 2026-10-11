@@ -87,15 +87,8 @@ function ImageUpload({
 					<button
 						type="button"
 						onClick={handleDivClick}
-						className={clsx(
-							"bg-input hover:bg-input/60 size-24 sm:size-28 flex flex-col items-center justify-center border-2 border-dashed rounded-xl cursor-pointer transition-colors",
-							multiple &&
-								images.length % 3 === 0 &&
-								"w-full sm:w-full col-span-3",
-							multiple &&
-								images.length % 3 === 1 &&
-								"w-full sm:w-full col-span-2",
-						)}
+						aria-label={name}
+						className="size-24 sm:size-28 bg-input hover:bg-input/60 flex flex-col items-center justify-center border-2 border-dashed rounded-xl cursor-pointer transition-colors"
 					>
 						<IconUpload className="size-6 text-mist-400 mb-1" />
 						<span className="text-xs text-mist-500">Upload</span>
@@ -136,7 +129,10 @@ function ImagePreview({
 					alt={isFile ? item.name : `Image ${src}`}
 					width={1000}
 					height={1000}
-					className="size-24 sm:size-28 object-cover border rounded-xl"
+					className={clsx(
+						"size-24 sm:size-28 object-cover border rounded-xl",
+						disabled && "cursor-not-allowed",
+					)}
 				/>
 			) : null}
 			{!disabled && onRemove && (

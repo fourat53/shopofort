@@ -23,6 +23,7 @@ import {
 	DialogContent,
 	DialogFooter,
 	DialogHeader,
+	DialogSubContent,
 	DialogTitle,
 } from "@/components/ui/dialog";
 import { getEntityFields } from "@/lib/entity/fields";
@@ -44,8 +45,8 @@ export default function CreateForm({ entity, open, setOpen }: CreateFormProps) {
 	const entityName = getSingleName(entity);
 
 	useEffect(() => {
-		setImages([]);
-	}, []);
+		if (!open) setImages([]);
+	}, [open]);
 
 	async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
 		e.preventDefault();
@@ -74,13 +75,12 @@ export default function CreateForm({ entity, open, setOpen }: CreateFormProps) {
 		<DialogContent
 			onPointerDownOutside={(e) => loading && e.preventDefault()}
 			onEscapeKeyDown={(e) => loading && e.preventDefault()}
-			className="px-0 w-82 sm:w-180 max-w-180 overflow-hidden"
 		>
 			<form onSubmit={handleSubmit}>
-				<DialogHeader className="pb-2">
+				<DialogHeader>
 					<DialogTitle>Create {entityName}</DialogTitle>
 				</DialogHeader>
-				<div className="max-h-[calc(100vh-12rem)] sm:max-h-[calc(100vh-8rem)] overflow-y-auto px-4 flex flex-col gap-4">
+				<DialogSubContent>
 					{fields.map((f) => {
 						const { type, name, multiple, required, defaultValue } = f;
 						const label = getFieldName(name);
@@ -154,8 +154,8 @@ export default function CreateForm({ entity, open, setOpen }: CreateFormProps) {
 							/>
 						) : null;
 					})}
-				</div>
-				<DialogFooter className="pt-3">
+				</DialogSubContent>
+				<DialogFooter>
 					<Button
 						variant="outline"
 						onClick={() => setOpen(false)}

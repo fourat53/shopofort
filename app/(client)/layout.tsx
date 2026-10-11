@@ -8,7 +8,7 @@ export default function ClientLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<div className="bg-mist-50 dark:bg-card">
+		<div className="bg-card">
 			<ClientNavbar />
 			<div className="min-h-[calc(100vh-117px)] sm:min-h-[calc(100vh-97px)] md:min-h-[calc(100vh-65px)]">
 				{children}

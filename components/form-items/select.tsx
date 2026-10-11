@@ -178,12 +178,11 @@ function Select({
 					<PopoverTrigger asChild className="bg-transparent">
 						<Button
 							variant="ghost"
-							role="combobox"
 							aria-label={name}
 							aria-expanded={open}
 							disabled={disabled}
 							className={cn(
-								"relative border border-border/80 bg-input hover:bg-input/80 rounded-md px-3 h-7 w-full justify-between disabled:cursor-not-allowed",
+								"relative bg-input hover:bg-input/80 border rounded-md px-3 h-7 w-full justify-between disabled:cursor-not-allowed  hover:disabled:bg-input",
 								selectedItem &&
 									Array.isArray(selectedItem.label) &&
 									selectedItem.label.length === 2 &&

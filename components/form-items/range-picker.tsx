@@ -23,6 +23,7 @@ interface DateRangePickerProps {
 	defaultTo?: string | Date;
 	required?: boolean;
 	time?: boolean;
+	disabled?: boolean;
 }
 
 export default function RangePicker({
@@ -33,21 +34,18 @@ export default function RangePicker({
 	defaultTo,
 	required,
 	time = true,
+	disabled = false,
 }: DateRangePickerProps) {
 	const [open, setOpen] = React.useState(false);
 	const [range, setRange] = React.useState<DateRange | undefined>(() => {
 		const from = defaultFrom ? new Date(defaultFrom) : undefined;
 		const to = defaultTo ? new Date(defaultTo) : undefined;
-
 		return from ? { from, to } : undefined;
 	});
 
 	const handleDateChange = (selectedRange: DateRange | undefined) => {
-		setRange((current) => {
-			if (!selectedRange) {
-				return undefined;
-			}
-
+		setRange((current: DateRange | undefined) => {
+			if (!selectedRange) return undefined;
 			return {
 				from: selectedRange.from
 					? preserveTime(selectedRange.from, current?.from)
@@ -67,17 +65,11 @@ export default function RangePicker({
 			.split(":")
 			.map(Number);
 
-		setRange((current) => {
+		setRange((current: DateRange | undefined) => {
 			if (!current?.[type]) return current;
-
 			const date = new Date(current[type]);
-
 			date.setHours(hours, minutes, seconds, 0);
-
-			return {
-				...current,
-				[type]: date,
-			};
+			return { ...current, [type]: date };
 		});
 	};
 
@@ -121,7 +113,9 @@ export default function RangePicker({
 						<Button
 							variant="ghost"
 							type="button"
-							className="w-full h-7 bg-input hover:bg-input/80 border border-border text-xs rounded-md justify-start px-3 pr-8"
+							aria-label={fromName + " - " + toName}
+							disabled={disabled}
+							className="w-full h-7 bg-input hover:bg-input/80 border text-xs rounded-md justify-start px-3 pr-8 disabled:cursor-not-allowed hover:disabled:bg-input"
 						>
 							<span className="truncate">{displayValue}</span>
 

@@ -87,6 +87,7 @@ function TableHead({
 			className={cn(
 				"h-7 py-1.5 px-2 font-semibold text-left whitespace-nowrap text-foreground has-[[role=checkbox]]:pr-0",
 				"bg-sidebar-accent hover:bg-mist-300/60 dark:hover:bg-mist-700/60 hover:cursor-pointer",
+				"text-mist-700 dark:text-mist-300",
 				border && "border-l",
 				className,
 			)}

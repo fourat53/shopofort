@@ -24,9 +24,10 @@ import {
 	DialogContent,
 	DialogFooter,
 	DialogHeader,
+	DialogSubContent,
 	DialogTitle,
 } from "@/components/ui/dialog";
-import { getEntityFields } from "@/lib/entity/fields";
+import { type FieldConfig, getEntityFields } from "@/lib/entity/fields";
 import type { EntityRow, EntityType } from "@/lib/entity/types";
 import {
 	getFieldName,
@@ -66,9 +67,7 @@ export default function EditForm<T extends EntityType>({
 	const { field, multiple } = uploadConfig[entity] ?? {};
 
 	useEffect(() => {
-		if (!open) return;
-
-		if (!field || rows.length === 0) {
+		if (!open || !field || rows.length === 0) {
 			setImages([]);
 			return;
 		}
@@ -141,117 +140,39 @@ export default function EditForm<T extends EntityType>({
 		<DialogContent
 			onPointerDownOutside={(e) => loading && e.preventDefault()}
 			onEscapeKeyDown={(e) => loading && e.preventDefault()}
-			className="px-0 w-82 sm:w-180 max-w-180 overflow-hidden"
 		>
 			<form onSubmit={handleSubmit}>
-				<DialogHeader className="pb-2">
+				<DialogHeader>
 					<DialogTitle>Update {entityName}</DialogTitle>
 				</DialogHeader>
-				<div className="max-h-[calc(100vh-12rem)] sm:max-h-[calc(100vh-8rem)] overflow-y-auto px-4 flex flex-col gap-4">
+				<DialogSubContent>
 					{fields.map((f) => {
 						const value = getFieldValue(rows[0], f.name);
-						const { type, name, multiple, required, step, options } = f;
-						const label = getFieldName(name);
-						const enabled = isFieldEnabled(name);
-
-						const fieldContent =
-							type === "string" ? (
-								<Input
-									key={name}
-									name={name}
-									label={label}
-									required={required}
-									disabled={!enabled}
-									type={name === "email" ? "email" : "text"}
-									placeholder={`Enter ${label.toLowerCase()}`}
-									defaultValue={value?.toString() || undefined}
-								/>
-							) : type === "text" ? (
-								<TextArea
-									key={name}
-									name={name}
-									label={label}
-									required={required}
-									disabled={!enabled}
-									placeholder={`Enter ${label.toLowerCase()}`}
-									defaultValue={value?.toString() || undefined}
-								/>
-							) : type === "number" ? (
-								<Input
-									key={name}
-									name={name}
-									label={label}
-									type="number"
-									step={step ?? "1"}
-									disabled={!enabled}
-									required={required}
-									placeholder={`Enter ${label.toLowerCase()}`}
-									defaultValue={value?.toString() || undefined}
-								/>
-							) : type === "date" ? (
-								<DatePicker
-									time
-									key={name}
-									name={name}
-									label={label}
-									disabled={!enabled}
-									required={required}
-									defaultValue={value as string | Date | undefined}
-								/>
-							) : type.includes("image") ? (
-								<ImageUpload
-									key={name}
-									name={name}
-									label={label}
-									images={images}
-									required={required}
-									onChange={setImages}
-									multiple={multiple}
-									disabled={!enabled}
-								/>
-							) : type === "enum" ? (
-								<Select
-									key={name}
-									name={name}
-									label={label}
-									multiple={multiple}
-									disabled={!enabled}
-									required={required}
-									items={options?.map((o) => ({ label: o, value: o }))}
-									defaultValue={
-										Array.isArray(value) && multiple
-											? value.map((item) => item.toString())
-											: value?.toString()
-									}
-								/>
-							) : type === "foreignKey" ? (
-								<ForeignKeySelect
-									key={name}
-									name={name}
-									entity={entity}
-									fields={fields}
-									disabled={!enabled}
-									required={required}
-									defaultValue={value?.toString()}
-								/>
-							) : null;
-
+						const enabled = isFieldEnabled(f.name);
 						return (
-							<div key={name} className="flex items-start gap-2">
+							<div key={f.name} className="relative flex items-start gap-2">
 								{!single && (
 									<Checkbox
 										checked={enabled}
-										onCheckedChange={() => toggleField(name)}
-										aria-label={`Update ${label} for all selected rows`}
-										className="size-3.5"
+										onCheckedChange={() => toggleField(f.name)}
+										aria-label={`Update ${f.name} for all selected rows`}
+										className="absolute top-0 right-0 z-50 size-3.5"
 									/>
 								)}
-								{fieldContent}
+								<FieldContent
+									entity={entity}
+									fields={fields}
+									field={f}
+									value={value}
+									images={images}
+									enabled={enabled}
+									setImages={setImages}
+								/>
 							</div>
 						);
 					})}
-				</div>
-				<DialogFooter className="pt-3">
+				</DialogSubContent>
+				<DialogFooter>
 					<Button
 						variant="outline"
 						onClick={() => setOpen(false)}
@@ -266,4 +187,133 @@ export default function EditForm<T extends EntityType>({
 			</form>
 		</DialogContent>
 	);
+}
+
+interface FieldContentProps {
+	entity: EntityType;
+	fields: FieldConfig[];
+	field: FieldConfig;
+	value: unknown;
+	images: ImageItem[];
+	enabled: boolean;
+	setImages: Dispatch<SetStateAction<ImageItem[]>>;
+}
+
+function FieldContent({
+	entity,
+	fields,
+	field,
+	value,
+	images,
+	enabled,
+	setImages,
+}: FieldContentProps) {
+	const { type, name, multiple, required, step, options } = field;
+	const label = getFieldName(name);
+	const placeholder = `Enter ${label.toLowerCase()}`;
+
+	if (type === "string") {
+		return (
+			<Input
+				name={name}
+				label={label}
+				required={required}
+				disabled={!enabled}
+				type={name === "email" ? "email" : "text"}
+				placeholder={placeholder}
+				defaultValue={value?.toString() || undefined}
+			/>
+		);
+	}
+
+	if (type === "text") {
+		return (
+			<TextArea
+				name={name}
+				label={label}
+				required={required}
+				disabled={!enabled}
+				placeholder={placeholder}
+				defaultValue={value?.toString() || undefined}
+			/>
+		);
+	}
+
+	if (type === "number") {
+		return (
+			<Input
+				name={name}
+				label={label}
+				type="number"
+				step={step ?? "1"}
+				disabled={!enabled}
+				required={required}
+				placeholder={placeholder}
+				defaultValue={value?.toString() || undefined}
+			/>
+		);
+	}
+
+	if (type === "date") {
+		return (
+			<DatePicker
+				time
+				name={name}
+				label={label}
+				disabled={!enabled}
+				required={required}
+				defaultValue={value as string | Date | undefined}
+			/>
+		);
+	}
+
+	if (type.includes("image")) {
+		return (
+			<ImageUpload
+				name={name}
+				label={label}
+				images={images}
+				required={required}
+				onChange={setImages}
+				multiple={multiple}
+				disabled={!enabled}
+			/>
+		);
+	}
+
+	if (type === "enum") {
+		return (
+			<Select
+				name={name}
+				label={label}
+				multiple={multiple}
+				disabled={!enabled}
+				required={required}
+				items={options?.map((option) => ({
+					label: option,
+					value: option,
+				}))}
+				defaultValue={
+					Array.isArray(value) && multiple
+						? value.map((item) => item.toString())
+						: value?.toString()
+				}
+			/>
+		);
+	}
+
+	if (type === "foreignKey") {
+		return (
+			<ForeignKeySelect
+				name={name}
+				entity={entity}
+				fields={fields}
+				disabled={!enabled}
+				required={required}
+				defaultValue={value?.toString()}
+			/>
+		);
+	}
+
+	return null;
 }

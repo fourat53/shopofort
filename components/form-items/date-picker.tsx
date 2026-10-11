@@ -99,9 +99,9 @@ export function DatePicker({
 					<PopoverTrigger asChild>
 						<Button
 							variant="ghost"
-							type="button"
+							aria-label={name}
 							disabled={disabled}
-							className="w-full h-7 bg-input hover:bg-input/80 border border-border text-xs rounded-md justify-start px-3 pr-8 disabled:cursor-not-allowed disabled:opacity-50"
+							className="w-full h-7 bg-input hover:bg-input/80 border text-xs rounded-md justify-start px-3 pr-8 disabled:cursor-not-allowed hover:disabled:bg-input"
 						>
 							<span className="truncate">{displayValue}</span>
 							{!date && (

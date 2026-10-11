@@ -50,7 +50,7 @@ export default function ListDialog<T extends EntityType>({
 				variant="ghost"
 				disabled={disabled}
 				className="size-6 p-1"
-				icon={<IconList className="size-4 text-mist-400" />}
+				icon={<IconList className="size-4 text-mist-700 dark:text-mist-300" />}
 			/>
 		);
 
@@ -61,12 +61,14 @@ export default function ListDialog<T extends EntityType>({
 					variant="ghost"
 					disabled={disabled}
 					className="size-6 p-1"
-					icon={<IconList className="size-4 text-mist-400" />}
+					icon={
+						<IconList className="size-4 text-mist-700 dark:text-mist-300" />
+					}
 				/>
 			</DialogTrigger>
 			<DialogContent
 				showCloseButton
-				className="min-w-[calc(100vw-100px)] flex flex-col gap-4"
+				className="p-4 min-w-[calc(100vw-100px)] flex flex-col gap-4"
 			>
 				<Tabs className="w-full flex flex-col items-center gap-4">
 					<TabsList>
@@ -118,7 +120,7 @@ function ImageCarousel({ images }: { images: string[] }) {
 			No images available
 		</div>
 	) : (
-		<Carousel className="bg-muted dark:bg-mist-950 rounded-xl">
+		<Carousel className="bg-mist-300 dark:bg-mist-950/80 rounded-xl">
 			<CarouselContent>
 				{images.map((image, index) => (
 					<CarouselItem

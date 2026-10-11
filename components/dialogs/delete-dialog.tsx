@@ -10,6 +10,7 @@ import {
 	DialogContent,
 	DialogFooter,
 	DialogHeader,
+	DialogSubContent,
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
@@ -92,7 +93,7 @@ export default function DeleteDialog({
 				<DialogHeader>
 					<DialogTitle>Are you absolutely sure?</DialogTitle>
 				</DialogHeader>
-				<div>
+				<DialogSubContent className="gap-0.5 justify-center">
 					This action cannot be undone. This will permanently delete the{" "}
 					{single ? (
 						<span className="font-semibold text-foreground">
@@ -106,7 +107,7 @@ export default function DeleteDialog({
 							and remove their data from our servers.
 						</div>
 					)}
-				</div>
+				</DialogSubContent>
 				<DialogFooter>
 					<Button
 						variant="outline"

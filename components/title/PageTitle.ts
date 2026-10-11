@@ -25,7 +25,8 @@ export default function PageTitle() {
 	}
 
 	return (
-		last?.replace(/-/g, " ").replace(/\b\w/g, (char) => char.toUpperCase()) ??
-		""
+		last
+			?.replace(/-/g, " ")
+			.replace(/\b\w/g, (char: string) => char.toUpperCase()) ?? ""
 	);
 }

@@ -62,6 +62,7 @@ export function RangeSlider({
 				<input
 					type="hidden"
 					name={fromName}
+					aria-label={fromName}
 					value={currentValue[0]}
 					required={required}
 				/>
@@ -70,6 +71,7 @@ export function RangeSlider({
 				<input
 					type="hidden"
 					name={toName}
+					aria-label={toName}
 					value={currentValue[1]}
 					required={required}
 				/>
@@ -78,6 +80,7 @@ export function RangeSlider({
 				id={id}
 				value={currentValue}
 				onValueChange={handleValueChange}
+				aria-label={fromName + " - " + toName}
 				min={min}
 				max={max}
 				step={step}

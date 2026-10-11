@@ -28,7 +28,7 @@ export default function EditDialog<T extends EntityType>({
 				variant="ghost"
 				disabled={disabled}
 				className="size-6 p-1"
-				icon={<IconEdit className="size-4 text-mist-400" />}
+				icon={<IconEdit className="size-4 text-mist-700 dark:text-mist-300" />}
 			/>
 		);
 
@@ -39,7 +39,9 @@ export default function EditDialog<T extends EntityType>({
 					variant="ghost"
 					disabled={disabled}
 					className="size-6 p-1"
-					icon={<IconEdit className="size-4 text-mist-400" />}
+					icon={
+						<IconEdit className="size-4 text-mist-700 dark:text-mist-300" />
+					}
 				/>
 			</DialogTrigger>
 			<EditForm<T> entity={entity} open={open} setOpen={setOpen} rows={rows} />

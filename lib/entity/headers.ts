@@ -71,7 +71,7 @@ const USERS_HEADER: HeaderItem[] = [
 
 const RATINGS_HEADER: HeaderItem[] = [
 	{ name: "userId", width: "260px" },
-	{ name: "productId", width: "150px" },
+	{ name: "productId", width: "250px" },
 	{ name: "rating", width: "auto" },
 ];
 

@@ -16,7 +16,8 @@
 		"generate": "prisma generate",
 		"push": "prisma db push",
 		"pull": "prisma db pull",
-		"studio": "prisma studio"
+		"studio": "prisma studio",
+		"check": "exec tsc --noEmit"
 	},
 	"dependencies": {
 		"@kinde-oss/kinde-auth-nextjs": "^2.13.2",
@@ -30,7 +31,7 @@
 		"cmdk": "^1.1.1",
 		"cn": "^0.4.0",
 		"date-fns": "^4.4.0",
-		"dotenv": "^18.0.6",
+		"dotenv": "^18.0.7",
 		"embla-carousel-react": "^8.6.0",
 		"next": "16.4.0",
 		"pg": "^8.23.1",
@@ -49,7 +50,7 @@
 	"devDependencies": {
 		"@biomejs/biome": "^2.5.15",
 		"@tailwindcss/postcss": "^4.3.3",
-		"@types/node": "^26.6.4",
+		"@types/node": "^26.6.5",
 		"@types/pg": "^8.23.1",
 		"@types/react": "^19.3.0",
 		"@types/react-dom": "^19.3.0",

@@ -30,11 +30,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
 
 const COLORS_STATUS = [
-	"--processing",
-	"--delivered",
-	"--pending",
-	"--shipped",
-	"--cancelled",
+	"var(--processing)",
+	"var(--delivered)",
+	"var(--pending)",
+	"var(--shipped)",
+	"var(--cancelled)",
 ];
 
 interface DashboardChartsProps {

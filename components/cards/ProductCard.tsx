@@ -10,7 +10,7 @@ import type { Product } from "@/lib/entity/types";
 
 export default function ProductCard({ product }: { product: Product }) {
 	return (
-		<div className="group hover:bg-muted p-2.5 rounded-3xl flex flex-col bg-transparent">
+		<div className="group hover:bg-mist-300 dark:hover:bg-mist-800  p-2.5 rounded-3xl flex flex-col bg-transparent">
 			<div className="relative aspect-square rounded-2xl bg-card overflow-hidden border shadow-sm transition-all duration-300 group-hover:shadow-md mb-4">
 				{product.images?.[0] ? (
 					<Image
@@ -27,9 +27,9 @@ export default function ProductCard({ product }: { product: Product }) {
 					</div>
 				)}
 
-				<div className="absolute inset-x-0 bottom-0 p-4 translate-y-full opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+				<div className="absolute inset-x-0 bottom-0 pb-4 px-6 translate-y-full opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
 					<Link href={`/products/${product.id}`}>
-						<Button className="w-full shadow-lg gap-1 rounded-xl h-11">
+						<Button className="w-full shadow-lg gap-1 rounded-xl h-10">
 							<IconShirt className="size-4.5" /> View Product
 						</Button>
 					</Link>
