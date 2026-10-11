@@ -66,6 +66,7 @@ import {
 	updateUsers,
 } from "@/actions/UserActions";
 import type { SelectOption } from "@/components/form-items/select";
+import { validateEntityForm } from "@/lib/entity/schemas";
 import {
 	type EntityRow,
 	EntityType,
@@ -74,6 +75,10 @@ import {
 } from "@/lib/entity/types";
 import { formatOption } from "@/lib/functions/server";
 import { prisma } from "@/lib/prisma";
+
+type EntityActionResult =
+	| { success: true; data: unknown }
+	| { success: false; fieldErrors: Record<string, string> };
 
 // GET
 async function getEntitiesPage<T extends EntityType>(
@@ -220,7 +225,10 @@ async function getFilterOptions(field: OptionField): Promise<SelectOption[]> {
 async function createEntity(
 	entity: Exclude<EntityType, "user">,
 	formData: FormData,
-) {
+): Promise<EntityActionResult> {
+	const validation = validateEntityForm(entity, formData, "create");
+	if (!validation.success) return validation;
+
 	let result: unknown;
 	try {
 		if (entity === EntityType.carts) {
@@ -236,7 +244,7 @@ async function createEntity(
 		} else if (entity === EntityType["order-items"]) {
 			result = await createOrderItem(formData);
 		}
-		return JSON.parse(JSON.stringify(result));
+		return { success: true, data: JSON.parse(JSON.stringify(result)) };
 	} catch (error) {
 		console.error(error);
 		throw error;
@@ -306,7 +314,10 @@ async function updateEntity(
 	entity: EntityType,
 	id: string | number,
 	formData: FormData,
-) {
+): Promise<EntityActionResult> {
+	const validation = validateEntityForm(entity, formData, "edit");
+	if (!validation.success) return validation;
+
 	let result: unknown;
 	try {
 		if (entity === EntityType.users) {
@@ -324,7 +335,7 @@ async function updateEntity(
 		} else if (entity === EntityType["order-items"]) {
 			result = await updateOrderItem(id as number, formData);
 		}
-		return JSON.parse(JSON.stringify(result));
+		return { success: true, data: JSON.parse(JSON.stringify(result)) };
 	} catch (error) {
 		console.error(error);
 		throw error;
@@ -337,8 +348,11 @@ async function updateEntities(
 	entity: EntityType,
 	ids: (string | number)[],
 	formData: FormData,
-) {
-	if (ids.length === 0) return;
+): Promise<EntityActionResult> {
+	const validation = validateEntityForm(entity, formData, "edit");
+	if (!validation.success) return validation;
+	if (ids.length === 0) return { success: true, data: null };
+
 	let result: unknown;
 	try {
 		if (entity === EntityType.users) {
@@ -356,7 +370,7 @@ async function updateEntities(
 		} else if (entity === EntityType["order-items"]) {
 			result = await updateOrderItems(ids as number[], formData);
 		}
-		return JSON.parse(JSON.stringify(result));
+		return { success: true, data: JSON.parse(JSON.stringify(result)) };
 	} catch (error) {
 		console.error(error);
 		throw error;

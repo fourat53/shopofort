@@ -28,6 +28,7 @@ import {
 	DialogTitle,
 } from "@/components/ui/dialog";
 import { type FieldConfig, getEntityFields } from "@/lib/entity/fields";
+import { validateEntityForm } from "@/lib/entity/schemas";
 import type { EntityRow, EntityType } from "@/lib/entity/types";
 import {
 	getFieldName,
@@ -42,6 +43,22 @@ interface DialogFormProps<T extends EntityType> {
 	open: boolean;
 	setOpen: Dispatch<SetStateAction<boolean>>;
 	rows: EntityRow<T>[];
+}
+
+function validationError(
+	entityName: string,
+	fieldErrors: Record<string, string>,
+) {
+	return (
+		<>
+			<p>Failed to update {entityName}.</p>
+			{Object.entries(fieldErrors).map(([field, message]) => (
+				<p key={field} className="text-muted-foreground">
+					{getFieldName(field)}: {message}
+				</p>
+			))}
+		</>
+	);
 }
 
 export default function EditForm<T extends EntityType>({
@@ -103,6 +120,21 @@ export default function EditForm<T extends EntityType>({
 	async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
 		e.preventDefault();
 		const formData = new FormData(e.currentTarget);
+
+		if (!single) {
+			for (const [key, _] of formData.entries()) {
+				if (!enabledFields.has(key) && key !== field) {
+					formData.delete(key);
+				}
+			}
+		}
+
+		const validation = validateEntityForm(entity, formData, "edit");
+		if (!validation.success) {
+			toast.error(validationError(entityName, validation.fieldErrors));
+			return;
+		}
+
 		setLoading(true);
 		try {
 			const imageFieldEnabled =
@@ -110,16 +142,15 @@ export default function EditForm<T extends EntityType>({
 
 			if (imageFieldEnabled) await addImages(entity, formData, images);
 
-			if (single) {
-				await updateEntity(entity, ids[0], formData);
-			} else {
-				for (const [key, _] of formData.entries()) {
-					if (!enabledFields.has(key) && key !== field) {
-						formData.delete(key);
-					}
-				}
-				await updateEntities(entity, ids, formData);
+			const result = single
+				? await updateEntity(entity, ids[0], formData)
+				: await updateEntities(entity, ids, formData);
+
+			if (!result.success) {
+				toast.error(validationError(entityName, result.fieldErrors));
+				return;
 			}
+
 			toast.success(`Successfully updated ${entityName}.`);
 			setOpen(false);
 		} catch {

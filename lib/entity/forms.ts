@@ -114,6 +114,8 @@ function getFormOrderItem(formData: FormData) {
 
 function getFormEntity(entity: EntityType, formData: FormData) {
 	switch (entity) {
+		case EntityType.users:
+			return getFormUser(formData);
 		case EntityType.products:
 			return getFormProduct(formData);
 		case EntityType.orders:

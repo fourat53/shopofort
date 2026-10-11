@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { getFormEntity } from "@/lib/entity/forms";
+import { EntityType } from "@/lib/entity/types";
 import {
 	Audience,
 	OrderStatus,
@@ -96,3 +98,143 @@ export {
 	ProductSchema,
 	UserSchema,
 };
+
+// FORM VALIDATION
+const emptyToUndefined = (value: unknown) =>
+	typeof value === "string" && value.trim() === "" ? undefined : value;
+
+const nanToUndefined = (value: unknown) =>
+	typeof value === "number" && Number.isNaN(value) ? undefined : value;
+
+const optionalText = (message: string) =>
+	z.preprocess(emptyToUndefined, z.string().min(3, message).optional());
+
+const requiredId = (message: string) =>
+	z.preprocess(
+		nanToUndefined,
+		z.number({ error: message }).int().positive(message),
+	);
+
+const requiredQuantity = () =>
+	z.preprocess(
+		nanToUndefined,
+		z.number({ error: "is required" }).int().positive("must be positive"),
+	);
+
+const UserFormSchema = z.object({
+	given_name: z.string().min(3, "must be at least 3 characters"),
+	family_name: z.string().min(3, "must be at least 3 characters"),
+	picture: z.preprocess(
+		(value) =>
+			typeof value === "string" && value.trim() !== "" ? value : undefined,
+		z.string().optional(),
+	),
+	is_suspended: z.enum(["true", "false"], {
+		error: "must be true or false",
+	}),
+});
+
+const ProductFormSchema = z.object({
+	name: z.string().min(3, "must be at least 3 characters"),
+	brand: optionalText("must be at least 3 characters"),
+	price: z.preprocess(
+		nanToUndefined,
+		z.number({ error: "is required" }).positive("must be positive"),
+	),
+	inventory: z.preprocess(
+		nanToUndefined,
+		z.number({ error: "is required" }).int().nonnegative("cannot be negative"),
+	),
+	description: optionalText("must be at least 3 characters"),
+	colors: z.array(z.enum(ProductColor)).optional(),
+	sizes: z.array(z.enum(ProductSize)).optional(),
+	categoryId: requiredId("is required"),
+});
+
+const CategoryFormSchema = z.object({
+	name: z.string().min(3, "must be at least 3 characters"),
+	audience: z.enum(Audience, { error: "is required" }),
+});
+
+const CartFormSchema = z.object({
+	userId: z.string().min(1, "is required"),
+});
+
+const OrderFormSchema = z.object({
+	orderDate: z.preprocess(
+		(value) =>
+			value instanceof Date && Number.isNaN(value.getTime())
+				? "invalid"
+				: value,
+		z.date({ error: "is required" }),
+	),
+	orderStatus: z.enum(OrderStatus, { error: "is required" }),
+	userId: z.string().min(1, "is required"),
+});
+
+const CartItemFormSchema = z.object({
+	quantity: requiredQuantity(),
+	color: z.preprocess(emptyToUndefined, z.enum(ProductColor).optional()),
+	size: z.preprocess(emptyToUndefined, z.enum(ProductSize).optional()),
+	cartId: requiredId("is required"),
+	productId: requiredId("is required"),
+});
+
+const OrderItemFormSchema = z.object({
+	quantity: requiredQuantity(),
+	color: z.preprocess(emptyToUndefined, z.enum(ProductColor).optional()),
+	size: z.preprocess(emptyToUndefined, z.enum(ProductSize).optional()),
+	orderId: requiredId("is required"),
+	productId: requiredId("is required"),
+});
+
+const EntityCreateSchemas: Record<EntityType, z.ZodType> = {
+	[EntityType.users]: z.never(),
+	[EntityType.carts]: CartFormSchema,
+	[EntityType.orders]: OrderFormSchema,
+	[EntityType.products]: ProductFormSchema,
+	[EntityType.categories]: CategoryFormSchema,
+	[EntityType["cart-items"]]: CartItemFormSchema,
+	[EntityType["order-items"]]: OrderItemFormSchema,
+};
+
+const EntityEditSchemas: Record<EntityType, z.ZodType> = {
+	[EntityType.users]: UserFormSchema.partial(),
+	[EntityType.carts]: CartFormSchema.partial(),
+	[EntityType.orders]: OrderFormSchema.partial(),
+	[EntityType.products]: ProductFormSchema.partial(),
+	[EntityType.categories]: CategoryFormSchema.partial(),
+	[EntityType["cart-items"]]: CartItemFormSchema.partial(),
+	[EntityType["order-items"]]: OrderItemFormSchema.partial(),
+};
+
+type EntityFormValidation =
+	| { success: true; data: Record<string, unknown> }
+	| { success: false; fieldErrors: Record<string, string> };
+
+function validateEntityForm(
+	entity: EntityType,
+	formData: FormData,
+	category: "create" | "edit",
+): EntityFormValidation {
+	const schema =
+		category === "create"
+			? EntityCreateSchemas[entity]
+			: EntityEditSchemas[entity];
+
+	const parsed = schema.safeParse(getFormEntity(entity, formData));
+
+	if (!parsed.success) {
+		const fieldErrors: Record<string, string> = {};
+		for (const issue of parsed.error.issues) {
+			const field = issue.path.join(".");
+			if (!fieldErrors[field]) fieldErrors[field] = issue.message;
+		}
+		return { success: false, fieldErrors };
+	}
+
+	return { success: true, data: parsed.data as Record<string, unknown> };
+}
+
+export type { EntityFormValidation };
+export { validateEntityForm };

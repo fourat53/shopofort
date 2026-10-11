@@ -27,6 +27,7 @@ import {
 	DialogTitle,
 } from "@/components/ui/dialog";
 import { getEntityFields } from "@/lib/entity/fields";
+import { validateEntityForm } from "@/lib/entity/schemas";
 import type { EntityType } from "@/lib/entity/types";
 import { getFieldName, getSingleName } from "@/lib/functions/client";
 import { addImages } from "@/lib/uploadthing/client";
@@ -35,6 +36,22 @@ interface CreateFormProps {
 	entity: EntityType;
 	open: boolean;
 	setOpen: Dispatch<SetStateAction<boolean>>;
+}
+
+function validationError(
+	entityName: string,
+	fieldErrors: Record<string, string>,
+) {
+	return (
+		<>
+			<p>Failed to create {entityName}.</p>
+			{Object.entries(fieldErrors).map(([field, message]) => (
+				<p key={field} className="text-muted-foreground">
+					{getFieldName(field)}: {message}
+				</p>
+			))}
+		</>
+	);
 }
 
 export default function CreateForm({ entity, open, setOpen }: CreateFormProps) {
@@ -51,10 +68,21 @@ export default function CreateForm({ entity, open, setOpen }: CreateFormProps) {
 	async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
 		e.preventDefault();
 		const formData = new FormData(e.currentTarget);
+
+		const validation = validateEntityForm(entity, formData, "create");
+		if (!validation.success) {
+			toast.error(validationError(entityName, validation.fieldErrors));
+			return;
+		}
+
 		setLoading(true);
 		try {
 			await addImages(entity, formData, images);
-			await createEntity(entity, formData);
+			const result = await createEntity(entity, formData);
+			if (!result.success) {
+				toast.error(validationError(entityName, result.fieldErrors));
+				return;
+			}
 			toast.success(`Successfully created ${entityName}.`);
 			setOpen(false);
 		} catch {
