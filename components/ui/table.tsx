@@ -86,8 +86,7 @@ function TableHead({
 			data-slot="table-head"
 			className={cn(
 				"h-7 py-1.5 px-2 font-semibold text-left whitespace-nowrap text-foreground has-[[role=checkbox]]:pr-0",
-				"bg-muted/90 dark:bg-sidebar-accent",
-				"hover:cursor-pointer hover:bg-mist-200/80 dark:hover:bg-mist-700/60",
+				"bg-sidebar-accent hover:bg-mist-300/60 dark:hover:bg-mist-700/60 hover:cursor-pointer",
 				border && "border-l",
 				className,
 			)}

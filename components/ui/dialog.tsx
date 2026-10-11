@@ -60,7 +60,7 @@ function DialogContent({
 			<DialogPrimitive.Content
 				data-slot="dialog-content"
 				className={cn(
-					"max-h-[calc(100vh-2rem)] max-w-[calc(100vw-2rem)] overflow-x-hidden overflow-y-auto fixed top-1/2 inset-s-1/2 z-40 grid  -translate-x-1/2 rtl:translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl bg-popover p-4 text-xs/relaxed text-popover-foreground ring-1 ring-foreground/10 duration-100 outline-none sm:max-w-sm data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
+					"max-h-[calc(100vh-1.5rem)] max-w-[calc(100vw-2rem)] overflow-x-hidden overflow-y-auto fixed top-1/2 inset-s-1/2 z-40 grid  -translate-x-1/2 rtl:translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl bg-popover text-xs/relaxed text-popover-foreground ring-1 ring-foreground/2	0 duration-100 outline-none sm:max-w-sm data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
 					className,
 				)}
 				{...props}
@@ -87,7 +87,10 @@ function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
 	return (
 		<div
 			data-slot="dialog-header"
-			className={cn("flex flex-col gap-1", className)}
+			className={cn(
+				"border-b border-foreground/20 px-4 py-3 bg-mist-200 dark:bg-mist-950/50 flex flex-col gap-1",
+				className,
+			)}
 			{...props}
 		/>
 	);
@@ -105,7 +108,7 @@ function DialogFooter({
 		<div
 			data-slot="dialog-footer"
 			className={cn(
-				"flex flex-col max-sm:px-4 gap-2 sm:flex-row sm:justify-center",
+				"border-t border-foreground/20 px-4 py-3 bg-mist-200 dark:bg-mist-950/50 flex flex-col gap-2 sm:flex-row sm:justify-center",
 				className,
 			)}
 			{...props}
@@ -120,6 +123,25 @@ function DialogFooter({
 	);
 }
 
+function DialogSubContent({
+	children,
+	className,
+}: {
+	children: React.ReactNode;
+	className?: string;
+}) {
+	return (
+		<div
+			className={cn(
+				"bg-mist-100 dark:bg-mist-900 max-h-[calc(100vh-12rem)] sm:max-h-[calc(100vh-7.5rem)] overflow-y-auto px-4 py-3 flex flex-col gap-4",
+				className,
+			)}
+		>
+			{children}
+		</div>
+	);
+}
+
 function DialogTitle({
 	className,
 	...props
@@ -127,7 +149,10 @@ function DialogTitle({
 	return (
 		<DialogPrimitive.Title
 			data-slot="dialog-title"
-			className={cn("text-center font-heading text-sm font-medium", className)}
+			className={cn(
+				"text-mist-700 dark:text-mist-400 text-center font-heading text-sm font-semibold",
+				className,
+			)}
 			{...props}
 		/>
 	);
@@ -158,6 +183,7 @@ export {
 	DialogHeader,
 	DialogOverlay,
 	DialogPortal,
+	DialogSubContent,
 	DialogTitle,
 	DialogTrigger,
 };

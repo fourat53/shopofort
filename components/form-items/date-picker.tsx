@@ -101,7 +101,7 @@ export function DatePicker({
 							variant="ghost"
 							type="button"
 							disabled={disabled}
-							className="w-full h-7 bg-input/20 dark:bg-input/30 border border-border text-xs rounded-md justify-start px-3 pr-8 disabled:cursor-not-allowed disabled:opacity-50"
+							className="w-full h-7 bg-input hover:bg-input/80 border border-border text-xs rounded-md justify-start px-3 pr-8 disabled:cursor-not-allowed disabled:opacity-50"
 						>
 							<span className="truncate">{displayValue}</span>
 							{!date && (

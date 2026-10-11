@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Geist, Geist_Mono, Oxanium } from "next/font/google";
 import DocumentTitle from "@/components/title/DocumentTitle";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -18,6 +19,12 @@ const geistMono = Geist_Mono({
 	variable: "--font-geist-mono",
 	subsets: ["latin"],
 });
+
+export const metadata: Metadata = {
+	title: "Shopofort",
+	description:
+		"Shopofort is a modern e-commerce platform for discovering and purchasing products online.",
+};
 
 export default function RootLayout({
 	children,

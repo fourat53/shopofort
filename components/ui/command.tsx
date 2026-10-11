@@ -73,9 +73,7 @@ function CommandInput({
 				{...props}
 				data-slot="command-input"
 				className={cn(
-					"h-6.5 w-full rounded-md bg-input/20 px-2 pe-8 text-xs/relaxed outline-hidden",
-					"dark:bg-input/30",
-					"disabled:cursor-not-allowed disabled:opacity-50",
+					"h-6.5 w-full rounded-md bg-input px-2 pe-8 text-xs/relaxed outline-hidden disabled:cursor-not-allowed disabled:opacity-50",
 					className,
 				)}
 			/>

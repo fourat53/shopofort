@@ -175,14 +175,15 @@ function Select({
 						/>
 					))}
 				<Popover open={open} onOpenChange={setOpen} modal={true}>
-					<PopoverTrigger asChild>
+					<PopoverTrigger asChild className="bg-transparent">
 						<Button
 							variant="ghost"
 							role="combobox"
+							aria-label={name}
 							aria-expanded={open}
 							disabled={disabled}
 							className={cn(
-								"relative border border-border/80 bg-input/20 dark:bg-input/30 rounded-md px-3 h-7 w-full justify-between disabled:cursor-not-allowed",
+								"relative border border-border/80 bg-input hover:bg-input/80 rounded-md px-3 h-7 w-full justify-between disabled:cursor-not-allowed",
 								selectedItem &&
 									Array.isArray(selectedItem.label) &&
 									selectedItem.label.length === 2 &&
@@ -277,7 +278,6 @@ function ButtonContent({
 				>
 					{selectedItem.label[0]}
 				</p>
-
 				<p
 					title={String(selectedItem.label[1])}
 					className="truncate max-w-full sm:max-w-[50%] sm:text-right"
@@ -308,7 +308,6 @@ function ItemContent({ item }: { item: SelectOption }) {
 				>
 					{item.label[0]}
 				</p>
-
 				<p
 					title={String(item.label[1])}
 					className="truncate max-w-full sm:max-w-[50%] sm:text-right"

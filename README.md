@@ -42,7 +42,7 @@ pnpm biome format --write .
 
 <!-- admin -->
 - use zod (verify implementation)
-- update the look of the dialogs
+- add elastic search
 
 <!-- client -->
 - add payment setup

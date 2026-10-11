@@ -88,7 +88,7 @@ function ImageUpload({
 						type="button"
 						onClick={handleDivClick}
 						className={clsx(
-							"size-24 sm:size-28 flex flex-col items-center justify-center border-2 border-dashed rounded-xl cursor-pointer hover:bg-mist-100 dark:hover:bg-mist-800 transition-colors",
+							"bg-input hover:bg-input/60 size-24 sm:size-28 flex flex-col items-center justify-center border-2 border-dashed rounded-xl cursor-pointer transition-colors",
 							multiple &&
 								images.length % 3 === 0 &&
 								"w-full sm:w-full col-span-3",
