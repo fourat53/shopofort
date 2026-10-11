@@ -9,6 +9,8 @@ import {
 } from "@/prisma/generated/prisma/enums";
 
 // Zod Schemas
+const decimal = z.coerce.number();
+
 const UserSchema = z.object({
 	id: z.string(),
 	picture: z.string(),
@@ -33,7 +35,7 @@ const ProductSchema = z.object({
 	id: z.number().int(),
 	name: z.string().min(3, "Name must be at least 3 characters"),
 	brand: z.string().min(3, "Brand must be at least 3 characters").nullable(),
-	price: z.coerce.number().positive("Price must be positive"),
+	price: decimal.positive("Price must be positive"),
 	inventory: z.coerce
 		.number()
 		.int()
@@ -44,7 +46,7 @@ const ProductSchema = z.object({
 		.nullable(),
 	colors: z.array(z.enum(ProductColor)),
 	sizes: z.array(z.enum(ProductSize)),
-	rating: z.coerce.number().nonnegative(),
+	rating: decimal.nonnegative(),
 	votes: z.number().int().nonnegative(),
 	categoryId: z.coerce.number().int().positive("Category is required"),
 	images: z.array(z.string()),
@@ -53,12 +55,12 @@ const ProductSchema = z.object({
 const ProductRatingSchema = z.object({
 	userId: z.string(),
 	productId: z.number().int(),
-	rating: z.coerce.number().positive().max(5),
+	rating: decimal.positive().max(5),
 });
 
 const CartSchema = z.object({
 	id: z.number().int(),
-	totalPrice: z.coerce.number().nonnegative(),
+	totalPrice: decimal.nonnegative(),
 	userId: z.string(),
 });
 
@@ -74,7 +76,7 @@ const CartItemSchema = z.object({
 const OrderSchema = z.object({
 	id: z.number().int(),
 	orderDate: z.coerce.date(),
-	totalPrice: z.coerce.number().nonnegative(),
+	totalPrice: decimal.nonnegative(),
 	orderStatus: z.enum(OrderStatus),
 	userId: z.string(),
 });

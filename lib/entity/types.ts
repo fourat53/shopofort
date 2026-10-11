@@ -1,13 +1,15 @@
 import type { KindeUser as KindeUserType } from "@kinde-oss/kinde-auth-nextjs/types";
+import type { z } from "zod";
 import type {
-	Cart as CartDb,
-	CartItem as CartItemDb,
-	Category as CategoryType,
-	Order as OrderDb,
-	OrderItem as OrderItemDb,
-	Product as ProductDb,
-	ProductRating as ProductRatingDb,
-} from "@/prisma/generated/prisma/client";
+	CartItemSchema,
+	CartSchema,
+	CategorySchema,
+	OrderItemSchema,
+	OrderSchema,
+	ProductRatingSchema,
+	ProductSchema,
+	UserSchema,
+} from "@/lib/entity/schemas";
 import {
 	Audience,
 	OrderStatus,
@@ -16,36 +18,21 @@ import {
 } from "@/prisma/generated/prisma/enums";
 
 // PLAIN MODEL TYPES
-type UserType = {
-	id: string;
-	picture: string;
-	email: string;
-	first_name: string;
-	last_name: string;
-	is_suspended: boolean;
-	total_sign_ins: number;
-	failed_sign_ins: number;
-	last_signed_in: Date;
-	created_on: Date;
-	updated_on: Date;
-};
+type UserType = z.infer<typeof UserSchema>;
 
-type ProductType = Omit<ProductDb, "price" | "rating"> & {
-	price: number;
-	rating: number;
-};
+type ProductType = z.infer<typeof ProductSchema>;
 
-type ProductRatingType = Omit<ProductRatingDb, "rating"> & {
-	rating: number;
-};
+type ProductRatingType = z.infer<typeof ProductRatingSchema>;
 
-type CartType = Omit<CartDb, "totalPrice"> & { totalPrice: number };
+type CartType = z.infer<typeof CartSchema>;
 
-type CartItemType = CartItemDb;
+type CartItemType = z.infer<typeof CartItemSchema>;
 
-type OrderType = Omit<OrderDb, "totalPrice"> & { totalPrice: number };
+type OrderType = z.infer<typeof OrderSchema>;
 
-type OrderItemType = OrderItemDb;
+type OrderItemType = z.infer<typeof OrderItemSchema>;
+
+type CategoryType = z.infer<typeof CategorySchema>;
 
 // MAPPED MODEL TYPES
 type KindeUser = KindeUserType<Record<string, unknown>>;
