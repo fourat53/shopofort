@@ -1,41 +1,36 @@
 "use client";
 
-import { IconPlus, IconRefresh } from "@tabler/icons-react";
+import { IconPlus } from "@tabler/icons-react";
 import { useState } from "react";
-import { updateCache } from "@/actions/EntityActions";
 import CreateForm from "@/components/forms/create-form";
 import CurrentEntity from "@/components/title/CurrentEntity";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { EntityType } from "@/lib/entity/types";
+import { getSingleName } from "@/lib/functions/client";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 export default function CreateDialog() {
 	const entity = CurrentEntity();
 	const [open, setOpen] = useState<boolean>(false);
 
-	if (!entity || entity === EntityType.users)
-		return (
-			<Button
-				variant="outline"
-				icon={<IconRefresh />}
-				onClick={() => updateCache()}
-			/>
-		);
+	if (!entity || entity === EntityType.users) return;
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
-			<Button
-				variant="outline"
-				icon={<IconRefresh />}
-				onClick={() => updateCache()}
-			/>
-			<DialogTrigger asChild>
-				<Button
-					variant="outline"
-					className="size-8 p-2"
-					icon={<IconPlus className="size-4" />}
-				/>
-			</DialogTrigger>
+			<Tooltip>
+				<TooltipTrigger asChild>
+					<DialogTrigger asChild>
+						<Button
+							variant="outline"
+							aria-label="Create"
+							className="size-7 sm:size-8 p-2"
+							icon={<IconPlus className="size-4" />}
+						/>
+					</DialogTrigger>
+				</TooltipTrigger>
+				<TooltipContent>Create new {getSingleName(entity)}</TooltipContent>
+			</Tooltip>
 			<CreateForm entity={entity} open={open} setOpen={setOpen} />
 		</Dialog>
 	);

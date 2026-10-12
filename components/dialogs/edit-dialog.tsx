@@ -6,6 +6,8 @@ import EditForm from "@/components/forms/edit-form";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import type { EntityRow, EntityType } from "@/lib/entity/types";
+import { getPluralName, getSingleName } from "@/lib/functions/client";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 interface EditDialogProps<T extends EntityType> {
 	entity?: T;
@@ -26,25 +28,45 @@ export default function EditDialog<T extends EntityType>({
 		return (
 			<Button
 				variant="ghost"
+				aria-label="Update"
 				disabled={disabled}
 				className="size-6 p-1"
 				icon={<IconEdit className="size-4 text-mist-700 dark:text-mist-300" />}
 			/>
 		);
 
+	const single = rows?.length === 1;
+	const title = single
+		? getSingleName(entity)
+		: "the " + rows?.length + " selected " + getPluralName(entity);
+
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
-			<DialogTrigger asChild>
-				<Button
-					variant="ghost"
-					disabled={disabled}
-					className="size-6 p-1"
-					icon={
-						<IconEdit className="size-4 text-mist-700 dark:text-mist-300" />
-					}
-				/>
-			</DialogTrigger>
-			<EditForm<T> entity={entity} open={open} setOpen={setOpen} rows={rows} />
+			<Tooltip>
+				<TooltipTrigger asChild>
+					<DialogTrigger asChild>
+						<Button
+							variant="ghost"
+							aria-label="Update"
+							disabled={disabled}
+							className="size-6 p-1"
+							icon={
+								<IconEdit className="size-4 text-mist-700 dark:text-mist-300" />
+							}
+						/>
+					</DialogTrigger>
+				</TooltipTrigger>
+				<TooltipContent>Update {title}</TooltipContent>
+			</Tooltip>
+
+			<EditForm<T>
+				entity={entity}
+				open={open}
+				setOpen={setOpen}
+				rows={rows}
+				single={single}
+				title={title}
+			/>
 		</Dialog>
 	);
 }

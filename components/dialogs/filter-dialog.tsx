@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { getEntityFields } from "@/lib/entity/fields";
 import { EntityType } from "@/lib/entity/types";
+import { getPluralName } from "@/lib/functions/client";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 export default function FilterDialog() {
 	const entity = CurrentEntity();
@@ -48,25 +50,38 @@ export default function FilterDialog() {
 	return (
 		<div
 			className={clsx(
-				"flex gap-1.5",
+				"flex gap-1 sm:gap-2",
 				entity !== EntityType.users && "pr-1.5 border-r",
 			)}
 		>
 			{hasFilters && (
-				<Button
-					variant="outline"
-					onClick={handleClear}
-					className="size-8 p-2"
-					icon={<IconArrowBackUp className="size-4" />}
-				/>
+				<Tooltip>
+					<TooltipTrigger asChild>
+						<Button
+							variant="outline"
+							onClick={handleClear}
+							aria-label="Clear filters"
+							className="size-7 sm:size-8 p-2"
+							icon={<IconArrowBackUp className="size-4" />}
+						/>
+					</TooltipTrigger>
+					<TooltipContent>Clear filters</TooltipContent>
+				</Tooltip>
 			)}
 			<Dialog open={open} onOpenChange={setOpen}>
-				<DialogTrigger asChild>
-					<Button
-						className="size-8 p-2"
-						icon={<IconFilter className="size-4" />}
-					/>
-				</DialogTrigger>
+				<Tooltip>
+					<TooltipTrigger asChild>
+						<DialogTrigger asChild>
+							<Button
+								aria-label="Filter"
+								icon={<IconFilter className="size-4" />}
+								className="size-7 sm:size-8 p-2"
+							/>
+						</DialogTrigger>
+					</TooltipTrigger>
+					<TooltipContent>Filter {getPluralName(entity)}</TooltipContent>
+				</Tooltip>
+
 				<FilterForm
 					fields={fields}
 					entity={entity}

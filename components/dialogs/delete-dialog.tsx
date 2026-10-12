@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import type { EntityType } from "@/lib/entity/types";
 import { getPluralName, getSingleName } from "@/lib/functions/client";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 interface DeleteDialogProps {
 	entity: EntityType;
@@ -35,7 +36,7 @@ export default function DeleteDialog({
 	const single = ids?.length === 1;
 	const entityName = single
 		? getSingleName(entity)
-		: "all the " + ids?.length + " selected " + getPluralName(entity);
+		: "the " + ids?.length + " selected " + getPluralName(entity);
 
 	const handleDelete = async (e: React.MouseEvent) => {
 		e.preventDefault();
@@ -73,14 +74,21 @@ export default function DeleteDialog({
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
-			<DialogTrigger asChild>
-				<Button
-					variant="ghost"
-					disabled={disabled}
-					className="size-6 p-0"
-					icon={<IconTrash className="size-4 text-red-500" />}
-				/>
-			</DialogTrigger>
+			<Tooltip>
+				<TooltipTrigger asChild>
+					<DialogTrigger asChild>
+						<Button
+							variant="ghost"
+							disabled={disabled}
+							aria-label="Delete"
+							className="size-6 p-0"
+							icon={<IconTrash className="size-4 text-red-500" />}
+						/>
+					</DialogTrigger>
+				</TooltipTrigger>
+				<TooltipContent>Delete {entityName}</TooltipContent>
+			</Tooltip>
+
 			<DialogContent
 				className="w-100"
 				onPointerDownOutside={(e) => loading && e.preventDefault()}

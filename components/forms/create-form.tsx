@@ -31,27 +31,12 @@ import { validateEntityForm } from "@/lib/entity/schemas";
 import type { EntityType } from "@/lib/entity/types";
 import { getFieldName, getSingleName } from "@/lib/functions/client";
 import { addImages } from "@/lib/uploadthing/client";
+import { ValidationError } from "../dialog-content/ValidationError";
 
 interface CreateFormProps {
 	entity: EntityType;
 	open: boolean;
 	setOpen: Dispatch<SetStateAction<boolean>>;
-}
-
-function validationError(
-	entityName: string,
-	fieldErrors: Record<string, string>,
-) {
-	return (
-		<>
-			<p>Failed to create {entityName}.</p>
-			{Object.entries(fieldErrors).map(([field, message]) => (
-				<p key={field} className="text-muted-foreground">
-					{getFieldName(field)}: {message}
-				</p>
-			))}
-		</>
-	);
 }
 
 export default function CreateForm({ entity, open, setOpen }: CreateFormProps) {
@@ -71,7 +56,9 @@ export default function CreateForm({ entity, open, setOpen }: CreateFormProps) {
 
 		const validation = validateEntityForm(entity, formData, "create");
 		if (!validation.success) {
-			toast.error(validationError(entityName, validation.fieldErrors));
+			toast.error(
+				ValidationError("create", entityName, validation.fieldErrors),
+			);
 			return;
 		}
 
@@ -80,7 +67,7 @@ export default function CreateForm({ entity, open, setOpen }: CreateFormProps) {
 			await addImages(entity, formData, images);
 			const result = await createEntity(entity, formData);
 			if (!result.success) {
-				toast.error(validationError(entityName, result.fieldErrors));
+				toast.error(ValidationError("create", entityName, result.fieldErrors));
 				return;
 			}
 			toast.success(`Successfully created ${entityName}.`);

@@ -28,7 +28,7 @@ export default async function AdminLayout({
 								<SidebarTrigger />
 								<PageTitle />
 							</div>
-							<div className="flex gap-1.5">
+							<div className="flex gap-1 sm:gap-2">
 								<FilterDialog />
 								<CreateDialog />
 							</div>

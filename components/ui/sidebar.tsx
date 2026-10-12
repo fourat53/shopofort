@@ -239,21 +239,30 @@ function SidebarTrigger({
 }: React.ComponentProps<typeof Button>) {
 	const { toggleSidebar } = useSidebar();
 	return (
-		<Button
-			data-sidebar="trigger"
-			data-slot="sidebar-trigger"
-			variant="ghost"
-			size="icon-lg"
-			className={cn("size-8 rounded-xl hover:border border-border", className)}
-			onClick={(event) => {
-				onClick?.(event);
-				toggleSidebar();
-			}}
-			{...props}
-		>
-			<IconLayoutSidebar className="cn-rtl-flip" />
-			<span className="sr-only">Toggle Sidebar</span>
-		</Button>
+		<Tooltip>
+			<TooltipTrigger asChild>
+				<Button
+					data-sidebar="trigger"
+					data-slot="sidebar-trigger"
+					aria-label="Toggle Sidebar"
+					variant="ghost"
+					size="icon-lg"
+					className={cn(
+						"size-7 sm:size-8 rounded-xl hover:border border-border",
+						className,
+					)}
+					onClick={(event) => {
+						onClick?.(event);
+						toggleSidebar();
+					}}
+					{...props}
+				>
+					<IconLayoutSidebar className="cn-rtl-flip" />
+					<span className="sr-only">Toggle Sidebar</span>
+				</Button>
+			</TooltipTrigger>
+			<TooltipContent>Toggle sidebar</TooltipContent>
+		</Tooltip>
 	);
 }
 

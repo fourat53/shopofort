@@ -5,6 +5,7 @@ import { clsx } from "clsx";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
 
 type ImageItem = string | File;
 
@@ -50,7 +51,7 @@ function ImageUpload({
 	};
 
 	return (
-		<div className={className}>
+		<div className={cn("w-full", className)}>
 			<Label className="pb-1.5" required={required}>
 				{label}
 			</Label>
@@ -69,7 +70,7 @@ function ImageUpload({
 
 			<div
 				className={
-					multiple || images.length > 1
+					multiple
 						? "w-full grid grid-cols-3 gap-1 sm:gap-2"
 						: "w-full flex justify-center"
 				}
@@ -82,13 +83,17 @@ function ImageUpload({
 						disabled={disabled}
 					/>
 				))}
-
 				{(multiple || (!multiple && images.length === 0)) && !disabled && (
 					<button
 						type="button"
 						onClick={handleDivClick}
 						aria-label={name}
-						className="size-24 sm:size-28 bg-input hover:bg-input/60 flex flex-col items-center justify-center border-2 border-dashed rounded-xl cursor-pointer transition-colors"
+						className={clsx(
+							"w-full h-24 sm:h-28 bg-input hover:bg-input/60 flex flex-col items-center justify-center border-2 border-dashed rounded-xl cursor-pointer transition-colors",
+							multiple && images.length % 3 === 0 && "col-span-3",
+							multiple && images.length % 3 === 1 && "col-span-2",
+							multiple && images.length % 3 === 2 && "col-span-1",
+						)}
 					>
 						<IconUpload className="size-6 text-mist-400 mb-1" />
 						<span className="text-xs text-mist-500">Upload</span>

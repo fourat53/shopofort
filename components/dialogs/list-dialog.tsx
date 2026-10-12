@@ -1,14 +1,7 @@
 import { IconList } from "@tabler/icons-react";
-import Image from "next/image";
 import ListDataTable from "@/components/data-table/ListDataTable";
+import ListImageCarousel from "@/components/dialog-content/ListImageCarousel";
 import { Button } from "@/components/ui/button";
-import {
-	Carousel,
-	CarouselContent,
-	CarouselItem,
-	CarouselNext,
-	CarouselPrevious,
-} from "@/components/ui/carousel";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getListHeader } from "@/lib/entity/headers";
@@ -20,9 +13,15 @@ import {
 import {
 	getFieldEntity,
 	getFieldName,
+	getSingleName,
 	isTabValue,
 } from "@/lib/functions/client";
 import { uploadConfig } from "@/lib/uploadthing/client";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface ListDialogProps<T extends EntityType> {
 	entity: T;
@@ -48,6 +47,7 @@ export default function ListDialog<T extends EntityType>({
 		return (
 			<Button
 				variant="ghost"
+				aria-label="View lists"
 				disabled={disabled}
 				className="size-6 p-1"
 				icon={<IconList className="size-4 text-mist-700 dark:text-mist-300" />}
@@ -56,16 +56,23 @@ export default function ListDialog<T extends EntityType>({
 
 	return (
 		<Dialog>
-			<DialogTrigger asChild>
-				<Button
-					variant="ghost"
-					disabled={disabled}
-					className="size-6 p-1"
-					icon={
-						<IconList className="size-4 text-mist-700 dark:text-mist-300" />
-					}
-				/>
-			</DialogTrigger>
+			<Tooltip>
+				<TooltipTrigger asChild>
+					<DialogTrigger asChild>
+						<Button
+							variant="ghost"
+							aria-label="View lists"
+							disabled={disabled}
+							className="size-6 p-1"
+							icon={
+								<IconList className="size-4 text-mist-700 dark:text-mist-300" />
+							}
+						/>
+					</DialogTrigger>
+				</TooltipTrigger>
+				<TooltipContent>View {getSingleName(entity)} lists</TooltipContent>
+			</Tooltip>
+
 			<DialogContent
 				showCloseButton
 				className="p-4 min-w-[calc(100vw-100px)] flex flex-col gap-4"
@@ -95,7 +102,7 @@ export default function ListDialog<T extends EntityType>({
 									className="w-full h-[calc(100vh-152px)]"
 								>
 									{name === field ? (
-										<ImageCarousel images={value as string[]} />
+										<ListImageCarousel images={value as string[]} />
 									) : (
 										<ListDataTable<typeof tabEntity>
 											entity={tabEntity}
@@ -111,34 +118,5 @@ export default function ListDialog<T extends EntityType>({
 				</Tabs>
 			</DialogContent>
 		</Dialog>
-	);
-}
-
-function ImageCarousel({ images }: { images: string[] }) {
-	return images.length === 0 ? (
-		<div className="h-[calc(100vh-152px)] w-full bg-chart-1/40 dark:bg-sidebar-accent/40 flex items-center justify-center border rounded-lg text-muted-foreground">
-			No images available
-		</div>
-	) : (
-		<Carousel className="bg-mist-300 dark:bg-mist-950/80 rounded-xl">
-			<CarouselContent>
-				{images.map((image, index) => (
-					<CarouselItem
-						key={index}
-						className="h-[calc(100vh-152px)] p-0 pl-4 flex justify-center items-center"
-					>
-						<Image
-							src={image}
-							alt={image}
-							width={1000}
-							height={1000}
-							className="h-[calc(100vh-152px)] w-auto"
-						/>
-					</CarouselItem>
-				))}
-			</CarouselContent>
-			<CarouselPrevious />
-			<CarouselNext />
-		</Carousel>
 	);
 }

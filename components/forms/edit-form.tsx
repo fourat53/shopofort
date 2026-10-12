@@ -30,35 +30,17 @@ import {
 import { type FieldConfig, getEntityFields } from "@/lib/entity/fields";
 import { validateEntityForm } from "@/lib/entity/schemas";
 import type { EntityRow, EntityType } from "@/lib/entity/types";
-import {
-	getFieldName,
-	getFieldValue,
-	getPluralName,
-	getSingleName,
-} from "@/lib/functions/client";
+import { getFieldName, getFieldValue } from "@/lib/functions/client";
 import { addImages, uploadConfig } from "@/lib/uploadthing/client";
+import { ValidationError } from "../dialog-content/ValidationError";
 
 interface DialogFormProps<T extends EntityType> {
 	entity: T;
 	open: boolean;
 	setOpen: Dispatch<SetStateAction<boolean>>;
 	rows: EntityRow<T>[];
-}
-
-function validationError(
-	entityName: string,
-	fieldErrors: Record<string, string>,
-) {
-	return (
-		<>
-			<p>Failed to update {entityName}.</p>
-			{Object.entries(fieldErrors).map(([field, message]) => (
-				<p key={field} className="text-muted-foreground">
-					{getFieldName(field)}: {message}
-				</p>
-			))}
-		</>
-	);
+	single: boolean;
+	title: string;
 }
 
 export default function EditForm<T extends EntityType>({
@@ -66,6 +48,8 @@ export default function EditForm<T extends EntityType>({
 	open,
 	setOpen,
 	rows,
+	single,
+	title,
 }: DialogFormProps<T>) {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [images, setImages] = useState<ImageItem[]>([]);
@@ -73,11 +57,6 @@ export default function EditForm<T extends EntityType>({
 
 	const ids = useMemo(() => rows.map((row) => row.id), [rows]);
 	const fields = useMemo(() => getEntityFields(entity, "edit"), [entity]);
-
-	const single = rows.length === 1;
-	const entityName = single
-		? getSingleName(entity)
-		: "all the " + rows.length + " selected " + getPluralName(entity);
 
 	const imageFieldName = useMemo(() => uploadConfig[entity]?.field, [entity]);
 
@@ -131,7 +110,7 @@ export default function EditForm<T extends EntityType>({
 
 		const validation = validateEntityForm(entity, formData, "edit");
 		if (!validation.success) {
-			toast.error(validationError(entityName, validation.fieldErrors));
+			toast.error(ValidationError("edit", title, validation.fieldErrors));
 			return;
 		}
 
@@ -147,16 +126,16 @@ export default function EditForm<T extends EntityType>({
 				: await updateEntities(entity, ids, formData);
 
 			if (!result.success) {
-				toast.error(validationError(entityName, result.fieldErrors));
+				toast.error(ValidationError("edit", title, result.fieldErrors));
 				return;
 			}
 
-			toast.success(`Successfully updated ${entityName}.`);
+			toast.success(`Successfully updated ${title}.`);
 			setOpen(false);
 		} catch {
 			toast.error(
 				<>
-					<p>Failed to update {entityName}.</p>
+					<p>Failed to update {title}.</p>
 					<p className="text-muted-foreground">Please try again.</p>
 				</>,
 			);
@@ -174,7 +153,7 @@ export default function EditForm<T extends EntityType>({
 		>
 			<form onSubmit={handleSubmit}>
 				<DialogHeader>
-					<DialogTitle>Update {entityName}</DialogTitle>
+					<DialogTitle>Update {title}</DialogTitle>
 				</DialogHeader>
 				<DialogSubContent>
 					{fields.map((f) => {
