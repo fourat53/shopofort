@@ -4,6 +4,11 @@ import ListImageCarousel from "@/components/dialog-content/ListImageCarousel";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { getListHeader } from "@/lib/entity/headers";
 import {
 	type EntityRow,
@@ -17,11 +22,6 @@ import {
 	isTabValue,
 } from "@/lib/functions/client";
 import { uploadConfig } from "@/lib/uploadthing/client";
-import {
-	Tooltip,
-	TooltipContent,
-	TooltipTrigger,
-} from "@/components/ui/tooltip";
 
 interface ListDialogProps<T extends EntityType> {
 	entity: T;
